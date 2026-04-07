@@ -1,0 +1,19 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build output
+bin/
+obj/
+build/
+build/Release/
+build/Debug/
+
+# NuGet
+packages/
+
+# MSIX packaging output
+src/NativeComServer.Package/AppPackages/
+src/NativeComServer.Package/bin/
+src/NativeComServer.Package/obj/
