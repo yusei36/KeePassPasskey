@@ -41,6 +41,16 @@ static HRESULT RunAsPluginServer()
 // Simple management UI — runs when the user launches the EXE directly.
 static void RunManagementUI(int argc, wchar_t* argv[])
 {
+    // Attach to the parent console (e.g. PowerShell) so wprintf output is visible.
+    // GUI subsystem EXEs don't inherit a console automatically.
+    // After AttachConsole, re-open stdout/stderr to CONOUT$ so the C runtime
+    // actually routes wprintf to the newly attached console (the handles it
+    // inherited at process start still point to NUL for a GUI subsystem EXE).
+    AttachConsole(ATTACH_PARENT_PROCESS);
+    FILE* f;
+    freopen_s(&f, "CONOUT$", "w", stdout);
+    freopen_s(&f, "CONOUT$", "w", stderr);
+
     // Parse command: /register, /unregister, /status
     std::wstring cmd = (argc > 1) ? argv[1] : L"";
 
