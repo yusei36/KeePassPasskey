@@ -4,7 +4,7 @@ using System.IO.Pipes;
 using System.Text;
 using System.Threading;
 
-namespace KeePassPasskeyProvider.IPC
+namespace PasskeyWinNative.IPC
 {
     /// <summary>
     /// Named pipe server that listens on \\.\pipe\keepass-passkey-provider.

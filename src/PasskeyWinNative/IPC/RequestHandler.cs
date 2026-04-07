@@ -1,13 +1,13 @@
 using KeePass.Plugins;
-using KeePassPasskeyProvider.Passkey;
-using KeePassPasskeyProvider.Storage;
-using KeePassPasskeyProvider.Utils;
+using PasskeyWinNative.Passkey;
+using PasskeyWinNative.Storage;
+using PasskeyWinNative.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace KeePassPasskeyProvider.IPC
+namespace PasskeyWinNative.IPC
 {
     internal sealed class RequestHandler
     {

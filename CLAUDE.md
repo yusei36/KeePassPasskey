@@ -9,13 +9,13 @@ PasskeyWin11 integrates KeePass as a native Windows 11 passkey provider. It has 
 ```
 Browser → Windows (webauthn.dll) → PasskeyProvider.exe (COM, -PluginActivated)
                                          ↓ Named pipe JSON (\\.\pipe\keepass-passkey-provider)
-                                   KeePassPasskeyProvider.dll (loaded by KeePass.exe)
+                                   PasskeyWinNative.dll (loaded by KeePass.exe)
                                          ↓ KeePass Plugin API
                                    KeePass Database (KPEX_PASSKEY_* fields)
 ```
 
 - **COM server** (`src/NativeComServer/`) — C++ EXE, MSIX-packaged, implements `IPluginAuthenticator`, acts as the pipe **client**
-- **KeePass plugin** (`src/KeePassPlugin/`) — C# DLL, acts as the pipe **server**
+- **KeePass plugin** (`src/PasskeyWinNative/`) — C# DLL, acts as the pipe **server**
 - All crypto (EC P-256 keygen, ECDSA signing) lives in the C# plugin (`EcKeyHelper.cs`)
 - The COM server handles Windows API surface only: CBOR decode/encode, Windows Hello UV, credential cache
 - CLSID/AAGUID: `fdb141b2-5d84-443e-8a35-4698c205a502` (KeePassXC-compatible)
@@ -38,9 +38,9 @@ Or use `nuget restore PasskeyWin11.sln` if `nuget.exe` is on PATH.
 
 ### Build C# KeePass plugin
 ```
-msbuild src\KeePassPlugin\KeePassPlugin.csproj /p:Configuration=Release /p:Platform=AnyCPU
+msbuild src\PasskeyWinNative\PasskeyWinNative.csproj /p:Configuration=Release /p:Platform=AnyCPU
 ```
-Output: `build\Release\KeePassPasskeyProvider.dll`
+Output: `build\Release\PasskeyWinNative.dll`
 
 ### Build C++ COM server
 The C++ project must be given `SolutionDir` explicitly when built outside the solution so it can resolve the `packages\` path for WIL headers:
@@ -119,6 +119,11 @@ Verify: `Get-AppxPackage -Name '*KeePassPasskeyProvider*'`
 ### 3. Register provider and install plugin
 
 ```powershell
+# Get InstallLocation
+`Get-AppxPackage -Name '*KeePassPasskeyProvider*'`
+
+
+# Navigate to InstallLocation/NativeComServer
 # Register COM server
 PasskeyProvider.exe /register
 
@@ -136,12 +141,12 @@ Then enable in Windows Settings → Accounts → Passkeys → Advanced Options.
 | `src/NativeComServer/CredentialCache.cpp` | In-memory credential cache for the COM server lifetime |
 | `src/NativeComServer/SignatureVerifier.cpp` | Verifies request signatures from Windows |
 | `src/NativeComServer/main.cpp` | COM server entry point, handles `-PluginActivated` flag |
-| `src/KeePassPlugin/PasskeyProviderExt.cs` | KeePass plugin entry point |
-| `src/KeePassPlugin/IPC/PipeServer.cs` | Named pipe server — listens and dispatches requests |
-| `src/KeePassPlugin/IPC/RequestHandler.cs` | Handles `make_credential` / `get_assertion` logic |
-| `src/KeePassPlugin/IPC/IpcProtocol.cs` | JSON message schema (request/response types) |
-| `src/KeePassPlugin/Storage/PasskeyEntryStorage.cs` | KeePassXC-compatible `KPEX_PASSKEY_*` field storage |
-| `src/KeePassPlugin/Passkey/EcKeyHelper.cs` | EC P-256 key generation and ECDSA signing |
-| `src/KeePassPlugin/Passkey/AuthenticatorData.cs` | WebAuthn authenticatorData construction |
-| `src/KeePassPlugin/Passkey/CborWriter.cs` | Minimal CBOR encoder for attestation objects |
+| `src/PasskeyWinNative/PasskeyWinNativeExt.cs` | KeePass plugin entry point |
+| `src/PasskeyWinNative/IPC/PipeServer.cs` | Named pipe server — listens and dispatches requests |
+| `src/PasskeyWinNative/IPC/RequestHandler.cs` | Handles `make_credential` / `get_assertion` logic |
+| `src/PasskeyWinNative/IPC/IpcProtocol.cs` | JSON message schema (request/response types) |
+| `src/PasskeyWinNative/Storage/PasskeyEntryStorage.cs` | KeePassXC-compatible `KPEX_PASSKEY_*` field storage |
+| `src/PasskeyWinNative/Passkey/EcKeyHelper.cs` | EC P-256 key generation and ECDSA signing |
+| `src/PasskeyWinNative/Passkey/AuthenticatorData.cs` | WebAuthn authenticatorData construction |
+| `src/PasskeyWinNative/Passkey/CborWriter.cs` | Minimal CBOR encoder for attestation objects |
 | `src/NativeComServer.Package/Package.appxmanifest` | MSIX manifest — declares COM server and passkey provider |

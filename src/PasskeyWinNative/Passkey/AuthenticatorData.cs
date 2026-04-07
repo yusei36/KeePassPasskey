@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace KeePassPasskeyProvider.Passkey
+namespace PasskeyWinNative.Passkey
 {
     internal static class AuthenticatorData
     {

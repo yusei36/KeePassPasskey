@@ -1,4 +1,4 @@
-namespace KeePassPasskeyProvider.Passkey
+namespace PasskeyWinNative.Passkey
 {
     internal sealed class PasskeyCredential
     {

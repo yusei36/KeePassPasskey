@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 
-namespace KeePassPasskeyProvider.Passkey
+namespace PasskeyWinNative.Passkey
 {
     internal sealed class CborWriter
     {

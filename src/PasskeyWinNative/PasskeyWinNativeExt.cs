@@ -1,16 +1,16 @@
 using KeePass.Plugins;
-using KeePassPasskeyProvider.IPC;
-using KeePassPasskeyProvider.Storage;
+using PasskeyWinNative.IPC;
+using PasskeyWinNative.Storage;
 using System;
 
-namespace KeePassPasskeyProvider
+namespace PasskeyWinNative
 {
     /// <summary>
     /// KeePass plugin entry point.
     /// Starts the named pipe server on Initialize() so the native COM server
     /// (PasskeyProvider.exe) can connect to perform passkey operations.
     /// </summary>
-    public sealed class PasskeyProviderExt : Plugin
+    public sealed class PasskeyWinNativeExt : Plugin
     {
         private IPluginHost _host;
         private PipeServer _pipeServer;

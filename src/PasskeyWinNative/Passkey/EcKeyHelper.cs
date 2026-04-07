@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace KeePassPasskeyProvider.Passkey
+namespace PasskeyWinNative.Passkey
 {
     internal static class EcKeyHelper
     {

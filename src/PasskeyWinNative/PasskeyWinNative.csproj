@@ -7,8 +7,8 @@
     <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KeePassPasskeyProvider</RootNamespace>
-    <AssemblyName>KeePassPasskeyProvider</AssemblyName>
+    <RootNamespace>PasskeyWinNative</RootNamespace>
+    <AssemblyName>PasskeyWinNative</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -49,7 +49,8 @@
     <Compile Include="Passkey\CborWriter.cs" />
     <Compile Include="Passkey\EcKeyHelper.cs" />
     <Compile Include="Passkey\PasskeyCredential.cs" />
-    <Compile Include="PasskeyProviderExt.cs" />
+    <Compile Include="PasskeyWinNativeExt.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\PasskeyEntryStorage.cs" />
     <Compile Include="Utils\Base64Url.cs" />
   </ItemGroup>

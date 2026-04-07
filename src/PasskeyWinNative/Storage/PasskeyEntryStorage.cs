@@ -1,12 +1,12 @@
 using KeePass.Plugins;
 using KeePassLib;
 using KeePassLib.Security;
-using KeePassPasskeyProvider.Passkey;
+using PasskeyWinNative.Passkey;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace KeePassPasskeyProvider.Storage
+namespace PasskeyWinNative.Storage
 {
     internal sealed class PasskeyEntryStorage
     {

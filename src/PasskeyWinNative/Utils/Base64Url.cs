@@ -1,6 +1,6 @@
 using System;
 
-namespace KeePassPasskeyProvider.Utils
+namespace PasskeyWinNative.Utils
 {
     internal static class Base64Url
     {

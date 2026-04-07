@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace KeePassPasskeyProvider.IPC
+namespace PasskeyWinNative.IPC
 {
     // All messages use length-prefixed framing: [4-byte LE uint32 length][UTF-8 JSON]
 
