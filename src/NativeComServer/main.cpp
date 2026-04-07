@@ -6,25 +6,46 @@
 #include <string>
 #include <cstdio>
 
+static void LogMain(const char* fmt, ...)
+{
+    wchar_t tempPath[MAX_PATH];
+    GetTempPathW(MAX_PATH, tempPath);
+    wchar_t logPath[MAX_PATH];
+    wsprintfW(logPath, L"%sPasskeyProvider.log", tempPath);
+    FILE* f = nullptr;
+    _wfopen_s(&f, logPath, L"a");
+    if (!f) return;
+    SYSTEMTIME st; GetLocalTime(&st);
+    fprintf(f, "[%02d:%02d:%02d.%03d] ", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+    va_list args; va_start(args, fmt); vfprintf(f, fmt, args); va_end(args);
+    fprintf(f, "\n");
+    fclose(f);
+}
+
 using namespace Microsoft::WRL;
 
 // Called by the Windows passkey platform when a passkey operation is needed.
 // Registers the COM class factory and waits until the platform is done.
 static HRESULT RunAsPluginServer()
 {
+    LogMain("RunAsPluginServer: entry");
     DWORD dwCookie = 0;
     auto factory = Make<PluginAuthenticatorFactory>();
     if (!factory) return E_OUTOFMEMORY;
 
-    RETURN_IF_FAILED(CoRegisterClassObject(
+    HRESULT hrReg = CoRegisterClassObject(
         KEEPASS_PASSKEY_PLUGIN_CLSID,
         factory.Get(),
         CLSCTX_LOCAL_SERVER,
         REGCLS_MULTIPLEUSE,
-        &dwCookie));
+        &dwCookie);
+    LogMain("RunAsPluginServer: CoRegisterClassObject hr=0x%08X cookie=%u", hrReg, dwCookie);
+    RETURN_IF_FAILED(hrReg);
 
     // Sync credentials to the Windows autofill cache on startup
-    CredentialCache::SyncToWindowsCache(KEEPASS_PASSKEY_PLUGIN_CLSID);
+    LogMain("RunAsPluginServer: calling SyncToWindowsCache");
+    HRESULT hrSync = CredentialCache::SyncToWindowsCache(KEEPASS_PASSKEY_PLUGIN_CLSID);
+    LogMain("RunAsPluginServer: SyncToWindowsCache hr=0x%08X", hrSync);
 
     // Run the message loop — exit when all COM instances are released
     MSG msg;
@@ -122,13 +143,16 @@ int WINAPI wWinMain(
 
     if (isPluginActivated)
     {
+        LogMain("wWinMain: -PluginActivated, calling CoInitializeEx");
         HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+        LogMain("wWinMain: CoInitializeEx hr=0x%08X", hr);
         if (SUCCEEDED(hr))
         {
             RunAsPluginServer();
             CoUninitialize();
         }
         LocalFree(argv);
+        LogMain("wWinMain: exiting");
         return 0;
     }
 

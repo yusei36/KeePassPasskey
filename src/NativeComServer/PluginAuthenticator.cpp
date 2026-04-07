@@ -6,6 +6,37 @@
 #include "CredentialCache.h"
 #include "JsonHelper.h"
 #include <sstream>
+#include <cstdio>
+#include <ctime>
+
+// ---------------------------------------------------------------------------
+// Minimal file logger — writes to %TEMP%\PasskeyProvider.log
+// ---------------------------------------------------------------------------
+static void Log(const char* fmt, ...)
+{
+    wchar_t tempPath[MAX_PATH];
+    GetTempPathW(MAX_PATH, tempPath);
+
+    wchar_t logPath[MAX_PATH];
+    wsprintfW(logPath, L"%sPasskeyProvider.log", tempPath);
+
+    FILE* f = nullptr;
+    _wfopen_s(&f, logPath, L"a");
+    if (!f) return;
+
+    // Timestamp
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    fprintf(f, "[%02d:%02d:%02d.%03d] ", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(f, fmt, args);
+    va_end(args);
+
+    fprintf(f, "\n");
+    fclose(f);
+}
 
 // ---------------------------------------------------------------------------
 // PluginAuthenticator
@@ -26,13 +57,16 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
     try
     {
         m_cancelled = false;
+        Log("MakeCredential: entry");
 
         // ----------------------------------------------------------------
         // 1. Decode CBOR request
         // ----------------------------------------------------------------
         PWEBAUTHN_CTAPCBOR_MAKE_CREDENTIAL_REQUEST pDecoded = nullptr;
-        RETURN_IF_FAILED(WebAuthNDecodeMakeCredentialRequest(
-            pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded));
+        HRESULT hr1 = WebAuthNDecodeMakeCredentialRequest(
+            pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded);
+        Log("MakeCredential: WebAuthNDecodeMakeCredentialRequest hr=0x%08X", hr1);
+        RETURN_IF_FAILED(hr1);
         auto cleanup = wil::scope_exit([&] { WebAuthNFreeDecodedMakeCredentialRequest(pDecoded); });
 
         // ----------------------------------------------------------------
@@ -41,17 +75,27 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         std::vector<BYTE> signingKey;
         if (LoadSigningPublicKey(signingKey) && !signingKey.empty())
         {
-            RETURN_IF_FAILED(SignatureVerifier::Verify(
+            HRESULT hrSig = SignatureVerifier::Verify(
                 pRequest->pbEncodedRequest, pRequest->cbEncodedRequest,
                 signingKey.data(), static_cast<DWORD>(signingKey.size()),
-                pRequest->pbRequestSignature, pRequest->cbRequestSignature));
+                pRequest->pbRequestSignature, pRequest->cbRequestSignature);
+            Log("MakeCredential: SignatureVerifier::Verify hr=0x%08X", hrSig);
+            RETURN_IF_FAILED(hrSig);
+        }
+        else
+        {
+            Log("MakeCredential: no signing key, skipping signature verification");
         }
 
         // ----------------------------------------------------------------
         // 3. User Verification via Windows Hello
         // ----------------------------------------------------------------
+        HWND hwnd = pRequest->hWnd;
+        if (!hwnd) hwnd = GetForegroundWindow();
+        Log("MakeCredential: hWnd=%p (from request: %p)", hwnd, pRequest->hWnd);
+
         WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST uvReq{
-            .hwnd               = pRequest->hWnd,
+            .hwnd               = hwnd,
             .rguidTransactionId = pRequest->transactionId,
             .pwszUsername       = (pDecoded->pUserInformation && pDecoded->pUserInformation->pwszName)
                                       ? pDecoded->pUserInformation->pwszName : nullptr,
@@ -60,10 +104,13 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
 
         DWORD cbUvResp = 0;
         PBYTE pbUvResp = nullptr;
-        RETURN_IF_FAILED(WebAuthNPluginPerformUserVerification(&uvReq, &cbUvResp, &pbUvResp));
+        Log("MakeCredential: calling WebAuthNPluginPerformUserVerification");
+        HRESULT hrUv = WebAuthNPluginPerformUserVerification(&uvReq, &cbUvResp, &pbUvResp);
+        Log("MakeCredential: WebAuthNPluginPerformUserVerification hr=0x%08X", hrUv);
+        RETURN_IF_FAILED(hrUv);
         auto uvCleanup = wil::scope_exit([&] { WebAuthNPluginFreeUserVerificationResponse(pbUvResp); });
 
-        if (m_cancelled) return NTE_USER_CANCELLED;
+        if (m_cancelled) { Log("MakeCredential: cancelled"); return NTE_USER_CANCELLED; }
 
         // ----------------------------------------------------------------
         // 4. Build JSON pipe request
@@ -79,12 +126,12 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         if (pDecoded->pUserInformation && pDecoded->pUserInformation->cbId > 0)
             userIdB64 = JsonHelper::Base64Encode(pDecoded->pUserInformation->pbId, pDecoded->pUserInformation->cbId);
 
-        // excludeCredentials
+        // excludeCredentials — must be base64url to match stored credential IDs
         std::vector<std::string> excludeList;
         for (DWORD i = 0; i < pDecoded->CredentialList.cCredentials; ++i)
         {
             auto* c = pDecoded->CredentialList.ppCredentials[i];
-            excludeList.push_back(JsonHelper::Base64Encode(c->pbId, c->cbId));
+            excludeList.push_back(JsonHelper::Base64UrlEncode(c->pbId, c->cbId));
         }
 
         std::string requestJson =
@@ -100,13 +147,19 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         // ----------------------------------------------------------------
         // 5. Send to KeePass plugin
         // ----------------------------------------------------------------
+        Log("MakeCredential: sending pipe request: %s", requestJson.c_str());
         std::string responseJson;
         if (!PipeClient::SendRequest(requestJson, responseJson))
+        {
+            Log("MakeCredential: PipeClient::SendRequest failed (KeePass not available)");
             return NTE_NOT_FOUND; // KeePass not available
+        }
+        Log("MakeCredential: pipe response: %s", responseJson.c_str());
 
         if (JsonHelper::IsError(responseJson))
         {
             auto code = JsonHelper::GetErrorCode(responseJson);
+            Log("MakeCredential: KeePass error: %s", code.c_str());
             if (code == "db_locked")    return HRESULT_FROM_WIN32(ERROR_LOCK_VIOLATION);
             if (code == "duplicate")    return HRESULT_FROM_WIN32(ERROR_ALREADY_EXISTS);
             if (code == "not_found")    return NTE_NOT_FOUND;
@@ -120,12 +173,17 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         auto publicKeyXB64    = JsonHelper::GetStringField(responseJson, "publicKeyX");
         auto publicKeyYB64    = JsonHelper::GetStringField(responseJson, "publicKeyY");
         auto authDataB64      = JsonHelper::GetStringField(responseJson, "authenticatorData");
+        Log("MakeCredential: credentialId=%s authData len=%zu", credentialIdB64.c_str(), authDataB64.size());
 
         if (credentialIdB64.empty() || authDataB64.empty())
+        {
+            Log("MakeCredential: missing credentialId or authData");
             return E_FAIL;
+        }
 
         auto authDataBytes = JsonHelper::Base64Decode(authDataB64);
         auto credIdBytes   = JsonHelper::Base64UrlDecode(credentialIdB64);
+        Log("MakeCredential: authData bytes=%zu credId bytes=%zu", authDataBytes.size(), credIdBytes.size());
 
         // ----------------------------------------------------------------
         // 7. Assemble WEBAUTHN_CREDENTIAL_ATTESTATION and encode
@@ -140,7 +198,10 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
 
         DWORD cbEncoded = 0;
         BYTE* pbEncoded = nullptr;
-        RETURN_IF_FAILED(WebAuthNEncodeMakeCredentialResponse(&attestation, &cbEncoded, &pbEncoded));
+        Log("MakeCredential: calling WebAuthNEncodeMakeCredentialResponse, dwVersion=%u", attestation.dwVersion);
+        HRESULT hrEnc = WebAuthNEncodeMakeCredentialResponse(&attestation, &cbEncoded, &pbEncoded);
+        Log("MakeCredential: WebAuthNEncodeMakeCredentialResponse hr=0x%08X cbEncoded=%u", hrEnc, cbEncoded);
+        RETURN_IF_FAILED(hrEnc);
 
         pResponse->cbEncodedResponse = cbEncoded;
         pResponse->pbEncodedResponse = pbEncoded; // ownership transferred to caller
@@ -171,9 +232,15 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
                 credIdBytes, wrpId, wrpName, userHandleBytes, wun);
         }
 
+        Log("MakeCredential: success");
         return S_OK;
     }
-    catch (...) { return wil::ResultFromCaughtException(); }
+    catch (...)
+    {
+        HRESULT hrCaught = wil::ResultFromCaughtException();
+        Log("MakeCredential: caught exception hr=0x%08X", hrCaught);
+        return hrCaught;
+    }
 }
 
 HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
@@ -186,13 +253,16 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
     try
     {
         m_cancelled = false;
+        Log("GetAssertion: entry");
 
         // ----------------------------------------------------------------
         // 1. Decode CBOR request
         // ----------------------------------------------------------------
         PWEBAUTHN_CTAPCBOR_GET_ASSERTION_REQUEST pDecoded = nullptr;
-        RETURN_IF_FAILED(WebAuthNDecodeGetAssertionRequest(
-            pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded));
+        HRESULT hr1 = WebAuthNDecodeGetAssertionRequest(
+            pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded);
+        Log("GetAssertion: WebAuthNDecodeGetAssertionRequest hr=0x%08X", hr1);
+        RETURN_IF_FAILED(hr1);
         auto cleanup = wil::scope_exit([&] { WebAuthNFreeDecodedGetAssertionRequest(pDecoded); });
 
         // ----------------------------------------------------------------
@@ -201,28 +271,27 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         std::vector<BYTE> signingKey;
         if (LoadSigningPublicKey(signingKey) && !signingKey.empty())
         {
-            RETURN_IF_FAILED(SignatureVerifier::Verify(
+            HRESULT hrSig = SignatureVerifier::Verify(
                 pRequest->pbEncodedRequest, pRequest->cbEncodedRequest,
                 signingKey.data(), static_cast<DWORD>(signingKey.size()),
-                pRequest->pbRequestSignature, pRequest->cbRequestSignature));
+                pRequest->pbRequestSignature, pRequest->cbRequestSignature);
+            Log("GetAssertion: SignatureVerifier::Verify hr=0x%08X", hrSig);
+            RETURN_IF_FAILED(hrSig);
+        }
+        else
+        {
+            Log("GetAssertion: no signing key, skipping signature verification");
         }
 
         // ----------------------------------------------------------------
         // 3. User Verification
         // ----------------------------------------------------------------
-        WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST uvReq{
-            .hwnd               = pRequest->hWnd,
-            .rguidTransactionId = pRequest->transactionId,
-            .pwszUsername       = nullptr,
-            .pwszDisplayHint    = nullptr,
-        };
+        // For GetAssertion, Windows already performed user verification as part of the
+        // credential picker UI shown before calling the plugin. Calling
+        // WebAuthNPluginPerformUserVerification here is not valid and returns E_POINTER.
+        Log("GetAssertion: UV skipped (handled by Windows credential picker)");
 
-        DWORD cbUvResp = 0;
-        PBYTE pbUvResp = nullptr;
-        RETURN_IF_FAILED(WebAuthNPluginPerformUserVerification(&uvReq, &cbUvResp, &pbUvResp));
-        auto uvCleanup = wil::scope_exit([&] { WebAuthNPluginFreeUserVerificationResponse(pbUvResp); });
-
-        if (m_cancelled) return NTE_USER_CANCELLED;
+        if (m_cancelled) { Log("GetAssertion: cancelled"); return NTE_USER_CANCELLED; }
 
         // ----------------------------------------------------------------
         // 4. Build JSON pipe request
@@ -230,15 +299,17 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         std::string rpIdUtf8(
             reinterpret_cast<const char*>(pDecoded->pbRpId),
             pDecoded->cbRpId);
+        Log("GetAssertion: rpId=%s allowCredentials=%u", rpIdUtf8.c_str(), pDecoded->CredentialList.cCredentials);
 
         std::string clientDataHashB64 = JsonHelper::Base64Encode(
             pDecoded->pbClientDataHash, pDecoded->cbClientDataHash);
 
+        // allowCredentials — must be base64url to match stored credential IDs
         std::vector<std::string> allowList;
         for (DWORD i = 0; i < pDecoded->CredentialList.cCredentials; ++i)
         {
             auto* c = pDecoded->CredentialList.ppCredentials[i];
-            allowList.push_back(JsonHelper::Base64Encode(c->pbId, c->cbId));
+            allowList.push_back(JsonHelper::Base64UrlEncode(c->pbId, c->cbId));
         }
 
         std::string requestJson =
@@ -251,13 +322,19 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         // ----------------------------------------------------------------
         // 5. Send to KeePass plugin
         // ----------------------------------------------------------------
+        Log("GetAssertion: sending pipe request: %s", requestJson.c_str());
         std::string responseJson;
         if (!PipeClient::SendRequest(requestJson, responseJson))
+        {
+            Log("GetAssertion: PipeClient::SendRequest failed");
             return NTE_NOT_FOUND;
+        }
+        Log("GetAssertion: pipe response: %s", responseJson.c_str());
 
         if (JsonHelper::IsError(responseJson))
         {
             auto code = JsonHelper::GetErrorCode(responseJson);
+            Log("GetAssertion: KeePass error: %s", code.c_str());
             if (code == "db_locked") return HRESULT_FROM_WIN32(ERROR_LOCK_VIOLATION);
             if (code == "not_found") return NTE_NOT_FOUND;
             return E_FAIL;
@@ -270,19 +347,25 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         auto authDataB64     = JsonHelper::GetStringField(responseJson, "authenticatorData");
         auto signatureB64    = JsonHelper::GetStringField(responseJson, "signature");
         auto userHandleB64   = JsonHelper::GetStringField(responseJson, "userHandle");
+        Log("GetAssertion: credentialId=%s authData len=%zu signature len=%zu",
+            credentialIdB64.c_str(), authDataB64.size(), signatureB64.size());
 
         if (authDataB64.empty() || signatureB64.empty())
+        {
+            Log("GetAssertion: missing authData or signature");
             return E_FAIL;
+        }
 
         auto authDataBytes   = JsonHelper::Base64Decode(authDataB64);
         auto signatureBytes  = JsonHelper::Base64Decode(signatureB64);
         auto userHandleBytes = JsonHelper::Base64UrlDecode(userHandleB64);
         auto credIdBytes     = JsonHelper::Base64UrlDecode(credentialIdB64);
+        Log("GetAssertion: authData=%zu sig=%zu userHandle=%zu credId=%zu bytes",
+            authDataBytes.size(), signatureBytes.size(), userHandleBytes.size(), credIdBytes.size());
 
         // ----------------------------------------------------------------
         // 7. Assemble WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE and encode
         // ----------------------------------------------------------------
-        // We need a WEBAUTHN_CREDENTIAL for the credential ID
         WEBAUTHN_CREDENTIAL cred = {};
         cred.dwVersion = WEBAUTHN_CREDENTIAL_CURRENT_VERSION;
         cred.cbId = static_cast<DWORD>(credIdBytes.size());
@@ -301,14 +384,23 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
 
         DWORD cbEncoded = 0;
         BYTE* pbEncoded = nullptr;
-        RETURN_IF_FAILED(WebAuthNEncodeGetAssertionResponse(&assertionResp, &cbEncoded, &pbEncoded));
+        Log("GetAssertion: calling WebAuthNEncodeGetAssertionResponse");
+        HRESULT hrEnc = WebAuthNEncodeGetAssertionResponse(&assertionResp, &cbEncoded, &pbEncoded);
+        Log("GetAssertion: WebAuthNEncodeGetAssertionResponse hr=0x%08X cbEncoded=%u", hrEnc, cbEncoded);
+        RETURN_IF_FAILED(hrEnc);
 
         pResponse->cbEncodedResponse = cbEncoded;
         pResponse->pbEncodedResponse = pbEncoded;
 
+        Log("GetAssertion: success");
         return S_OK;
     }
-    catch (...) { return wil::ResultFromCaughtException(); }
+    catch (...)
+    {
+        HRESULT hrCaught = wil::ResultFromCaughtException();
+        Log("GetAssertion: caught exception hr=0x%08X", hrCaught);
+        return hrCaught;
+    }
 }
 
 HRESULT STDMETHODCALLTYPE PluginAuthenticator::CancelOperation(
@@ -325,7 +417,10 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetLockStatus(
 
     // Ping KeePass to determine lock status
     std::string response;
-    if (!PipeClient::SendRequest(R"({"type":"ping","requestId":"ping"})", response))
+    bool pipeOk = PipeClient::SendRequest(R"({"type":"ping","requestId":"ping"})", response);
+    Log("GetLockStatus: pipe ok=%d response=%s", pipeOk ? 1 : 0, response.c_str());
+
+    if (!pipeOk)
     {
         *pLockStatus = PLUGIN_LOCK_STATUS::PluginLocked;
         return S_OK;
@@ -337,6 +432,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetLockStatus(
     else
         *pLockStatus = PLUGIN_LOCK_STATUS::PluginLocked;
 
+    Log("GetLockStatus: status=%s lockStatus=%d", status.c_str(), (int)*pLockStatus);
     return S_OK;
 }
 

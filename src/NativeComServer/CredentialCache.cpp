@@ -33,10 +33,9 @@ HRESULT CredentialCache::SyncToWindowsCache(REFCLSID pluginClsid)
     if (JsonHelper::IsError(response))
         return S_FALSE;
 
-    // Clear existing cache and repopulate
-    WebAuthNPluginAuthenticatorRemoveAllCredentials(pluginClsid);
-
-    // Parse the credentials array — simple format:
+    // Parse the credentials array
+    // Note: do NOT call RemoveAllCredentials here — it would invalidate any
+    // in-progress authentication flow that Windows started based on the cache. — simple format:
     // {"type":"get_credentials","credentials":[{"credentialId":"...","rpId":"...","userHandle":"...","userName":"..."},...]}
     // We do a simple scan for credential objects
     auto pos = response.find("\"credentials\":");

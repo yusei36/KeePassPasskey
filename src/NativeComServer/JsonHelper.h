@@ -97,6 +97,15 @@ namespace JsonHelper
         return out;
     }
 
+    /// Base64url encode: replace + with - and / with _, strip padding
+    inline std::string Base64UrlEncode(const BYTE* pb, DWORD cb)
+    {
+        std::string s = Base64Encode(pb, cb);
+        for (char& c : s) { if (c == '+') c = '-'; else if (c == '/') c = '_'; }
+        while (!s.empty() && s.back() == '=') s.pop_back();
+        return s;
+    }
+
     /// Base64url decode: replace - with + and _ with /
     inline std::vector<BYTE> Base64UrlDecode(const std::string& b64url)
     {

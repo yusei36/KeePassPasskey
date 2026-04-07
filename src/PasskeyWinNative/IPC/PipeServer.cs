@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 
@@ -53,12 +55,25 @@ namespace PasskeyWinNative.IPC
                 NamedPipeServerStream pipe = null;
                 try
                 {
+                    // Grant access to the current user and to ALL APPLICATION PACKAGES
+                    // so that the MSIX-packaged COM server (AppContainer process) can connect.
+                    var ps = new PipeSecurity();
+                    ps.AddAccessRule(new PipeAccessRule(
+                        WindowsIdentity.GetCurrent().User,
+                        PipeAccessRights.FullControl,
+                        AccessControlType.Allow));
+                    ps.AddAccessRule(new PipeAccessRule(
+                        new SecurityIdentifier("S-1-15-2-1"), // ALL APPLICATION PACKAGES
+                        PipeAccessRights.ReadWrite,
+                        AccessControlType.Allow));
+
                     pipe = new NamedPipeServerStream(
                         PipeName,
                         PipeDirection.InOut,
                         MaxInstances,
                         PipeTransmissionMode.Byte,
-                        PipeOptions.Asynchronous);
+                        PipeOptions.Asynchronous,
+                        0, 0, ps);
 
                     pipe.WaitForConnection();
 

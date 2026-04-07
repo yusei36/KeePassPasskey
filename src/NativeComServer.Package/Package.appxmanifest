@@ -40,7 +40,7 @@
         <!-- COM server registration for IPluginAuthenticator -->
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="PasskeyProvider.exe" Arguments="-PluginActivated" DisplayName="KeePass Passkey Provider">
+            <com:ExeServer Executable="NativeComServer\PasskeyProvider.exe" Arguments="-PluginActivated" DisplayName="KeePass Passkey Provider">
               <com:Class Id="fdb141b2-5d84-443e-8a35-4698c205a502" DisplayName="KeePass Passkey Provider" />
             </com:ExeServer>
           </com:ComServer>
