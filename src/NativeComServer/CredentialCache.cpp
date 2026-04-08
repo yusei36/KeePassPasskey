@@ -29,37 +29,9 @@ HRESULT CredentialCache::SyncToWindowsCache(REFCLSID pluginClsid)
     if (JsonHelper::IsError(response))
         return S_FALSE;
 
-    // Clear the existing cache before repopulating so stale/deleted entries are removed.
-    // Use GetAllCredentials + RemoveCredentials rather than RemoveAllCredentials (didn't work).
-    {
-        DWORD cExisting = 0;
-        PWEBAUTHN_PLUGIN_CREDENTIAL_DETAILS pExisting = nullptr;
-        HRESULT hrGet = WebAuthNPluginAuthenticatorGetAllCredentials(pluginClsid, &cExisting, &pExisting);
-        Log("SyncToWindowsCache: GetAllCredentials hr=0x%08X count=%u", hrGet, cExisting);
-        if (SUCCEEDED(hrGet) && cExisting > 0 && pExisting != nullptr)
-        {
-            HRESULT hrRem = WebAuthNPluginAuthenticatorRemoveCredentials(pluginClsid, cExisting, pExisting);
-            Log("SyncToWindowsCache: RemoveCredentials hr=0x%08X removed=%u", hrRem, cExisting);
-            WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
-        }
-    }
-
-    // Parse the credentials array — simple format:
-    // {"type":"get_credentials","credentials":[{"credentialId":"...","rpId":"...","userHandle":"...","userName":"..."},...]}
-    // We do a simple scan for credential objects
-    auto pos = response.find("\"credentials\":");
-    if (pos == std::string::npos) return S_OK;
-
-    // Walk through each credential object in the array
-    pos = response.find('[', pos);
-    if (pos == std::string::npos) return S_OK;
-    auto arrayEnd = response.rfind(']');
-    if (arrayEnd == std::string::npos) return S_OK;
-
-    std::vector<WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS> creds;
-    std::vector<std::vector<BYTE>> credIdBufs, userHandleBufs;
-    std::vector<std::wstring> rpIds, rpNames, userNames, displayNames;
-
+    // ----------------------------------------------------------------
+    // Parse KeePass credentials
+    // ----------------------------------------------------------------
     auto toWide = [](const std::string& utf8) -> std::wstring
     {
         if (utf8.empty()) return {};
@@ -70,57 +42,151 @@ HRESULT CredentialCache::SyncToWindowsCache(REFCLSID pluginClsid)
         return out;
     };
 
-    auto cur = pos + 1;
-    while (cur < arrayEnd)
+    std::vector<std::vector<BYTE>> credIdBufs, userHandleBufs;
+    std::vector<std::wstring> rpIds, rpNames, userNames, displayNames;
+
+    auto pos = response.find("\"credentials\":");
+    if (pos != std::string::npos)
     {
-        auto objStart = response.find('{', cur);
-        if (objStart == std::string::npos || objStart >= arrayEnd) break;
-        auto objEnd = response.find('}', objStart);
-        if (objEnd == std::string::npos || objEnd > arrayEnd) break;
-        std::string obj = response.substr(objStart, objEnd - objStart + 1);
+        pos = response.find('[', pos);
+        auto arrayEnd = (pos != std::string::npos) ? response.rfind(']') : std::string::npos;
+        auto cur = (pos != std::string::npos) ? pos + 1 : std::string::npos;
 
-        auto credIdStr = JsonHelper::GetStringField(obj, "credentialId");
-        auto rpIdStr   = JsonHelper::GetStringField(obj, "rpId");
-        auto uhStr     = JsonHelper::GetStringField(obj, "userHandle");
-        auto unStr     = JsonHelper::GetStringField(obj, "userName");
-        auto titleStr  = JsonHelper::GetStringField(obj, "title");
-
-        if (!credIdStr.empty() && !rpIdStr.empty())
+        while (cur < arrayEnd)
         {
-            credIdBufs.push_back(JsonHelper::Base64UrlDecode(credIdStr));
-            userHandleBufs.push_back(JsonHelper::Base64UrlDecode(uhStr));
-            rpIds.push_back(toWide(rpIdStr));
-            rpNames.push_back(toWide(rpIdStr));
-            userNames.push_back(toWide(unStr));
-            displayNames.push_back(toWide(titleStr.empty() ? rpIdStr : titleStr));
+            auto objStart = response.find('{', cur);
+            if (objStart == std::string::npos || objStart >= arrayEnd) break;
+            auto objEnd = response.find('}', objStart);
+            if (objEnd == std::string::npos || objEnd > arrayEnd) break;
+            std::string obj = response.substr(objStart, objEnd - objStart + 1);
+
+            auto credIdStr = JsonHelper::GetStringField(obj, "credentialId");
+            auto rpIdStr   = JsonHelper::GetStringField(obj, "rpId");
+            auto uhStr     = JsonHelper::GetStringField(obj, "userHandle");
+            auto unStr     = JsonHelper::GetStringField(obj, "userName");
+            auto titleStr  = JsonHelper::GetStringField(obj, "title");
+
+            if (!credIdStr.empty() && !rpIdStr.empty())
+            {
+                credIdBufs.push_back(JsonHelper::Base64UrlDecode(credIdStr));
+                userHandleBufs.push_back(JsonHelper::Base64UrlDecode(uhStr));
+                rpIds.push_back(toWide(rpIdStr));
+                rpNames.push_back(toWide(rpIdStr));
+                userNames.push_back(toWide(unStr));
+                displayNames.push_back(toWide(titleStr.empty() ? rpIdStr : titleStr));
+            }
+            cur = objEnd + 1;
         }
-        cur = objEnd + 1;
     }
 
-    // Build the arrays for the API call
-    std::vector<WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS> credDetails(credIdBufs.size());
-
+    std::vector<WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS> kpCreds(credIdBufs.size());
     for (size_t i = 0; i < credIdBufs.size(); ++i)
     {
-        credDetails[i].cbCredentialId      = static_cast<DWORD>(credIdBufs[i].size());
-        credDetails[i].pbCredentialId      = credIdBufs[i].empty() ? nullptr : credIdBufs[i].data();
-        credDetails[i].pwszRpId            = rpIds[i].c_str();
-        credDetails[i].pwszRpName          = rpNames[i].c_str();
-        credDetails[i].cbUserId            = static_cast<DWORD>(userHandleBufs[i].size());
-        credDetails[i].pbUserId            = userHandleBufs[i].empty() ? nullptr : userHandleBufs[i].data();
-        credDetails[i].pwszUserName        = userNames[i].c_str();
-        credDetails[i].pwszUserDisplayName = displayNames[i].c_str();
+        kpCreds[i].cbCredentialId      = static_cast<DWORD>(credIdBufs[i].size());
+        kpCreds[i].pbCredentialId      = credIdBufs[i].empty() ? nullptr : credIdBufs[i].data();
+        kpCreds[i].pwszRpId            = rpIds[i].c_str();
+        kpCreds[i].pwszRpName          = rpNames[i].c_str();
+        kpCreds[i].cbUserId            = static_cast<DWORD>(userHandleBufs[i].size());
+        kpCreds[i].pbUserId            = userHandleBufs[i].empty() ? nullptr : userHandleBufs[i].data();
+        kpCreds[i].pwszUserName        = userNames[i].c_str();
+        kpCreds[i].pwszUserDisplayName = displayNames[i].c_str();
     }
 
-    if (!credDetails.empty())
+    // ----------------------------------------------------------------
+    // Get current Windows cache
+    // ----------------------------------------------------------------
+    DWORD cExisting = 0;
+    PWEBAUTHN_PLUGIN_CREDENTIAL_DETAILS pExisting = nullptr;
+    HRESULT hrGet = WebAuthNPluginAuthenticatorGetAllCredentials(pluginClsid, &cExisting, &pExisting);
+    Log("SyncToWindowsCache: GetAllCredentials hr=0x%08X count=%u", hrGet, cExisting);
+
+    // ----------------------------------------------------------------
+    // Diff: compare by credential ID, then by fields
+    // ----------------------------------------------------------------
+    auto bytesEq = [](const BYTE* a, DWORD ca, const BYTE* b, DWORD cb) -> bool
     {
-        HRESULT hrAdd = WebAuthNPluginAuthenticatorAddCredentials(pluginClsid, static_cast<DWORD>(credDetails.size()), credDetails.data());
-        Log("SyncToWindowsCache: AddCredentials hr=0x%08X added=%zu", hrAdd, credDetails.size());
-    }
-    else
+        return ca == cb && (ca == 0 || memcmp(a, b, ca) == 0);
+    };
+    auto wstrEq = [](LPCWSTR a, LPCWSTR b) -> bool
     {
-        Log("SyncToWindowsCache: no credentials to add");
+        if (!a && !b) return true;
+        if (!a || !b) return false;
+        return wcscmp(a, b) == 0;
+    };
+    auto credEq = [&](const WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS& a,
+                      const WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS& b) -> bool
+    {
+        return bytesEq(a.pbCredentialId, a.cbCredentialId, b.pbCredentialId, b.cbCredentialId)
+            && wstrEq(a.pwszRpId, b.pwszRpId)
+            && wstrEq(a.pwszUserName, b.pwszUserName)
+            && wstrEq(a.pwszUserDisplayName, b.pwszUserDisplayName)
+            && bytesEq(a.pbUserId, a.cbUserId, b.pbUserId, b.cbUserId);
+    };
+
+    // Windows entries not in KeePass (or changed) → remove
+    std::vector<WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS> toRemove;
+    if (SUCCEEDED(hrGet) && cExisting > 0 && pExisting != nullptr)
+    {
+        for (DWORD i = 0; i < cExisting; ++i)
+        {
+            bool matchedAndSame = false;
+            for (const auto& kp : kpCreds)
+            {
+                if (bytesEq(pExisting[i].pbCredentialId, pExisting[i].cbCredentialId,
+                            kp.pbCredentialId, kp.cbCredentialId))
+                {
+                    matchedAndSame = credEq(pExisting[i], kp);
+                    break;
+                }
+            }
+            if (!matchedAndSame)
+                toRemove.push_back(pExisting[i]);
+        }
     }
+
+    // KeePass entries not in Windows (or changed) → add
+    std::vector<WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS> toAdd;
+    for (const auto& kp : kpCreds)
+    {
+        bool matchedAndSame = false;
+        if (SUCCEEDED(hrGet) && cExisting > 0 && pExisting != nullptr)
+        {
+            for (DWORD i = 0; i < cExisting; ++i)
+            {
+                if (bytesEq(kp.pbCredentialId, kp.cbCredentialId,
+                            pExisting[i].pbCredentialId, pExisting[i].cbCredentialId))
+                {
+                    matchedAndSame = credEq(kp, pExisting[i]);
+                    break;
+                }
+            }
+        }
+        if (!matchedAndSame)
+            toAdd.push_back(kp);
+    }
+
+    // ----------------------------------------------------------------
+    // Apply changes — free pExisting after remove (pointers still valid until then)
+    // ----------------------------------------------------------------
+    if (!toRemove.empty())
+    {
+        HRESULT hrRem = WebAuthNPluginAuthenticatorRemoveCredentials(
+            pluginClsid, static_cast<DWORD>(toRemove.size()), toRemove.data());
+        Log("SyncToWindowsCache: RemoveCredentials hr=0x%08X removed=%zu", hrRem, toRemove.size());
+    }
+
+    if (pExisting)
+        WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
+
+    if (!toAdd.empty())
+    {
+        HRESULT hrAdd = WebAuthNPluginAuthenticatorAddCredentials(
+            pluginClsid, static_cast<DWORD>(toAdd.size()), toAdd.data());
+        Log("SyncToWindowsCache: AddCredentials hr=0x%08X added=%zu", hrAdd, toAdd.size());
+    }
+
+    Log("SyncToWindowsCache: done removed=%zu added=%zu unchanged=%zu",
+        toRemove.size(), toAdd.size(), kpCreds.size() - toAdd.size());
 
     return S_OK;
 }
