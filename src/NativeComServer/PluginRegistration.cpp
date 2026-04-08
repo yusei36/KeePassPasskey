@@ -100,17 +100,30 @@ HRESULT GetPluginState(AUTHENTICATOR_STATE& state)
 bool LoadSigningPublicKey(std::vector<BYTE>& keyBlob)
 {
     wil::unique_hkey hKey;
-    if (RegOpenKeyExW(HKEY_CURRENT_USER, PluginRegPath, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+    LONG lOpen = RegOpenKeyExW(HKEY_CURRENT_USER, PluginRegPath, 0, KEY_READ, &hKey);
+    if (lOpen != ERROR_SUCCESS)
+    {
+        Log("LoadSigningPublicKey: RegOpenKeyEx result=%ld (key not found)", lOpen);
         return false;
+    }
 
     DWORD cbData = 0;
-    if (RegQueryValueExW(hKey.get(), RegKeySigningKey, nullptr, nullptr, nullptr, &cbData) != ERROR_SUCCESS)
+    LONG lQuery = RegQueryValueExW(hKey.get(), RegKeySigningKey, nullptr, nullptr, nullptr, &cbData);
+    if (lQuery != ERROR_SUCCESS)
+    {
+        Log("LoadSigningPublicKey: RegQueryValueEx (size) result=%ld", lQuery);
         return false;
+    }
 
     keyBlob.resize(cbData);
-    if (RegQueryValueExW(hKey.get(), RegKeySigningKey, nullptr, nullptr, keyBlob.data(), &cbData) != ERROR_SUCCESS)
+    lQuery = RegQueryValueExW(hKey.get(), RegKeySigningKey, nullptr, nullptr, keyBlob.data(), &cbData);
+    if (lQuery != ERROR_SUCCESS)
+    {
+        Log("LoadSigningPublicKey: RegQueryValueEx (data) result=%ld", lQuery);
         return false;
+    }
 
     keyBlob.resize(cbData);
+    Log("LoadSigningPublicKey: loaded %u bytes", cbData);
     return true;
 }
