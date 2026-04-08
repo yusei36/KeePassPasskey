@@ -10,6 +10,9 @@
     4. Trusts the cert in LocalMachine\TrustedPeople (requires elevation).
     5. Installs the MSIX package.
 
+.PARAMETER Configuration
+    Build configuration: Debug or Release. Defaults to Debug.
+
 .PARAMETER SkipBuild
     Skip the msbuild step; use if you already have a built MSIX.
 
@@ -18,9 +21,12 @@
 
 .EXAMPLE
     .\sign-and-install.ps1
+    .\sign-and-install.ps1 -Configuration Release
     .\sign-and-install.ps1 -SkipBuild -SkipCert
 #>
 param(
+    [ValidateSet('Debug', 'Release')]
+    [string]$Configuration = 'Debug',
     [switch]$SkipBuild,
     [switch]$SkipCert
 )
@@ -29,7 +35,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $RepoRoot  = Split-Path $PSScriptRoot -Parent
-$MsixPath  = "$RepoRoot\src\NativeComServer.Package\AppPackages\NativeComServer.Package_1.0.0.0_x64_Test\NativeComServer.Package_1.0.0.0_x64.msix"
+$ConfigSuffix = if ($Configuration -eq 'Debug') { '_Debug' } else { '' }
+$MsixPath  = "$RepoRoot\src\NativeComServer.Package\AppPackages\NativeComServer.Package_1.0.0.0_x64${ConfigSuffix}_Test\NativeComServer.Package_1.0.0.0_x64${ConfigSuffix}.msix"
 $SignTool  = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
 $CertSubject = 'CN=KeePassPasskeyProvider'
 
@@ -60,7 +67,7 @@ if (-not $SkipBuild) {
 
     $wapproj = "$RepoRoot\src\NativeComServer.Package\NativeComServer.Package.wapproj"
     & $msbuild $wapproj `
-        /p:Configuration=Release `
+        /p:Configuration=$Configuration `
         /p:Platform=x64 `
         /p:PlatformToolset=v145 `
         /p:SolutionDir="$RepoRoot\" `
