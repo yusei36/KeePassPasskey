@@ -4,6 +4,7 @@ using KeePassLib.Security;
 using PasskeyWinNative.Passkey;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PasskeyWinNative.Storage
@@ -75,6 +76,11 @@ namespace PasskeyWinNative.Storage
             return results;
         }
 
+        internal PasskeyCredential FindByRpIdAndCredentialId(string rpId, string credentialId)
+        {
+            return FindByRpIdAndCredentialIds(rpId, new List<string> { credentialId }).FirstOrDefault();
+        }
+
         internal List<PasskeyCredential> FindByRpIdAndCredentialIds(string rpId, List<string> credentialIds)
         {
             var results = new List<PasskeyCredential>();
@@ -136,6 +142,7 @@ namespace PasskeyWinNative.Storage
                 RelyingParty = entry.Strings.ReadSafe(FieldRelyingParty),
                 UserHandle = entry.Strings.ReadSafe(FieldUserHandle),
                 Username = entry.Strings.ReadSafe(FieldUsername),
+                Title = entry.Strings.ReadSafe(PwDefs.TitleField),
             };
         }
 

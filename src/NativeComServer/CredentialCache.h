@@ -23,5 +23,6 @@ public:
         const std::wstring& rpId,
         const std::wstring& rpName,
         const std::vector<BYTE>& userHandle,
-        const std::wstring& userName);
+        const std::wstring& userName,
+        const std::wstring& displayName);
 };

@@ -76,12 +76,19 @@ namespace PasskeyWinNative.IPC
             var infos = new List<CredentialInfo>(all.Count);
             foreach (var c in all)
             {
+                if (!string.IsNullOrEmpty(req.RpId) && c.RelyingParty != req.RpId)
+                    continue;
+                if (req.AllowCredentials != null && req.AllowCredentials.Count > 0
+                    && !req.AllowCredentials.Contains(c.CredentialId))
+                    continue;
+
                 infos.Add(new CredentialInfo
                 {
                     CredentialId = c.CredentialId,
                     RpId = c.RelyingParty,
                     UserHandle = c.UserHandle,
-                    UserName = c.Username
+                    UserName = c.Username,
+                    Title = c.Title
                 });
             }
 
@@ -145,11 +152,14 @@ namespace PasskeyWinNative.IPC
             if (!_storage.CreatePasskeyEntry(credential))
                 return Error(req.RequestId, "internal_error", "Failed to create KeePass entry");
 
+            var storedCredential = _storage.FindByRpIdAndCredentialId(req.RpId, credentialId);
+
             return JsonConvert.SerializeObject(new IpcResponse
             {
                 Type = "make_credential",
                 RequestId = req.RequestId,
                 CredentialId = credentialId,
+                Title = storedCredential.Title,
                 PublicKeyX = Convert.ToBase64String(x),
                 PublicKeyY = Convert.ToBase64String(y),
                 AuthenticatorData = Convert.ToBase64String(authData)

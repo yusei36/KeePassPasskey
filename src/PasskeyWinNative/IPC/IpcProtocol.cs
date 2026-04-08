@@ -56,6 +56,9 @@ namespace PasskeyWinNative.IPC
         [JsonProperty("credentialId", NullValueHandling = NullValueHandling.Ignore)]
         public string CredentialId { get; set; }
 
+        [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
+        public string Title { get; set; }
+
         [JsonProperty("publicKeyX", NullValueHandling = NullValueHandling.Ignore)]
         public string PublicKeyX { get; set; }
 
@@ -105,5 +108,8 @@ namespace PasskeyWinNative.IPC
 
         [JsonProperty("userName")]
         public string UserName { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
     }
 }

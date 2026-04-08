@@ -99,7 +99,8 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
             .rguidTransactionId = pRequest->transactionId,
             .pwszUsername       = (pDecoded->pUserInformation && pDecoded->pUserInformation->pwszName)
                                       ? pDecoded->pUserInformation->pwszName : nullptr,
-            .pwszDisplayHint    = nullptr,
+            .pwszDisplayHint    = (pDecoded->pRpInformation && pDecoded->pRpInformation->pwszName)
+                                      ? pDecoded->pRpInformation->pwszName : nullptr,
         };
 
         DWORD cbUvResp = 0;
@@ -170,10 +171,11 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         // 6. Parse KeePass response
         // ----------------------------------------------------------------
         auto credentialIdB64  = JsonHelper::GetStringField(responseJson, "credentialId");
+        auto titleUtf8        = JsonHelper::GetStringField(responseJson, "title");
         auto publicKeyXB64    = JsonHelper::GetStringField(responseJson, "publicKeyX");
         auto publicKeyYB64    = JsonHelper::GetStringField(responseJson, "publicKeyY");
         auto authDataB64      = JsonHelper::GetStringField(responseJson, "authenticatorData");
-        Log("MakeCredential: credentialId=%s authData len=%zu", credentialIdB64.c_str(), authDataB64.size());
+        Log("MakeCredential: credentialId=%s title=%s authData len=%zu", credentialIdB64.c_str(), titleUtf8.c_str(), authDataB64.size());
 
         if (credentialIdB64.empty() || authDataB64.empty())
         {
@@ -211,13 +213,20 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         // ----------------------------------------------------------------
         if (!credIdBytes.empty())
         {
-            std::wstring wrpId, wrpName, wun;
+            auto toWide = [](const std::string& utf8) -> std::wstring
             {
-                int n = MultiByteToWideChar(CP_UTF8, 0, rpIdUtf8.c_str(), -1, nullptr, 0);
-                wrpId.resize(n); MultiByteToWideChar(CP_UTF8, 0, rpIdUtf8.c_str(), -1, wrpId.data(), n);
-                if (!wrpId.empty() && wrpId.back() == L'\0') wrpId.pop_back();
-                wrpName = wrpId;
-            }
+                if (utf8.empty()) return {};
+                int n = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
+                std::wstring out(n, L'\0');
+                MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, out.data(), n);
+                if (!out.empty() && out.back() == L'\0') out.pop_back();
+                return out;
+            };
+            
+            std::wstring wrpId = toWide(rpIdUtf8);
+            std::wstring wrpName = (pDecoded->pRpInformation && pDecoded->pRpInformation->pwszName) 
+                                    ? pDecoded->pRpInformation->pwszName : nullptr;
+            std::wstring wun;
             if (pDecoded->pUserInformation && pDecoded->pUserInformation->pwszName)
                 wun = pDecoded->pUserInformation->pwszName;
 
@@ -229,7 +238,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
 
             CredentialCache::AddSingleCredential(
                 KEEPASS_PASSKEY_PLUGIN_CLSID,
-                credIdBytes, wrpId, wrpName, userHandleBytes, wun);
+                credIdBytes, wrpId, wrpName, userHandleBytes, wun, toWide(titleUtf8));
         }
 
         Log("MakeCredential: success");
@@ -284,17 +293,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         }
 
         // ----------------------------------------------------------------
-        // 3. User Verification
-        // ----------------------------------------------------------------
-        // For GetAssertion, Windows already performed user verification as part of the
-        // credential picker UI shown before calling the plugin. Calling
-        // WebAuthNPluginPerformUserVerification here is not valid and returns E_POINTER.
-        Log("GetAssertion: UV skipped (handled by Windows credential picker)");
-
-        if (m_cancelled) { Log("GetAssertion: cancelled"); return NTE_USER_CANCELLED; }
-
-        // ----------------------------------------------------------------
-        // 4. Build JSON pipe request
+        // 3. Extract rpId, allowCredentials, clientDataHash
         // ----------------------------------------------------------------
         std::string rpIdUtf8(
             reinterpret_cast<const char*>(pDecoded->pbRpId),
@@ -311,13 +310,77 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
             auto* c = pDecoded->CredentialList.ppCredentials[i];
             allowList.push_back(JsonHelper::Base64UrlEncode(c->pbId, c->cbId));
         }
+        std::string allowCredentialsJson = JsonHelper::StringArray(allowList);
 
+        // ----------------------------------------------------------------
+        // 4. Pre-query KeePass to get username and entry title for the UV prompt
+        // ----------------------------------------------------------------
+        std::wstring uvUsernameStr;
+        std::wstring uvDisplayHintStr;
+        {
+            std::string gcJson =
+                "{\"type\":\"get_credentials\","
+                "\"requestId\":\"gc_uv\","
+                "\"rpId\":\"" + JsonHelper::Escape(rpIdUtf8) + "\","
+                "\"allowCredentials\":" + allowCredentialsJson + "}";
+            Log("GetAssertion: pre-query: %s", gcJson.c_str());
+            std::string gcResp;
+            if (PipeClient::SendRequest(gcJson, gcResp) && !JsonHelper::IsError(gcResp))
+            {
+                auto toWide = [](const std::string& utf8, std::wstring& out)
+                {
+                    if (utf8.empty()) return;
+                    int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
+                    out.resize(wlen);
+                    MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, out.data(), wlen);
+                    if (!out.empty() && out.back() == L'\0') out.pop_back();
+                };
+
+                std::string userName = JsonHelper::GetStringField(gcResp, "userName");
+                std::string title    = JsonHelper::GetStringField(gcResp, "title");
+                Log("GetAssertion: pre-query userName=%s title=%s", userName.c_str(), title.c_str());
+                toWide(userName, uvUsernameStr);
+                toWide(title, uvDisplayHintStr);
+            }
+            else
+            {
+                Log("GetAssertion: pre-query failed, UV will use null username/hint");
+            }
+        }
+
+        // ----------------------------------------------------------------
+        // 5. User Verification via Windows Hello
+        // ----------------------------------------------------------------
+        HWND hwnd = pRequest->hWnd;
+        if (!hwnd) hwnd = GetForegroundWindow();
+        Log("GetAssertion: hWnd=%p (from request: %p)", hwnd, pRequest->hWnd);
+
+        WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST uvReq{
+            .hwnd               = hwnd,
+            .rguidTransactionId = pRequest->transactionId,
+            .pwszUsername       = uvUsernameStr.empty()    ? nullptr : uvUsernameStr.c_str(),
+            .pwszDisplayHint    = uvDisplayHintStr.empty() ? nullptr : uvDisplayHintStr.c_str(),
+        };
+
+        DWORD cbUvResp = 0;
+        PBYTE pbUvResp = nullptr;
+        Log("GetAssertion: calling WebAuthNPluginPerformUserVerification");
+        HRESULT hrUv = WebAuthNPluginPerformUserVerification(&uvReq, &cbUvResp, &pbUvResp);
+        Log("GetAssertion: WebAuthNPluginPerformUserVerification hr=0x%08X", hrUv);
+        RETURN_IF_FAILED(hrUv);
+        auto uvCleanup = wil::scope_exit([&] { WebAuthNPluginFreeUserVerificationResponse(pbUvResp); });
+
+        if (m_cancelled) { Log("GetAssertion: cancelled"); return NTE_USER_CANCELLED; }
+
+        // ----------------------------------------------------------------
+        // 6. Build JSON pipe request
+        // ----------------------------------------------------------------
         std::string requestJson =
             "{\"type\":\"get_assertion\","
             "\"requestId\":\"ga1\","
             "\"rpId\":\"" + JsonHelper::Escape(rpIdUtf8) + "\","
             "\"clientDataHash\":\"" + clientDataHashB64 + "\","
-            "\"allowCredentials\":" + JsonHelper::StringArray(allowList) + "}";
+            "\"allowCredentials\":" + allowCredentialsJson + "}";
 
         // ----------------------------------------------------------------
         // 5. Send to KeePass plugin
