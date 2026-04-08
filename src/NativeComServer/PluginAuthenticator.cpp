@@ -40,7 +40,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         auto cleanup = wil::scope_exit([&] { WebAuthNFreeDecodedMakeCredentialRequest(pDecoded); });
 
         // ----------------------------------------------------------------
-        // 2. Verify request signature (best-effort — log but continue if key unavailable)
+        // 2. Verify request signature
         // ----------------------------------------------------------------
         std::vector<BYTE> signingKey;
         if (LoadSigningPublicKey(signingKey) && !signingKey.empty())
@@ -54,6 +54,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         }
         else
         {
+            //TODO only if debug?
             Log("MakeCredential: no signing key, skipping signature verification");
         }
 
@@ -230,6 +231,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         }
         else
         {
+            //TODO only if debug?
             Log("GetAssertion: no signing key, skipping signature verification");
         }
 
@@ -438,19 +440,6 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetLockStatus(
 
     Log("GetLockStatus: status=%s lockStatus=%d", status.c_str(), (int)*pLockStatus);
     return S_OK;
-}
-
-HRESULT STDMETHODCALLTYPE PluginAuthenticator::VerifyRequestSignature(
-    const BYTE* pbRequest, DWORD cbRequest,
-    const BYTE* pbSig, DWORD cbSig)
-{
-    std::vector<BYTE> signingKey;
-    if (!LoadSigningPublicKey(signingKey) || signingKey.empty())
-        return S_OK; // key not yet stored — skip (first run scenario)
-    return SignatureVerifier::Verify(
-        pbRequest, cbRequest,
-        signingKey.data(), static_cast<DWORD>(signingKey.size()),
-        const_cast<PBYTE>(pbSig), cbSig);
 }
 
 // ---------------------------------------------------------------------------

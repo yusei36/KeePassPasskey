@@ -28,10 +28,6 @@ public:
         __RPC__out PLUGIN_LOCK_STATUS* pLockStatus) noexcept override;
 
 private:
-    HRESULT VerifyRequestSignature(
-        const BYTE* pbRequest, DWORD cbRequest,
-        const BYTE* pbSig, DWORD cbSig);
-
     volatile bool m_cancelled = false;
 };
 
