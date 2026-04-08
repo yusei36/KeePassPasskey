@@ -2,25 +2,9 @@
 #include "PluginAuthenticator.h"
 #include "PluginRegistration.h"
 #include "CredentialCache.h"
+#include "Log.h"
 #include <wrl/module.h>
 #include <string>
-#include <cstdio>
-
-static void LogMain(const char* fmt, ...)
-{
-    wchar_t tempPath[MAX_PATH];
-    GetTempPathW(MAX_PATH, tempPath);
-    wchar_t logPath[MAX_PATH];
-    wsprintfW(logPath, L"%sPasskeyProvider.log", tempPath);
-    FILE* f = nullptr;
-    _wfopen_s(&f, logPath, L"a");
-    if (!f) return;
-    SYSTEMTIME st; GetLocalTime(&st);
-    fprintf(f, "[%02d:%02d:%02d.%03d] ", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
-    va_list args; va_start(args, fmt); vfprintf(f, fmt, args); va_end(args);
-    fprintf(f, "\n");
-    fclose(f);
-}
 
 using namespace Microsoft::WRL;
 
@@ -32,10 +16,10 @@ static DWORD WINAPI SyncThreadProc(LPVOID)
 {
     while (WaitForSingleObject(g_hStopSync, SYNC_INTERVAL_MS) == WAIT_TIMEOUT)
     {
-        LogMain("SyncThread: periodic SyncToWindowsCache");
+        Log("SyncThread: periodic SyncToWindowsCache");
         CredentialCache::SyncToWindowsCache(KEEPASS_PASSKEY_PLUGIN_CLSID);
     }
-    LogMain("SyncThread: exiting");
+    Log("SyncThread: exiting");
     return 0;
 }
 
@@ -43,7 +27,7 @@ static DWORD WINAPI SyncThreadProc(LPVOID)
 // Registers the COM class factory and keeps running, periodically syncing credentials.
 static HRESULT RunAsPluginServer()
 {
-    LogMain("RunAsPluginServer: entry");
+    Log("RunAsPluginServer: entry");
     DWORD dwCookie = 0;
     auto factory = Make<PluginAuthenticatorFactory>();
     if (!factory) return E_OUTOFMEMORY;
@@ -54,20 +38,20 @@ static HRESULT RunAsPluginServer()
         CLSCTX_LOCAL_SERVER,
         REGCLS_MULTIPLEUSE,
         &dwCookie);
-    LogMain("RunAsPluginServer: CoRegisterClassObject hr=0x%08X cookie=%u", hrReg, dwCookie);
+    Log("RunAsPluginServer: CoRegisterClassObject hr=0x%08X cookie=%u", hrReg, dwCookie);
     RETURN_IF_FAILED(hrReg);
 
     // Sync credentials to the Windows autofill cache on startup
-    LogMain("RunAsPluginServer: calling SyncToWindowsCache");
+    Log("RunAsPluginServer: calling SyncToWindowsCache");
     HRESULT hrSync = CredentialCache::SyncToWindowsCache(KEEPASS_PASSKEY_PLUGIN_CLSID);
-    LogMain("RunAsPluginServer: SyncToWindowsCache hr=0x%08X", hrSync);
+    Log("RunAsPluginServer: SyncToWindowsCache hr=0x%08X", hrSync);
 
     // Start background thread for periodic sync
     g_hStopSync = CreateEventW(nullptr, TRUE, FALSE, nullptr);
     HANDLE hSyncThread = g_hStopSync
         ? CreateThread(nullptr, 0, SyncThreadProc, nullptr, 0, nullptr)
         : nullptr;
-    LogMain("RunAsPluginServer: sync thread started=%s", hSyncThread ? "yes" : "no");
+    Log("RunAsPluginServer: sync thread started=%s", hSyncThread ? "yes" : "no");
 
     // Run the COM message loop
     MSG msg;
@@ -174,16 +158,16 @@ int WINAPI wWinMain(
 
     if (isPluginActivated)
     {
-        LogMain("wWinMain: -PluginActivated, calling CoInitializeEx");
+        Log("wWinMain: -PluginActivated, calling CoInitializeEx");
         HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-        LogMain("wWinMain: CoInitializeEx hr=0x%08X", hr);
+        Log("wWinMain: CoInitializeEx hr=0x%08X", hr);
         if (SUCCEEDED(hr))
         {
             RunAsPluginServer();
             CoUninitialize();
         }
         LocalFree(argv);
-        LogMain("wWinMain: exiting");
+        Log("wWinMain: exiting");
         return 0;
     }
 
