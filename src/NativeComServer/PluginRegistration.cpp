@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PluginRegistration.h"
+#include "Log.h"
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
@@ -44,6 +45,7 @@ std::vector<BYTE> BuildAuthenticatorInfoCbor()
 
 HRESULT RegisterPlugin()
 {
+    Log("RegisterPlugin: entry");
     auto authenticatorInfo = BuildAuthenticatorInfoCbor();
 
     WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_OPTIONS options{
@@ -59,25 +61,35 @@ HRESULT RegisterPlugin()
     };
 
     PWEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_RESPONSE pResponse = nullptr;
-    RETURN_IF_FAILED(WebAuthNPluginAddAuthenticator(&options, &pResponse));
+    HRESULT hr = WebAuthNPluginAddAuthenticator(&options, &pResponse);
+    Log("RegisterPlugin: WebAuthNPluginAddAuthenticator hr=0x%08X", hr);
+    RETURN_IF_FAILED(hr);
     auto cleanup = wil::scope_exit([&] { WebAuthNPluginFreeAddAuthenticatorResponse(pResponse); });
 
     // Store operation signing public key in registry
     wil::unique_hkey hKey;
-    RETURN_IF_WIN32_ERROR(RegCreateKeyExW(
+    LONG lReg = RegCreateKeyExW(
         HKEY_CURRENT_USER, PluginRegPath, 0, nullptr,
-        REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr));
+        REG_OPTION_NON_VOLATILE, KEY_WRITE, nullptr, &hKey, nullptr);
+    Log("RegisterPlugin: RegCreateKeyEx result=%ld", lReg);
+    RETURN_IF_WIN32_ERROR(lReg);
 
-    RETURN_IF_WIN32_ERROR(RegSetValueExW(
+    lReg = RegSetValueExW(
         hKey.get(), RegKeySigningKey, 0, REG_BINARY,
-        pResponse->pbOpSignPubKey, pResponse->cbOpSignPubKey));
+        pResponse->pbOpSignPubKey, pResponse->cbOpSignPubKey);
+    Log("RegisterPlugin: RegSetValueEx result=%ld cbSigningKey=%u", lReg, pResponse->cbOpSignPubKey);
+    RETURN_IF_WIN32_ERROR(lReg);
 
+    Log("RegisterPlugin: success");
     return S_OK;
 }
 
 HRESULT UnregisterPlugin()
 {
-    return WebAuthNPluginRemoveAuthenticator(KEEPASS_PASSKEY_PLUGIN_CLSID);
+    Log("UnregisterPlugin: entry");
+    HRESULT hr = WebAuthNPluginRemoveAuthenticator(KEEPASS_PASSKEY_PLUGIN_CLSID);
+    Log("UnregisterPlugin: WebAuthNPluginRemoveAuthenticator hr=0x%08X", hr);
+    return hr;
 }
 
 HRESULT GetPluginState(AUTHENTICATOR_STATE& state)
