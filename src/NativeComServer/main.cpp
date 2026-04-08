@@ -24,8 +24,23 @@ static void LogMain(const char* fmt, ...)
 
 using namespace Microsoft::WRL;
 
+static constexpr DWORD SYNC_INTERVAL_MS = 30 * 1000; // sync every 30 seconds
+
+static HANDLE g_hStopSync = nullptr;
+
+static DWORD WINAPI SyncThreadProc(LPVOID)
+{
+    while (WaitForSingleObject(g_hStopSync, SYNC_INTERVAL_MS) == WAIT_TIMEOUT)
+    {
+        LogMain("SyncThread: periodic SyncToWindowsCache");
+        CredentialCache::SyncToWindowsCache(KEEPASS_PASSKEY_PLUGIN_CLSID);
+    }
+    LogMain("SyncThread: exiting");
+    return 0;
+}
+
 // Called by the Windows passkey platform when a passkey operation is needed.
-// Registers the COM class factory and waits until the platform is done.
+// Registers the COM class factory and keeps running, periodically syncing credentials.
 static HRESULT RunAsPluginServer()
 {
     LogMain("RunAsPluginServer: entry");
@@ -47,13 +62,29 @@ static HRESULT RunAsPluginServer()
     HRESULT hrSync = CredentialCache::SyncToWindowsCache(KEEPASS_PASSKEY_PLUGIN_CLSID);
     LogMain("RunAsPluginServer: SyncToWindowsCache hr=0x%08X", hrSync);
 
-    // Run the message loop — exit when all COM instances are released
+    // Start background thread for periodic sync
+    g_hStopSync = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    HANDLE hSyncThread = g_hStopSync
+        ? CreateThread(nullptr, 0, SyncThreadProc, nullptr, 0, nullptr)
+        : nullptr;
+    LogMain("RunAsPluginServer: sync thread started=%s", hSyncThread ? "yes" : "no");
+
+    // Run the COM message loop
     MSG msg;
     while (GetMessageW(&msg, nullptr, 0, 0))
     {
         TranslateMessage(&msg);
         DispatchMessageW(&msg);
     }
+
+    // Stop the sync thread
+    if (g_hStopSync) SetEvent(g_hStopSync);
+    if (hSyncThread)
+    {
+        WaitForSingleObject(hSyncThread, 5000);
+        CloseHandle(hSyncThread);
+    }
+    if (g_hStopSync) { CloseHandle(g_hStopSync); g_hStopSync = nullptr; }
 
     CoRevokeClassObject(dwCookie);
     return S_OK;

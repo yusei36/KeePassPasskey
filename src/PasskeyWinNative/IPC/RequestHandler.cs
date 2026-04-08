@@ -152,14 +152,11 @@ namespace PasskeyWinNative.IPC
             if (!_storage.CreatePasskeyEntry(credential))
                 return Error(req.RequestId, "internal_error", "Failed to create KeePass entry");
 
-            var storedCredential = _storage.FindByRpIdAndCredentialId(req.RpId, credentialId);
-
             return JsonConvert.SerializeObject(new IpcResponse
             {
                 Type = "make_credential",
                 RequestId = req.RequestId,
                 CredentialId = credentialId,
-                Title = storedCredential.Title,
                 PublicKeyX = Convert.ToBase64String(x),
                 PublicKeyY = Convert.ToBase64String(y),
                 AuthenticatorData = Convert.ToBase64String(authData)

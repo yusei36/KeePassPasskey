@@ -1,27 +1,22 @@
 #include "pch.h"
 #include "CredentialCache.h"
 
-HRESULT CredentialCache::AddSingleCredential(
-    REFCLSID pluginClsid,
-    const std::vector<BYTE>& credentialIdBytes,
-    const std::wstring& rpId,
-    const std::wstring& rpName,
-    const std::vector<BYTE>& userHandleBytes,
-    const std::wstring& userName,
-    const std::wstring& displayName)
+static void Log(const char* fmt, ...)
 {
-    WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS cred = {};
-    cred.cbCredentialId      = static_cast<DWORD>(credentialIdBytes.size());
-    cred.pbCredentialId      = const_cast<PBYTE>(credentialIdBytes.data());
-    cred.pwszRpId            = rpId.c_str();
-    cred.pwszRpName          = rpName.empty() ? rpId.c_str() : rpName.c_str();
-    cred.cbUserId            = static_cast<DWORD>(userHandleBytes.size());
-    cred.pbUserId            = userHandleBytes.empty() ? nullptr : const_cast<PBYTE>(userHandleBytes.data());
-    cred.pwszUserName        = userName.c_str();
-    cred.pwszUserDisplayName = displayName.empty() ? userName.c_str() : displayName.c_str();
-
-    return WebAuthNPluginAuthenticatorAddCredentials(pluginClsid, 1, &cred);
+    wchar_t tempPath[MAX_PATH];
+    GetTempPathW(MAX_PATH, tempPath);
+    wchar_t logPath[MAX_PATH];
+    wsprintfW(logPath, L"%sPasskeyProvider.log", tempPath);
+    FILE* f = nullptr;
+    _wfopen_s(&f, logPath, L"a");
+    if (!f) return;
+    SYSTEMTIME st; GetLocalTime(&st);
+    fprintf(f, "[%02d:%02d:%02d.%03d] ", st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+    va_list args; va_start(args, fmt); vfprintf(f, fmt, args); va_end(args);
+    fprintf(f, "\n");
+    fclose(f);
 }
+
 
 HRESULT CredentialCache::SyncToWindowsCache(REFCLSID pluginClsid)
 {
@@ -34,9 +29,22 @@ HRESULT CredentialCache::SyncToWindowsCache(REFCLSID pluginClsid)
     if (JsonHelper::IsError(response))
         return S_FALSE;
 
-    // Parse the credentials array
-    // Note: do NOT call RemoveAllCredentials here — it would invalidate any
-    // in-progress authentication flow that Windows started based on the cache. — simple format:
+    // Clear the existing cache before repopulating so stale/deleted entries are removed.
+    // Use GetAllCredentials + RemoveCredentials rather than RemoveAllCredentials.
+    {
+        DWORD cExisting = 0;
+        PWEBAUTHN_PLUGIN_CREDENTIAL_DETAILS pExisting = nullptr;
+        HRESULT hrGet = WebAuthNPluginAuthenticatorGetAllCredentials(pluginClsid, &cExisting, &pExisting);
+        Log("SyncToWindowsCache: GetAllCredentials hr=0x%08X count=%u", hrGet, cExisting);
+        if (SUCCEEDED(hrGet) && cExisting > 0 && pExisting != nullptr)
+        {
+            HRESULT hrRem = WebAuthNPluginAuthenticatorRemoveCredentials(pluginClsid, cExisting, pExisting);
+            Log("SyncToWindowsCache: RemoveCredentials hr=0x%08X removed=%u", hrRem, cExisting);
+            WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
+        }
+    }
+
+    // Parse the credentials array — simple format:
     // {"type":"get_credentials","credentials":[{"credentialId":"...","rpId":"...","userHandle":"...","userName":"..."},...]}
     // We do a simple scan for credential objects
     auto pos = response.find("\"credentials\":");
@@ -106,7 +114,12 @@ HRESULT CredentialCache::SyncToWindowsCache(REFCLSID pluginClsid)
 
     if (!credDetails.empty())
     {
-        WebAuthNPluginAuthenticatorAddCredentials(pluginClsid, static_cast<DWORD>(credDetails.size()), credDetails.data());
+        HRESULT hrAdd = WebAuthNPluginAuthenticatorAddCredentials(pluginClsid, static_cast<DWORD>(credDetails.size()), credDetails.data());
+        Log("SyncToWindowsCache: AddCredentials hr=0x%08X added=%zu", hrAdd, credDetails.size());
+    }
+    else
+    {
+        Log("SyncToWindowsCache: no credentials to add");
     }
 
     return S_OK;

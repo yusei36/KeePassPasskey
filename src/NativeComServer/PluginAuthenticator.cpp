@@ -171,11 +171,10 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         // 6. Parse KeePass response
         // ----------------------------------------------------------------
         auto credentialIdB64  = JsonHelper::GetStringField(responseJson, "credentialId");
-        auto titleUtf8        = JsonHelper::GetStringField(responseJson, "title");
         auto publicKeyXB64    = JsonHelper::GetStringField(responseJson, "publicKeyX");
         auto publicKeyYB64    = JsonHelper::GetStringField(responseJson, "publicKeyY");
         auto authDataB64      = JsonHelper::GetStringField(responseJson, "authenticatorData");
-        Log("MakeCredential: credentialId=%s title=%s authData len=%zu", credentialIdB64.c_str(), titleUtf8.c_str(), authDataB64.size());
+        Log("MakeCredential: credentialId=%s authData len=%zu", credentialIdB64.c_str(), authDataB64.size());
 
         if (credentialIdB64.empty() || authDataB64.empty())
         {
@@ -211,35 +210,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         // ----------------------------------------------------------------
         // 8. Update platform credential cache
         // ----------------------------------------------------------------
-        if (!credIdBytes.empty())
-        {
-            auto toWide = [](const std::string& utf8) -> std::wstring
-            {
-                if (utf8.empty()) return {};
-                int n = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
-                std::wstring out(n, L'\0');
-                MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, out.data(), n);
-                if (!out.empty() && out.back() == L'\0') out.pop_back();
-                return out;
-            };
-            
-            std::wstring wrpId = toWide(rpIdUtf8);
-            std::wstring wrpName = (pDecoded->pRpInformation && pDecoded->pRpInformation->pwszName) 
-                                    ? pDecoded->pRpInformation->pwszName : nullptr;
-            std::wstring wun;
-            if (pDecoded->pUserInformation && pDecoded->pUserInformation->pwszName)
-                wun = pDecoded->pUserInformation->pwszName;
-
-            std::vector<BYTE> userHandleBytes;
-            if (pDecoded->pUserInformation && pDecoded->pUserInformation->cbId > 0)
-                userHandleBytes.assign(
-                    pDecoded->pUserInformation->pbId,
-                    pDecoded->pUserInformation->pbId + pDecoded->pUserInformation->cbId);
-
-            CredentialCache::AddSingleCredential(
-                KEEPASS_PASSKEY_PLUGIN_CLSID,
-                credIdBytes, wrpId, wrpName, userHandleBytes, wun, toWide(titleUtf8));
-        }
+        CredentialCache::SyncToWindowsCache(KEEPASS_PASSKEY_PLUGIN_CLSID);
 
         Log("MakeCredential: success");
         return S_OK;
