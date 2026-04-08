@@ -30,7 +30,7 @@ HRESULT CredentialCache::SyncToWindowsCache(REFCLSID pluginClsid)
         return S_FALSE;
 
     // Clear the existing cache before repopulating so stale/deleted entries are removed.
-    // Use GetAllCredentials + RemoveCredentials rather than RemoveAllCredentials.
+    // Use GetAllCredentials + RemoveCredentials rather than RemoveAllCredentials (didn't work).
     {
         DWORD cExisting = 0;
         PWEBAUTHN_PLUGIN_CREDENTIAL_DETAILS pExisting = nullptr;
