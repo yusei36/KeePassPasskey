@@ -279,11 +279,30 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
                     if (!out.empty() && out.back() == L'\0') out.pop_back();
                 };
 
-                std::string userName = JsonHelper::GetStringField(gcResp, "userName");
-                std::string title    = JsonHelper::GetStringField(gcResp, "title");
-                Log("GetAssertion: pre-query userName=%s title=%s", userName.c_str(), title.c_str());
-                toWide(userName, uvUsernameStr);
-                toWide(title, uvDisplayHintStr);
+                auto credsPos = gcResp.find("\"credentials\":");
+                if (credsPos != std::string::npos)
+                {
+                    auto arrayStart = gcResp.find('[', credsPos);
+                    auto firstObjStart = (arrayStart != std::string::npos) ? gcResp.find('{', arrayStart) : std::string::npos;
+                    auto firstObjEnd = (firstObjStart != std::string::npos) ? gcResp.find('}', firstObjStart) : std::string::npos;
+                    if (firstObjStart != std::string::npos && firstObjEnd != std::string::npos)
+                    {
+                        std::string firstCredential = gcResp.substr(firstObjStart, firstObjEnd - firstObjStart + 1);
+                        std::string userName = JsonHelper::GetStringField(firstCredential, "userName");
+                        std::string title    = JsonHelper::GetStringField(firstCredential, "title");
+                        Log("GetAssertion: pre-query userName=%s title=%s", userName.c_str(), title.c_str());
+                        toWide(userName, uvUsernameStr);
+                        toWide(title, uvDisplayHintStr);
+                    }
+                    else
+                    {
+                        Log("GetAssertion: pre-query returned no credential objects");
+                    }
+                }
+                else
+                {
+                    Log("GetAssertion: pre-query response missing credentials array");
+                }
             }
             else
             {
