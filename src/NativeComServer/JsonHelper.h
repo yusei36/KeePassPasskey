@@ -55,9 +55,45 @@ namespace JsonHelper
         auto pos = json.find(key);
         if (pos == std::string::npos) return {};
         pos += key.size();
-        auto end = json.find('"', pos);
-        if (end == std::string::npos) return {};
-        return json.substr(pos, end - pos);
+
+        std::string out;
+        out.reserve(json.size() - pos);
+
+        bool escaped = false;
+        for (size_t i = pos; i < json.size(); ++i)
+        {
+            char c = json[i];
+            if (escaped)
+            {
+                switch (c)
+                {
+                    case '"': out += '"'; break;
+                    case '\\': out += '\\'; break;
+                    case '/': out += '/'; break;
+                    case 'b': out += '\b'; break;
+                    case 'f': out += '\f'; break;
+                    case 'n': out += '\n'; break;
+                    case 'r': out += '\r'; break;
+                    case 't': out += '\t'; break;
+                    default: out += c; break;
+                }
+                escaped = false;
+                continue;
+            }
+
+            if (c == '\\')
+            {
+                escaped = true;
+                continue;
+            }
+
+            if (c == '"')
+                return out;
+
+            out += c;
+        }
+
+        return {};
     }
 
     /// Check if the response has "type":"error"
