@@ -59,28 +59,9 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::MakeCredential(
         }
 
         // ----------------------------------------------------------------
-        // 3. User Verification via Windows Hello
+        // 3. User Verification
         // ----------------------------------------------------------------
-        HWND hwnd = pRequest->hWnd;
-        if (!hwnd) hwnd = GetForegroundWindow();
-        Log("MakeCredential: hWnd=%p (from request: %p)", hwnd, pRequest->hWnd);
-
-        WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST uvReq{
-            .hwnd               = hwnd,
-            .rguidTransactionId = pRequest->transactionId,
-            .pwszUsername       = (pDecoded->pUserInformation && pDecoded->pUserInformation->pwszName)
-                                      ? pDecoded->pUserInformation->pwszName : nullptr,
-            .pwszDisplayHint    = (pDecoded->pRpInformation && pDecoded->pRpInformation->pwszName)
-                                      ? pDecoded->pRpInformation->pwszName : nullptr,
-        };
-
-        DWORD cbUvResp = 0;
-        PBYTE pbUvResp = nullptr;
-        Log("MakeCredential: calling WebAuthNPluginPerformUserVerification");
-        HRESULT hrUv = WebAuthNPluginPerformUserVerification(&uvReq, &cbUvResp, &pbUvResp);
-        Log("MakeCredential: WebAuthNPluginPerformUserVerification hr=0x%08X", hrUv);
-        RETURN_IF_FAILED(hrUv);
-        auto uvCleanup = wil::scope_exit([&] { WebAuthNPluginFreeUserVerificationResponse(pbUvResp); });
+        Log("MakeCredential: native user verification disabled");
 
         if (m_cancelled) { Log("MakeCredential: cancelled"); return NTE_USER_CANCELLED; }
 
@@ -256,86 +237,14 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         std::string allowCredentialsJson = JsonHelper::StringArray(allowList);
 
         // ----------------------------------------------------------------
-        // 4. Pre-query KeePass to get username and entry title for the UV prompt
+        // 4. User Verification
         // ----------------------------------------------------------------
-        std::wstring uvUsernameStr;
-        std::wstring uvDisplayHintStr;
-        {
-            std::string gcJson =
-                "{\"type\":\"get_credentials\","
-                "\"requestId\":\"gc_uv\","
-                "\"rpId\":\"" + JsonHelper::Escape(rpIdUtf8) + "\","
-                "\"allowCredentials\":" + allowCredentialsJson + "}";
-            Log("GetAssertion: pre-query: %s", gcJson.c_str());
-            std::string gcResp;
-            if (PipeClient::SendRequest(gcJson, gcResp) && !JsonHelper::IsError(gcResp))
-            {
-                auto toWide = [](const std::string& utf8, std::wstring& out)
-                {
-                    if (utf8.empty()) return;
-                    int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
-                    out.resize(wlen);
-                    MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, out.data(), wlen);
-                    if (!out.empty() && out.back() == L'\0') out.pop_back();
-                };
-
-                auto credsPos = gcResp.find("\"credentials\":");
-                if (credsPos != std::string::npos)
-                {
-                    auto arrayStart = gcResp.find('[', credsPos);
-                    auto firstObjStart = (arrayStart != std::string::npos) ? gcResp.find('{', arrayStart) : std::string::npos;
-                    auto firstObjEnd = (firstObjStart != std::string::npos) ? gcResp.find('}', firstObjStart) : std::string::npos;
-                    if (firstObjStart != std::string::npos && firstObjEnd != std::string::npos)
-                    {
-                        std::string firstCredential = gcResp.substr(firstObjStart, firstObjEnd - firstObjStart + 1);
-                        std::string userName = JsonHelper::GetStringField(firstCredential, "userName");
-                        std::string title    = JsonHelper::GetStringField(firstCredential, "title");
-                        Log("GetAssertion: pre-query userName=%s title=%s", userName.c_str(), title.c_str());
-                        toWide(userName, uvUsernameStr);
-                        toWide(title, uvDisplayHintStr);
-                    }
-                    else
-                    {
-                        Log("GetAssertion: pre-query returned no credential objects");
-                    }
-                }
-                else
-                {
-                    Log("GetAssertion: pre-query response missing credentials array");
-                }
-            }
-            else
-            {
-                Log("GetAssertion: pre-query failed, UV will use null username/hint");
-            }
-        }
-
-        // ----------------------------------------------------------------
-        // 5. User Verification via Windows Hello
-        // ----------------------------------------------------------------
-        HWND hwnd = pRequest->hWnd;
-        if (!hwnd) hwnd = GetForegroundWindow();
-        Log("GetAssertion: hWnd=%p (from request: %p)", hwnd, pRequest->hWnd);
-
-        WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST uvReq{
-            .hwnd               = hwnd,
-            .rguidTransactionId = pRequest->transactionId,
-            .pwszUsername       = uvUsernameStr.empty()    ? nullptr : uvUsernameStr.c_str(),
-            .pwszDisplayHint    = uvDisplayHintStr.empty() ? nullptr : uvDisplayHintStr.c_str(),
-        };
-
-        DWORD cbUvResp = 0;
-        PBYTE pbUvResp = nullptr;
-        Log("GetAssertion: calling WebAuthNPluginPerformUserVerification");
-        HRESULT hrUv = WebAuthNPluginPerformUserVerification(&uvReq, &cbUvResp, &pbUvResp);
-        Log("GetAssertion: WebAuthNPluginPerformUserVerification hr=0x%08X", hrUv);
-        RETURN_IF_FAILED(hrUv);
-        auto uvCleanup = wil::scope_exit([&] { WebAuthNPluginFreeUserVerificationResponse(pbUvResp); });
+        Log("GetAssertion: native user verification disabled");
 
         if (m_cancelled) { Log("GetAssertion: cancelled"); return NTE_USER_CANCELLED; }
 
         // ----------------------------------------------------------------
-        // 6. Build JSON pipe request
+        // 5. Build JSON pipe request
         // ----------------------------------------------------------------
         std::string requestJson =
             "{\"type\":\"get_assertion\","
@@ -345,7 +254,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
             "\"allowCredentials\":" + allowCredentialsJson + "}";
 
         // ----------------------------------------------------------------
-        // 5. Send to KeePass plugin
+        // 6. Send to KeePass plugin
         // ----------------------------------------------------------------
         Log("GetAssertion: sending pipe request: %s", requestJson.c_str());
         std::string responseJson;
@@ -366,7 +275,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         }
 
         // ----------------------------------------------------------------
-        // 6. Parse KeePass response
+        // 7. Parse KeePass response
         // ----------------------------------------------------------------
         auto credentialIdB64 = JsonHelper::GetStringField(responseJson, "credentialId");
         auto authDataB64     = JsonHelper::GetStringField(responseJson, "authenticatorData");
@@ -389,7 +298,7 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
             authDataBytes.size(), signatureBytes.size(), userHandleBytes.size(), credIdBytes.size());
 
         // ----------------------------------------------------------------
-        // 7. Assemble WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE and encode
+        // 8. Assemble WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE and encode
         // ----------------------------------------------------------------
         WEBAUTHN_CREDENTIAL cred = {};
         cred.dwVersion = WEBAUTHN_CREDENTIAL_CURRENT_VERSION;
