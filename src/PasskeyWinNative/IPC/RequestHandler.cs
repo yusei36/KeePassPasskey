@@ -54,7 +54,7 @@ namespace PasskeyWinNative.IPC
         private string HandlePing(IpcRequest req)
         {
             string status;
-            if (_host.Database == null || !_host.Database.IsOpen)
+            if (!IsDatabaseOpen())
                 status = "no_database";
             else
                 status = "ready";
@@ -108,18 +108,14 @@ namespace PasskeyWinNative.IPC
             if (string.IsNullOrEmpty(req.RpId))
                 return Error(req.RequestId, "internal_error", "rpId is required");
 
-            // TODO: excludeCredentials handling is currently disabled.
-            // KeePassXC appears to not enforce this check either, allowing users to
-            // re-register passkeys for the same RP freely. Uncomment to enforce the
-            // WebAuthn spec requirement that prevents duplicate credentials per authenticator.
-            //if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
-            //{
-            //    foreach (var excluded in req.ExcludeCredentials)
-            //    {
-            //        if (_storage.HasCredentialForRpId(req.RpId, excluded))
-            //            return Error(req.RequestId, "duplicate", "Credential already exists for this RP");
-            //    }
-            //}
+            // KeePassXC-style excludeCredentials handling: reject registration only
+            // when one of the excluded credential IDs already exists for this RP.
+            if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
+            {
+                var existingCredentials = _storage.FindByRpIdAndCredentialIds(req.RpId, req.ExcludeCredentials);
+                if (existingCredentials.Count > 0)
+                    return Error(req.RequestId, "duplicate", "Credential already exists for this RP");
+            }
 
             // Generate EC P-256 key pair
             byte[] x, y, d;
