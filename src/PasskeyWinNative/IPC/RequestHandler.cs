@@ -202,7 +202,9 @@ namespace PasskeyWinNative.IPC
                 CredentialId = credential.CredentialId,
                 AuthenticatorData = Convert.ToBase64String(authData),
                 Signature = Convert.ToBase64String(signature),
-                UserHandle = credential.UserHandle ?? ""
+                UserHandle = credential.UserHandle ?? "",
+                UserName = credential.Username ?? "",
+                UserDisplayName = string.IsNullOrEmpty(credential.Title) ? (credential.Username ?? "") : credential.Title
             });
         }
 

@@ -281,6 +281,8 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         auto authDataB64     = JsonHelper::GetStringField(responseJson, "authenticatorData");
         auto signatureB64    = JsonHelper::GetStringField(responseJson, "signature");
         auto userHandleB64   = JsonHelper::GetStringField(responseJson, "userHandle");
+        auto userNameUtf8    = JsonHelper::GetStringField(responseJson, "userName");
+        auto userDisplayUtf8 = JsonHelper::GetStringField(responseJson, "userDisplayName");
         Log("GetAssertion: credentialId=%s authData len=%zu signature len=%zu",
             credentialIdB64.c_str(), authDataB64.size(), signatureB64.size());
 
@@ -296,6 +298,19 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         auto credIdBytes     = JsonHelper::Base64UrlDecode(credentialIdB64);
         Log("GetAssertion: authData=%zu sig=%zu userHandle=%zu credId=%zu bytes",
             authDataBytes.size(), signatureBytes.size(), userHandleBytes.size(), credIdBytes.size());
+
+        auto utf8ToWide = [](const std::string& utf8) -> std::wstring
+        {
+            if (utf8.empty()) return {};
+            int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
+            if (wlen <= 0) return {};
+            std::wstring out(wlen, L'\0');
+            MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, out.data(), wlen);
+            if (!out.empty() && out.back() == L'\0') out.pop_back();
+            return out;
+        };
+        std::wstring userNameWide = utf8ToWide(userNameUtf8);
+        std::wstring userDisplayWide = utf8ToWide(userDisplayUtf8);
 
         // ----------------------------------------------------------------
         // 8. Assemble WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE and encode
@@ -315,6 +330,16 @@ HRESULT STDMETHODCALLTYPE PluginAuthenticator::GetAssertion(
         assertionResp.WebAuthNAssertion.pbSignature  = signatureBytes.data();
         assertionResp.WebAuthNAssertion.cbUserId     = static_cast<DWORD>(userHandleBytes.size());
         assertionResp.WebAuthNAssertion.pbUserId     = userHandleBytes.empty() ? nullptr : userHandleBytes.data();
+        WEBAUTHN_USER_ENTITY_INFORMATION userInfo = {};
+        userInfo.dwVersion = WEBAUTHN_USER_ENTITY_INFORMATION_CURRENT_VERSION;
+        userInfo.cbId = static_cast<DWORD>(userHandleBytes.size());
+        userInfo.pbId = userHandleBytes.empty() ? nullptr : userHandleBytes.data();
+        userInfo.pwszName = userNameWide.empty() ? nullptr : userNameWide.c_str();
+        userInfo.pwszIcon = nullptr;
+        userInfo.pwszDisplayName = userDisplayWide.empty() ? userInfo.pwszName : userDisplayWide.c_str();
+        assertionResp.pUserInformation = userInfo.pbId ? &userInfo : nullptr;
+        assertionResp.dwNumberOfCredentials = 1;
+        assertionResp.lUserSelected = TRUE;
 
         DWORD cbEncoded = 0;
         BYTE* pbEncoded = nullptr;
