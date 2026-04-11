@@ -4,12 +4,9 @@ namespace PasskeyPluginProxy.Interop;
 
 /// <summary>
 /// Hand-rolled P/Invoke for Win32 APIs used by the COM server host.
-/// CsWin32-generated wrappers (CoRegisterClassObject, etc.)
-/// are available in the generated Windows namespace — these are supplementary.
 /// </summary>
 internal static class Win32Native
 {
-    // Fallback direct P/Invokes for anything CsWin32 doesn't project cleanly.
 
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern int AttachConsole(uint dwProcessId);

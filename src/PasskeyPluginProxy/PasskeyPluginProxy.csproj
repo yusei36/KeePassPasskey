@@ -19,15 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- CsWin32 generates P/Invoke for standard Win32 APIs listed in NativeMethods.txt -->
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.*" PrivateAssets="all" />
     <!-- CBOR encoding for authenticatorGetInfo blob -->
     <PackageReference Include="System.Formats.Cbor" Version="9.*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Required by CsWin32 source generator -->
-    <AdditionalFiles Include="Interop\NativeMethods.txt" />
   </ItemGroup>
 
 </Project>
