@@ -36,7 +36,7 @@ $ErrorActionPreference = 'Stop'
 
 $RepoRoot  = Split-Path $PSScriptRoot -Parent
 $ConfigSuffix = if ($Configuration -eq 'Debug') { '_Debug' } else { '' }
-$MsixPath  = "$RepoRoot\src\NativeComServer.Package\AppPackages\NativeComServer.Package_1.0.0.0_x64${ConfigSuffix}_Test\NativeComServer.Package_1.0.0.0_x64${ConfigSuffix}.msix"
+$MsixPath  = "$RepoRoot\src\KeePassPasskeyProvider.Package\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}.msix"
 $SignTool  = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
 $CertSubject = 'CN=KeePassPasskeyProvider'
 
@@ -65,13 +65,13 @@ if (-not $SkipBuild) {
     $msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1
     if (-not $msbuild) { throw "MSBuild.exe not found via vswhere." }
 
-    $wapproj = "$RepoRoot\src\NativeComServer.Package\NativeComServer.Package.wapproj"
+    $wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
     & $msbuild $wapproj `
         /p:Configuration=$Configuration `
         /p:Platform=x64 `
         /p:PlatformToolset=v145 `
         /p:SolutionDir="$RepoRoot\" `
-        /p:AppxPackageDir="$RepoRoot\src\NativeComServer.Package\AppPackages\" `
+        /p:AppxPackageDir="$RepoRoot\src\KeePassPasskeyProvider.Package\AppPackages\" `
         /p:AppxBundle=Never `
         /p:UapAppxPackageBuildMode=SideLoadOnly `
         /p:AppxPackageSigningEnabled=false `
@@ -125,7 +125,7 @@ $store.Close()
 Write-Step "Signing MSIX"
 
 if (-not (Test-Path $MsixPath)) {
-    throw "MSIX not found at:`n  $MsixPath`nBuild the NativeComServer.Package project first."
+    throw "MSIX not found at:`n  $MsixPath`nBuild the KeePassPasskeyProvider.Package project first."
 }
 
 if (-not (Test-Path $SignTool)) {
@@ -159,9 +159,9 @@ if ($pkg) {
     Write-Host "  InstallLocation  : $($pkg.InstallLocation)"
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Yellow
-    Write-Host "  cd `"$($pkg.InstallLocation)\PasskeyPluginProxy`""
-    Write-Host "  .\PasskeyPluginProxy.exe /register"
-    Write-Host "  Copy PasskeyWinNative.dll to KeePass Plugins folder"
+    Write-Host "  cd `"$($pkg.InstallLocation)\KeePassPasskeyProvider`""
+    Write-Host "  .\KeePassPasskeyProvider.exe /register"
+    Write-Host "  Copy KeePassPasskeyPlugin.dll to KeePass Plugins folder"
     Write-Host "  Enable in: Settings → Accounts → Passkeys → Advanced Options"
 } else {
     Write-Warning "Package not found after install - check above for errors."

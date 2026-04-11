@@ -7,15 +7,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 PasskeyWin11 integrates KeePass as a native Windows 11 passkey provider. It has two components bridged by a named pipe:
 
 ```
-Browser → Windows (webauthn.dll) → PasskeyPluginProxy.exe (COM, -PluginActivated)
+Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, -PluginActivated)
                                          ↓ Named pipe JSON (\\.\pipe\keepass-passkey-provider)
-                                   PasskeyWinNative.dll (loaded by KeePass.exe)
+                                   KeePassPasskeyPlugin.dll (loaded by KeePass.exe)
                                          ↓ KeePass Plugin API
                                    KeePass Database (KPEX_PASSKEY_* fields)
 ```
 
-- **COM server** (`src/PasskeyPluginProxy/`) — C# EXE, MSIX-packaged, implements `IPluginAuthenticator`, acts as the pipe **client**
-- **KeePass plugin** (`src/PasskeyWinNative/`) — C# DLL, acts as the pipe **server**
+- **COM server** (`src/KeePassPasskeyProvider/`) — C# EXE, MSIX-packaged, implements `IPluginAuthenticator`, acts as the pipe **client**
+- **KeePass plugin** (`src/KeePassPasskeyPlugin/`) — C# DLL, acts as the pipe **server**
 - All crypto (EC P-256 keygen, ECDSA signing) lives in the C# plugin (`EcKeyHelper.cs`)
 - The COM server handles Windows API surface only: CBOR decode/encode, Windows Hello UV, credential cache
 - CLSID/AAGUID: `fdb141b2-5d84-443e-8a35-4698c205a502` (KeePassXC-compatible)
@@ -25,27 +25,27 @@ Browser → Windows (webauthn.dll) → PasskeyPluginProxy.exe (COM, -PluginActiv
 
 ### Prerequisites
 - Windows SDK 10.0.26100.7175+ (required for `webauthnplugin.h`)
-- .NET 10 SDK (for PasskeyPluginProxy)
-- .NET Framework 4.8 SDK (for PasskeyWinNative)
+- .NET 10 SDK (for KeePassPasskeyProvider)
+- .NET Framework 4.8 SDK (for KeePassPasskeyPlugin)
 - `KeePass.exe` placed in `build/KeePass/` (not shipped): `copy "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\`
 
 ### Build C# KeePass plugin
 ```
-msbuild src\PasskeyWinNative\PasskeyWinNative.csproj /p:Configuration=Release /p:Platform=AnyCPU
+msbuild src\KeePassPasskeyPlugin\KeePassPasskeyPlugin.csproj /p:Configuration=Release /p:Platform=AnyCPU
 ```
-Output: `build\Release\PasskeyWinNative.dll`
+Output: `build\Release\KeePassPasskeyPlugin.dll`
 
-### Build C# COM server (PasskeyPluginProxy)
+### Build C# COM server (KeePassPasskeyProvider)
 ```
-msbuild src\PasskeyPluginProxy\PasskeyPluginProxy.csproj /p:Configuration=Release /p:Platform=x64
+msbuild src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj /p:Configuration=Release /p:Platform=x64
 ```
-Output: `build\Release\PasskeyPluginProxy\PasskeyPluginProxy.exe`
+Output: `build\Release\KeePassPasskeyProvider\KeePassPasskeyProvider.exe`
 
 ### Build MSIX package
 ```
-msbuild src\NativeComServer.Package\NativeComServer.Package.wapproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=E:\Repos\PasskeyWin11\
+msbuild src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=E:\Repos\PasskeyWin11\
 ```
-Output: `src\NativeComServer.Package\AppPackages\NativeComServer.Package_1.0.0.0_x64_Test\NativeComServer.Package_1.0.0.0_x64.msix`
+Output: `src\KeePassPasskeyProvider.Package\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64.msix`
 
 Note: `AppxPackageSigningEnabled` is `false` in the wapproj — the MSIX is unsigned and must be signed manually before install (see below).
 
@@ -87,7 +87,7 @@ $thumb = $cert.Thumbprint
 
 # Sign the MSIX (signtool.exe from Windows SDK)
 & 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe' sign /fd SHA256 /sha1 $thumb `
-    'src\NativeComServer.Package\AppPackages\NativeComServer.Package_1.0.0.0_x64_Test\NativeComServer.Package_1.0.0.0_x64.msix'
+    'src\KeePassPasskeyProvider.Package\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64.msix'
 ```
 
 ```powershell
@@ -103,7 +103,7 @@ $store.Close()
 ### 2. Install the MSIX
 
 ```powershell
-Add-AppxPackage -Path 'src\NativeComServer.Package\AppPackages\NativeComServer.Package_1.0.0.0_x64_Test\NativeComServer.Package_1.0.0.0_x64.msix' -ForceUpdateFromAnyVersion
+Add-AppxPackage -Path 'src\KeePassPasskeyProvider.Package\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64.msix' -ForceUpdateFromAnyVersion
 ```
 
 Verify: `Get-AppxPackage -Name '*KeePassPasskeyProvider*'`
@@ -114,9 +114,9 @@ Verify: `Get-AppxPackage -Name '*KeePassPasskeyProvider*'`
 # Get InstallLocation
 Get-AppxPackage -Name '*KeePassPasskeyProvider*'
 
-# Navigate to InstallLocation/PasskeyPluginProxy
+# Navigate to InstallLocation/KeePassPasskeyProvider
 # Register COM server
-PasskeyPluginProxy.exe /register
+KeePassPasskeyProvider.exe /register
 
 # Install plugin DLL alongside KeePass.exe or in %APPDATA%\KeePass\Plugins\
 ```
@@ -127,17 +127,17 @@ Then enable in Windows Settings → Accounts → Passkeys → Advanced Options.
 
 | File | Purpose |
 |------|---------|
-| `src/PasskeyPluginProxy/Plugin/PluginAuthenticator.cs` | `IPluginAuthenticator` implementation — entry point for all WebAuthn operations |
-| `src/PasskeyPluginProxy/Plugin/CredentialCache.cs` | In-memory credential cache for the COM server lifetime |
-| `src/PasskeyPluginProxy/Plugin/SignatureVerifier.cs` | Verifies request signatures from Windows |
-| `src/PasskeyPluginProxy/Ipc/PipeClient.cs` | Named pipe client — sends JSON requests to KeePass plugin |
-| `src/PasskeyPluginProxy/Program.cs` | COM server entry point, handles `-PluginActivated` flag |
-| `src/PasskeyWinNative/PasskeyWinNativeExt.cs` | KeePass plugin entry point |
-| `src/PasskeyWinNative/IPC/PipeServer.cs` | Named pipe server — listens and dispatches requests |
-| `src/PasskeyWinNative/IPC/RequestHandler.cs` | Handles `make_credential` / `get_assertion` logic |
-| `src/PasskeyWinNative/IPC/IpcProtocol.cs` | JSON message schema (request/response types) |
-| `src/PasskeyWinNative/Storage/PasskeyEntryStorage.cs` | KeePassXC-compatible `KPEX_PASSKEY_*` field storage |
-| `src/PasskeyWinNative/Passkey/EcKeyHelper.cs` | EC P-256 key generation and ECDSA signing |
-| `src/PasskeyWinNative/Passkey/AuthenticatorData.cs` | WebAuthn authenticatorData construction |
-| `src/PasskeyWinNative/Passkey/CborWriter.cs` | Minimal CBOR encoder for attestation objects |
-| `src/NativeComServer.Package/Package.appxmanifest` | MSIX manifest — declares COM server and passkey provider |
+| `src/KeePassPasskeyProvider/Plugin/PluginAuthenticator.cs` | `IPluginAuthenticator` implementation — entry point for all WebAuthn operations |
+| `src/KeePassPasskeyProvider/Plugin/CredentialCache.cs` | In-memory credential cache for the COM server lifetime |
+| `src/KeePassPasskeyProvider/Plugin/SignatureVerifier.cs` | Verifies request signatures from Windows |
+| `src/KeePassPasskeyProvider/Ipc/PipeClient.cs` | Named pipe client — sends JSON requests to KeePass plugin |
+| `src/KeePassPasskeyProvider/Program.cs` | COM server entry point, handles `-PluginActivated` flag |
+| `src/KeePassPasskeyPlugin/KeePassPasskeyPluginExt.cs` | KeePass plugin entry point |
+| `src/KeePassPasskeyPlugin/IPC/PipeServer.cs` | Named pipe server — listens and dispatches requests |
+| `src/KeePassPasskeyPlugin/IPC/RequestHandler.cs` | Handles `make_credential` / `get_assertion` logic |
+| `src/KeePassPasskeyPlugin/IPC/IpcProtocol.cs` | JSON message schema (request/response types) |
+| `src/KeePassPasskeyPlugin/Storage/PasskeyEntryStorage.cs` | KeePassXC-compatible `KPEX_PASSKEY_*` field storage |
+| `src/KeePassPasskeyPlugin/Passkey/EcKeyHelper.cs` | EC P-256 key generation and ECDSA signing |
+| `src/KeePassPasskeyPlugin/Passkey/AuthenticatorData.cs` | WebAuthn authenticatorData construction |
+| `src/KeePassPasskeyPlugin/Passkey/CborWriter.cs` | Minimal CBOR encoder for attestation objects |
+| `src/KeePassPasskeyProvider.Package/Package.appxmanifest` | MSIX manifest — declares COM server and passkey provider |

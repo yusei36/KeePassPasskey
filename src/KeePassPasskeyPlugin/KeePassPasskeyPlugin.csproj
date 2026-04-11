@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>KeePassPasskeyPlugin</RootNamespace>
+    <AssemblyName>KeePassPasskeyPlugin</AssemblyName>
+    <UseWindowsForms>true</UseWindowsForms>
+    <OutputPath>..\..\build\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <Deterministic>true</Deterministic>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Title>KeePassPasskeyPlugin</Title>
+    <Description>KeePass plugin that provides native Windows 11 passkey (FIDO2/WebAuthn) support via the platform authenticator API.</Description>
+    <Company>Uwe Kögel</Company>
+    <Product>KeePass Plugin</Product>
+    <Copyright>Copyright © 2026 Uwe Kögel</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- KeePass.exe must be placed in build\KeePass\ (not shipped) -->
+    <Reference Include="KeePass">
+      <HintPath>..\..\build\KeePass\KeePass.exe</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <Target Name="CopyToKeePassPlugins" AfterTargets="Build">
+    <MakeDir Directories="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
+    <ItemGroup>
+      <PluginOutputFiles Include="$(OutputPath)*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PluginOutputFiles)" DestinationFolder="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
+  </Target>
+
+</Project>

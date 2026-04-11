@@ -1,0 +1,102 @@
+﻿using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using Microsoft.Win32;
+using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Util;
+
+namespace KeePassPasskeyProvider.Plugin;
+
+/// <summary>
+/// Verifies the platform-supplied operation signing signature.
+/// Mirrors SignatureVerifier.cpp — BCrypt key blob import, SHA-256 hash,
+/// RSA/ECDSA verify using managed CNG wrappers (no P/Invoke to NCrypt needed).
+/// </summary>
+internal static unsafe class SignatureVerifier
+{
+    // BCrypt key blob magic values (from bcrypt.h)
+    private const uint BCRYPT_RSAPUBLIC_MAGIC = 0x31415352; // "RSA1"
+
+    /// <summary>
+    /// Loads the signing key from the registry and verifies the signature.
+    /// Returns S_OK if no key is stored (first run, nothing to verify).
+    /// </summary>
+    public static int VerifyIfKeyAvailable(
+        byte* pbData, uint cbData,
+        byte* pbSignature, uint cbSignature)
+    {
+        byte[]? keyBlob = LoadSigningPublicKey();
+        if (keyBlob == null)
+        {
+            Log.Write("SignatureVerifier: no key stored, skipping verification");
+            return PluginConstants.S_OK;
+        }
+
+        try
+        {
+            return Verify(
+                new ReadOnlySpan<byte>(pbData, (int)cbData),
+                keyBlob,
+                new ReadOnlySpan<byte>(pbSignature, (int)cbSignature));
+        }
+        catch (Exception ex)
+        {
+            Log.Write($"SignatureVerifier: exception {ex.GetType().Name}: {ex.Message}");
+            return Marshal.GetHRForException(ex);
+        }
+    }
+
+    private static int Verify(
+        ReadOnlySpan<byte> data,
+        byte[] keyBlob,
+        ReadOnlySpan<byte> signature)
+    {
+        // Detect RSA vs EC from the BCrypt key blob magic (first 4 bytes of BCRYPT_KEY_BLOB)
+        bool isRsa = keyBlob.Length >= 4 &&
+                     BitConverter.ToUInt32(keyBlob, 0) == BCRYPT_RSAPUBLIC_MAGIC;
+
+        // Import the key via CNG (managed wrappers)
+        CngKey cngKey = CngKey.Import(keyBlob, CngKeyBlobFormat.GenericPublicBlob);
+
+        // Hash the data with SHA-256
+        byte[] hash = SHA256.HashData(data);
+
+        if (isRsa)
+        {
+            using var rsa = new RSACng(cngKey);
+            bool valid = rsa.VerifyHash(hash, signature.ToArray(),
+                HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            Log.Write($"SignatureVerifier: RSA verify={valid}");
+            return valid ? PluginConstants.S_OK : unchecked((int)0x80090006); // NTE_BAD_SIGNATURE
+        }
+        else
+        {
+            using var ecdsa = new ECDsaCng(cngKey);
+            bool valid = ecdsa.VerifyHash(hash, signature.ToArray());
+            Log.Write($"SignatureVerifier: ECDSA verify={valid}");
+            return valid ? PluginConstants.S_OK : unchecked((int)0x80090006); // NTE_BAD_SIGNATURE
+        }
+    }
+
+    internal static byte[]? LoadSigningPublicKey()
+    {
+        try
+        {
+            using RegistryKey? hkcu = Registry.CurrentUser;
+            using RegistryKey? key = hkcu?.OpenSubKey(PluginConstants.PluginRegPath, writable: false);
+            if (key == null) return null;
+
+            object? val = key.GetValue(PluginConstants.RegKeySigningKey);
+            if (val is byte[] blob && blob.Length > 0)
+            {
+                Log.Write($"SignatureVerifier: loaded key blob {blob.Length} bytes");
+                return blob;
+            }
+            return null;
+        }
+        catch (Exception ex)
+        {
+            Log.Write($"SignatureVerifier: LoadSigningPublicKey failed: {ex.Message}");
+            return null;
+        }
+    }
+}

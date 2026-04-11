@@ -14,6 +14,6 @@ build/Debug/
 packages/
 
 # MSIX packaging output
-src/NativeComServer.Package/AppPackages/
-src/NativeComServer.Package/bin/
-src/NativeComServer.Package/obj/
+src/KeePassPasskeyProvider.Package/AppPackages/
+src/KeePassPasskeyProvider.Package/bin/
+src/KeePassPasskeyProvider.Package/obj/

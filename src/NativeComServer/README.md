@@ -1,7 +1,7 @@
 # NativeComServer (C++ — not part of the current build)
 
 This directory contains the original C++ implementation of the COM server / passkey provider.
-It has been superseded by the C# project at `src/PasskeyPluginProxy/` and is no longer included in the solution build.
+It has been superseded by the C# project at `src/KeePassPasskeyProvider/` and is no longer included in the solution build.
 
 ## Prerequisites (if building manually)
 
