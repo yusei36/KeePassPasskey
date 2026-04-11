@@ -127,10 +127,10 @@ Then enable in Windows Settings → Accounts → Passkeys → Advanced Options.
 
 | File | Purpose |
 |------|---------|
-| `src/PasskeyPluginProxy/ComServer/PluginAuthenticator.cs` | `IPluginAuthenticator` implementation — entry point for all WebAuthn operations |
-| `src/PasskeyPluginProxy/Ipc/PipeClient.cs` | Named pipe client — sends JSON requests to KeePass plugin |
+| `src/PasskeyPluginProxy/Plugin/PluginAuthenticator.cs` | `IPluginAuthenticator` implementation — entry point for all WebAuthn operations |
 | `src/PasskeyPluginProxy/Plugin/CredentialCache.cs` | In-memory credential cache for the COM server lifetime |
 | `src/PasskeyPluginProxy/Plugin/SignatureVerifier.cs` | Verifies request signatures from Windows |
+| `src/PasskeyPluginProxy/Ipc/PipeClient.cs` | Named pipe client — sends JSON requests to KeePass plugin |
 | `src/PasskeyPluginProxy/Program.cs` | COM server entry point, handles `-PluginActivated` flag |
 | `src/PasskeyWinNative/PasskeyWinNativeExt.cs` | KeePass plugin entry point |
 | `src/PasskeyWinNative/IPC/PipeServer.cs` | Named pipe server — listens and dispatches requests |
