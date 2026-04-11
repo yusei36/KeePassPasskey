@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using PasskeyProviderManaged.ComServer;
 using PasskeyProviderManaged.Interop;
 using PasskeyProviderManaged.Plugin;
 using PasskeyProviderManaged.Util;
@@ -15,7 +14,7 @@ internal static class Program
 {
     private const int SyncIntervalMs = 30_000;
 
-    [STAThread] // replaced with MTAThread below via explicit CoInitializeEx
+    [MTAThread] // .NET initializes COM as MTA before Main runs; explicit CoInitializeEx calls return S_FALSE (already initialized)
     static int Main(string[] args)
     {
         bool isPluginActivated = args.Any(a =>

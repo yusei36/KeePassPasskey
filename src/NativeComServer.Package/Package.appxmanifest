@@ -5,7 +5,8 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
-  IgnorableNamespaces="uap rescap desktop com">
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  IgnorableNamespaces="uap rescap desktop com uap3">
 
   <Identity
     Name="KeePassPasskeyProvider"
@@ -48,6 +49,14 @@
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
+        <!-- App execution alias so management commands can be run from any terminal
+             without navigating to the protected WindowsApps directory.
+             Usage: PasskeyProviderManaged.exe /register | /unregister | /status -->
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="NativeComServerManaged\PasskeyProviderManaged.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap3:AppExecutionAlias>
+            <desktop:ExecutionAlias Alias="PasskeyProviderManaged.exe" />
+          </uap3:AppExecutionAlias>
+        </uap3:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -1,9 +1,9 @@
+using PasskeyProviderManaged.Plugin;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
-using PasskeyProviderManaged.Interop;
 
-namespace PasskeyProviderManaged.ComServer;
+namespace PasskeyProviderManaged.Interop;
 
 // ---------------------------------------------------------------------------
 // IPluginAuthenticator COM interface (IID: d26bcf6f-b54c-43ff-9f06-d5bf148625f7)
@@ -15,7 +15,7 @@ namespace PasskeyProviderManaged.ComServer;
 [ComVisible(true)]
 [Guid("d26bcf6f-b54c-43ff-9f06-d5bf148625f7")]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-internal interface IPluginAuthenticator
+public interface IPluginAuthenticator
 {
     [PreserveSig]
     int MakeCredential(nint pRequest, nint pResponse);
@@ -37,7 +37,7 @@ internal interface IPluginAuthenticator
 [ComVisible(true)]
 [Guid("00000001-0000-0000-C000-000000000046")]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-internal interface IClassFactory
+public interface IClassFactory
 {
     [PreserveSig]
     int CreateInstance(nint pUnkOuter, in Guid riid, out nint ppvObject);

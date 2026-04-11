@@ -2,10 +2,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using PasskeyProviderManaged.Interop;
 using PasskeyProviderManaged.Ipc;
-using PasskeyProviderManaged.Plugin;
 using PasskeyProviderManaged.Util;
 
-namespace PasskeyProviderManaged.ComServer;
+namespace PasskeyProviderManaged.Plugin;
 
 /// <summary>
 /// Managed implementation of IPluginAuthenticator.
@@ -13,7 +12,7 @@ namespace PasskeyProviderManaged.ComServer;
 /// </summary>
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
-internal sealed class PluginAuthenticator : IPluginAuthenticator
+public sealed class PluginAuthenticator : IPluginAuthenticator
 {
     private volatile bool _cancelled;
 
@@ -381,7 +380,7 @@ internal sealed class PluginAuthenticator : IPluginAuthenticator
 /// </summary>
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
-internal sealed class ClassFactory : IClassFactory
+public sealed class ClassFactory : IClassFactory
 {
     public int CreateInstance(nint pUnkOuter, in Guid riid, out nint ppvObject)
     {
