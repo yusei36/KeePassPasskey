@@ -35,9 +35,15 @@
     <Content Include="Assets\Square44x44Logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Native C++ COM server — kept as fallback; swap Executable in Package.appxmanifest to use it -->
     <ProjectReference Include="..\NativeComServer\NativeComServer.vcxproj">
       <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
       <Project>{B1C2D3E4-F5A6-7890-BCDE-F01234567890}</Project>
+    </ProjectReference>
+    <!-- Managed C# COM server (active) — publish output staged into the package -->
+    <ProjectReference Include="..\NativeComServerManaged\NativeComServerManaged.csproj">
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <Project>{D4E5F6A7-B8C9-0123-DEF0-123456789ABC}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">

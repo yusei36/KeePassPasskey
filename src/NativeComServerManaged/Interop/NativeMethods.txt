@@ -1,0 +1,14 @@
+// CsWin32 source-generator input file.
+// These are standard Win32 APIs covered by the shipped Win32 metadata.
+// webauthnplugin.h and pluginauthenticator.h types are declared manually
+// in WebAuthnPluginNative.cs because they are not in the shipped winmd.
+
+CoInitializeEx
+CoUninitialize
+CoRegisterClassObject
+CoRevokeClassObject
+AttachConsole
+GetMessage
+TranslateMessage
+DispatchMessage
+PostQuitMessage
