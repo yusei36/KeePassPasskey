@@ -14,7 +14,7 @@ internal static class Program
 {
     private const int SyncIntervalMs = 30_000;
 
-    [MTAThread] // .NET initializes COM as MTA before Main runs; explicit CoInitializeEx calls return S_FALSE (already initialized)
+    [MTAThread]
     static int Main(string[] args)
     {
         bool isPluginActivated = args.Any(a =>
@@ -29,76 +29,50 @@ internal static class Program
         // Management UI path — attach to parent console so output is visible
         Win32Native.AttachConsole(Win32Native.ATTACH_PARENT_PROCESS);
 
-        int hr = Win32Native.CoInitializeEx(0, Win32Native.COINIT_MULTITHREADED);
-        if (hr < 0)
-        {
-            Console.WriteLine($"CoInitializeEx failed: 0x{hr:X8}");
-            return 1;
-        }
-
-        try
-        {
-            return RunManagementCommand(args);
-        }
-        finally
-        {
-            Win32Native.CoUninitialize();
-        }
+        return RunManagementCommand(args);
     }
 
     // -----------------------------------------------------------------
-    // COM server mode (-PluginActivated)
+    // COM server mode (-PluginActivated) -- must initialized as MTA by [MTAThread]
     // -----------------------------------------------------------------
 
     private static int RunAsPluginServer()
     {
-        int hr = Win32Native.CoInitializeEx(0, Win32Native.COINIT_MULTITHREADED);
-        Log.Write($"RunAsPluginServer: CoInitializeEx hr=0x{hr:X8}");
-        if (hr < 0) return hr;
-
+        var factory = new ClassFactory();
+        uint cookie;
         try
         {
-            var factory = new ClassFactory();
-            uint cookie;
-            try
-            {
-                cookie = ComRegistration.RegisterClassFactory(factory);
-            }
-            catch (Exception ex)
-            {
-                Log.Write($"RunAsPluginServer: RegisterClassFactory failed: {ex.Message}");
-                return Marshal.GetHRForException(ex);
-            }
-            Log.Write($"RunAsPluginServer: registered class factory cookie={cookie}");
-
-            // Initial credential sync
-            Log.Write("RunAsPluginServer: initial SyncToWindowsCache");
-            CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
-
-            // Background sync thread
-            using var cts = new CancellationTokenSource();
-            var syncTask = Task.Run(() => SyncLoop(cts.Token));
-
-            // Win32 message loop
-            Log.Write("RunAsPluginServer: entering message loop");
-            Win32Native.MSG msg;
-            while (Win32Native.GetMessage(out msg, 0, 0, 0) > 0)
-            {
-                Win32Native.TranslateMessage(in msg);
-                Win32Native.DispatchMessage(in msg);
-            }
-            Log.Write("RunAsPluginServer: message loop exited");
-
-            cts.Cancel();
-            syncTask.Wait(5000);
-
-            ComRegistration.RevokeClassFactory(cookie);
+            cookie = ComRegistration.RegisterClassFactory(factory);
         }
-        finally
+        catch (Exception ex)
         {
-            Win32Native.CoUninitialize();
+            Log.Write($"RunAsPluginServer: RegisterClassFactory failed: {ex.Message}");
+            return Marshal.GetHRForException(ex);
         }
+        Log.Write($"RunAsPluginServer: registered class factory cookie={cookie}");
 
+        // Initial credential sync
+        Log.Write("RunAsPluginServer: initial SyncToWindowsCache");
+        CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
+
+        // Background sync thread
+        using var cts = new CancellationTokenSource();
+        var syncTask = Task.Run(() => SyncLoop(cts.Token));
+
+        // Win32 message loop
+        Log.Write("RunAsPluginServer: entering message loop");
+        Win32Native.MSG msg;
+        while (Win32Native.GetMessage(out msg, 0, 0, 0) > 0)
+        {
+            Win32Native.TranslateMessage(in msg);
+            Win32Native.DispatchMessage(in msg);
+        }
+        Log.Write("RunAsPluginServer: message loop exited");
+
+        cts.Cancel();
+        syncTask.Wait(5000);
+
+        ComRegistration.RevokeClassFactory(cookie);
         Log.Write("RunAsPluginServer: exiting");
         return 0;
     }

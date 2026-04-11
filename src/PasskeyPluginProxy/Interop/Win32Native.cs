@@ -4,7 +4,7 @@ namespace PasskeyPluginProxy.Interop;
 
 /// <summary>
 /// Hand-rolled P/Invoke for Win32 APIs used by the COM server host.
-/// CsWin32-generated wrappers (CoInitializeEx, CoRegisterClassObject, etc.)
+/// CsWin32-generated wrappers (CoRegisterClassObject, etc.)
 /// are available in the generated Windows namespace — these are supplementary.
 /// </summary>
 internal static class Win32Native
@@ -14,13 +14,6 @@ internal static class Win32Native
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern int AttachConsole(uint dwProcessId);
     internal const uint ATTACH_PARENT_PROCESS = unchecked((uint)-1);
-
-    [DllImport("ole32.dll")]
-    internal static extern int CoInitializeEx(nint reserved, uint dwCoInit);
-    internal const uint COINIT_MULTITHREADED = 0;
-
-    [DllImport("ole32.dll")]
-    internal static extern void CoUninitialize();
 
     [DllImport("ole32.dll")]
     internal static extern int CoRegisterClassObject(
