@@ -38,13 +38,9 @@
         Square44x44Logo="Assets\Square44x44Logo.png" />
 
       <Extensions>
-        <!-- COM server registration for IPluginAuthenticator.
-             To switch between managed and native EXE, change the Executable attribute below.
-             Managed EXE (active):  NativeComServerManaged\PasskeyProviderManaged.exe
-             Native C++ EXE (fallback): NativeComServer\PasskeyProvider.exe -->
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="NativeComServerManaged\PasskeyProviderManaged.exe" Arguments="-PluginActivated" DisplayName="KeePass Passkey Provider">
+            <com:ExeServer Executable="PasskeyPluginProxy\PasskeyProviderManaged.exe" Arguments="-PluginActivated" DisplayName="KeePass Passkey Provider">
               <com:Class Id="fdb141b2-5d84-443e-8a35-4698c205a502" DisplayName="KeePass Passkey Provider" />
             </com:ExeServer>
           </com:ComServer>
@@ -52,7 +48,7 @@
         <!-- App execution alias so management commands can be run from any terminal
              without navigating to the protected WindowsApps directory.
              Usage: PasskeyProviderManaged.exe /register | /unregister | /status -->
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="NativeComServerManaged\PasskeyProviderManaged.exe" EntryPoint="Windows.FullTrustApplication">
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="PasskeyPluginProxy\PasskeyProviderManaged.exe" EntryPoint="Windows.FullTrustApplication">
           <uap3:AppExecutionAlias>
             <desktop:ExecutionAlias Alias="PasskeyProviderManaged.exe" />
           </uap3:AppExecutionAlias>

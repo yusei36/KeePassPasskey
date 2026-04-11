@@ -159,8 +159,8 @@ if ($pkg) {
     Write-Host "  InstallLocation  : $($pkg.InstallLocation)"
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Yellow
-    Write-Host "  cd `"$($pkg.InstallLocation)\NativeComServer`""
-    Write-Host "  .\PasskeyProvider.exe /register"
+    Write-Host "  cd `"$($pkg.InstallLocation)\PasskeyPluginProxy`""
+    Write-Host "  .\PasskeyProviderManaged.exe /register"
     Write-Host "  Copy PasskeyWinNative.dll to KeePass Plugins folder"
     Write-Host "  Enable in: Settings → Accounts → Passkeys → Advanced Options"
 } else {
