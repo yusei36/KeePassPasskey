@@ -18,9 +18,8 @@
     <ProjectName>PasskeyProvider</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <!-- PlatformToolset defaults to v143 (VS 2022) but can be overridden:
-       VS 2022 = v143, VS 2026 (if it uses v144) = v144
-       Override at build time: msbuild /p:PlatformToolset=v144 -->
+  <!-- PlatformToolset defaults to v145 (VS 2026). Override at build time, e.g.:
+       msbuild /p:PlatformToolset=v143   (VS 2022) -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>

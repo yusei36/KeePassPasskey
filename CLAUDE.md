@@ -24,7 +24,6 @@ Browser → Windows (webauthn.dll) → PasskeyPluginProxy.exe (COM, -PluginActiv
 ## Build Commands
 
 ### Prerequisites
-- Visual Studio 2022+ (toolset `v143`; use `v145` for VS 2026)
 - Windows SDK 10.0.26100.7175+ (required for `webauthnplugin.h`)
 - .NET 10 SDK (for PasskeyPluginProxy)
 - .NET Framework 4.8 SDK (for PasskeyWinNative)
