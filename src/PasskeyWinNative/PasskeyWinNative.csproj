@@ -1,61 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net48</TargetFramework>
     <RootNamespace>PasskeyWinNative</RootNamespace>
     <AssemblyName>PasskeyWinNative</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <UseWindowsForms>true</UseWindowsForms>
+    <OutputPath>..\..\build\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Deterministic>true</Deterministic>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Title>PasskeyWinNative</Title>
+    <Description>KeePass plugin that provides native Windows 11 passkey (FIDO2/WebAuthn) support via the platform authenticator API.</Description>
+    <Company>Uwe Kögel</Company>
+    <Product>KeePass Plugin</Product>
+    <Copyright>Copyright © 2026 Uwe Kögel</Copyright>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\build\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\build\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <!-- KeePass.exe must be placed in the build\ directory (not shipped) -->
+    <!-- KeePass.exe must be placed in build\KeePass\ (not shipped) -->
     <Reference Include="KeePass">
-      <HintPath>..\..\build\KeePass.exe</HintPath>
+      <HintPath>..\..\build\KeePass\KeePass.exe</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="IPC\IpcProtocol.cs" />
-    <Compile Include="IPC\PipeServer.cs" />
-    <Compile Include="IPC\RequestHandler.cs" />
-    <Compile Include="Passkey\AuthenticatorData.cs" />
-    <Compile Include="Passkey\CborWriter.cs" />
-    <Compile Include="Passkey\EcKeyHelper.cs" />
-    <Compile Include="Passkey\PasskeyCredential.cs" />
-    <Compile Include="PasskeyWinNativeExt.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Storage\PasskeyEntryStorage.cs" />
-    <Compile Include="Utils\Base64Url.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <Target Name="CopyToKeePassPlugins" AfterTargets="Build">
+    <MakeDir Directories="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
+    <ItemGroup>
+      <PluginOutputFiles Include="$(OutputPath)*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PluginOutputFiles)" DestinationFolder="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
+  </Target>
+
 </Project>

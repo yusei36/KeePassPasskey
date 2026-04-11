@@ -8,7 +8,7 @@ namespace PasskeyWinNative
     /// <summary>
     /// KeePass plugin entry point.
     /// Starts the named pipe server on Initialize() so the native COM server
-    /// (PasskeyProvider.exe) can connect to perform passkey operations.
+    /// (PasskeyPluginProxy.exe) can connect to perform passkey operations.
     /// </summary>
     public sealed class PasskeyWinNativeExt : Plugin
     {

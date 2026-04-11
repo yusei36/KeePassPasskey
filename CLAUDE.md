@@ -28,7 +28,7 @@ Browser → Windows (webauthn.dll) → PasskeyPluginProxy.exe (COM, -PluginActiv
 - Windows SDK 10.0.26100.7175+ (required for `webauthnplugin.h`)
 - .NET 10 SDK (for PasskeyPluginProxy)
 - .NET Framework 4.8 SDK (for PasskeyWinNative)
-- `KeePass.exe` placed in `build/` (not shipped): `copy "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\`
+- `KeePass.exe` placed in `build/KeePass/` (not shipped): `copy "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\`
 
 ### Build C# KeePass plugin
 ```

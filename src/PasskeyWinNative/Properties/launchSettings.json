@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KeePass": {
+      "commandName": "Executable",
+      "executablePath": "..\\..\\build\\KeePass\\KeePass.exe"
+    }
+  }
+}
