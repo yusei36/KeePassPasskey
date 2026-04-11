@@ -1,10 +1,10 @@
 using System.Runtime.InteropServices;
 using System.Text;
-using PasskeyProviderManaged.Interop;
-using PasskeyProviderManaged.Ipc;
-using PasskeyProviderManaged.Util;
+using PasskeyPluginProxy.Interop;
+using PasskeyPluginProxy.Ipc;
+using PasskeyPluginProxy.Util;
 
-namespace PasskeyProviderManaged.Plugin;
+namespace PasskeyPluginProxy.Plugin;
 
 /// <summary>
 /// Managed implementation of IPluginAuthenticator.

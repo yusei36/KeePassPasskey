@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PasskeyProviderManaged.Interop;
+namespace PasskeyPluginProxy.Interop;
 
 /// <summary>
 /// Hand-rolled P/Invoke for Win32 APIs used by the COM server host.

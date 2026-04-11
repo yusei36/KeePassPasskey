@@ -1,9 +1,9 @@
 using System.IO.Pipes;
 using System.Text;
 using System.Text.Json;
-using PasskeyProviderManaged.Util;
+using PasskeyPluginProxy.Util;
 
-namespace PasskeyProviderManaged.Ipc;
+namespace PasskeyPluginProxy.Ipc;
 
 /// <summary>
 /// Synchronous named-pipe client for the KeePass passkey plugin IPC protocol.

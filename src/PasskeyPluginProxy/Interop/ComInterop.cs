@@ -1,9 +1,9 @@
-using PasskeyProviderManaged.Plugin;
+using PasskeyPluginProxy.Plugin;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
-namespace PasskeyProviderManaged.Interop;
+namespace PasskeyPluginProxy.Interop;
 
 // ---------------------------------------------------------------------------
 // IPluginAuthenticator COM interface (IID: d26bcf6f-b54c-43ff-9f06-d5bf148625f7)

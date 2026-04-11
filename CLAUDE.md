@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 PasskeyWin11 integrates KeePass as a native Windows 11 passkey provider. It has two components bridged by a named pipe:
 
 ```
-Browser → Windows (webauthn.dll) → PasskeyProviderManaged.exe (COM, -PluginActivated)
+Browser → Windows (webauthn.dll) → PasskeyPluginProxy.exe (COM, -PluginActivated)
                                          ↓ Named pipe JSON (\\.\pipe\keepass-passkey-provider)
                                    PasskeyWinNative.dll (loaded by KeePass.exe)
                                          ↓ KeePass Plugin API
@@ -40,7 +40,7 @@ Output: `build\Release\PasskeyWinNative.dll`
 ```
 msbuild src\PasskeyPluginProxy\PasskeyPluginProxy.csproj /p:Configuration=Release /p:Platform=x64
 ```
-Output: `build\Release\ManagedServer\PasskeyProviderManaged.exe`
+Output: `build\Release\PasskeyPluginProxy\PasskeyPluginProxy.exe`
 
 ### Build MSIX package
 ```
@@ -117,7 +117,7 @@ Get-AppxPackage -Name '*KeePassPasskeyProvider*'
 
 # Navigate to InstallLocation/PasskeyPluginProxy
 # Register COM server
-PasskeyProviderManaged.exe /register
+PasskeyPluginProxy.exe /register
 
 # Install plugin DLL alongside KeePass.exe or in %APPDATA%\KeePass\Plugins\
 ```

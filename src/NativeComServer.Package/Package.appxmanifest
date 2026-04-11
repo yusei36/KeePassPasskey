@@ -40,17 +40,17 @@
       <Extensions>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="PasskeyPluginProxy\PasskeyProviderManaged.exe" Arguments="-PluginActivated" DisplayName="KeePass Passkey Provider">
+            <com:ExeServer Executable="PasskeyPluginProxy\PasskeyPluginProxy.exe" Arguments="-PluginActivated" DisplayName="KeePass Passkey Provider">
               <com:Class Id="fdb141b2-5d84-443e-8a35-4698c205a502" DisplayName="KeePass Passkey Provider" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>
         <!-- App execution alias so management commands can be run from any terminal
              without navigating to the protected WindowsApps directory.
-             Usage: PasskeyProviderManaged.exe /register | /unregister | /status -->
-        <uap3:Extension Category="windows.appExecutionAlias" Executable="PasskeyPluginProxy\PasskeyProviderManaged.exe" EntryPoint="Windows.FullTrustApplication">
+             Usage: PasskeyPluginProxy.exe /register | /unregister | /status -->
+        <uap3:Extension Category="windows.appExecutionAlias" Executable="PasskeyPluginProxy\PasskeyPluginProxy.exe" EntryPoint="Windows.FullTrustApplication">
           <uap3:AppExecutionAlias>
-            <desktop:ExecutionAlias Alias="PasskeyProviderManaged.exe" />
+            <desktop:ExecutionAlias Alias="PasskeyPluginProxy.exe" />
           </uap3:AppExecutionAlias>
         </uap3:Extension>
       </Extensions>

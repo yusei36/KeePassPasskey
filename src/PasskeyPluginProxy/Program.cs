@@ -1,9 +1,9 @@
 using System.Runtime.InteropServices;
-using PasskeyProviderManaged.Interop;
-using PasskeyProviderManaged.Plugin;
-using PasskeyProviderManaged.Util;
+using PasskeyPluginProxy.Interop;
+using PasskeyPluginProxy.Plugin;
+using PasskeyPluginProxy.Util;
 
-namespace PasskeyProviderManaged;
+namespace PasskeyPluginProxy;
 
 /// <summary>
 /// Entry point for the managed passkey COM server.
@@ -173,7 +173,7 @@ internal static class Program
 
             default:
                 Console.WriteLine("KeePass Passkey Provider (managed)");
-                Console.WriteLine("Usage: PasskeyProviderManaged.exe /register | /unregister | /status");
+                Console.WriteLine("Usage: PasskeyPluginProxy.exe /register | /unregister | /status");
                 return 0;
         }
     }

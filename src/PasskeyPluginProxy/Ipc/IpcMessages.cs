@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PasskeyProviderManaged.Ipc;
+namespace PasskeyPluginProxy.Ipc;
 
 /// <summary>
 /// JSON message schema for the KeePass passkey IPC protocol.

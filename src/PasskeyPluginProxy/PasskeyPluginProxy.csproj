@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AssemblyName>PasskeyProviderManaged</AssemblyName>
-    <RootNamespace>PasskeyProviderManaged</RootNamespace>
+    <AssemblyName>PasskeyPluginProxy</AssemblyName>
+    <RootNamespace>PasskeyPluginProxy</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -15,8 +15,7 @@
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <!-- Output alongside the C++ build -->
-    <OutputPath>..\..\build\$(Configuration)\ManagedServer\</OutputPath>
+    <OutputPath>..\..\build\$(Configuration)\PasskeyPluginProxy\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

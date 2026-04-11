@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PasskeyProviderManaged.Interop;
+namespace PasskeyPluginProxy.Interop;
 
 // ---------------------------------------------------------------------------
 // Struct layouts from webauthn.h (Windows SDK 10.0.26100.0).

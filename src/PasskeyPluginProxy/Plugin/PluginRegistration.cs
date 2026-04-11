@@ -1,9 +1,9 @@
 using System.Formats.Cbor;
 using Microsoft.Win32;
-using PasskeyProviderManaged.Interop;
-using PasskeyProviderManaged.Util;
+using PasskeyPluginProxy.Interop;
+using PasskeyPluginProxy.Util;
 
-namespace PasskeyProviderManaged.Plugin;
+namespace PasskeyPluginProxy.Plugin;
 
 /// <summary>
 /// Manages registration/unregistration of the plugin with the Windows passkey platform.

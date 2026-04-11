@@ -1,4 +1,4 @@
-namespace PasskeyProviderManaged.Util;
+namespace PasskeyPluginProxy.Util;
 
 /// <summary>
 /// Appends timestamped lines to %TEMP%\PasskeyProvider.log,

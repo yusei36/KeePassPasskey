@@ -1,10 +1,10 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32;
-using PasskeyProviderManaged.Interop;
-using PasskeyProviderManaged.Util;
+using PasskeyPluginProxy.Interop;
+using PasskeyPluginProxy.Util;
 
-namespace PasskeyProviderManaged.Plugin;
+namespace PasskeyPluginProxy.Plugin;
 
 /// <summary>
 /// Verifies the platform-supplied operation signing signature.

@@ -1,4 +1,4 @@
-namespace PasskeyProviderManaged.Util;
+namespace PasskeyPluginProxy.Util;
 
 /// <summary>
 /// Base64url encode/decode helpers (RFC 4648 §5, no padding).

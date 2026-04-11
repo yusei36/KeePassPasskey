@@ -1,9 +1,9 @@
 using System.Runtime.InteropServices;
-using PasskeyProviderManaged.Interop;
-using PasskeyProviderManaged.Ipc;
-using PasskeyProviderManaged.Util;
+using PasskeyPluginProxy.Interop;
+using PasskeyPluginProxy.Ipc;
+using PasskeyPluginProxy.Util;
 
-namespace PasskeyProviderManaged.Plugin;
+namespace PasskeyPluginProxy.Plugin;
 
 /// <summary>
 /// Synchronises KeePass credentials with the Windows platform autofill cache.

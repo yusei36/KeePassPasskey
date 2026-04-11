@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace PasskeyProviderManaged.Interop;
+namespace PasskeyPluginProxy.Interop;
 
 // ---------------------------------------------------------------------------
 // Struct layouts from webauthnplugin.h + pluginauthenticator.h
