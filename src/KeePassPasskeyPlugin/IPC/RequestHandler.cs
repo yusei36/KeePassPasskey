@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace KeePassPasskeyPlugin.IPC
+namespace KeePassPasskeyPlugin.Ipc
 {
     internal sealed class RequestHandler
     {

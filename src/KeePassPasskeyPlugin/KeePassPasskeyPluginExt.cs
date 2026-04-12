@@ -1,5 +1,5 @@
 ﻿using KeePass.Plugins;
-using KeePassPasskeyPlugin.IPC;
+using KeePassPasskeyPlugin.Ipc;
 using KeePassPasskeyPlugin.Storage;
 using System;
 
