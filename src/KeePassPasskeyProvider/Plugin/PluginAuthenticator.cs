@@ -58,10 +58,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     /// <summary>
     /// Encodes the attestation response (for make_credential).
     /// Isolates the fixed-pinning block and WebAuthnCredentialAttestation struct construction.
+    /// Converts base64 string to byte array internally.
     /// </summary>
     private static unsafe int EncodeAttestation(
-        byte[] authDataBytes, out uint cbEncoded, out byte* pbEncoded)
+        string? authDataB64, out uint cbEncoded, out byte* pbEncoded)
     {
+        // Convert base64 string to byte array
+        byte[] authDataBytes = Convert.FromBase64String(authDataB64 ?? string.Empty);
+
         fixed (char* fmtPtr = "none")
         fixed (byte* authPtr = authDataBytes)
         {
@@ -87,13 +91,24 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     /// <summary>
     /// Encodes the assertion response (for get_assertion).
     /// Isolates the 7-way fixed-pinning block and WebAuthnCtapCborGetAssertionResponse struct construction.
+    /// Converts base64/base64url strings to byte arrays internally.
     /// </summary>
     private static unsafe int EncodeAssertion(
-        byte[] authDataBytes, byte[] signatureBytes,
-        byte[] credIdBytes, byte[] userHandleBytes,
+        string? authDataB64, string? signatureB64,
+        string? credIdB64, string? userHandleB64,
         string? userName, string? userDisplayName,
         out uint cbEncoded, out byte* pbEncoded)
     {
+        // Convert base64/base64url strings to byte arrays
+        byte[] authDataBytes = Convert.FromBase64String(authDataB64 ?? string.Empty);
+        byte[] signatureBytes = Convert.FromBase64String(signatureB64 ?? string.Empty);
+        byte[] userHandleBytes = string.IsNullOrEmpty(userHandleB64)
+            ? Array.Empty<byte>()
+            : Base64Url.Decode(userHandleB64);
+        byte[] credIdBytes = string.IsNullOrEmpty(credIdB64)
+            ? Array.Empty<byte>()
+            : Base64Url.Decode(credIdB64);
+
         fixed (byte* authPtr = authDataBytes)
         fixed (byte* sigPtr = signatureBytes)
         fixed (byte* uhPtr = userHandleBytes.Length > 0 ? userHandleBytes : new byte[1])
@@ -224,27 +239,15 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     return MapErrorCode(resp.Code);
                 }
 
-                // 5. Parse response
-                string? credIdB64   = resp.CredentialId;
-                string? authDataB64 = resp.AuthenticatorData;
-                if (string.IsNullOrEmpty(credIdB64) || string.IsNullOrEmpty(authDataB64))
-                {
-                    Log.Error("missing credentialId or authenticatorData");
-                    return PluginConstants.E_FAIL;
-                }
-
-                byte[] authDataBytes = Convert.FromBase64String(authDataB64);
-                Log.Info($"authData={authDataBytes.Length}B credId={credIdB64.Length}ch");
-
-                // 6. Encode attestation response
-                int hrEnc = EncodeAttestation(authDataBytes, out uint cbEncoded, out byte* pbEncoded);
+                // 5. Encode attestation response (conversion happens inside EncodeAttestation)
+                int hrEnc = EncodeAttestation(resp.AuthenticatorData, out uint cbEncoded, out byte* pbEncoded);
                 Log.Info($"WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                 if (hrEnc < 0) return hrEnc;
 
                 pResponse->cbEncodedResponse = cbEncoded;
                 pResponse->pbEncodedResponse = pbEncoded; // ownership transferred to caller (platform frees)
 
-                // 7. Sync Windows autofill cache
+                // 6. Sync Windows autofill cache
                 CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
 
                 Log.Info("success");
@@ -301,7 +304,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     new ReadOnlySpan<byte>(pDecoded->pbClientDataHash, (int)pDecoded->cbClientDataHash).ToArray());
 
                 var allowList = ExtractCredentialIds(pDecoded->CredentialList);
-                Log.Info($"rpId={rpIdUtf8} allowCredentials={allowList.Count}");
 
                 // 4. Build JSON pipe request
                 var req = new IpcRequest
@@ -327,35 +329,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     return MapErrorCode(resp.Code);
                 }
 
-                // 6. Parse response
-                string? authDataB64   = resp.AuthenticatorData;
-                string? signatureB64  = resp.Signature;
-                string? credIdB64     = resp.CredentialId;
-                string? userHandleB64 = resp.UserHandle;
-                string? userNameStr   = resp.UserName;
-                string? userDispStr   = resp.UserDisplayName;
-
-                if (string.IsNullOrEmpty(authDataB64) || string.IsNullOrEmpty(signatureB64))
-                {
-                    Log.Error("missing authData or signature");
-                    return PluginConstants.E_FAIL;
-                }
-
-                byte[] authDataBytes  = Convert.FromBase64String(authDataB64);
-                byte[] signatureBytes = Convert.FromBase64String(signatureB64);
-                byte[] userHandleBytes = string.IsNullOrEmpty(userHandleB64)
-                    ? Array.Empty<byte>()
-                    : Base64Url.Decode(userHandleB64);
-                byte[] credIdBytes = string.IsNullOrEmpty(credIdB64)
-                    ? Array.Empty<byte>()
-                    : Base64Url.Decode(credIdB64);
-
-                Log.Info($"authData={authDataBytes.Length}B sig={signatureBytes.Length}B credId={credIdBytes.Length}B");
-
-                // 7. Encode assertion response
+                // 6. Encode assertion response
                 int hrEnc = EncodeAssertion(
-                    authDataBytes, signatureBytes, credIdBytes, userHandleBytes,
-                    userNameStr, userDispStr, out uint cbEncoded, out byte* pbEncoded);
+                    resp.AuthenticatorData, resp.Signature, resp.CredentialId, resp.UserHandle,
+                    resp.UserName, resp.UserDisplayName, out uint cbEncoded, out byte* pbEncoded);
                 Log.Info($"WebAuthNEncodeGetAssertionResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                 if (hrEnc < 0) return hrEnc;
 
