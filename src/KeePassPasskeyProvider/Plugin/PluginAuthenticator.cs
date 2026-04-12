@@ -31,13 +31,13 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         try
         {
             _cancelled = false;
-            Log.Info("MakeCredential: entry");
+            Log.Info("entry");
 
             // 1. Decode CBOR request
             WebAuthnCtapCborMakeCredentialRequest* pDecoded = null;
             int hr1 = WebAuthnApi.WebAuthNDecodeMakeCredentialRequest(
                 pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded);
-            Log.Info($"MakeCredential: WebAuthNDecodeMakeCredentialRequest hr=0x{hr1:X8}");
+            Log.Info($"WebAuthNDecodeMakeCredentialRequest hr=0x{hr1:X8}");
             if (hr1 < 0) return hr1;
 
             try
@@ -46,10 +46,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 var sigResult = SignatureVerifier.VerifyIfKeyAvailable(
                     pRequest->pbEncodedRequest, pRequest->cbEncodedRequest,
                     pRequest->pbRequestSignature, pRequest->cbRequestSignature);
-                Log.Info($"MakeCredential: SignatureVerifier hr=0x{sigResult:X8}");
+                Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
                 if (sigResult < 0) return sigResult;
 
-                if (_cancelled) { Log.Info("MakeCredential: cancelled"); return PluginConstants.NTE_USER_CANCELLED; }
+                if (_cancelled) { Log.Info("cancelled"); return PluginConstants.NTE_USER_CANCELLED; }
 
                 // 3. Build JSON request for KeePass
                 string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -89,16 +89,16 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 };
 
                 // 4. Send to KeePass plugin
-                Log.Info($"MakeCredential: sending pipe request rpId={rpIdUtf8}");
+                Log.Info($"sending pipe request rpId={rpIdUtf8}");
                 if (!PipeClient.SendRequest(req, out var resp) || resp == null)
                 {
-                    Log.Warn("MakeCredential: pipe failed");
+                    Log.Warn("pipe failed");
                     return PluginConstants.NTE_NOT_FOUND;
                 }
 
                 if (resp.Type == "error")
                 {
-                    Log.Warn($"MakeCredential: KeePass error code={resp.Code}");
+                    Log.Warn($"KeePass error code={resp.Code}");
                     return resp.Code switch
                     {
                         "db_locked"  => PluginConstants.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
@@ -113,12 +113,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 string? authDataB64 = resp.AuthenticatorData;
                 if (string.IsNullOrEmpty(credIdB64) || string.IsNullOrEmpty(authDataB64))
                 {
-                    Log.Error("MakeCredential: missing credentialId or authenticatorData");
+                    Log.Error("missing credentialId or authenticatorData");
                     return PluginConstants.E_FAIL;
                 }
 
                 byte[] authDataBytes = Convert.FromBase64String(authDataB64);
-                Log.Info($"MakeCredential: authData={authDataBytes.Length}B credId={credIdB64.Length}ch");
+                Log.Info($"authData={authDataBytes.Length}B credId={credIdB64.Length}ch");
 
                 // 6. Encode attestation response
                 // "none" format attestation — we pin the constant string and the authData bytes
@@ -138,7 +138,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     uint cbEncoded = 0;
                     byte* pbEncoded = null;
                     int hrEnc = WebAuthnApi.WebAuthNEncodeMakeCredentialResponse(&attestation, &cbEncoded, &pbEncoded);
-                    Log.Info($"MakeCredential: WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
+                    Log.Info($"WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                     if (hrEnc < 0) return hrEnc;
 
                     pResponse->cbEncodedResponse = cbEncoded;
@@ -148,7 +148,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 // 7. Sync Windows autofill cache
                 CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
 
-                Log.Info("MakeCredential: success");
+                Log.Info("success");
                 return PluginConstants.S_OK;
             }
             finally
@@ -158,7 +158,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         }
         catch (Exception ex)
         {
-            Log.Error($"MakeCredential: exception {ex.GetType().Name}: {ex.Message}");
+            Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
             return Marshal.GetHRForException(ex);
         }
     }
@@ -178,13 +178,13 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         try
         {
             _cancelled = false;
-            Log.Info("GetAssertion: entry");
+            Log.Info("entry");
 
             // 1. Decode CBOR request
             WebAuthnCtapCborGetAssertionRequest* pDecoded = null;
             int hr1 = WebAuthnApi.WebAuthNDecodeGetAssertionRequest(
                 pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded);
-            Log.Info($"GetAssertion: WebAuthNDecodeGetAssertionRequest hr=0x{hr1:X8}");
+            Log.Info($"WebAuthNDecodeGetAssertionRequest hr=0x{hr1:X8}");
             if (hr1 < 0) return hr1;
 
             try
@@ -193,10 +193,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 var sigResult = SignatureVerifier.VerifyIfKeyAvailable(
                     pRequest->pbEncodedRequest, pRequest->cbEncodedRequest,
                     pRequest->pbRequestSignature, pRequest->cbRequestSignature);
-                Log.Info($"GetAssertion: SignatureVerifier hr=0x{sigResult:X8}");
+                Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
                 if (sigResult < 0) return sigResult;
 
-                if (_cancelled) { Log.Info("GetAssertion: cancelled"); return PluginConstants.NTE_USER_CANCELLED; }
+                if (_cancelled) { Log.Info("cancelled"); return PluginConstants.NTE_USER_CANCELLED; }
 
                 // 3. Extract fields
                 string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -209,7 +209,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     var c = pDecoded->CredentialList.ppCredentials[i];
                     allowList.Add(Base64Url.Encode(new ReadOnlySpan<byte>(c->pbId, (int)c->cbId)));
                 }
-                Log.Info($"GetAssertion: rpId={rpIdUtf8} allowCredentials={allowList.Count}");
+                Log.Info($"rpId={rpIdUtf8} allowCredentials={allowList.Count}");
 
                 // 4. Build JSON pipe request
                 var req = new IpcRequest
@@ -222,16 +222,16 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 };
 
                 // 5. Send to KeePass plugin
-                Log.Info("GetAssertion: sending pipe request");
+                Log.Info("sending pipe request");
                 if (!PipeClient.SendRequest(req, out var resp) || resp == null)
                 {
-                    Log.Warn("GetAssertion: pipe failed");
+                    Log.Warn("pipe failed");
                     return PluginConstants.NTE_NOT_FOUND;
                 }
 
                 if (resp.Type == "error")
                 {
-                    Log.Warn($"GetAssertion: KeePass error code={resp.Code}");
+                    Log.Warn($"KeePass error code={resp.Code}");
                     return resp.Code switch
                     {
                         "db_locked" => PluginConstants.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
@@ -250,7 +250,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 if (string.IsNullOrEmpty(authDataB64) || string.IsNullOrEmpty(signatureB64))
                 {
-                    Log.Error("GetAssertion: missing authData or signature");
+                    Log.Error("missing authData or signature");
                     return PluginConstants.E_FAIL;
                 }
 
@@ -263,7 +263,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     ? Array.Empty<byte>()
                     : Base64Url.Decode(credIdB64);
 
-                Log.Info($"GetAssertion: authData={authDataBytes.Length}B sig={signatureBytes.Length}B credId={credIdBytes.Length}B");
+                Log.Info($"authData={authDataBytes.Length}B sig={signatureBytes.Length}B credId={credIdBytes.Length}B");
 
                 // 7. Encode assertion response — pin all buffers
                 fixed (byte* authPtr  = authDataBytes)
@@ -310,16 +310,16 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                     uint cbEncoded = 0;
                     byte* pbEncoded = null;
-                    Log.Info("GetAssertion: calling WebAuthNEncodeGetAssertionResponse");
+                    Log.Info("calling WebAuthNEncodeGetAssertionResponse");
                     int hrEnc = WebAuthnApi.WebAuthNEncodeGetAssertionResponse(&assertionResp, &cbEncoded, &pbEncoded);
-                    Log.Info($"GetAssertion: WebAuthNEncodeGetAssertionResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
+                    Log.Info($"WebAuthNEncodeGetAssertionResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                     if (hrEnc < 0) return hrEnc;
 
                     pResponse->cbEncodedResponse = cbEncoded;
                     pResponse->pbEncodedResponse = pbEncoded;
                 }
 
-                Log.Info("GetAssertion: success");
+                Log.Info("success");
                 return PluginConstants.S_OK;
             }
             finally
@@ -329,7 +329,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         }
         catch (Exception ex)
         {
-            Log.Error($"GetAssertion: exception {ex.GetType().Name}: {ex.Message}");
+            Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
             return Marshal.GetHRForException(ex);
         }
     }
@@ -355,7 +355,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         {
             var req = new IpcRequest { Type = "ping", RequestId = "ping" };
             bool ok = PipeClient.SendRequest(req, out var resp);
-            Log.Info($"GetLockStatus: pipeOk={ok} status={resp?.Status}");
+            Log.Info($"pipeOk={ok} status={resp?.Status}");
 
             if (!ok || resp == null)
                 *pLockStatus = PluginLockStatus.PluginLocked;
@@ -368,7 +368,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         }
         catch (Exception ex)
         {
-            Log.Warn($"GetLockStatus: exception {ex.Message}");
+            Log.Warn($"exception {ex.Message}");
             *pLockStatus = PluginLockStatus.PluginLocked;
             return PluginConstants.S_OK; // non-fatal
         }

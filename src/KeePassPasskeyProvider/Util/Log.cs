@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace KeePassPasskeyProvider.Util;
 
@@ -15,17 +16,17 @@ internal static class Log
     private static readonly object _lock = new();
 
     [Conditional("DEBUG")]
-    public static void Info(string message) => Append("INFO ", message);
+    public static void Info(string message, [CallerMemberName] string member = "") => Append("INFO ", member, message);
 
     [Conditional("DEBUG")]
-    public static void Warn(string message) => Append("WARN ", message);
+    public static void Warn(string message, [CallerMemberName] string member = "") => Append("WARN ", member, message);
 
     [Conditional("DEBUG")]
-    public static void Error(string message) => Append("ERROR", message);
+    public static void Error(string message, [CallerMemberName] string member = "") => Append("ERROR", member, message);
 
-    private static void Append(string level, string message)
+    private static void Append(string level, string member, string message)
     {
-        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level}] {message}";
+        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level}] {member}: {message}";
         lock (_lock)
         {
             try

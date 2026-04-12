@@ -19,34 +19,34 @@ internal static unsafe class CredentialCache
     {
         try
         {
-            SyncToWindowsCacheCore(pluginClsid);
+            SyncToCredentialCache(pluginClsid);
         }
         catch (Exception ex)
         {
-            Log.Error($"CredentialCache.SyncToWindowsCache: exception {ex.GetType().Name}: {ex.Message}");
+            Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
         }
     }
 
-    private static void SyncToWindowsCacheCore(Guid pluginClsid)
+    private static void SyncToCredentialCache(Guid pluginClsid)
     {
         // 1. Query credentials from KeePass
         var req = new IpcRequest { Type = "get_credentials", RequestId = "sync" };
         if (!PipeClient.SendRequest(req, out var resp) || resp == null || resp.Type == "error")
         {
-            Log.Warn("CredentialCache: KeePass unavailable or error, skipping sync");
+            Log.Warn("KeePass unavailable or error, skipping sync");
             return;
         }
 
         // 2. Parse credential list
         var kpCredentials = ParseKeePassCredentials(resp.Credentials);
-        Log.Info($"CredentialCache: KeePass returned {kpCredentials.Count} credentials");
+        Log.Info($"KeePass returned {kpCredentials.Count} credentials");
 
         // 3. Get Windows cache
         uint cExisting = 0;
         WebAuthnPluginCredentialDetails* pExisting = null;
         int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
             pluginClsid, &cExisting, &pExisting);
-        Log.Info($"CredentialCache: GetAllCredentials hr=0x{hrGet:X8} count={cExisting}");
+        Log.Info($"GetAllCredentials hr=0x{hrGet:X8} count={cExisting}");
 
         // Collect existing entries as managed objects for comparison
         var existingList = new List<ManagedCredentialDetails>();
@@ -85,7 +85,7 @@ internal static unsafe class CredentialCache
             ApplyAdd(pluginClsid, toAdd);
         }
 
-        Log.Info($"CredentialCache: sync done removed={toRemove.Count} added={toAdd.Count} unchanged={kpCredentials.Count - toAdd.Count}");
+        Log.Info($"sync done removed={toRemove.Count} added={toAdd.Count} unchanged={kpCredentials.Count - toAdd.Count}");
     }
 
     private static void ApplyRemove(Guid pluginClsid, List<ManagedCredentialDetails> items)
@@ -99,7 +99,7 @@ internal static unsafe class CredentialCache
             {
                 int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveCredentials(
                     pluginClsid, (uint)natives.Length, ptr);
-                Log.Info($"CredentialCache: RemoveCredentials hr=0x{hr:X8} count={natives.Length}");
+                Log.Info($"RemoveCredentials hr=0x{hr:X8} count={natives.Length}", nameof(SyncToCredentialCache));
             }
         }
         finally
@@ -118,7 +118,7 @@ internal static unsafe class CredentialCache
             {
                 int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorAddCredentials(
                     pluginClsid, (uint)natives.Length, ptr);
-                Log.Info($"CredentialCache: AddCredentials hr=0x{hr:X8} count={natives.Length}");
+                Log.Info($"AddCredentials hr=0x{hr:X8} count={natives.Length}", nameof(SyncToCredentialCache));
             }
         }
         finally

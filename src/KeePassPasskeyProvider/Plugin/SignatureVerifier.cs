@@ -27,7 +27,7 @@ internal static unsafe class SignatureVerifier
         byte[]? keyBlob = LoadSigningPublicKey();
         if (keyBlob == null)
         {
-            Log.Warn("SignatureVerifier: no key stored, skipping verification");
+            Log.Warn("no key stored, skipping verification");
             return PluginConstants.S_OK;
         }
 
@@ -40,7 +40,7 @@ internal static unsafe class SignatureVerifier
         }
         catch (Exception ex)
         {
-            Log.Error($"SignatureVerifier: exception {ex.GetType().Name}: {ex.Message}");
+            Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
             return Marshal.GetHRForException(ex);
         }
     }
@@ -65,16 +65,16 @@ internal static unsafe class SignatureVerifier
             using var rsa = new RSACng(cngKey);
             bool valid = rsa.VerifyHash(hash, signature.ToArray(),
                 HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            if (!valid) Log.Warn("SignatureVerifier: RSA signature invalid");
-            else        Log.Info("SignatureVerifier: RSA signature valid");
+            if (!valid) Log.Warn("RSA signature invalid");
+            else        Log.Info("RSA signature valid");
             return valid ? PluginConstants.S_OK : unchecked((int)0x80090006); // NTE_BAD_SIGNATURE
         }
         else
         {
             using var ecdsa = new ECDsaCng(cngKey);
             bool valid = ecdsa.VerifyHash(hash, signature.ToArray());
-            if (!valid) Log.Warn("SignatureVerifier: ECDSA signature invalid");
-            else        Log.Info("SignatureVerifier: ECDSA signature valid");
+            if (!valid) Log.Warn("ECDSA signature invalid");
+            else        Log.Info("ECDSA signature valid");
             return valid ? PluginConstants.S_OK : unchecked((int)0x80090006); // NTE_BAD_SIGNATURE
         }
     }
@@ -90,14 +90,14 @@ internal static unsafe class SignatureVerifier
             object? val = key.GetValue(PluginConstants.RegKeySigningKey);
             if (val is byte[] blob && blob.Length > 0)
             {
-                Log.Info($"SignatureVerifier: loaded key blob {blob.Length} bytes");
+                Log.Info($"loaded key blob {blob.Length} bytes");
                 return blob;
             }
             return null;
         }
         catch (Exception ex)
         {
-            Log.Error($"SignatureVerifier: LoadSigningPublicKey failed: {ex.Message}");
+            Log.Error($"LoadSigningPublicKey failed: {ex.Message}");
             return null;
         }
     }

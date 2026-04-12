@@ -79,9 +79,9 @@ internal static unsafe class PluginRegistration
     /// <summary>Registers the plugin with the Windows passkey platform.</summary>
     public static int Register()
     {
-        Log.Info("PluginRegistration.Register: entry");
+        Log.Info("entry");
         byte[] authenticatorInfo = BuildAuthenticatorInfoCbor();
-        Log.Info($"PluginRegistration.Register: CBOR blob {authenticatorInfo.Length} bytes");
+        Log.Info($"CBOR blob {authenticatorInfo.Length} bytes");
 
         Guid clsid = PluginConstants.KeePassClsid;
 
@@ -104,7 +104,7 @@ internal static unsafe class PluginRegistration
 
             WebAuthnPluginAddAuthenticatorResponse* pResponse = null;
             int hr = WebAuthnPluginApi.WebAuthNPluginAddAuthenticator(&options, &pResponse);
-            Log.Info($"PluginRegistration.Register: WebAuthNPluginAddAuthenticator hr=0x{hr:X8}");
+            Log.Info($"WebAuthNPluginAddAuthenticator hr=0x{hr:X8}");
             if (hr < 0) return hr;
 
             try
@@ -118,7 +118,7 @@ internal static unsafe class PluginRegistration
                     using RegistryKey? hkcu = Registry.CurrentUser;
                     using RegistryKey? key = hkcu?.CreateSubKey(PluginConstants.PluginRegPath, writable: true);
                     key?.SetValue(PluginConstants.RegKeySigningKey, keyBlob, RegistryValueKind.Binary);
-                    Log.Info($"PluginRegistration.Register: stored signing key {keyBlob.Length} bytes");
+                    Log.Info($"stored signing key {keyBlob.Length} bytes");
                 }
             }
             finally
@@ -127,16 +127,16 @@ internal static unsafe class PluginRegistration
             }
         }
 
-        Log.Info("PluginRegistration.Register: success");
+        Log.Info("success");
         return 0; // S_OK
     }
 
     /// <summary>Unregisters the plugin from the Windows passkey platform.</summary>
     public static int Unregister()
     {
-        Log.Info("PluginRegistration.Unregister: entry");
+        Log.Info("entry");
         int hr = WebAuthnPluginApi.WebAuthNPluginRemoveAuthenticator(PluginConstants.KeePassClsid);
-        Log.Info($"PluginRegistration.Unregister: hr=0x{hr:X8}");
+        Log.Info($"hr=0x{hr:X8}");
         return hr;
     }
 
@@ -146,7 +146,7 @@ internal static unsafe class PluginRegistration
         state = AuthenticatorState.AuthenticatorState_Disabled;
         int hr = WebAuthnPluginApi.WebAuthNPluginGetAuthenticatorState(
             PluginConstants.KeePassClsid, (AuthenticatorState*)System.Runtime.CompilerServices.Unsafe.AsPointer(ref state));
-        Log.Info($"PluginRegistration.GetState: hr=0x{hr:X8} state={state}");
+        Log.Info($"hr=0x{hr:X8} state={state}");
         return hr;
     }
 }
