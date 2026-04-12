@@ -7,7 +7,7 @@ namespace KeePassPasskeyProvider;
 
 /// <summary>
 /// Entry point for the managed passkey COM server.
-/// Mirrors main.cpp — handles both -PluginActivated (COM server mode)
+/// Handles both -PluginActivated (COM server mode)
 /// and /register | /unregister | /status (management mode).
 /// </summary>
 internal static class Program

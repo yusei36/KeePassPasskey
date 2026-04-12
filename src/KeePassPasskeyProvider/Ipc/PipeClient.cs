@@ -7,7 +7,7 @@ namespace KeePassPasskeyProvider.Ipc;
 
 /// <summary>
 /// Synchronous named-pipe client for the KeePass passkey plugin IPC protocol.
-/// Wire format: [4-byte LE uint32 length][UTF-8 JSON body] — identical to PipeClient.cpp.
+/// Wire format: [4-byte LE uint32 length][UTF-8 JSON body]
 /// </summary>
 internal static class PipeClient
 {

@@ -7,7 +7,7 @@ namespace KeePassPasskeyProvider.Plugin;
 
 /// <summary>
 /// Synchronises KeePass credentials with the Windows platform autofill cache.
-/// Mirrors CredentialCache.cpp — diff-based add/remove to minimise API calls.
+/// Uses diff-based add/remove to minimise API calls.
 /// </summary>
 internal static unsafe class CredentialCache
 {
@@ -171,7 +171,7 @@ internal static unsafe class CredentialCache
             byte[] credId   = Base64Url.Decode(c.CredentialId);
             byte[] userId   = string.IsNullOrEmpty(c.UserHandle) ? [] : Base64Url.Decode(c.UserHandle);
             string rpId     = c.RpId;
-            string rpName   = c.RpId; // use rpId as rpName (matches C++ code)
+            string rpName   = c.RpId; // use rpId as rpName
             string userName = c.UserName ?? string.Empty;
             string dispName = !string.IsNullOrEmpty(c.Title) ? c.Title : c.RpId;
 
@@ -206,7 +206,6 @@ internal static unsafe class CredentialCache
                 p->pwszUserDisplayName != null ? new string(p->pwszUserDisplayName) : string.Empty);
         }
 
-        // Equality mirrors the C++ credEq lambda
         public virtual bool Equals(ManagedCredentialDetails? other)
         {
             if (other is null) return false;

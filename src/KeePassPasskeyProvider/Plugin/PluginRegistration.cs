@@ -7,16 +7,14 @@ namespace KeePassPasskeyProvider.Plugin;
 
 /// <summary>
 /// Manages registration/unregistration of the plugin with the Windows passkey platform.
-/// Mirrors PluginRegistration.cpp — same CBOR blob, same registry key.
 /// </summary>
 internal static unsafe class PluginRegistration
 {
     /// <summary>
     /// Builds the CTAP2 authenticatorGetInfo CBOR blob.
-    /// Format identical to the C++ hand-hex template:
-    ///   {1: ["FIDO_2_0", "FIDO_2_1"], 2: ["prf", "hmac-secret"],
-    ///    3: h'AAGUID', 4: {rk:true,up:true,uv:true},
-    ///    9: ["internal"], 10: [{alg:-7,type:"public-key"}]}
+    /// Format: {1: ["FIDO_2_0", "FIDO_2_1"], 2: ["prf", "hmac-secret"],
+    ///          3: h'AAGUID', 4: {rk:true,up:true,uv:true},
+    ///          9: ["internal"], 10: [{alg:-7,type:"public-key"}]}
     /// AAGUID is in RFC 4122 big-endian byte order: fdb141b2-5d84-443e-8a35-4698c205a502.
     /// </summary>
     public static byte[] BuildAuthenticatorInfoCbor()

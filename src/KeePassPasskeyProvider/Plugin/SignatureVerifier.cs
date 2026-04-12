@@ -8,8 +8,8 @@ namespace KeePassPasskeyProvider.Plugin;
 
 /// <summary>
 /// Verifies the platform-supplied operation signing signature.
-/// Mirrors SignatureVerifier.cpp — BCrypt key blob import, SHA-256 hash,
-/// RSA/ECDSA verify using managed CNG wrappers (no P/Invoke to NCrypt needed).
+/// Performs BCrypt key blob import, SHA-256 hash,
+/// and RSA/ECDSA verify using managed CNG wrappers.
 /// </summary>
 internal static unsafe class SignatureVerifier
 {
