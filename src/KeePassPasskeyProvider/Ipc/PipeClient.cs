@@ -28,9 +28,11 @@ internal static class PipeClient
             pipe.Connect(ConnectTimeoutMs);
 
             byte[] requestBytes = JsonSerializer.SerializeToUtf8Bytes(request, IpcJsonContext.Default.IpcRequest);
+            Log.Info($">> {Encoding.UTF8.GetString(requestBytes)}");
             WriteMessage(pipe, requestBytes);
 
             byte[] responseBytes = ReadMessage(pipe);
+            Log.Info($"<< {Encoding.UTF8.GetString(responseBytes)}");
             response = JsonSerializer.Deserialize(responseBytes, IpcJsonContext.Default.IpcResponse);
             return true;
         }

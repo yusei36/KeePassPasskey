@@ -17,11 +17,7 @@ internal static class Log
 
     [Conditional("DEBUG")]
     public static void Info(string message, [CallerMemberName] string member = "") => Append("INFO ", member, message);
-
-    [Conditional("DEBUG")]
     public static void Warn(string message, [CallerMemberName] string member = "") => Append("WARN ", member, message);
-
-    [Conditional("DEBUG")]
     public static void Error(string message, [CallerMemberName] string member = "") => Append("ERROR", member, message);
 
     private static void Append(string level, string member, string message)
