@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
+using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Ipc;
 using KeePassPasskeyProvider.Util;
@@ -62,7 +63,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 {
                     var u = pDecoded->pUserInformation;
                     if (u->cbId > 0)
-                        userIdB64 = Base64Url.Encode(new ReadOnlySpan<byte>(u->pbId, (int)u->cbId));
+                        userIdB64 = Base64Url.Encode(new ReadOnlySpan<byte>(u->pbId, (int)u->cbId).ToArray());
                     if (u->pwszName != null) userNameStr = new string(u->pwszName);
                     if (u->pwszDisplayName != null) userDisplayStr = new string(u->pwszDisplayName);
                 }
@@ -73,7 +74,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 for (uint i = 0; i < pDecoded->CredentialList.cCredentials; i++)
                 {
                     var c = pDecoded->CredentialList.ppCredentials[i];
-                    excludeList.Add(Base64Url.Encode(new ReadOnlySpan<byte>(c->pbId, (int)c->cbId)));
+                    excludeList.Add(Base64Url.Encode(new ReadOnlySpan<byte>(c->pbId, (int)c->cbId).ToArray()));
                 }
 
                 var req = new IpcRequest
@@ -207,7 +208,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 for (uint i = 0; i < pDecoded->CredentialList.cCredentials; i++)
                 {
                     var c = pDecoded->CredentialList.ppCredentials[i];
-                    allowList.Add(Base64Url.Encode(new ReadOnlySpan<byte>(c->pbId, (int)c->cbId)));
+                    allowList.Add(Base64Url.Encode(new ReadOnlySpan<byte>(c->pbId, (int)c->cbId).ToArray()));
                 }
                 Log.Info($"rpId={rpIdUtf8} allowCredentials={allowList.Count}");
 

@@ -19,8 +19,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\KeePassPasskey.Shared\KeePassPasskey.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- CBOR encoding for authenticatorGetInfo blob -->
     <PackageReference Include="System.Formats.Cbor" Version="9.*" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>

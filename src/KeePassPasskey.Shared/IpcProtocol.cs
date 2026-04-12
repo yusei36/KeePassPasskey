@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace KeePassPasskeyPlugin.IPC
+namespace KeePassPasskey.Shared
 {
     // All messages use length-prefixed framing: [4-byte LE uint32 length][UTF-8 JSON]
 
-    internal sealed class IpcRequest
+    public sealed class IpcRequest
     {
         [JsonProperty("type")]
         public string Type { get; set; }
@@ -40,13 +40,20 @@ namespace KeePassPasskeyPlugin.IPC
         public List<string> AllowCredentials { get; set; }
     }
 
-    internal sealed class IpcResponse
+    public sealed class IpcResponse
     {
         [JsonProperty("type")]
         public string Type { get; set; }
 
         [JsonProperty("requestId")]
         public string RequestId { get; set; }
+
+        // error response
+        [JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
+        public string Code { get; set; }
+
+        [JsonProperty("message", NullValueHandling = NullValueHandling.Ignore)]
+        public string Message { get; set; }
 
         // ping response
         [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
@@ -83,7 +90,7 @@ namespace KeePassPasskeyPlugin.IPC
         public List<CredentialInfo> Credentials { get; set; }
     }
 
-    internal sealed class IpcErrorResponse
+    public sealed class IpcErrorResponse
     {
         [JsonProperty("type")]
         public string Type => "error";
@@ -98,7 +105,7 @@ namespace KeePassPasskeyPlugin.IPC
         public string Message { get; set; }
     }
 
-    internal sealed class CredentialInfo
+    public sealed class CredentialInfo
     {
         [JsonProperty("credentialId")]
         public string CredentialId { get; set; }

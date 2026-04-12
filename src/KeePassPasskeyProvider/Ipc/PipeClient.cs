@@ -1,7 +1,8 @@
 ﻿using System.IO.Pipes;
 using System.Text;
-using System.Text.Json;
+using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Util;
+using Newtonsoft.Json;
 
 namespace KeePassPasskeyProvider.Ipc;
 
@@ -27,13 +28,15 @@ internal static class PipeClient
             using var pipe = new NamedPipeClientStream(".", PipeName, PipeDirection.InOut);
             pipe.Connect(ConnectTimeoutMs);
 
-            byte[] requestBytes = JsonSerializer.SerializeToUtf8Bytes(request, IpcJsonContext.Default.IpcRequest);
-            Log.Info($">> {Encoding.UTF8.GetString(requestBytes)}");
+            string requestJson = JsonConvert.SerializeObject(request);
+            byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
+            Log.Info($">> {requestJson}");
             WriteMessage(pipe, requestBytes);
 
             byte[] responseBytes = ReadMessage(pipe);
-            Log.Info($"<< {Encoding.UTF8.GetString(responseBytes)}");
-            response = JsonSerializer.Deserialize(responseBytes, IpcJsonContext.Default.IpcResponse);
+            string responseJson = Encoding.UTF8.GetString(responseBytes);
+            Log.Info($"<< {responseJson}");
+            response = JsonConvert.DeserializeObject<IpcResponse>(responseJson);
             return true;
         }
         catch (Exception ex) when (ex is TimeoutException or IOException or UnauthorizedAccessException)

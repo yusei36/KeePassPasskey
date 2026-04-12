@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 
-namespace KeePassPasskeyPlugin.Utils
+namespace KeePassPasskey.Shared
 {
-    internal static class Base64Url
+    public static class Base64Url
     {
-        internal static string Encode(byte[] data)
+        public static string Encode(byte[] data)
         {
             return Convert.ToBase64String(data)
                 .TrimEnd('=')
@@ -12,7 +12,7 @@ namespace KeePassPasskeyPlugin.Utils
                 .Replace('/', '_');
         }
 
-        internal static byte[] Decode(string base64Url)
+        public static byte[] Decode(string base64Url)
         {
             var s = base64Url.Replace('-', '+').Replace('_', '/');
             switch (s.Length % 4)

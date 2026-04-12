@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Ipc;
 using KeePassPasskeyProvider.Util;
