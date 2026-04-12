@@ -15,9 +15,17 @@ internal static class Log
     private static readonly object _lock = new();
 
     [Conditional("DEBUG")]
-    public static void Write(string message)
+    public static void Info(string message) => Append("INFO ", message);
+
+    [Conditional("DEBUG")]
+    public static void Warn(string message) => Append("WARN ", message);
+
+    [Conditional("DEBUG")]
+    public static void Error(string message) => Append("ERROR", message);
+
+    private static void Append(string level, string message)
     {
-        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}";
+        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level}] {message}";
         lock (_lock)
         {
             try

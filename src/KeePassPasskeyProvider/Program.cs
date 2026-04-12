@@ -22,7 +22,7 @@ internal static class Program
 
         if (isPluginActivated)
         {
-            Log.Write("Main: -PluginActivated received");
+            Log.Info("Main: -PluginActivated received");
             return RunAsPluginServer();
         }
 
@@ -46,13 +46,13 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            Log.Write($"RunAsPluginServer: RegisterClassFactory failed: {ex.Message}");
+            Log.Error($"RunAsPluginServer: RegisterClassFactory failed: {ex.Message}");
             return Marshal.GetHRForException(ex);
         }
-        Log.Write($"RunAsPluginServer: registered class factory cookie={cookie}");
+        Log.Info($"RunAsPluginServer: registered class factory cookie={cookie}");
 
         // Initial credential sync
-        Log.Write("RunAsPluginServer: initial SyncToWindowsCache");
+        Log.Info("RunAsPluginServer: initial SyncToWindowsCache");
         CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
 
         // Background sync thread
@@ -60,20 +60,20 @@ internal static class Program
         var syncTask = Task.Run(() => SyncLoop(cts.Token));
 
         // Win32 message loop
-        Log.Write("RunAsPluginServer: entering message loop");
+        Log.Info("RunAsPluginServer: entering message loop");
         Win32Native.MSG msg;
         while (Win32Native.GetMessage(out msg, 0, 0, 0) > 0)
         {
             Win32Native.TranslateMessage(in msg);
             Win32Native.DispatchMessage(in msg);
         }
-        Log.Write("RunAsPluginServer: message loop exited");
+        Log.Info("RunAsPluginServer: message loop exited");
 
         cts.Cancel();
         syncTask.Wait(5000);
 
         ComRegistration.RevokeClassFactory(cookie);
-        Log.Write("RunAsPluginServer: exiting");
+        Log.Info("RunAsPluginServer: exiting");
         return 0;
     }
 
@@ -84,7 +84,7 @@ internal static class Program
             try
             {
                 await Task.Delay(SyncIntervalMs, token);
-                Log.Write("SyncThread: periodic SyncToWindowsCache");
+                Log.Info("SyncThread: periodic SyncToWindowsCache");
                 CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
             }
             catch (OperationCanceledException)
@@ -93,10 +93,10 @@ internal static class Program
             }
             catch (Exception ex)
             {
-                Log.Write($"SyncThread: exception {ex.Message}");
+                Log.Error($"SyncThread: exception {ex.Message}");
             }
         }
-        Log.Write("SyncThread: exiting");
+        Log.Info("SyncThread: exiting");
     }
 
     // -----------------------------------------------------------------
