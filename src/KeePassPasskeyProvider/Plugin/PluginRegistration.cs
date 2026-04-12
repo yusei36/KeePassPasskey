@@ -104,8 +104,12 @@ internal static unsafe class PluginRegistration
 
             WebAuthnPluginAddAuthenticatorResponse* pResponse = null;
             int hr = WebAuthnPluginApi.WebAuthNPluginAddAuthenticator(&options, &pResponse);
+            if (hr < 0) 
+            { 
+                Log.Error($"WebAuthNPluginAddAuthenticator failed hr=0x{hr:X8}"); 
+                return hr;
+            }
             Log.Info($"WebAuthNPluginAddAuthenticator hr=0x{hr:X8}");
-            if (hr < 0) return hr;
 
             try
             {
