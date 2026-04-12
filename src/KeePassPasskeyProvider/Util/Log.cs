@@ -13,6 +13,10 @@ internal static class Log
     private static readonly string LogPath =
         Path.Combine(Path.GetTempPath(), "PasskeyProvider.log");
 
+    private static readonly string BakPath = LogPath + ".bak";
+
+    private const long MaxLogBytes = 1 * 1024 * 1024; // 1 MB
+
     private static readonly object _lock = new();
 
     [Conditional("DEBUG")]
@@ -27,6 +31,9 @@ internal static class Log
         {
             try
             {
+                if (File.Exists(LogPath) && new FileInfo(LogPath).Length >= MaxLogBytes)
+                    File.Move(LogPath, BakPath, overwrite: true);
+
                 File.AppendAllText(LogPath, line + Environment.NewLine);
             }
             catch
