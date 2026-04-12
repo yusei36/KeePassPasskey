@@ -4,16 +4,21 @@ using System.Runtime.CompilerServices;
 namespace KeePassPasskeyProvider.Util;
 
 /// <summary>
-/// Appends timestamped lines to %TEMP%\PasskeyProvider.log,
-/// matching the C++ log format so existing troubleshooting workflows still work.
-/// Only active in DEBUG builds; calls are eliminated by the compiler in Release.
+/// Appends timestamped lines to %LOCALAPPDATA%\KeePassPasskeyProvider\PasskeyProvider.log -- redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Local\KeePassPasskeyProvider\PasskeyProvider.log
+/// <see cref="Info"/> is only active in DEBUG builds; <see cref="Warn"/> and <see cref="Error"/> are always active.
 /// </summary>
 internal static class Log
 {
-    private static readonly string LogPath =
-        Path.Combine(Path.GetTempPath(), "PasskeyProvider.log");
+    // redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Local\KeePassPasskeyProvider
+    private static readonly string LogDir =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                     "KeePassPasskeyProvider");
+
+    private static readonly string LogPath = Path.Combine(LogDir, "PasskeyProvider.log");
 
     private static readonly string BakPath = LogPath + ".bak";
+
+    static Log() => Directory.CreateDirectory(LogDir);
 
     private const long MaxLogBytes = 1 * 1024 * 1024; // 1 MB
 
