@@ -33,7 +33,7 @@ internal static unsafe class CredentialCache
         var req = new IpcRequest { Type = "get_credentials", RequestId = "sync" };
         if (!PipeClient.SendRequest(req, out var resp) || resp == null || resp.Type == "error")
         {
-            Log.Warn("KeePass unavailable or error, skipping sync");
+            Log.Info("KeePass unavailable or error, skipping sync");
             return;
         }
 

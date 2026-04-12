@@ -38,7 +38,7 @@ internal static class PipeClient
         }
         catch (Exception ex) when (ex is TimeoutException or IOException or UnauthorizedAccessException)
         {
-            Log.Warn($"{ex.GetType().Name}: {ex.Message}");
+            Log.Info($"{ex.GetType().Name}: {ex.Message}");
             return false;
         }
     }
