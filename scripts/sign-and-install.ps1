@@ -160,11 +160,20 @@ if ($pkg) {
     Write-Host "  InstallLocation  : $($pkg.InstallLocation)"
     Write-Host "  Log directory    : $logDir"
     Write-Host ""
-    Write-Host "Next steps:" -ForegroundColor Yellow
+    Write-Host "Next steps:" -ForegroundColor Yellow    
     Write-Host "  cd `"$($pkg.InstallLocation)\KeePassPasskeyProvider`""
-    Write-Host "  .\KeePassPasskeyProvider.exe /register"
-    Write-Host "  Copy KeePassPasskeyPlugin.dll to KeePass Plugins folder"
+    Write-Host "  .\KeePassPasskeyProvider.exe /register -- (or KeePassPasskeyProvider UI)"
     Write-Host "  Enable in: Settings → Accounts → Passkeys → Advanced Options"
+    Write-Host "  Copy KeePassPasskeyPlugin.dll to KeePass Plugins folder"
+
+    Write-Step "Launching KeePassPasskeyProvider UI"
+    $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
+    if (Test-Path $exe) {
+        Start-Process $exe
+        Write-Host "  Launched." -ForegroundColor Green
+    } else {
+        Write-Warning "Executable not found at: $exe"
+    }
 } else {
     Write-Warning "Package not found after install - check above for errors."
 }
