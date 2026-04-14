@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -34,6 +35,8 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
         get => _statusColor;
         private set { _statusColor = value; OnPropertyChanged(); }
     }
+
+    public bool IsNotPackaged { get; } = !IsRunningAsPackage();
 
     public ICommand RegisterCommand          { get; }
     public ICommand UnregisterCommand        { get; }
@@ -100,6 +103,17 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
 
     private void OnPropertyChanged([CallerMemberName] string? name = null)
         => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    private static bool IsRunningAsPackage()
+    {
+        const int APPMODEL_ERROR_NO_PACKAGE  = 15700;
+        uint length = 0;
+        int rc = GetCurrentPackageFullName(ref length, null);
+        return rc != APPMODEL_ERROR_NO_PACKAGE;
+    }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    private static extern int GetCurrentPackageFullName(ref uint packageFullNameLength, char[]? packageFullName);
 }
 
 internal sealed class RelayCommand(Action execute) : ICommand

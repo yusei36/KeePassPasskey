@@ -8,6 +8,16 @@
     <StackPanel Margin="24" Spacing="14">
         <TextBlock Text="KeePass Passkey Provider" FontSize="18" FontWeight="Bold" />
 
+        <!-- Not-packaged warning -->
+        <Border IsVisible="{Binding IsNotPackaged}"
+                Background="#FFF3CD" BorderBrush="#FFC107" BorderThickness="1"
+                CornerRadius="4" Padding="12 8">
+            <TextBlock TextWrapping="Wrap" Foreground="#856404">
+                <Run Text="Warning: " FontWeight="Bold" />
+                <Run Text="This app is not running from an installed MSIX package. Register and Unregister will not work correctly. Please install the package first." />
+            </TextBlock>
+        </Border>
+
         <!-- Setup guide -->
         <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
                 BorderThickness="1" CornerRadius="4" Padding="12 10">
