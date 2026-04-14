@@ -2,8 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="KeePassPasskeyProvider.UI.MainWindow"
         Title="KeePass Passkey Provider"
-        Width="550" Height="420"
-        CanResize="False"
+        Width="700" Height="420" MaxHeight="800"
+        CanResize="True" SizeToContent="Height"
         WindowStartupLocation="CenterScreen">
     <StackPanel Margin="24" Spacing="14">
         <TextBlock Text="KeePass Passkey Provider" FontSize="18" FontWeight="Bold" />
@@ -80,8 +80,27 @@
             <Button Content="Register"   Command="{Binding RegisterCommand}"   Width="110" HorizontalContentAlignment="Center" />
             <Button Content="Unregister" Command="{Binding UnregisterCommand}" Width="110" HorizontalContentAlignment="Center" />
             <Button Content="Refresh"    Command="{Binding RefreshCommand}"    Width="110" HorizontalContentAlignment="Center" />
+            <Button Content="{Binding LogToggleLabel}" Command="{Binding ToggleLogCommand}" Width="110" HorizontalContentAlignment="Center" />
         </StackPanel>
 
         <TextBlock Text="{Binding ResultMessage}" TextWrapping="Wrap" />
+
+        <!-- Log viewer (collapsed by default) -->
+        <Border IsVisible="{Binding IsLogVisible}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
+                BorderThickness="1" CornerRadius="4">
+            <ScrollViewer x:Name="LogScrollViewer"
+                          MaxHeight="220"
+                          HorizontalScrollBarVisibility="Visible"
+                          VerticalScrollBarVisibility="Auto">
+                <SelectableTextBlock x:Name="LogTextBlock"
+					                 Text="{Binding LogText}"
+									 FontFamily="Consolas,Courier New,monospace"
+									 FontSize="11"
+									 TextWrapping="NoWrap"
+									 Margin="8 6" 
+									 GotFocus="LogTextBlock_GotFocus" />
+            </ScrollViewer>
+        </Border>
     </StackPanel>
 </Window>

@@ -7,6 +7,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
+using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.UI;
 
@@ -17,6 +18,10 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
     private string _statusText = "Checking...";
     private string _resultMessage = "";
     private IBrush _statusColor = Brushes.Gray;
+    private string _logText = "";
+    private bool _isLogVisible = false;
+
+    private readonly FileSystemWatcher? _logWatcher;
 
     public string StatusText
     {
@@ -36,12 +41,27 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
         private set { _statusColor = value; OnPropertyChanged(); }
     }
 
+    public string LogText
+    {
+        get => _logText;
+        private set { _logText = value; OnPropertyChanged(); }
+    }
+
+    public bool IsLogVisible
+    {
+        get => _isLogVisible;
+        private set { _isLogVisible = value; OnPropertyChanged(); OnPropertyChanged(nameof(LogToggleLabel)); }
+    }
+
+    public string LogToggleLabel => _isLogVisible ? "Hide Log" : "Show Log";
+
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
 
-    public ICommand RegisterCommand          { get; }
-    public ICommand UnregisterCommand        { get; }
-    public ICommand RefreshCommand           { get; }
+    public ICommand RegisterCommand            { get; }
+    public ICommand UnregisterCommand          { get; }
+    public ICommand RefreshCommand             { get; }
     public ICommand OpenPasskeySettingsCommand { get; }
+    public ICommand ToggleLogCommand           { get; }
 
     public MainWindowViewModel()
     {
@@ -49,11 +69,26 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
         UnregisterCommand          = new RelayCommand(DoUnregister);
         RefreshCommand             = new RelayCommand(DoManualRefresh);
         OpenPasskeySettingsCommand = new RelayCommand(DoOpenPasskeySettings);
+        ToggleLogCommand           = new RelayCommand(DoToggleLog);
         DoRefresh();
 
         var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         timer.Tick += (_, _) => DoRefresh();
         timer.Start();
+
+        // Watch the log file for changes
+        string logDir  = Path.GetDirectoryName(Log.LogFilePath)!;
+        string logFile = Path.GetFileName(Log.LogFilePath);
+        if (Directory.Exists(logDir))
+        {
+            _logWatcher = new FileSystemWatcher(logDir, logFile)
+            {
+                NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.Size,
+                EnableRaisingEvents = true,
+            };
+            _logWatcher.Changed += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
+            _logWatcher.Created += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
+        }
     }
 
     private void DoRegister()
@@ -72,6 +107,33 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
             ? "Unregistered successfully."
             : $"Unregister failed: 0x{hr:X8}";
         DoRefresh();
+    }
+
+    private void DoToggleLog()
+    {
+        IsLogVisible = !IsLogVisible;
+        if (IsLogVisible)
+            ReloadLog();
+    }
+
+    private void ReloadLog()
+    {
+        try
+        {
+            if (!File.Exists(Log.LogFilePath))
+            {
+                LogText = "(no log file yet)";
+                return;
+            }
+            // Open with share so the log writer is not blocked
+            using var fs     = new FileStream(Log.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var reader = new StreamReader(fs);
+            LogText = reader.ReadToEnd();
+        }
+        catch (Exception ex)
+        {
+            LogText = $"(could not read log: {ex.Message})";
+        }
     }
 
     private static void DoOpenPasskeySettings()

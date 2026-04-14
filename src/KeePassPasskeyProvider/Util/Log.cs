@@ -14,9 +14,9 @@ internal static class Log
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                      "KeePassPasskeyProvider");
 
-    private static readonly string LogPath = Path.Combine(LogDir, "PasskeyProvider.log");
+    public static readonly string LogFilePath = Path.Combine(LogDir, "PasskeyProvider.log");
 
-    private static readonly string BakPath = LogPath + ".bak";
+    private static readonly string BakPath = LogFilePath + ".bak";
 
     static Log() => Directory.CreateDirectory(LogDir);
 
@@ -36,10 +36,10 @@ internal static class Log
         {
             try
             {
-                if (File.Exists(LogPath) && new FileInfo(LogPath).Length >= MaxLogBytes)
-                    File.Move(LogPath, BakPath, overwrite: true);
+                if (File.Exists(LogFilePath) && new FileInfo(LogFilePath).Length >= MaxLogBytes)
+                    File.Move(LogFilePath, BakPath, overwrite: true);
 
-                File.AppendAllText(LogPath, line + Environment.NewLine);
+                File.AppendAllText(LogFilePath, line + Environment.NewLine);
             }
             catch
             {
