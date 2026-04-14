@@ -36,6 +36,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\plugin-icon.png" />
+  </ItemGroup>
+
   <Target Name="CopyToKeePassPlugins" AfterTargets="Build">
     <MakeDir Directories="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
     <ItemGroup>

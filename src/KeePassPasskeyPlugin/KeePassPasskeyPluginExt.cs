@@ -2,6 +2,9 @@
 using KeePassPasskeyPlugin.Ipc;
 using KeePassPasskeyPlugin.Storage;
 using System;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
 
 namespace KeePassPasskeyPlugin
 {
@@ -15,9 +18,26 @@ namespace KeePassPasskeyPlugin
         private IPluginHost _host;
         private PipeServer _pipeServer;
 
+        // Loaded once; MemoryStream kept open for GDI+ lifetime requirement.
+        private static readonly Image _smallIcon = LoadSmallIcon();
+
+        private static Image LoadSmallIcon()
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            using (Stream raw = asm.GetManifestResourceStream(
+                "KeePassPasskeyPlugin.Resources.plugin-icon.png"))
+            {
+                var ms = new MemoryStream();
+                raw.CopyTo(ms);
+                ms.Position = 0;
+                return Image.FromStream(ms);
+            }
+        }
+
+        public override Image SmallIcon => _smallIcon;
+
         public override string UpdateUrl =>
             "https://github.com/your-org/PasskeyWin11/raw/main/version.txt";
-
         public override bool Initialize(IPluginHost host)
         {
             if (host == null) return false;

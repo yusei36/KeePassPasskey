@@ -23,6 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\logo-dark.svg" />
+    <EmbeddedResource Include="Resources\logo-light.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Resources\app-icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- CBOR encoding for authenticatorGetInfo blob -->
     <PackageReference Include="System.Formats.Cbor" Version="9.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

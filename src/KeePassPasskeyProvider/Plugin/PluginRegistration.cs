@@ -83,17 +83,22 @@ internal static unsafe class PluginRegistration
 
         Guid clsid = PluginConstants.KeePassClsid;
 
-        fixed (char* namePtr  = PluginConstants.PluginName)
-        fixed (char* rpIdPtr  = PluginConstants.PluginRpId)
-        fixed (byte* infoPtr  = authenticatorInfo)
+        string lightSvg = LogoResources.LightThemeSvg;
+        string darkSvg  = LogoResources.DarkThemeSvg;
+
+        fixed (char* namePtr     = PluginConstants.PluginName)
+        fixed (char* rpIdPtr     = PluginConstants.PluginRpId)
+        fixed (byte* infoPtr     = authenticatorInfo)
+        fixed (char* lightSvgPtr = lightSvg)
+        fixed (char* darkSvgPtr  = darkSvg)
         {
             var options = new WebAuthnPluginAddAuthenticatorOptions
             {
                 pwszAuthenticatorName  = namePtr,
                 rclsid                 = &clsid,
                 pwszPluginRpId         = rpIdPtr,
-                pwszLightThemeLogoSvg  = null,
-                pwszDarkThemeLogoSvg   = null,
+                pwszLightThemeLogoSvg  = lightSvgPtr,
+                pwszDarkThemeLogoSvg   = darkSvgPtr,
                 cbAuthenticatorInfo    = (uint)authenticatorInfo.Length,
                 pbAuthenticatorInfo    = infoPtr,
                 cSupportedRpIds        = 0,
