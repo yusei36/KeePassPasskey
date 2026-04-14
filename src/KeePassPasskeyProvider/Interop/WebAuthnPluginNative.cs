@@ -208,6 +208,7 @@ internal static class PluginConstants
     public const int E_FAIL = unchecked((int)0x80004005);
     public const int E_NOINTERFACE = unchecked((int)0x80004002);
     public const int CLASS_E_NOAGGREGATION = unchecked((int)0x80040110);
+    public const int NTE_BAD_SIGNATURE = unchecked((int)0x80090006);
     public const int NTE_NOT_FOUND = unchecked((int)0x80090011);
     public const int NTE_USER_CANCELLED = unchecked((int)0x80090036);
     public static int HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION => unchecked((int)0x80070021);
