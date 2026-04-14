@@ -26,6 +26,12 @@
     <!-- CBOR encoding for authenticatorGetInfo blob -->
     <PackageReference Include="System.Formats.Cbor" Version="9.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <!-- Avalonia UI for management window -->
+    <PackageReference Include="Avalonia" Version="11.2.*" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.*" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.*" />
+    <!-- Override vulnerable transitive dep from Avalonia.Desktop (Linux D-Bus, unused on Windows) -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
   </ItemGroup>
 
 </Project>

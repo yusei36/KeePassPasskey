@@ -1,6 +1,8 @@
 ﻿using System.Runtime.InteropServices;
+using Avalonia;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
+using KeePassPasskeyProvider.UI;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
@@ -26,7 +28,11 @@ internal static class Program
             return RunAsPluginServer();
         }
 
-        // Management UI path — attach to parent console so output is visible
+        // No args: show management UI
+        if (args.Length == 0)
+            return RunManagementUI();
+
+        // /register | /unregister | /status — attach to parent console so output is visible
         Win32Native.AttachConsole(Win32Native.ATTACH_PARENT_PROCESS);
 
         return RunManagementCommand(args);
@@ -100,6 +106,29 @@ internal static class Program
     }
 
     // -----------------------------------------------------------------
+    // Management UI mode (no args) -- Avalonia window on a dedicated STA thread
+    // -----------------------------------------------------------------
+
+    private static int RunManagementUI()
+    {
+        int exitCode = 0;
+        var uiThread = new Thread(() =>
+        {
+            exitCode = BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime([]);
+        });
+        uiThread.SetApartmentState(ApartmentState.STA);
+        uiThread.Start();
+        uiThread.Join();
+        return exitCode;
+    }
+
+    private static AppBuilder BuildAvaloniaApp()
+        => AppBuilder.Configure<App>()
+            .UsePlatformDetect()
+            .LogToTrace();
+
+    // -----------------------------------------------------------------
     // Management command mode (/register, /unregister, /status)
     // -----------------------------------------------------------------
 
@@ -146,7 +175,7 @@ internal static class Program
             }
 
             default:
-                Console.WriteLine("KeePass Passkey Provider (managed)");
+                Console.WriteLine("KeePass Passkey Provider");
                 Console.WriteLine("Usage: KeePassPasskeyProvider.exe /register | /unregister | /status");
                 return 0;
         }
