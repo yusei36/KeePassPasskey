@@ -37,7 +37,7 @@ namespace KeePassPasskeyPlugin
         public override Image SmallIcon => _smallIcon;
 
         public override string UpdateUrl =>
-            "https://github.com/your-org/PasskeyWin11/raw/main/version.txt";
+            "https://github.com/your-org/KeePassPasskey/raw/main/version.txt";
         public override bool Initialize(IPluginHost host)
         {
             if (host == null) return false;

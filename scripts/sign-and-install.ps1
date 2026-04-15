@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Signs and installs the PasskeyWin11 MSIX package.
+    Signs and installs the KeePassPasskey MSIX package.
 
 .DESCRIPTION
     1. Builds the MSIX via msbuild (wapproj).
@@ -99,7 +99,7 @@ if ($cert -and -not $SkipCert) {
         -Type Custom `
         -Subject $CertSubject `
         -KeyUsage DigitalSignature `
-        -FriendlyName 'PasskeyWin11 Test' `
+        -FriendlyName 'KeePassPasskey Test' `
         -CertStoreLocation 'Cert:\CurrentUser\My' `
         -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}')
     Write-Host "  Created  Thumbprint=$($cert.Thumbprint)"

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-PasskeyWin11 integrates KeePass as a native Windows 11 passkey provider. It has two components bridged by a named pipe:
+KeePassPasskey integrates KeePass as a native Windows 11 passkey provider. It has two components bridged by a named pipe:
 
 ```
 Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, -PluginActivated)
@@ -44,7 +44,7 @@ Output: `build\Release\KeePassPasskeyProvider\KeePassPasskeyProvider.exe`
 
 ### Build MSIX package
 ```
-msbuild src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=E:\Repos\PasskeyWin11\
+msbuild src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=E:\Repos\KeePassPasskey\
 ```
 Output: `src\KeePassPasskeyProvider.Package\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64.msix`
 
