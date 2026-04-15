@@ -94,6 +94,14 @@ namespace KeePassPasskeyPlugin.Ipc
             {
                 using (pipe)
                 {
+                    // Verify the connecting client before processing any requests
+                    if (!ClientVerifier.VerifyClient(pipe.SafePipeHandle, out string reason))
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[KeePassPasskey] Client verification failed: {reason}");
+                        // Close connection without responding
+                        return;
+                    }
+
                     while (pipe.IsConnected)
                     {
                         var requestJson = ReadMessage(pipe);
