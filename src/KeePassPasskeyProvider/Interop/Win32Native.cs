@@ -49,4 +49,12 @@ internal static class Win32Native
 
     [DllImport("user32.dll")]
     internal static extern void PostQuitMessage(int nExitCode);
+
+    [DllImport("user32.dll")]
+    internal static extern bool SetForegroundWindow(nint hWnd);
+
+    [DllImport("user32.dll")]
+    internal static extern bool ShowWindow(nint hWnd, int nCmdShow);
+
+    internal const int SW_RESTORE = 9;
 }

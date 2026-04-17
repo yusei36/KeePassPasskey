@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Threading;
 using Avalonia;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
@@ -111,16 +112,54 @@ internal static class Program
 
     private static int RunManagementUI()
     {
-        int exitCode = 0;
-        var uiThread = new Thread(() =>
+        const string MutexName = "Global\\KeePassPasskeyProvider_UI";
+        var mutex = new Mutex(false, MutexName);
+
+        try
         {
-            exitCode = BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime([]);
-        });
-        uiThread.SetApartmentState(ApartmentState.STA);
-        uiThread.Start();
-        uiThread.Join();
-        return exitCode;
+            if (!mutex.WaitOne(0))
+            {
+                // Another instance is running; activate its window and exit
+                Log.Info("Another instance is already running; activating existing window");
+                ActivateExistingWindow();
+                return 0;
+            }
+
+            // Mutex acquired; we are the first instance
+            Log.Info("First instance; starting UI");
+            int exitCode = 0;
+            var uiThread = new Thread(() =>
+            {
+                exitCode = BuildAvaloniaApp()
+                    .StartWithClassicDesktopLifetime([]);
+            });
+            uiThread.SetApartmentState(ApartmentState.STA);
+            uiThread.Start();
+            uiThread.Join();
+            return exitCode;
+        }
+        finally
+        {
+            mutex?.Dispose();
+        }
+    }
+
+    private static void ActivateExistingWindow()
+    {
+        var existing = System.Diagnostics.Process.GetProcessesByName("KeePassPasskeyProvider")
+            .FirstOrDefault(p => p.Id != Environment.ProcessId && p.MainWindowHandle != 0);
+
+        nint hwnd = existing?.MainWindowHandle ?? 0;
+        if (hwnd != 0)
+        {
+            Win32Native.ShowWindow(hwnd, Win32Native.SW_RESTORE);
+            Win32Native.SetForegroundWindow(hwnd);
+            Log.Info($"Activated window 0x{hwnd:X}");
+        }
+        else
+        {
+            Log.Warn("Could not find existing window");
+        }
     }
 
     private static AppBuilder BuildAvaloniaApp()
