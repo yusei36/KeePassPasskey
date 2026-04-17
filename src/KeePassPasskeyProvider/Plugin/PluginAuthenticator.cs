@@ -58,22 +58,18 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     /// <summary>
     /// Encodes the attestation response (for make_credential).
     /// Isolates the fixed-pinning block and WebAuthnCredentialAttestation struct construction.
-    /// Converts base64 string to byte array internally.
     /// </summary>
     private static unsafe int EncodeAttestation(
-        string? authDataB64, out uint cbEncoded, out byte* pbEncoded)
+        byte[] authData, out uint cbEncoded, out byte* pbEncoded)
     {
-        // Convert base64 string to byte array
-        byte[] authDataBytes = Convert.FromBase64String(authDataB64 ?? string.Empty);
-
         fixed (char* fmtPtr = "none")
-        fixed (byte* authPtr = authDataBytes)
+        fixed (byte* authPtr = authData)
         {
             var attestation = new WebAuthnCredentialAttestation
             {
                 dwVersion            = PluginConstants.AttestationCurrentVersion,
                 pwszFormatType       = fmtPtr,
-                cbAuthenticatorData  = (uint)authDataBytes.Length,
+                cbAuthenticatorData  = (uint)authData.Length,
                 pbAuthenticatorData  = authPtr,
                 cbAttestation        = 0,
                 pbAttestation        = null,
@@ -239,8 +235,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     return MapErrorCode(resp.Code);
                 }
 
-                // 5. Encode attestation response (conversion happens inside EncodeAttestation)
-                int hrEnc = EncodeAttestation(resp.AuthenticatorData, out uint cbEncoded, out byte* pbEncoded);
+                // 5. Build authenticatorData and encode attestation response
+                var credentialIdBytes = Base64Url.Decode(resp.CredentialId!);
+                var ecX = Convert.FromBase64String(resp.PublicKeyX!);
+                var ecY = Convert.FromBase64String(resp.PublicKeyY!);
+                var authData = AuthenticatorData.BuildForRegistration(rpIdUtf8, PluginConstants.KeePassPasskeyProviderAaguid, credentialIdBytes, ecX, ecY);
+                int hrEnc = EncodeAttestation(authData, out uint cbEncoded, out byte* pbEncoded);
                 Log.Info($"WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                 if (hrEnc < 0) return hrEnc;
 
@@ -248,7 +248,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 pResponse->pbEncodedResponse = pbEncoded; // ownership transferred to caller (platform frees)
 
                 // 6. Sync Windows autofill cache
-                CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
+                CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
                 Log.Info("success");
                 return PluginConstants.S_OK;

@@ -62,7 +62,7 @@ internal static class ComRegistration
         try
         {
             int hr = Win32Native.CoRegisterClassObject(
-                in PluginConstants.KeePassClsid,
+                in PluginConstants.KeePassPasskeyProviderClsid,
                 factoryPtr,
                 Win32Native.CLSCTX_LOCAL_SERVER,
                 Win32Native.REGCLS_MULTIPLEUSE,

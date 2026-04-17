@@ -1,7 +1,7 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 
-namespace KeePassPasskeyPlugin.Passkey
+namespace KeePassPasskey.Shared
 {
     internal sealed class CborWriter
     {
@@ -39,11 +39,6 @@ namespace KeePassPasskeyPlugin.Passkey
         internal void WriteMapStart(int count)
         {
             WriteTypeAndValue(5, (ulong)count);
-        }
-
-        internal void WriteEmptyMap()
-        {
-            WriteMapStart(0);
         }
 
         internal byte[] ToArray()

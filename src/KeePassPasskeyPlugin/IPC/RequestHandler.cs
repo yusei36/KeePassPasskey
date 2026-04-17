@@ -53,11 +53,7 @@ namespace KeePassPasskeyPlugin.Ipc
 
         private string HandlePing(IpcRequest req)
         {
-            string status;
-            if (!IsDatabaseOpen())
-                status = "no_database";
-            else
-                status = "ready";
+            string status = IsDatabaseOpen() ? "ready" : "no_database";
 
             return JsonConvert.SerializeObject(new IpcResponse
             {
@@ -127,9 +123,6 @@ namespace KeePassPasskeyPlugin.Ipc
                 rng.GetBytes(credentialIdBytes);
             var credentialId = Base64Url.Encode(credentialIdBytes);
 
-            // Build authenticator data
-            var authData = AuthenticatorData.BuildForRegistration(req.RpId, credentialIdBytes, x, y, 0);
-
             // Export private key as PEM (includes public key)
             var pem = EcKeyHelper.ExportPrivateKeyPem(d, x, y);
 
@@ -155,7 +148,6 @@ namespace KeePassPasskeyPlugin.Ipc
                 CredentialId = credentialId,
                 PublicKeyX = Convert.ToBase64String(x),
                 PublicKeyY = Convert.ToBase64String(y),
-                AuthenticatorData = Convert.ToBase64String(authData)
             });
         }
 

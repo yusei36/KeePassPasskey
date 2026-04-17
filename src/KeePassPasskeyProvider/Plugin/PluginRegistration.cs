@@ -15,16 +15,10 @@ internal static unsafe class PluginRegistration
     /// Format: {1: ["FIDO_2_0", "FIDO_2_1"], 2: ["prf", "hmac-secret"],
     ///          3: h'AAGUID', 4: {rk:true,up:true,uv:true},
     ///          9: ["internal"], 10: [{alg:-7,type:"public-key"}]}
-    /// AAGUID is in RFC 4122 big-endian byte order: fdb141b2-5d84-443e-8a35-4698c205a502.
     /// </summary>
     public static byte[] BuildAuthenticatorInfoCbor()
     {
-        // AAGUID in big-endian (RFC 4122 order), distinct from Windows GUID byte order
-        ReadOnlySpan<byte> aaguid = [
-            0xfd, 0xb1, 0x41, 0xb2, 0x5d, 0x84, 0x44, 0x3e,
-            0x8a, 0x35, 0x46, 0x98, 0xc2, 0x05, 0xa5, 0x02
-        ];
-
+        ReadOnlySpan<byte> aaguid = PluginConstants.KeePassPasskeyProviderAaguid;
         var writer = new CborWriter(CborConformanceMode.Canonical, convertIndefiniteLengthEncodings: true);
 
         writer.WriteStartMap(6); // map with 6 entries
@@ -81,7 +75,7 @@ internal static unsafe class PluginRegistration
         byte[] authenticatorInfo = BuildAuthenticatorInfoCbor();
         Log.Info($"CBOR blob {authenticatorInfo.Length} bytes");
 
-        Guid clsid = PluginConstants.KeePassClsid;
+        Guid clsid = PluginConstants.KeePassPasskeyProviderClsid;
 
         string lightSvg = LogoResources.LightThemeSvg;
         string darkSvg  = LogoResources.DarkThemeSvg;
@@ -142,7 +136,7 @@ internal static unsafe class PluginRegistration
     public static int Unregister()
     {
         Log.Info("entry");
-        int hr = WebAuthnPluginApi.WebAuthNPluginRemoveAuthenticator(PluginConstants.KeePassClsid);
+        int hr = WebAuthnPluginApi.WebAuthNPluginRemoveAuthenticator(PluginConstants.KeePassPasskeyProviderClsid);
         Log.Info($"hr=0x{hr:X8}");
         return hr;
     }
@@ -152,7 +146,7 @@ internal static unsafe class PluginRegistration
     {
         state = AuthenticatorState.AuthenticatorState_Disabled;
         int hr = WebAuthnPluginApi.WebAuthNPluginGetAuthenticatorState(
-            PluginConstants.KeePassClsid, (AuthenticatorState*)System.Runtime.CompilerServices.Unsafe.AsPointer(ref state));
+            PluginConstants.KeePassPasskeyProviderClsid, (AuthenticatorState*)System.Runtime.CompilerServices.Unsafe.AsPointer(ref state));
         Log.Info($"hr=0x{hr:X8} state={state}");
         return hr;
     }

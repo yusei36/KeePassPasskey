@@ -60,7 +60,7 @@ internal static class Program
 
         // Initial credential sync
         Log.Info("initial SyncToWindowsCache");
-        CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
+        CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
         // Background sync thread
         using var cts = new CancellationTokenSource();
@@ -92,7 +92,7 @@ internal static class Program
             {
                 await Task.Delay(SyncIntervalMs, token);
                 Log.Info("periodic SyncToWindowsCache");
-                CredentialCache.SyncToWindowsCache(PluginConstants.KeePassClsid);
+                CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
             }
             catch (OperationCanceledException)
             {
