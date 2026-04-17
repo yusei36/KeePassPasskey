@@ -178,14 +178,18 @@ internal static class PluginConstants
     /// <summary>KeePass Passkey Provider COM server CLSID.</summary>
     public static readonly Guid KeePassPasskeyProviderClsid = new("4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e");
 
-    /// <summary>
-    /// KeePassXC-compatible AAGUID in RFC 4122 big-endian byte order.
-    /// Embedded in every credential's authenticatorData and in the CTAP2 authenticatorGetInfo CBOR.
-    /// </summary>
-    public static readonly byte[] KeePassPasskeyProviderAaguid = [
-        0xfd, 0xb1, 0x41, 0xb2, 0x5d, 0x84, 0x44, 0x3e,
-        0x8a, 0x35, 0x46, 0x98, 0xc2, 0x05, 0xa5, 0x02
-    ];
+    /// <summary>KeePassXC-compatible AAGUID.</summary>
+    public static readonly Guid KeePassPasskeyProviderAaguid = new("fdb141b2-5d84-443e-8a35-4698c205a502");
+
+    /// <summary>AAGUID as 16 bytes in RFC 4122 big-endian order, for use in authenticatorData and CBOR.</summary>
+    public static readonly byte[] KeePassPasskeyProviderAaguidBytes = AaguidToRfc4122Bytes(KeePassPasskeyProviderAaguid);
+
+    private static byte[] AaguidToRfc4122Bytes(Guid guid)
+    {
+        var bytes = new byte[16];
+        guid.TryWriteBytes(bytes, bigEndian: true, out _);
+        return bytes;
+    }
 
     /// <summary>IPluginAuthenticator IID (from pluginauthenticator.h MIDL_INTERFACE).</summary>
     public static readonly Guid IID_IPluginAuthenticator = new("d26bcf6f-b54c-43ff-9f06-d5bf148625f7");

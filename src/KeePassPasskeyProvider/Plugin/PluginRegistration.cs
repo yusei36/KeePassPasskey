@@ -18,7 +18,7 @@ internal static unsafe class PluginRegistration
     /// </summary>
     public static byte[] BuildAuthenticatorInfoCbor()
     {
-        ReadOnlySpan<byte> aaguid = PluginConstants.KeePassPasskeyProviderAaguid;
+        ReadOnlySpan<byte> aaguid = PluginConstants.KeePassPasskeyProviderAaguidBytes;
         var writer = new CborWriter(CborConformanceMode.Canonical, convertIndefiniteLengthEncodings: true);
 
         writer.WriteStartMap(6); // map with 6 entries
