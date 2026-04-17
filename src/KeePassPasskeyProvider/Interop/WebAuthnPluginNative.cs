@@ -169,13 +169,14 @@ internal static unsafe class WebAuthnPluginApi
 
 /// <summary>
 /// IID and CLSID constants for the KeePass passkey provider.
-/// CLSID matches the AAGUID: fdb141b2-5d84-443e-8a35-4698c205a502 (KeePassXC-compatible).
+/// CLSID: 4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e (COM server identity).
+/// AAGUID: fdb141b2-5d84-443e-8a35-4698c205a502 (KeePassXC-compatible, embedded in credentials).
 /// IPluginAuthenticator IID from pluginauthenticator.h: d26bcf6f-b54c-43ff-9f06-d5bf148625f7.
 /// </summary>
 internal static class PluginConstants
 {
-    /// <summary>KeePass Passkey Provider CLSID / AAGUID.</summary>
-    public static readonly Guid KeePassClsid = new("fdb141b2-5d84-443e-8a35-4698c205a502");
+    /// <summary>KeePass Passkey Provider COM server CLSID.</summary>
+    public static readonly Guid KeePassClsid = new("4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e");
 
     /// <summary>IPluginAuthenticator IID (from pluginauthenticator.h MIDL_INTERFACE).</summary>
     public static readonly Guid IID_IPluginAuthenticator = new("d26bcf6f-b54c-43ff-9f06-d5bf148625f7");
