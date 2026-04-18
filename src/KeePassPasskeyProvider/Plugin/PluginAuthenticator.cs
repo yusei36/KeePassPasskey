@@ -16,6 +16,7 @@ namespace KeePassPasskeyProvider.Plugin;
 public sealed class PluginAuthenticator : IPluginAuthenticator
 {
     private volatile bool _cancelled;
+    private Guid _currentTransactionId;
     private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
 
     // null = unknown (first call), true = last ping succeeded, false = last ping failed
@@ -38,6 +39,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         try
         {
             _cancelled = false;
+            _currentTransactionId = pRequest->transactionId;
             Log.Info("entry");
 
             // 1. Decode CBOR request
@@ -92,7 +94,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (response == null)
                 {
                     Log.Warn("pipe failed");
-                    return HResults.NTE_NOT_FOUND;
+                    return HResults.E_FAIL;
                 }
 
                 if (response.ErrorCode != null)
@@ -148,6 +150,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         try
         {
             _cancelled = false;
+            _currentTransactionId = pRequest->transactionId;
             Log.Info("entry");
 
             // 1. Decode CBOR request
@@ -222,8 +225,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     }
 
     /// <summary>IPluginAuthenticator.CancelOperation implementation. Sets the cancellation flag.</summary>
-    public int CancelOperation(nint pCancelRequest)
+    public unsafe int CancelOperation(nint pCancelRequest)
     {
+        if (pCancelRequest == 0) return HResults.E_INVALIDARG;
+
+        var pCancel = (WebAuthnPluginCancelOperationRequest*)pCancelRequest;
+        if (pCancel->transactionId != _currentTransactionId)
+            return HResults.NTE_NOT_FOUND;
+
         _cancelled = true;
         return HResults.S_OK;
     }
@@ -301,7 +310,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     /// </summary>
     private static int MapErrorCode(PipeErrorCode? code) => code switch
     {
-        PipeErrorCode.DbLocked => HResults.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
+        PipeErrorCode.DbLocked => HResults.E_FAIL,
         PipeErrorCode.Duplicate => HResults.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
         PipeErrorCode.NotFound => HResults.NTE_NOT_FOUND,
         _ => HResults.E_FAIL,
