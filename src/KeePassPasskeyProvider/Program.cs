@@ -16,6 +16,8 @@ namespace KeePassPasskeyProvider;
 internal static class Program
 {
     private const int SyncIntervalMs = 30_000;
+    // Exit after ~10 minutes of continuous pipe failure (KeePass unreachable).
+    private const int MaxConsecutiveSyncFailures = 20;
 
     [MTAThread]
     static int Main(string[] args)
@@ -62,9 +64,12 @@ internal static class Program
         Log.Info("initial SyncToWindowsCache");
         CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
+        // Capture main thread ID so the sync task can post WM_QUIT here to wake GetMessage.
+        uint mainThreadId = Win32Native.GetCurrentThreadId();
+
         // Background sync thread
         using var cts = new CancellationTokenSource();
-        var syncTask = Task.Run(() => SyncLoop(cts.Token));
+        var syncTask = Task.Run(() => SyncLoop(cts.Token, mainThreadId));
 
         // Win32 message loop
         Log.Info("entering message loop");
@@ -84,15 +89,33 @@ internal static class Program
         return 0;
     }
 
-    private static async Task SyncLoop(CancellationToken token)
+    private static async Task SyncLoop(CancellationToken token, uint mainThreadId)
     {
+        int consecutiveFailures = 0;
+
         while (!token.IsCancellationRequested)
         {
             try
             {
                 await Task.Delay(SyncIntervalMs, token);
                 Log.Info("periodic SyncToWindowsCache");
-                CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+                bool reached = CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+
+                if (reached)
+                {
+                    consecutiveFailures = 0;
+                }
+                else
+                {
+                    consecutiveFailures++;
+                    Log.Warn($"KeePass unreachable, failures={consecutiveFailures}/{MaxConsecutiveSyncFailures}");
+                    if (consecutiveFailures >= MaxConsecutiveSyncFailures)
+                    {
+                        Log.Info("idle shutdown — KeePass unreachable for too long");
+                        Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);
+                        break;
+                    }
+                }
             }
             catch (OperationCanceledException)
             {

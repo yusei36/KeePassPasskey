@@ -14,17 +14,18 @@ internal static unsafe class CredentialCache
 {
     /// <summary>
     /// Query KeePass for all passkeys and push changes to the Windows cache.
-    /// Returns immediately (not an error) if KeePass is unavailable.
+    /// Returns true if KeePass was reached (sync applied), false otherwise.
     /// </summary>
-    public static void SyncToWindowsCache(Guid pluginClsid)
+    public static bool SyncToWindowsCache(Guid pluginClsid)
     {
         try
         {
-            SyncToCredentialCache(pluginClsid);
+            return SyncToCredentialCache(pluginClsid);
         }
         catch (Exception ex)
         {
             Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+            return false;
         }
     }
 
@@ -62,7 +63,7 @@ internal static unsafe class CredentialCache
         }
     }
 
-    private static void SyncToCredentialCache(Guid pluginClsid)
+    private static bool SyncToCredentialCache(Guid pluginClsid)
     {
         // 1. Query credentials from KeePass
         var pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
@@ -70,7 +71,7 @@ internal static unsafe class CredentialCache
         if (response == null)
         {
             Log.Info("KeePass unavailable or error, skipping sync");
-            return;
+            return false;
         }
 
         // 2. Parse credential list
@@ -122,6 +123,7 @@ internal static unsafe class CredentialCache
         }
 
         Log.Info($"sync done removed={toRemove.Count} added={toAdd.Count} unchanged={kpCredentials.Count - toAdd.Count}");
+        return true;
     }
 
     private static void ApplyRemove(Guid pluginClsid, List<ManagedCredentialDetails> items)

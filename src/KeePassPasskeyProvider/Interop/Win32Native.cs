@@ -50,6 +50,14 @@ internal static class Win32Native
     [DllImport("user32.dll")]
     internal static extern void PostQuitMessage(int nExitCode);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    internal static extern bool PostThreadMessage(uint idThread, uint Msg, nuint wParam, nint lParam);
+
+    internal const uint WM_QUIT = 0x0012;
+
+    [DllImport("kernel32.dll")]
+    internal static extern uint GetCurrentThreadId();
+
     [DllImport("user32.dll")]
     internal static extern bool SetForegroundWindow(nint hWnd);
 
