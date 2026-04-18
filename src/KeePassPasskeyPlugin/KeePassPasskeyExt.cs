@@ -46,10 +46,6 @@ namespace KeePassPasskey
             // Windows 11 24H2 required (build 26100+) for the passkey provider API.
             if (GetRealWindowsBuildNumber() < 26100)
             {
-                System.Windows.Forms.MessageBox.Show(
-                    "KeePassPasskey requires Windows 11 24H2 or later.",
-                    "KeePassPasskey", System.Windows.Forms.MessageBoxButtons.OK,
-                    System.Windows.Forms.MessageBoxIcon.Error);
                 return false;
             }
 
