@@ -10,9 +10,6 @@ namespace KeePassPasskey.Shared
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("requestId")]
-        public string RequestId { get; set; }
-
         // make_credential fields
         [JsonProperty("rpId")]
         public string RpId { get; set; }
@@ -44,9 +41,6 @@ namespace KeePassPasskey.Shared
     {
         [JsonProperty("type")]
         public string Type { get; set; }
-
-        [JsonProperty("requestId")]
-        public string RequestId { get; set; }
 
         // error response
         [JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
@@ -94,9 +88,6 @@ namespace KeePassPasskey.Shared
     {
         [JsonProperty("type")]
         public string Type => "error";
-
-        [JsonProperty("requestId")]
-        public string RequestId { get; set; }
 
         [JsonProperty("code")]
         public string Code { get; set; }

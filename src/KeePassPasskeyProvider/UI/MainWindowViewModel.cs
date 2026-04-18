@@ -178,7 +178,7 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
             StatusColor = Brushes.Gray;
         }
 
-        var pingRequest = new IpcRequest { Type = "ping", RequestId = "status-check" };
+        var pingRequest = new IpcRequest { Type = "ping" };
         bool ok = PipeClient.SendRequest(pingRequest, out var pingResponse);
         string pluginStatus = ok ? (pingResponse?.Status ?? "unknown") : "not_running";
         (PluginStatusText, PluginStatusColor) = pluginStatus switch

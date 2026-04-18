@@ -65,7 +65,7 @@ internal static unsafe class CredentialCache
     private static void SyncToCredentialCache(Guid pluginClsid)
     {
         // 1. Query credentials from KeePass
-        var req = new IpcRequest { Type = "get_credentials", RequestId = "sync" };
+        var req = new IpcRequest { Type = "get_credentials" };
         if (!PipeClient.SendRequest(req, out var resp) || resp == null || resp.Type == "error")
         {
             Log.Info("KeePass unavailable or error, skipping sync");

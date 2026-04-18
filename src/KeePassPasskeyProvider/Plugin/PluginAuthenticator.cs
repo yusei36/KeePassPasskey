@@ -212,7 +212,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 var req = new IpcRequest
                 {
                     Type = "make_credential",
-                    RequestId = "mc1",
                     RpId = rpIdUtf8,
                     RpName = rpNameStr,
                     UserId = userIdB64,
@@ -309,7 +308,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 var req = new IpcRequest
                 {
                     Type = "get_assertion",
-                    RequestId = "ga1",
                     RpId = rpIdUtf8,
                     ClientDataHash = clientDataHashB64,
                     AllowCredentials = allowList,
@@ -377,7 +375,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
         try
         {
-            var req = new IpcRequest { Type = "ping", RequestId = "ping" };
+            var req = new IpcRequest { Type = "ping" };
             bool ok = PipeClient.SendRequest(req, out var resp);
             bool ready = ok && resp?.Status == "ready";
             Log.Info($"pipeOk={ok} status={resp?.Status} ready={ready}");

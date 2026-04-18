@@ -73,13 +73,13 @@ namespace KeePassPasskeyPlugin.Ipc
                     pipe = null;
                     ThreadPool.QueueUserWorkItem(_ => HandleConnection(connectedPipe));
                 }
-                catch (Exception ex) when (!_running)
+                catch (Exception) when (!_running)
                 {
                     // Expected on shutdown
                     pipe?.Dispose();
                     break;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     pipe?.Dispose();
                     // Brief pause to avoid tight loop on persistent errors
