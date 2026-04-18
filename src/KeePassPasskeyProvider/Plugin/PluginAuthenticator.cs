@@ -18,144 +18,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     private volatile bool _cancelled;
     private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
 
-    // -----------------------------------------------------------------
-    // Helper Methods
-    // -----------------------------------------------------------------
-
-    /// <summary>
-    /// Verifies the request signature by extracting fields from the request pointer.
-    /// </summary>
-    private static unsafe int VerifyRequestSignature(WebAuthnPluginOperationRequest* pRequest)
-        => SignatureVerifier.VerifyIfKeyAvailable(
-            pRequest->pbEncodedRequest, pRequest->cbEncodedRequest,
-            pRequest->pbRequestSignature, pRequest->cbRequestSignature);
-
-    /// <summary>
-    /// Extracts credential IDs from a WebAuthn credential list and converts them to base64url.
-    /// </summary>
-    private static unsafe List<string> ExtractCredentialIds(WebAuthnCredentialList list)
-    {
-        var ids = new List<string>((int)list.cCredentials);
-        for (uint i = 0; i < list.cCredentials; i++)
-        {
-            var c = list.ppCredentials[i];
-            ids.Add(Base64Url.Encode(new ReadOnlySpan<byte>(c->pbId, (int)c->cbId).ToArray()));
-        }
-        return ids;
-    }
-
-    /// <summary>
-    /// Maps error codes from the KeePass plugin response to Windows HRESULTs.
-    /// Used by both MakeCredential and GetAssertion.
-    /// </summary>
-    private static int MapErrorCode(PipeErrorCode? code) => code switch
-    {
-        PipeErrorCode.DbLocked  => PluginConstants.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
-        PipeErrorCode.Duplicate => PluginConstants.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
-        PipeErrorCode.NotFound  => PluginConstants.NTE_NOT_FOUND,
-        _                       => PluginConstants.E_FAIL,
-    };
-
-    /// <summary>
-    /// Encodes the attestation response (for make_credential).
-    /// Isolates the fixed-pinning block and WebAuthnCredentialAttestation struct construction.
-    /// </summary>
-    private static unsafe int EncodeAttestation(
-        byte[] authData, out uint cbEncoded, out byte* pbEncoded)
-    {
-        fixed (char* fmtPtr = "none")
-        fixed (byte* authPtr = authData)
-        {
-            var attestation = new WebAuthnCredentialAttestation
-            {
-                dwVersion            = PluginConstants.AttestationCurrentVersion,
-                pwszFormatType       = fmtPtr,
-                cbAuthenticatorData  = (uint)authData.Length,
-                pbAuthenticatorData  = authPtr,
-                cbAttestation        = 0,
-                pbAttestation        = null,
-            };
-
-            uint cb = 0;
-            byte* pb = null;
-            int hr = WebAuthnApi.WebAuthNEncodeMakeCredentialResponse(&attestation, &cb, &pb);
-            cbEncoded = cb;
-            pbEncoded = pb;
-            return hr;
-        }
-    }
-
-    /// <summary>
-    /// Encodes the assertion response (for get_assertion).
-    /// Isolates the 7-way fixed-pinning block and WebAuthnCtapCborGetAssertionResponse struct construction.
-    /// Converts base64/base64url strings to byte arrays internally.
-    /// </summary>
-    private static unsafe int EncodeAssertion(
-        string? authDataB64, string? signatureB64,
-        string? credIdB64, string? userHandleB64,
-        string? userName, string? userDisplayName,
-        out uint cbEncoded, out byte* pbEncoded)
-    {
-        // Convert base64/base64url strings to byte arrays
-        byte[] authDataBytes = Convert.FromBase64String(authDataB64 ?? string.Empty);
-        byte[] signatureBytes = Convert.FromBase64String(signatureB64 ?? string.Empty);
-        byte[] userHandleBytes = string.IsNullOrEmpty(userHandleB64)
-            ? Array.Empty<byte>()
-            : Base64Url.Decode(userHandleB64);
-        byte[] credIdBytes = string.IsNullOrEmpty(credIdB64)
-            ? Array.Empty<byte>()
-            : Base64Url.Decode(credIdB64);
-
-        fixed (byte* authPtr = authDataBytes)
-        fixed (byte* sigPtr = signatureBytes)
-        fixed (byte* uhPtr = userHandleBytes.Length > 0 ? userHandleBytes : new byte[1])
-        fixed (byte* credPtr = credIdBytes.Length > 0 ? credIdBytes : new byte[1])
-        fixed (char* typePtr = PluginConstants.CredentialTypePublicKey)
-        fixed (char* namePtr = userName ?? string.Empty)
-        fixed (char* dispPtr = (userDisplayName ?? userName) ?? string.Empty)
-        {
-            var cred = new WebAuthnCredential
-            {
-                dwVersion           = PluginConstants.CredentialVersion,
-                cbId                = (uint)credIdBytes.Length,
-                pbId                = credPtr,
-                pwszCredentialType  = typePtr,
-            };
-
-            // Build the assertion response struct (full v6 size, zero-initialized)
-            var assertionResp = new WebAuthnCtapCborGetAssertionResponse();
-            assertionResp.WebAuthNAssertion.dwVersion             = PluginConstants.AssertionCurrentVersion;
-            assertionResp.WebAuthNAssertion.Credential            = cred;
-            assertionResp.WebAuthNAssertion.cbAuthenticatorData   = (uint)authDataBytes.Length;
-            assertionResp.WebAuthNAssertion.pbAuthenticatorData   = authPtr;
-            assertionResp.WebAuthNAssertion.cbSignature           = (uint)signatureBytes.Length;
-            assertionResp.WebAuthNAssertion.pbSignature           = sigPtr;
-            assertionResp.WebAuthNAssertion.cbUserId              = (uint)userHandleBytes.Length;
-            assertionResp.WebAuthNAssertion.pbUserId              = userHandleBytes.Length > 0 ? uhPtr : null;
-            assertionResp.dwNumberOfCredentials                   = 1;
-            assertionResp.lUserSelected                           = 1; // TRUE
-
-            // Build user info if we have a user handle
-            WebAuthnUserEntityInformation userInfo = default;
-            if (userHandleBytes.Length > 0)
-            {
-                userInfo.dwVersion     = PluginConstants.UserEntityVersion;
-                userInfo.cbId          = (uint)userHandleBytes.Length;
-                userInfo.pbId          = uhPtr;
-                userInfo.pwszName      = namePtr;
-                userInfo.pwszIcon      = null;
-                userInfo.pwszDisplayName = dispPtr;
-                assertionResp.pUserInformation = &userInfo;
-            }
-
-            uint cb = 0;
-            byte* pb = null;
-            int hr = WebAuthnApi.WebAuthNEncodeGetAssertionResponse(&assertionResp, &cb, &pb);
-            cbEncoded = cb;
-            pbEncoded = pb;
-            return hr;
-        }
-    }
+    // null = unknown (first call), true = last ping succeeded, false = last ping failed
+    private static bool? _lastPingReady;
 
     // -----------------------------------------------------------------
     // MakeCredential
@@ -365,10 +229,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     // -----------------------------------------------------------------
     // GetLockStatus
     // -----------------------------------------------------------------
-
-    // null = unknown (first call), true = last ping succeeded, false = last ping failed
-    private static bool? _lastPingReady;
-
     public unsafe int GetLockStatus(nint pLockStatusRaw)
     {
         if (pLockStatusRaw == 0) return PluginConstants.E_INVALIDARG;
@@ -407,6 +267,141 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             Log.Warn($"exception {ex.Message}");
             *pLockStatus = PluginLockStatus.PluginLocked;
             return PluginConstants.S_OK;
+        }
+    }
+
+    /// <summary>
+    /// Verifies the request signature by extracting fields from the request pointer.
+    /// </summary>
+    private static unsafe int VerifyRequestSignature(WebAuthnPluginOperationRequest* pRequest)
+        => SignatureVerifier.VerifyIfKeyAvailable(
+            pRequest->pbEncodedRequest, pRequest->cbEncodedRequest,
+            pRequest->pbRequestSignature, pRequest->cbRequestSignature);
+
+    /// <summary>
+    /// Extracts credential IDs from a WebAuthn credential list and converts them to base64url.
+    /// </summary>
+    private static unsafe List<string> ExtractCredentialIds(WebAuthnCredentialList list)
+    {
+        var ids = new List<string>((int)list.cCredentials);
+        for (uint i = 0; i < list.cCredentials; i++)
+        {
+            var c = list.ppCredentials[i];
+            ids.Add(Base64Url.Encode(new ReadOnlySpan<byte>(c->pbId, (int)c->cbId).ToArray()));
+        }
+        return ids;
+    }
+
+    /// <summary>
+    /// Maps error codes from the KeePass plugin response to Windows HRESULTs.
+    /// Used by both MakeCredential and GetAssertion.
+    /// </summary>
+    private static int MapErrorCode(PipeErrorCode? code) => code switch
+    {
+        PipeErrorCode.DbLocked => PluginConstants.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
+        PipeErrorCode.Duplicate => PluginConstants.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
+        PipeErrorCode.NotFound => PluginConstants.NTE_NOT_FOUND,
+        _ => PluginConstants.E_FAIL,
+    };
+
+    /// <summary>
+    /// Encodes the attestation response (for make_credential).
+    /// Isolates the fixed-pinning block and WebAuthnCredentialAttestation struct construction.
+    /// </summary>
+    private static unsafe int EncodeAttestation(
+        byte[] authData, out uint cbEncoded, out byte* pbEncoded)
+    {
+        fixed (char* fmtPtr = "none")
+        fixed (byte* authPtr = authData)
+        {
+            var attestation = new WebAuthnCredentialAttestation
+            {
+                dwVersion = PluginConstants.AttestationCurrentVersion,
+                pwszFormatType = fmtPtr,
+                cbAuthenticatorData = (uint)authData.Length,
+                pbAuthenticatorData = authPtr,
+                cbAttestation = 0,
+                pbAttestation = null,
+            };
+
+            uint cb = 0;
+            byte* pb = null;
+            int hr = WebAuthnApi.WebAuthNEncodeMakeCredentialResponse(&attestation, &cb, &pb);
+            cbEncoded = cb;
+            pbEncoded = pb;
+            return hr;
+        }
+    }
+
+    /// <summary>
+    /// Encodes the assertion response (for get_assertion).
+    /// Isolates the 7-way fixed-pinning block and WebAuthnCtapCborGetAssertionResponse struct construction.
+    /// Converts base64/base64url strings to byte arrays internally.
+    /// </summary>
+    private static unsafe int EncodeAssertion(
+        string? authDataB64, string? signatureB64,
+        string? credIdB64, string? userHandleB64,
+        string? userName, string? userDisplayName,
+        out uint cbEncoded, out byte* pbEncoded)
+    {
+        // Convert base64/base64url strings to byte arrays
+        byte[] authDataBytes = Convert.FromBase64String(authDataB64 ?? string.Empty);
+        byte[] signatureBytes = Convert.FromBase64String(signatureB64 ?? string.Empty);
+        byte[] userHandleBytes = string.IsNullOrEmpty(userHandleB64)
+            ? Array.Empty<byte>()
+            : Base64Url.Decode(userHandleB64);
+        byte[] credIdBytes = string.IsNullOrEmpty(credIdB64)
+            ? Array.Empty<byte>()
+            : Base64Url.Decode(credIdB64);
+
+        fixed (byte* authPtr = authDataBytes)
+        fixed (byte* sigPtr = signatureBytes)
+        fixed (byte* uhPtr = userHandleBytes.Length > 0 ? userHandleBytes : new byte[1])
+        fixed (byte* credPtr = credIdBytes.Length > 0 ? credIdBytes : new byte[1])
+        fixed (char* typePtr = PluginConstants.CredentialTypePublicKey)
+        fixed (char* namePtr = userName ?? string.Empty)
+        fixed (char* dispPtr = (userDisplayName ?? userName) ?? string.Empty)
+        {
+            var cred = new WebAuthnCredential
+            {
+                dwVersion = PluginConstants.CredentialVersion,
+                cbId = (uint)credIdBytes.Length,
+                pbId = credPtr,
+                pwszCredentialType = typePtr,
+            };
+
+            // Build the assertion response struct (full v6 size, zero-initialized)
+            var assertionResp = new WebAuthnCtapCborGetAssertionResponse();
+            assertionResp.WebAuthNAssertion.dwVersion = PluginConstants.AssertionCurrentVersion;
+            assertionResp.WebAuthNAssertion.Credential = cred;
+            assertionResp.WebAuthNAssertion.cbAuthenticatorData = (uint)authDataBytes.Length;
+            assertionResp.WebAuthNAssertion.pbAuthenticatorData = authPtr;
+            assertionResp.WebAuthNAssertion.cbSignature = (uint)signatureBytes.Length;
+            assertionResp.WebAuthNAssertion.pbSignature = sigPtr;
+            assertionResp.WebAuthNAssertion.cbUserId = (uint)userHandleBytes.Length;
+            assertionResp.WebAuthNAssertion.pbUserId = userHandleBytes.Length > 0 ? uhPtr : null;
+            assertionResp.dwNumberOfCredentials = 1;
+            assertionResp.lUserSelected = 1; // TRUE
+
+            // Build user info if we have a user handle
+            WebAuthnUserEntityInformation userInfo = default;
+            if (userHandleBytes.Length > 0)
+            {
+                userInfo.dwVersion = PluginConstants.UserEntityVersion;
+                userInfo.cbId = (uint)userHandleBytes.Length;
+                userInfo.pbId = uhPtr;
+                userInfo.pwszName = namePtr;
+                userInfo.pwszIcon = null;
+                userInfo.pwszDisplayName = dispPtr;
+                assertionResp.pUserInformation = &userInfo;
+            }
+
+            uint cb = 0;
+            byte* pb = null;
+            int hr = WebAuthnApi.WebAuthNEncodeGetAssertionResponse(&assertionResp, &cb, &pb);
+            cbEncoded = cb;
+            pbEncoded = pb;
+            return hr;
         }
     }
 }
