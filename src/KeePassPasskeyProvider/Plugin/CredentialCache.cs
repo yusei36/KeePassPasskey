@@ -66,7 +66,7 @@ internal static unsafe class CredentialCache
     private static bool SyncToCredentialCache(Guid pluginClsid)
     {
         // 1. Query credentials from KeePass
-        var pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
+        var pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
         var response = pipeClient.GetCredentials(new GetCredentialsRequest());
         if (response == null)
         {

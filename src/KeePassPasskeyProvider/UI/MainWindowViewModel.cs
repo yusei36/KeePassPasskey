@@ -23,7 +23,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool _isRefreshing;
 
     private readonly FileSystemWatcher? _logWatcher;
-    private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
+    private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
 
     public string LogToggleLabel => IsLogVisible ? "Hide Log" : "Show Log";
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();

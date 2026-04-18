@@ -25,6 +25,7 @@ internal static class Log
     private static readonly object _lock = new();
 
     [Conditional("DEBUG")]
+    public static void Debug(string message, [CallerMemberName] string member = "") => Append("DEBUG", member, message);
     public static void Info(string message, [CallerMemberName] string member = "") => Append("INFO ", member, message);
     public static void Warn(string message, [CallerMemberName] string member = "") => Append("WARN ", member, message);
     public static void Error(string message, [CallerMemberName] string member = "") => Append("ERROR", member, message);

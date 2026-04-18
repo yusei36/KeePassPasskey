@@ -17,7 +17,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 {
     private volatile bool _cancelled;
     private Guid _currentTransactionId;
-    private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
+    private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
 
     // null = unknown (first call), true = last ping succeeded, false = last ping failed
     private static bool? _lastPingReady;
