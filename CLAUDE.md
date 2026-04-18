@@ -20,7 +20,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, -PluginA
 - All crypto (EC P-256 keygen, ECDSA signing) lives in the C# plugin (`EcKeyHelper.cs`)
 - The COM server handles Windows API surface only: CBOR decode/encode, credential cache
 - CLSID: `4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e` (COM server identity, MSIX manifest + `KeePassPasskeyProviderClsid`)
-- AAGUID: `fdb141b2-5d84-443e-8a35-4698c205a502` (KeePassXC-compatible, defined once in `KeePassPasskeyProviderAaguid` in the provider; sent to the plugin in every `make_credential` request so the plugin never hardcodes it)
+- AAGUID: `9addb28c-b46f-4402-808f-019651441ff3` (defined once in `KeePassPasskeyProviderAaguid` in the provider; sent to the plugin in every `make_credential` request so the plugin never hardcodes it)
 - Credentials stored as `KPEX_PASSKEY_*` fields (KeePassXC format)
 
 ## Build Commands

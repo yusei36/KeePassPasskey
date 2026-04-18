@@ -170,7 +170,7 @@ internal static unsafe class WebAuthnPluginApi
 /// <summary>
 /// IID and CLSID constants for the KeePass passkey provider.
 /// CLSID: 4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e (COM server identity).
-/// AAGUID: fdb141b2-5d84-443e-8a35-4698c205a502 (KeePassXC-compatible, embedded in credentials).
+/// AAGUID: 9addb28c-b46f-4402-808f-019651441ff3
 /// IPluginAuthenticator IID from pluginauthenticator.h: d26bcf6f-b54c-43ff-9f06-d5bf148625f7.
 /// </summary>
 internal static class PluginConstants
@@ -178,8 +178,8 @@ internal static class PluginConstants
     /// <summary>KeePassPasskey Provider COM server CLSID.</summary>
     public static readonly Guid KeePassPasskeyProviderClsid = new("4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e");
 
-    /// <summary>KeePassXC-compatible AAGUID.</summary>
-    public static readonly Guid KeePassPasskeyProviderAaguid = new("fdb141b2-5d84-443e-8a35-4698c205a502");
+    /// <summary>KeePassPasskey Provider AAGUID.</summary>
+    public static readonly Guid KeePassPasskeyProviderAaguid = new("9addb28c-b46f-4402-808f-019651441ff3");
 
     /// <summary>AAGUID as 16 bytes in RFC 4122 big-endian order, for use in authenticatorData and CBOR.</summary>
     public static readonly byte[] KeePassPasskeyProviderAaguidBytes = AaguidToRfc4122Bytes(KeePassPasskeyProviderAaguid);

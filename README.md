@@ -102,7 +102,7 @@ Credentials created here can be read by KeePassXC and vice versa.
 | Identifier | Value |
 |---|---|
 | COM CLSID | `4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e` |
-| AAGUID | `fdb141b2-5d84-443e-8a35-4698c205a502` (KeePassXC-compatible) |
+| AAGUID | `9addb28c-b46f-4402-808f-019651441ff3` |
 
 ## Project structure
 
