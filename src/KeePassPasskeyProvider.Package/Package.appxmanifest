@@ -15,8 +15,8 @@
     ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>KeePass Passkey Provider</DisplayName>
-    <PublisherDisplayName>KeePass Passkey Provider</PublisherDisplayName>
+    <DisplayName>KeePassPasskey</DisplayName>
+    <PublisherDisplayName>Uwe Kögel</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -31,7 +31,7 @@
   <Applications>
     <Application Id="PasskeyProvider" Executable="PasskeyProvider.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="KeePass Passkey Provider"
+        DisplayName="KeePassPasskey"
         Description="Stores passkeys in KeePass (KeePassXC-compatible)"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
@@ -43,8 +43,8 @@
       <Extensions>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" Arguments="-PluginActivated" DisplayName="KeePass Passkey Provider">
-              <com:Class Id="4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e" DisplayName="KeePass Passkey Provider" />
+            <com:ExeServer Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" Arguments="-PluginActivated" DisplayName="KeePassPasskey Provider">
+              <com:Class Id="4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e" DisplayName="KeePassPasskey Provider" />
             </com:ExeServer>
           </com:ComServer>
         </com:Extension>

@@ -175,7 +175,7 @@ internal static unsafe class WebAuthnPluginApi
 /// </summary>
 internal static class PluginConstants
 {
-    /// <summary>KeePass Passkey Provider COM server CLSID.</summary>
+    /// <summary>KeePassPasskey Provider COM server CLSID.</summary>
     public static readonly Guid KeePassPasskeyProviderClsid = new("4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e");
 
     /// <summary>KeePassXC-compatible AAGUID.</summary>
@@ -200,7 +200,7 @@ internal static class PluginConstants
     /// <summary>IUnknown IID (standard COM).</summary>
     public static readonly Guid IID_IUnknown = new("00000000-0000-0000-C000-000000000046");
 
-    public const string PluginName = "KeePass Passkey Provider";
+    public const string PluginName = "KeePassPasskey";
     public const string PluginRpId = "keepass.info";
     public const string PluginRegPath = @"Software\KeePassPasskeyProvider";
     public const string RegKeySigningKey = "OpSigningPublicKey";

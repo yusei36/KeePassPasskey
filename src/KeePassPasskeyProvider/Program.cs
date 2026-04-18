@@ -181,7 +181,7 @@ internal static class Program
             {
                 int hr = PluginRegistration.Register();
                 if (hr >= 0)
-                    Console.WriteLine("KeePass Passkey Provider registered successfully.");
+                    Console.WriteLine("KeePassPasskey Provider registered successfully.");
                 else
                     Console.WriteLine($"Registration failed: 0x{hr:X8}");
                 return hr >= 0 ? 0 : 1;
@@ -191,7 +191,7 @@ internal static class Program
             {
                 int hr = PluginRegistration.Unregister();
                 if (hr >= 0)
-                    Console.WriteLine("KeePass Passkey Provider unregistered.");
+                    Console.WriteLine("KeePassPasskey Provider unregistered.");
                 else
                     Console.WriteLine($"Unregister failed: 0x{hr:X8}");
                 return hr >= 0 ? 0 : 1;
@@ -214,7 +214,7 @@ internal static class Program
             }
 
             default:
-                Console.WriteLine("KeePass Passkey Provider");
+                Console.WriteLine("KeePassPasskey Provider");
                 Console.WriteLine("Usage: KeePassPasskeyProvider.exe /register | /unregister | /status");
                 return 0;
         }

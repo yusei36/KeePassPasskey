@@ -32,7 +32,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 2. Double-click the MSIX to install (you will be prompted to trust the certificate on first install).
 3. Copy `KeePassPasskeyPlugin.dll` to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`).
 4. Restart KeePass.
-5. Open **Settings → Accounts → Passkeys → Advanced Options** and select **KeePass Passkey Provider**.
+5. Launch **KeePassPasskey** from the Start menu. Click **Register** and then **Open Passkey Settings** to enable it.
 
 ### Option B — Build and install from source
 
@@ -43,9 +43,18 @@ See [Prerequisites](#Prerequisites) below, then run the install script:
 .\scripts\sign-and-install.ps1
 ```
 
-This builds the MSIX, creates a self-signed test certificate, trusts it, and installs the package.
+This builds the MSIX, creates a self-signed test certificate, trusts it, installs the package, and launches the provider UI.
 
-After installation, open **Settings → Accounts → Passkeys → Advanced Options** and select **KeePass Passkey Provider**.
+In the provider UI, click **Register** to register the plugin with Windows, then click **Open Passkey Settings** to open **Settings → Accounts → Passkeys → Advanced Options** and enable **KeePassPasskey**.
+
+#### Manual registration (CLI alternative)
+
+```powershell
+KeePassPasskeyProvider.exe /register
+KeePassPasskeyProvider.exe /status   # verify
+```
+
+Then open Settings manually: **Settings → Accounts → Passkeys → Advanced Options** → enable **KeePassPasskey**.
 
 ## Building
 
