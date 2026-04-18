@@ -229,10 +229,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     return PluginConstants.NTE_NOT_FOUND;
                 }
 
-                if (response.Code != null)
+                if (response.ErrorCode != null)
                 {
-                    Log.Warn($"KeePass error code={response.Code}");
-                    return MapErrorCode(response.Code);
+                    Log.Warn($"KeePass error code={response.ErrorCode}");
+                    return MapErrorCode(response.ErrorCode);
                 }
 
                 // 5. Build authenticatorData and encode attestation response
@@ -322,10 +322,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     return PluginConstants.NTE_NOT_FOUND;
                 }
 
-                if (response.Code != null)
+                if (response.ErrorCode != null)
                 {
-                    Log.Warn($"KeePass error code={response.Code}");
-                    return MapErrorCode(response.Code);
+                    Log.Warn($"KeePass error code={response.ErrorCode}");
+                    return MapErrorCode(response.ErrorCode);
                 }
 
                 // 6. Encode assertion response

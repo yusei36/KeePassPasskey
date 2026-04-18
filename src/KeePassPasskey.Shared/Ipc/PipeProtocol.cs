@@ -78,11 +78,11 @@ namespace KeePassPasskey.Shared
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
-        public string Code { get; set; }
+        [JsonProperty("errorCode", NullValueHandling = NullValueHandling.Ignore)]
+        public string ErrorCode { get; set; }
 
-        [JsonProperty("message", NullValueHandling = NullValueHandling.Ignore)]
-        public string Message { get; set; }
+        [JsonProperty("errorMessage", NullValueHandling = NullValueHandling.Ignore)]
+        public string ErrorMessage { get; set; }
     }
 
     public sealed class PingResponse : PipeResponseBase

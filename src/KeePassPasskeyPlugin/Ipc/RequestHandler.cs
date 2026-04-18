@@ -29,7 +29,7 @@ namespace KeePassPasskeyPlugin.Ipc
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new PipeResponseBase { Code = "internal_error", Message = "Failed to parse request: " + ex.Message });
+                return JsonConvert.SerializeObject(new PipeResponseBase { ErrorCode ="internal_error", ErrorMessage ="Failed to parse request: " + ex.Message });
             }
 
             try
@@ -41,13 +41,13 @@ namespace KeePassPasskeyPlugin.Ipc
                     MakeCredentialRequest r  => HandleMakeCredential(r),
                     GetAssertionRequest r    => HandleGetAssertion(r),
                     CancelRequest r          => HandleCancel(r),
-                    _ => new PipeResponseBase { Code = "internal_error", Message = "Unknown request type: " + req.Type }
+                    _ => new PipeResponseBase { ErrorCode ="internal_error", ErrorMessage ="Unknown request type: " + req.Type }
                 };
                 return JsonConvert.SerializeObject(response);
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new PipeResponseBase { Code = "internal_error", Message = ex.Message });
+                return JsonConvert.SerializeObject(new PipeResponseBase { ErrorCode ="internal_error", ErrorMessage =ex.Message });
             }
         }
 
@@ -59,7 +59,7 @@ namespace KeePassPasskeyPlugin.Ipc
         private GetCredentialsResponse HandleGetCredentials(GetCredentialsRequest req)
         {
             if (!IsDatabaseOpen())
-                return new GetCredentialsResponse { Code = "db_locked", Message = "No database open" };
+                return new GetCredentialsResponse { ErrorCode ="db_locked", ErrorMessage ="No database open" };
 
             var all = _storage.GetAllCredentials();
             var infos = new List<CredentialInfo>(all.Count);
@@ -87,10 +87,10 @@ namespace KeePassPasskeyPlugin.Ipc
         private MakeCredentialResponse HandleMakeCredential(MakeCredentialRequest req)
         {
             if (!IsDatabaseOpen())
-                return new MakeCredentialResponse { Code = "db_locked", Message = "No database open" };
+                return new MakeCredentialResponse { ErrorCode ="db_locked", ErrorMessage ="No database open" };
 
             if (string.IsNullOrEmpty(req.RpId))
-                return new MakeCredentialResponse { Code = "internal_error", Message = "rpId is required" };
+                return new MakeCredentialResponse { ErrorCode ="internal_error", ErrorMessage ="rpId is required" };
 
             // KeePassXC-style excludeCredentials handling: reject registration only
             // when one of the excluded credential IDs already exists for this RP.
@@ -98,7 +98,7 @@ namespace KeePassPasskeyPlugin.Ipc
             {
                 var existingCredentials = _storage.FindByRpIdAndCredentialIds(req.RpId, req.ExcludeCredentials);
                 if (existingCredentials.Count > 0)
-                    return new MakeCredentialResponse { Code = "duplicate", Message = "Credential already exists for this RP" };
+                    return new MakeCredentialResponse { ErrorCode ="duplicate", ErrorMessage ="Credential already exists for this RP" };
             }
 
             // Generate EC P-256 key pair
@@ -127,7 +127,7 @@ namespace KeePassPasskeyPlugin.Ipc
             };
 
             if (!_storage.CreatePasskeyEntry(credential))
-                return new MakeCredentialResponse { Code = "internal_error", Message = "Failed to create KeePass entry" };
+                return new MakeCredentialResponse { ErrorCode ="internal_error", ErrorMessage ="Failed to create KeePass entry" };
 
             return new MakeCredentialResponse
             {
@@ -140,13 +140,13 @@ namespace KeePassPasskeyPlugin.Ipc
         private GetAssertionResponse HandleGetAssertion(GetAssertionRequest req)
         {
             if (!IsDatabaseOpen())
-                return new GetAssertionResponse { Code = "db_locked", Message = "No database open" };
+                return new GetAssertionResponse { ErrorCode ="db_locked", ErrorMessage ="No database open" };
 
             if (string.IsNullOrEmpty(req.RpId))
-                return new GetAssertionResponse { Code = "internal_error", Message = "rpId is required" };
+                return new GetAssertionResponse { ErrorCode ="internal_error", ErrorMessage ="rpId is required" };
 
             if (string.IsNullOrEmpty(req.ClientDataHash))
-                return new GetAssertionResponse { Code = "internal_error", Message = "clientDataHash is required" };
+                return new GetAssertionResponse { ErrorCode ="internal_error", ErrorMessage ="clientDataHash is required" };
 
             // Find matching credential
             List<PasskeyCredential> candidates;
@@ -156,7 +156,7 @@ namespace KeePassPasskeyPlugin.Ipc
                 candidates = _storage.FindByRpId(req.RpId);
 
             if (candidates.Count == 0)
-                return new GetAssertionResponse { Code = "not_found", Message = "No matching credential found for rpId: " + req.RpId };
+                return new GetAssertionResponse { ErrorCode ="not_found", ErrorMessage ="No matching credential found for rpId: " + req.RpId };
 
             // Use first matching credential (platform handles multi-credential selection via autofill UI)
             var credential = candidates[0];
