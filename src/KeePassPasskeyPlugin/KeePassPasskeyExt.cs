@@ -5,6 +5,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace KeePassPasskey
 {
@@ -41,6 +42,17 @@ namespace KeePassPasskey
         public override bool Initialize(IPluginHost host)
         {
             if (host == null) return false;
+
+            // Windows 11 24H2 required (build 26100+) for the passkey provider API.
+            if (GetRealWindowsBuildNumber() < 26100)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "KeePassPasskey requires Windows 11 24H2 or later.",
+                    "KeePassPasskey", System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Error);
+                return false;
+            }
+
             _host = host;
 
             var storage = new PasskeyEntryStorage(_host);
@@ -55,6 +67,34 @@ namespace KeePassPasskey
         {
             _pipeServer?.Stop();
             _pipeServer = null;
+        }
+
+        // Environment.OSVersion lies on .NET Framework without a matching manifest — use RtlGetVersion instead.
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct OSVERSIONINFOEX
+        {
+            public uint dwOSVersionInfoSize;
+            public uint dwMajorVersion;
+            public uint dwMinorVersion;
+            public uint dwBuildNumber;
+            public uint dwPlatformId;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string szCSDVersion;
+            public ushort wServicePackMajor;
+            public ushort wServicePackMinor;
+            public ushort wSuiteMask;
+            public byte wProductType;
+            public byte wReserved;
+        }
+
+        [DllImport("ntdll.dll")]
+        private static extern int RtlGetVersion(ref OSVERSIONINFOEX lpVersionInformation);
+
+        private static uint GetRealWindowsBuildNumber()
+        {
+            var osvi = new OSVERSIONINFOEX { dwOSVersionInfoSize = (uint)Marshal.SizeOf(typeof(OSVERSIONINFOEX)) };
+            RtlGetVersion(ref osvi);
+            return osvi.dwBuildNumber;
         }
     }
 }
