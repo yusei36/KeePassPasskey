@@ -11,6 +11,7 @@
     <EnableComHosting>false</EnableComHosting>
     <!-- Self-contained, single-file publish for x64 Windows -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
