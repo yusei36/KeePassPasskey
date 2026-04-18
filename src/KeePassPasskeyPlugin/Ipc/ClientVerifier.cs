@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
 
-namespace KeePassPasskeyPlugin.Ipc
+namespace KeePassPasskey.Ipc
 {
     /// <summary>
     /// Verifies that connecting pipe clients are legitimate KeePassPasskeyProvider instances.

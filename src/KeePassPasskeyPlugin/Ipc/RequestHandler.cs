@@ -1,14 +1,14 @@
 using KeePass.Plugins;
 using KeePassPasskey.Shared;
 using KeePassPasskey.Shared.Ipc;
-using KeePassPasskeyPlugin.Passkey;
-using KeePassPasskeyPlugin.Storage;
+using KeePassPasskey.Passkey;
+using KeePassPasskey.Storage;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-namespace KeePassPasskeyPlugin.Ipc
+namespace KeePassPasskey.Ipc
 {
     internal sealed class RequestHandler
     {

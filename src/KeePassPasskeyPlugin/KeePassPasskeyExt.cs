@@ -1,19 +1,19 @@
 ﻿using KeePass.Plugins;
-using KeePassPasskeyPlugin.Ipc;
-using KeePassPasskeyPlugin.Storage;
+using KeePassPasskey.Ipc;
+using KeePassPasskey.Storage;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 
-namespace KeePassPasskeyPlugin
+namespace KeePassPasskey
 {
     /// <summary>
     /// KeePass plugin entry point.
     /// Starts the named pipe server on Initialize() so the native COM server
     /// (KeePassPasskeyProvider.exe) can connect to perform passkey operations.
     /// </summary>
-    public sealed class KeePassPasskeyPluginExt : Plugin
+    public sealed class KeePassPasskeyExt : Plugin
     {
         private IPluginHost _host;
         private PipeServer _pipeServer;
@@ -25,7 +25,7 @@ namespace KeePassPasskeyPlugin
         {
             var asm = Assembly.GetExecutingAssembly();
             using (Stream raw = asm.GetManifestResourceStream(
-                "KeePassPasskeyPlugin.Resources.plugin-icon.png"))
+                "KeePassPasskey.Resources.plugin-icon.png"))
             {
                 var ms = new MemoryStream();
                 raw.CopyTo(ms);

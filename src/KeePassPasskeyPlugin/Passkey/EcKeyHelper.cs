@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace KeePassPasskeyPlugin.Passkey
+namespace KeePassPasskey.Passkey
 {
     internal static class EcKeyHelper
     {

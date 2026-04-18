@@ -9,13 +9,13 @@ Windows 11 routes passkey operations through a COM server registered as a plugin
 ```
 Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
                                           ↓  Named pipe JSON
-                                    KeePassPasskeyPlugin.dll (KeePass plugin)
+                                    KeePassPasskey.dll (KeePass plugin)
                                           ↓  KeePass Plugin API
                                     KeePass Database (KPEX_PASSKEY_* fields)
 ```
 
 - **KeePassPasskeyProvider.exe** — COM server, MSIX-packaged, handles the Windows WebAuthn API surface (CBOR decode/encode, credential cache sync)
-- **KeePassPasskeyPlugin.dll** — KeePass plugin, handles EC P-256 key generation and ECDSA signing, stores credentials in the open database
+- **KeePassPasskey.dll** — KeePass plugin, handles EC P-256 key generation and ECDSA signing, stores credentials in the open database
 - Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so they are readable by KeePassXC
 
 ## Requirements
@@ -30,7 +30,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 
 1. Download `KeePassPasskeyProvider.Package_x64.msix` from the releases page.
 2. Double-click the MSIX to install (you will be prompted to trust the certificate on first install).
-3. Copy `KeePassPasskeyPlugin.dll` to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`).
+3. Copy `KeePassPasskey.dll` to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`).
 4. Restart KeePass.
 5. Launch **KeePassPasskey** from the Start menu. Click **Register** and then **Open Passkey Settings** to enable it.
 

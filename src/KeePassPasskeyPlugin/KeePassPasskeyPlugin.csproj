@@ -4,8 +4,8 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net48</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <RootNamespace>KeePassPasskeyPlugin</RootNamespace>
-    <AssemblyName>KeePassPasskeyPlugin</AssemblyName>
+    <RootNamespace>KeePassPasskey</RootNamespace>
+    <AssemblyName>KeePassPasskey</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
     <OutputPath>..\..\build\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -14,7 +14,7 @@
     <Version>1.0.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Title>KeePassPasskeyPlugin</Title>
+    <Title>KeePassPasskey</Title>
     <Description>KeePass plugin that provides native Windows 11 passkey (FIDO2/WebAuthn) support via the platform authenticator API.</Description>
     <Company>Uwe Kögel</Company>
     <Product>KeePass Plugin</Product>

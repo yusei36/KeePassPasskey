@@ -1,4 +1,4 @@
-﻿namespace KeePassPasskeyPlugin.Passkey
+﻿namespace KeePassPasskey.Passkey
 {
     internal sealed class PasskeyCredential
     {

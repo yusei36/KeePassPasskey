@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using KeePassPasskey.Shared.Ipc;
 
-namespace KeePassPasskeyPlugin.Ipc
+namespace KeePassPasskey.Ipc
 {
     /// <summary>
     /// Named pipe server that listens on \\.\pipe\keepass-passkey-provider.

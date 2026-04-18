@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterScreen">
     <StackPanel Margin="24" Spacing="14">
         <TextBlock Text="KeePassPasskey" FontSize="18" FontWeight="Bold" />
-        <TextBlock Text="Windows passkey provider · requires KeePassPasskeyPlugin installed in KeePass"
+        <TextBlock Text="Windows passkey provider · requires KeePassPasskey installed in KeePass"
                    FontSize="11" Opacity="0.55" Margin="0 -8 0 0" />
 
         <!-- Not-packaged warning -->
@@ -31,7 +31,7 @@
                     <TextBlock Text="1." FontWeight="SemiBold" Width="16" />
                     <TextBlock TextWrapping="Wrap">
                         <Run Text="Copy " />
-                        <Run Text="KeePassPasskeyPlugin.dll" FontWeight="Bold" />
+                        <Run Text="KeePassPasskey.dll" FontWeight="Bold" />
                         <Run Text=" to the KeePass " />
                         <Run Text="Plugins" FontWeight="Bold" />
                         <Run Text=" folder and (re)start KeePass." />
