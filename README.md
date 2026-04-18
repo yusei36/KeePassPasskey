@@ -95,7 +95,6 @@ Credentials created here can be read by KeePassXC and vice versa.
 
 - The KeePass plugin verifies the identity of the connecting COM server before processing any request. In production (MSIX-installed) it checks the package family name and that the executable is in the protected `WindowsApps` folder.
 - All signing (ECDSA P-256) happens inside KeePass, so private keys are never sent over the pipe.
-- The named pipe (`\\.\pipe\keepass-passkey-provider`) is only created when KeePass is running with an open database.
 
 ## Identifiers
 
