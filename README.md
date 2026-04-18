@@ -20,7 +20,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 
 ## Requirements
 
-- Windows 11 (build 26100 or later)
+- Windows 11 24H2 or later
 - [KeePass 2.x](https://keepass.info/)
 - .NET Framework 4.8 (included in Windows 11)
 
