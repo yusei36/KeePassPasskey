@@ -21,9 +21,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     // null = unknown (first call), true = last ping succeeded, false = last ping failed
     private static bool? _lastPingReady;
 
-    // -----------------------------------------------------------------
-    // MakeCredential
-    // -----------------------------------------------------------------
+    /// <summary>
+    /// IPluginAuthenticator.MakeCredential implementation.
+    /// Decodes the CBOR request, verifies the signature, forwards to KeePass plugin,
+    /// and encodes the attestation response.
+    /// </summary>
     public unsafe int MakeCredential(nint pRequestRaw, nint pResponseRaw)
     {
         if (pRequestRaw == 0 || pResponseRaw == 0)
@@ -129,9 +131,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         }
     }
 
-    // -----------------------------------------------------------------
-    // GetAssertion
-    // -----------------------------------------------------------------
+    /// <summary>
+    /// IPluginAuthenticator.GetAssertion implementation.
+    /// Decodes the CBOR request, verifies the signature, forwards to KeePass plugin,
+    /// and encodes the assertion response.
+    /// </summary>
     public unsafe int GetAssertion(nint pRequestRaw, nint pResponseRaw)
     {
         if (pRequestRaw == 0 || pResponseRaw == 0)
@@ -217,18 +221,17 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         }
     }
 
-    // -----------------------------------------------------------------
-    // CancelOperation
-    // -----------------------------------------------------------------
+    /// <summary>IPluginAuthenticator.CancelOperation implementation. Sets the cancellation flag.</summary>
     public int CancelOperation(nint pCancelRequest)
     {
         _cancelled = true;
         return HResults.S_OK;
     }
 
-    // -----------------------------------------------------------------
-    // GetLockStatus
-    // -----------------------------------------------------------------
+    /// <summary>
+    /// IPluginAuthenticator.GetLockStatus implementation.
+    /// Pings the KeePass plugin to determine lock status and syncs the Windows credential cache.
+    /// </summary>
     public unsafe int GetLockStatus(nint pLockStatusRaw)
     {
         if (pLockStatusRaw == 0) return HResults.E_INVALIDARG;

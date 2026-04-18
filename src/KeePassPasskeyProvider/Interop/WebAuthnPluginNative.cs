@@ -2,10 +2,10 @@
 
 namespace KeePassPasskeyProvider.Interop;
 
-// ---------------------------------------------------------------------------
-// Struct layouts from webauthnplugin.h + pluginauthenticator.h
-// (Windows SDK 10.0.26100.0).  Not in the shipped Win32 winmd.
-// ---------------------------------------------------------------------------
+/// <summary>
+/// Struct layouts from webauthnplugin.h + pluginauthenticator.h (Windows SDK 10.0.26100.0).
+/// Not in the shipped Win32 winmd.
+/// </summary>
 
 internal enum PluginLockStatus : int
 {

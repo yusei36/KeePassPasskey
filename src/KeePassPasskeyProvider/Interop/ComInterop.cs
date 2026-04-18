@@ -5,13 +5,11 @@ using System.Runtime.InteropServices.Marshalling;
 
 namespace KeePassPasskeyProvider.Interop;
 
-// ---------------------------------------------------------------------------
-// IPluginAuthenticator COM interface (IID: d26bcf6f-b54c-43ff-9f06-d5bf148625f7)
-// Declared as a C# interface so Marshal.GetComInterfaceForObject can produce
-// a CCW with the correct vtable ordering.  Methods use nint for struct
-// pointers to stay safely out of the COM marshalling machinery.
-// ---------------------------------------------------------------------------
-
+/// <summary>
+/// Declared as a C# interface so Marshal.GetComInterfaceForObject can produce
+/// a CCW with the correct vtable ordering. Methods use nint for struct pointers
+/// to stay safely out of the COM marshalling machinery.
+/// </summary>
 [ComVisible(true)]
 [Guid("d26bcf6f-b54c-43ff-9f06-d5bf148625f7")]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -30,10 +28,7 @@ public interface IPluginAuthenticator
     int GetLockStatus(nint pLockStatus);
 }
 
-// ---------------------------------------------------------------------------
-// IClassFactory COM interface (IID: 00000001-0000-0000-C000-000000000046)
-// ---------------------------------------------------------------------------
-
+/// <summary>Standard COM IClassFactory interface.</summary>
 [ComVisible(true)]
 [Guid("00000001-0000-0000-C000-000000000046")]
 [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -46,10 +41,7 @@ public interface IClassFactory
     int LockServer([MarshalAs(UnmanagedType.Bool)] bool fLock);
 }
 
-// ---------------------------------------------------------------------------
-// COM registration helpers
-// ---------------------------------------------------------------------------
-
+/// <summary>COM registration helpers.</summary>
 internal static class ComRegistration
 {
     /// <summary>

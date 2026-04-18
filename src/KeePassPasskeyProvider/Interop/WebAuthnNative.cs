@@ -2,11 +2,10 @@
 
 namespace KeePassPasskeyProvider.Interop;
 
-// ---------------------------------------------------------------------------
-// Struct layouts from webauthn.h (Windows SDK 10.0.26100.0).
-// All fields use natural alignment (LayoutKind.Sequential, Pack=0) which
-// matches MSVC x64 default packing.
-// ---------------------------------------------------------------------------
+/// <summary>
+/// Struct layouts from webauthn.h (Windows SDK 10.0.26100.0).
+/// All fields use natural alignment (LayoutKind.Sequential, Pack=0) which matches MSVC x64 default packing.
+/// </summary>
 
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnExtension

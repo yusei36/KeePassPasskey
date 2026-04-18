@@ -39,10 +39,10 @@ internal static class Program
         return RunManagementCommand(args);
     }
 
-    // -----------------------------------------------------------------
-    // COM server mode (-PluginActivated) -- must initialized as MTA by [MTAThread]
-    // -----------------------------------------------------------------
-
+    /// <summary>
+    /// COM server mode (-PluginActivated). Must be initialized as MTA by [MTAThread].
+    /// Registers the class factory, syncs credentials, and runs the Win32 message loop.
+    /// </summary>
     private static int RunAsPluginServer()
     {
         var factory = new ClassFactory();
@@ -106,10 +106,10 @@ internal static class Program
         Log.Info("exiting");
     }
 
-    // -----------------------------------------------------------------
-    // Management UI mode (no args) -- Avalonia window on a dedicated STA thread
-    // -----------------------------------------------------------------
-
+    /// <summary>
+    /// Management UI mode (no args). Shows an Avalonia window on a dedicated STA thread.
+    /// Uses a mutex to ensure only one UI instance runs.
+    /// </summary>
     private static int RunManagementUI()
     {
         const string MutexName = "Global\\KeePassPasskeyProvider_UI";
@@ -167,10 +167,10 @@ internal static class Program
             .UsePlatformDetect()
             .LogToTrace();
 
-    // -----------------------------------------------------------------
-    // Management command mode (/register, /unregister, /status)
-    // -----------------------------------------------------------------
-
+    /// <summary>
+    /// Management command mode (/register, /unregister, /status).
+    /// Handles COM registration, unregistration, and status queries.
+    /// </summary>
     private static int RunManagementCommand(string[] args)
     {
         string cmd = args.Length > 1 ? args[1] : (args.Length > 0 ? args[0] : string.Empty);
