@@ -18,6 +18,7 @@
     <AppxPackage>true</AppxPackage>
     <AppxBundle>Never</AppxBundle>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <DefaultLanguage>en-US</DefaultLanguage>
     <EntryPointProjectUniqueName>..\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj</EntryPointProjectUniqueName>
   </PropertyGroup>
   <PropertyGroup>
