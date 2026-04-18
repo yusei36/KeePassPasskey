@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using System.ComponentModel;
+using Avalonia.Platform;
 
 namespace KeePassPasskeyProvider.UI;
 
@@ -19,6 +20,9 @@ public partial class MainWindow : Window
     {
         if (e.PropertyName == nameof(MainWindowViewModel.LogText) && string.IsNullOrEmpty(LogTextBlock.SelectedText))
             LogScrollViewer.ScrollToEnd();
+
+        if (e.PropertyName == nameof(MainWindowViewModel.IsRefreshing) && sender is MainWindowViewModel vm)
+            Cursor = vm.IsRefreshing ? new Cursor(StandardCursorType.Wait) : Cursor.Default;
     }
 
     private void LogTextBlock_GotFocus(object sender, GotFocusEventArgs e)

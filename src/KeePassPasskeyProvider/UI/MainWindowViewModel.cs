@@ -1,98 +1,41 @@
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
-using KeePassPasskeyProvider.Interop;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using KeePassPasskey.Shared.Ipc;
+using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.UI;
 
-internal sealed class MainWindowViewModel : INotifyPropertyChanged
+internal sealed partial class MainWindowViewModel : ObservableObject
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private string _statusText = "Checking...";
-    private string _pluginStatusText = "Checking...";
-    private string _resultMessage = "";
-    private IBrush _statusColor = Brushes.Gray;
-    private IBrush _pluginStatusColor = Brushes.Gray;
-    private string _logText = "";
-    private bool _isLogVisible = false;
+    [ObservableProperty] private string _statusText = "Checking...";
+    [ObservableProperty] private string _pluginStatusText = "Checking...";
+    [ObservableProperty] private string _resultMessage = "";
+    [ObservableProperty] private IBrush _statusColor = Brushes.Gray;
+    [ObservableProperty] private IBrush _pluginStatusColor = Brushes.Gray;
+    [ObservableProperty] private string _logText = "";
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(LogToggleLabel))] private bool _isLogVisible;
+    [ObservableProperty] private bool _isRefreshing;
 
     private readonly FileSystemWatcher? _logWatcher;
     private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
 
-    public string StatusText
-    {
-        get => _statusText;
-        private set { _statusText = value; OnPropertyChanged(); }
-    }
-
-    public string PluginStatusText
-    {
-        get => _pluginStatusText;
-        private set { _pluginStatusText = value; OnPropertyChanged(); }
-    }
-
-    public string ResultMessage
-    {
-        get => _resultMessage;
-        private set { _resultMessage = value; OnPropertyChanged(); }
-    }
-
-    public IBrush StatusColor
-    {
-        get => _statusColor;
-        private set { _statusColor = value; OnPropertyChanged(); }
-    }
-
-    public IBrush PluginStatusColor
-    {
-        get => _pluginStatusColor;
-        private set { _pluginStatusColor = value; OnPropertyChanged(); }
-    }
-
-    public string LogText
-    {
-        get => _logText;
-        private set { _logText = value; OnPropertyChanged(); }
-    }
-
-    public bool IsLogVisible
-    {
-        get => _isLogVisible;
-        private set { _isLogVisible = value; OnPropertyChanged(); OnPropertyChanged(nameof(LogToggleLabel)); }
-    }
-
-    public string LogToggleLabel => _isLogVisible ? "Hide Log" : "Show Log";
-
+    public string LogToggleLabel => IsLogVisible ? "Hide Log" : "Show Log";
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
-
-    public ICommand RegisterCommand            { get; }
-    public ICommand UnregisterCommand          { get; }
-    public ICommand RefreshCommand             { get; }
-    public ICommand OpenPasskeySettingsCommand { get; }
-    public ICommand ToggleLogCommand           { get; }
 
     public MainWindowViewModel()
     {
-        RegisterCommand            = new RelayCommand(DoRegister);
-        UnregisterCommand          = new RelayCommand(DoUnregister);
-        RefreshCommand             = new RelayCommand(DoManualRefresh);
-        OpenPasskeySettingsCommand = new RelayCommand(DoOpenPasskeySettings);
-        ToggleLogCommand           = new RelayCommand(DoToggleLog);
         DoRefresh();
 
         var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
         timer.Tick += (_, _) => DoRefresh();
         timer.Start();
 
-        // Watch the log file for changes
         string logDir  = Path.GetDirectoryName(Log.LogFilePath)!;
         string logFile = Path.GetFileName(Log.LogFilePath);
         if (Directory.Exists(logDir))
@@ -107,25 +50,38 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private void DoRegister()
+    [RelayCommand]
+    private void Register()
     {
         int hr = PluginRegistration.Register();
-        ResultMessage = hr >= 0
-            ? "Registered successfully."
-            : $"Registration failed: 0x{hr:X8}";
+        ResultMessage = hr >= 0 ? "Registered successfully." : $"Registration failed: 0x{hr:X8}";
         DoRefresh();
     }
 
-    private void DoUnregister()
+    [RelayCommand]
+    private void Unregister()
     {
         int hr = PluginRegistration.Unregister();
-        ResultMessage = hr >= 0
-            ? "Unregistered successfully."
-            : $"Unregister failed: 0x{hr:X8}";
+        ResultMessage = hr >= 0 ? "Unregistered successfully." : $"Unregister failed: 0x{hr:X8}";
         DoRefresh();
     }
 
-    private void DoToggleLog()
+    [RelayCommand]
+    private async Task RefreshAsync()
+    {
+        IsRefreshing = true;
+        ResultMessage = "";
+        RefreshProviderStatus();
+        ApplyPingResponse(await Task.Run(() => _pipeClient.Ping()));
+        IsRefreshing = false;
+    }
+
+    [RelayCommand]
+    private static void OpenPasskeySettings()
+        => Process.Start(new ProcessStartInfo("ms-settings:savedpasskeys") { UseShellExecute = true });
+
+    [RelayCommand]
+    private void ToggleLog()
     {
         IsLogVisible = !IsLogVisible;
         if (IsLogVisible)
@@ -152,18 +108,13 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    private static void DoOpenPasskeySettings()
-    {
-        Process.Start(new ProcessStartInfo("ms-settings:savedpasskeys") { UseShellExecute = true });
-    }
-
-    private void DoManualRefresh()
-    {
-        ResultMessage = "";
-        DoRefresh();
-    }
-
     private void DoRefresh()
+    {
+        RefreshProviderStatus();
+        ApplyPingResponse(_pipeClient.Ping());
+    }
+
+    private void RefreshProviderStatus()
     {
         int hr = PluginRegistration.GetState(out var state);
         if (hr >= 0)
@@ -177,8 +128,10 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
             StatusText  = $"Unknown or not registered (0x{hr:X8})";
             StatusColor = Brushes.Gray;
         }
+    }
 
-        var pingResponse = _pipeClient.Ping();
+    private void ApplyPingResponse(PingResponse? pingResponse)
+    {
         (PluginStatusText, PluginStatusColor) = pingResponse?.Status switch
         {
             PingStatus.Ready      => ("Running",          Brushes.Green),
@@ -187,12 +140,9 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
         };
     }
 
-    private void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
     private static bool IsRunningAsPackage()
     {
-        const int APPMODEL_ERROR_NO_PACKAGE  = 15700;
+        const int APPMODEL_ERROR_NO_PACKAGE = 15700;
         uint length = 0;
         int rc = GetCurrentPackageFullName(ref length, null);
         return rc != APPMODEL_ERROR_NO_PACKAGE;
@@ -200,13 +150,4 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
     private static extern int GetCurrentPackageFullName(ref uint packageFullNameLength, char[]? packageFullName);
-}
-
-internal sealed class RelayCommand(Action execute) : ICommand
-{
-#pragma warning disable CS0067 // currently not used, pragma needs to be removed once it is used
-    public event EventHandler? CanExecuteChanged;
-#pragma warning restore CS0067
-    public bool CanExecute(object? parameter) => true;
-    public void Execute(object? parameter) => execute();
 }

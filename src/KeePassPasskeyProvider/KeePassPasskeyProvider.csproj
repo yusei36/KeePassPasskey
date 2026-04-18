@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.*" />
     <!-- CBOR encoding for authenticatorGetInfo blob -->
     <PackageReference Include="System.Formats.Cbor" Version="9.*" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
