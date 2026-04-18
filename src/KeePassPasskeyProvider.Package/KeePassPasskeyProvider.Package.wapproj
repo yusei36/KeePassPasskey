@@ -91,10 +91,12 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>..\..\build\Debug\KeePassPasskeyProvider.Package\</OutputPath>
+    <AppxPackageDir>..\..\build\AppPackages\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>..\..\build\Release\KeePassPasskeyProvider.Package\</OutputPath>
+    <AppxPackageDir>..\..\build\AppPackages\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup>
     <PackageCertificateThumbprint>

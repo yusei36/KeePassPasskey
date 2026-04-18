@@ -36,7 +36,7 @@ $ErrorActionPreference = 'Stop'
 
 $RepoRoot  = Split-Path $PSScriptRoot -Parent
 $ConfigSuffix = if ($Configuration -eq 'Debug') { '_Debug' } else { '' }
-$MsixPath  = "$RepoRoot\src\KeePassPasskeyProvider.Package\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}.msix"
+$MsixPath  = "$RepoRoot\build\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}.msix"
 $SignTool  = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
 $CertSubject = 'CN=KeePassPasskeyProvider'
 
@@ -71,7 +71,7 @@ if (-not $SkipBuild) {
         /p:Platform=x64 `
         /p:PlatformToolset=v145 `
         /p:SolutionDir="$RepoRoot\" `
-        /p:AppxPackageDir="$RepoRoot\src\KeePassPasskeyProvider.Package\AppPackages\" `
+        /p:AppxPackageDir="$RepoRoot\build\AppPackages\" `
         /p:AppxBundle=Never `
         /p:UapAppxPackageBuildMode=SideLoadOnly `
         /p:AppxPackageSigningEnabled=false `
