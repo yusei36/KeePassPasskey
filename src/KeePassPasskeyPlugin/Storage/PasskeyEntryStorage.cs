@@ -67,6 +67,7 @@ namespace KeePassPasskeyPlugin.Storage
             {
                 foreach (var entry in db.RootGroup.GetEntries(true))
                 {
+                    if (!IsSearchable(entry)) continue;
                     if (!entry.Strings.Exists(FieldRelyingParty)) continue;
                     var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
                     if (string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
@@ -90,6 +91,7 @@ namespace KeePassPasskeyPlugin.Storage
             {
                 foreach (var entry in db.RootGroup.GetEntries(true))
                 {
+                    if (!IsSearchable(entry)) continue;
                     if (!entry.Strings.Exists(FieldRelyingParty)) continue;
                     var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
                     if (!string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase)) continue;
@@ -107,6 +109,7 @@ namespace KeePassPasskeyPlugin.Storage
             {
                 foreach (var entry in db.RootGroup.GetEntries(true))
                 {
+                    if (!IsSearchable(entry)) continue;
                     if (!entry.Strings.Exists(FieldCredentialId)) continue;
                     var entryCredId = entry.Strings.ReadSafe(FieldCredentialId);
                     if (!string.Equals(entryCredId, credentialIdBase64Url, StringComparison.Ordinal)) continue;
@@ -126,6 +129,7 @@ namespace KeePassPasskeyPlugin.Storage
             {
                 foreach (var entry in db.RootGroup.GetEntries(true))
                 {
+                    if (!IsSearchable(entry)) continue;
                     if (entry.Strings.Exists(FieldCredentialId) && entry.Strings.Exists(FieldRelyingParty))
                         results.Add(ExtractCredential(entry));
                 }
@@ -144,6 +148,18 @@ namespace KeePassPasskeyPlugin.Storage
                 Username = entry.Strings.ReadSafe(FieldUsername),
                 Title = entry.Strings.ReadSafe(PwDefs.TitleField),
             };
+        }
+
+        private static bool IsSearchable(PwEntry entry)
+        {
+            var group = entry.ParentGroup;
+            while (group != null)
+            {
+                if (group.EnableSearching.HasValue)
+                    return group.EnableSearching.Value;
+                group = group.ParentGroup;
+            }
+            return true;
         }
 
         private List<PwDatabase> GetSearchDatabases()
