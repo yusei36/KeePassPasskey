@@ -48,12 +48,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     /// Maps error codes from the KeePass plugin response to Windows HRESULTs.
     /// Used by both MakeCredential and GetAssertion.
     /// </summary>
-    private static int MapErrorCode(string? code) => code switch
+    private static int MapErrorCode(PipeErrorCode? code) => code switch
     {
-        "db_locked" => PluginConstants.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
-        "duplicate" => PluginConstants.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
-        "not_found" => PluginConstants.NTE_NOT_FOUND,
-        _           => PluginConstants.E_FAIL,
+        PipeErrorCode.DbLocked  => PluginConstants.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
+        PipeErrorCode.Duplicate => PluginConstants.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
+        PipeErrorCode.NotFound  => PluginConstants.NTE_NOT_FOUND,
+        _                       => PluginConstants.E_FAIL,
     };
 
     /// <summary>

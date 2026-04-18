@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
-namespace KeePassPasskey.Shared
+namespace KeePassPasskey.Shared.Ipc
 {
     // All messages use length-prefixed framing: [4-byte LE uint32 length][UTF-8 JSON]
 
@@ -72,6 +74,15 @@ namespace KeePassPasskey.Shared
         public override string Type => "cancel";
     }
 
+    [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
+    public enum PipeErrorCode
+    {
+        DbLocked,
+        Duplicate,
+        NotFound,
+        InternalError
+    }
+
     [JsonConverter(typeof(PipeResponseConverter))]
     public class PipeResponseBase
     {
@@ -79,7 +90,7 @@ namespace KeePassPasskey.Shared
         public string Type { get; set; }
 
         [JsonProperty("errorCode", NullValueHandling = NullValueHandling.Ignore)]
-        public string ErrorCode { get; set; }
+        public PipeErrorCode? ErrorCode { get; set; }
 
         [JsonProperty("errorMessage", NullValueHandling = NullValueHandling.Ignore)]
         public string ErrorMessage { get; set; }
