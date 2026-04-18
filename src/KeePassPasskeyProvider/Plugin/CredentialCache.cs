@@ -252,6 +252,6 @@ internal static unsafe class CredentialCache
                 && UserId.AsSpan().SequenceEqual(other.UserId);
         }
 
-        public override int GetHashCode() => CredentialId.Length; // imprecise but acceptable
+        public override int GetHashCode() => CredentialId.Length; // satisfies CS0659; never used in a hash collection
     }
 }
