@@ -28,6 +28,40 @@ internal static unsafe class CredentialCache
         }
     }
 
+    /// <summary>
+    /// Remove all credentials from the Windows autofill cache.
+    /// </summary>
+    public static void ClearWindowsCache(Guid pluginClsid)
+    {
+        try
+        {
+            uint cExisting = 0;
+            WebAuthnPluginCredentialDetails* pExisting = null;
+            int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
+                pluginClsid, &cExisting, &pExisting);
+            Log.Info($"GetAllCredentials hr=0x{hrGet:X8} count={cExisting}");
+
+            if (hrGet < 0 || cExisting == 0 || pExisting == null)
+            {
+                if (pExisting != null)
+                    WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
+                return;
+            }
+
+            var toRemove = new List<ManagedCredentialDetails>((int)cExisting);
+            for (uint i = 0; i < cExisting; i++)
+                toRemove.Add(ManagedCredentialDetails.FromNative(&pExisting[i]));
+
+            ApplyRemove(pluginClsid, toRemove);
+            WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
+            Log.Info($"removed={toRemove.Count}");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+        }
+    }
+
     private static void SyncToCredentialCache(Guid pluginClsid)
     {
         // 1. Query credentials from KeePass

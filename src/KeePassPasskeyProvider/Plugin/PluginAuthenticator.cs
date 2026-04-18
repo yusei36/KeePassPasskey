@@ -366,6 +366,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     // -----------------------------------------------------------------
     // GetLockStatus
     // -----------------------------------------------------------------
+
+    // null = unknown (first call), true = last ping succeeded, false = last ping failed
+    private static bool? _lastPingReady;
+
     public unsafe int GetLockStatus(nint pLockStatusRaw)
     {
         if (pLockStatusRaw == 0) return PluginConstants.E_INVALIDARG;
@@ -375,22 +379,36 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         {
             var req = new IpcRequest { Type = "ping", RequestId = "ping" };
             bool ok = PipeClient.SendRequest(req, out var resp);
-            Log.Info($"pipeOk={ok} status={resp?.Status}");
+            bool ready = ok && resp?.Status == "ready";
+            Log.Info($"pipeOk={ok} status={resp?.Status} ready={ready}");
 
-            if (!ok || resp == null)
-                *pLockStatus = PluginLockStatus.PluginLocked;
-            else if (resp.Status == "ready")
+            if (ready)
+            {
                 *pLockStatus = PluginLockStatus.PluginUnlocked;
+                if (_lastPingReady != true)
+                {
+                    Log.Info("reconnected — syncing cache");
+                    CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+                }
+            }
             else
+            {
                 *pLockStatus = PluginLockStatus.PluginLocked;
+                if (_lastPingReady != false)
+                {
+                    Log.Info("disconnected — clearing cache");
+                    CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+                }
+            }
 
+            _lastPingReady = ready;
             return PluginConstants.S_OK;
         }
         catch (Exception ex)
         {
             Log.Warn($"exception {ex.Message}");
             *pLockStatus = PluginLockStatus.PluginLocked;
-            return PluginConstants.S_OK; // non-fatal
+            return PluginConstants.S_OK;
         }
     }
 }
