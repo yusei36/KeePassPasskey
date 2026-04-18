@@ -5,7 +5,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
+using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Ipc;
 using KeePassPasskeyProvider.Plugin;
 using KeePassPasskeyProvider.Util;
 
@@ -16,8 +18,10 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private string _statusText = "Checking...";
+    private string _pluginStatusText = "Checking...";
     private string _resultMessage = "";
     private IBrush _statusColor = Brushes.Gray;
+    private IBrush _pluginStatusColor = Brushes.Gray;
     private string _logText = "";
     private bool _isLogVisible = false;
 
@@ -27,6 +31,12 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         get => _statusText;
         private set { _statusText = value; OnPropertyChanged(); }
+    }
+
+    public string PluginStatusText
+    {
+        get => _pluginStatusText;
+        private set { _pluginStatusText = value; OnPropertyChanged(); }
     }
 
     public string ResultMessage
@@ -39,6 +49,12 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
     {
         get => _statusColor;
         private set { _statusColor = value; OnPropertyChanged(); }
+    }
+
+    public IBrush PluginStatusColor
+    {
+        get => _pluginStatusColor;
+        private set { _pluginStatusColor = value; OnPropertyChanged(); }
     }
 
     public string LogText
@@ -161,6 +177,16 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
             StatusText  = $"Unknown or not registered (0x{hr:X8})";
             StatusColor = Brushes.Gray;
         }
+
+        var pingRequest = new IpcRequest { Type = "ping", RequestId = "status-check" };
+        bool ok = PipeClient.SendRequest(pingRequest, out var pingResponse);
+        string pluginStatus = ok ? (pingResponse?.Status ?? "unknown") : "not_running";
+        (PluginStatusText, PluginStatusColor) = pluginStatus switch
+        {
+            "ready"       => ("Running",          Brushes.Green),
+            "no_database" => ("No database open", Brushes.OrangeRed),
+            _             => ("Not running",       Brushes.Gray),
+        };
     }
 
     private void OnPropertyChanged([CallerMemberName] string? name = null)
