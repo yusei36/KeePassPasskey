@@ -75,6 +75,13 @@ namespace KeePassPasskey.Shared.Ipc
     }
 
     [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
+    public enum PingStatus
+    {
+        Ready,
+        NoDatabase
+    }
+
+    [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
     public enum PipeErrorCode
     {
         DbLocked,
@@ -100,8 +107,8 @@ namespace KeePassPasskey.Shared.Ipc
     {
         public PingResponse() { Type = "ping"; }
 
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
+        public PingStatus? Status { get; set; }
     }
 
     public sealed class GetCredentialsResponse : PipeResponseBase

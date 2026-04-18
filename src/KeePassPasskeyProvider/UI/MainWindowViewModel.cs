@@ -179,12 +179,11 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
         }
 
         var pingResponse = _pipeClient.Ping();
-        string pluginStatus = pingResponse != null ? (pingResponse.Status ?? "unknown") : "not_running";
-        (PluginStatusText, PluginStatusColor) = pluginStatus switch
+        (PluginStatusText, PluginStatusColor) = pingResponse?.Status switch
         {
-            "ready"       => ("Running",          Brushes.Green),
-            "no_database" => ("No database open", Brushes.OrangeRed),
-            _             => ("Not running",       Brushes.Gray),
+            PingStatus.Ready      => ("Running",          Brushes.Green),
+            PingStatus.NoDatabase => ("No database open", Brushes.OrangeRed),
+            _                     => ("Not running",       Brushes.Gray),
         };
     }
 

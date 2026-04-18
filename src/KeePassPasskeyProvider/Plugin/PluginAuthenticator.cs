@@ -237,7 +237,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         try
         {
             var response = _pipeClient.Ping();
-            bool ready = response?.Status == "ready";
+            bool ready = response?.Status == PingStatus.Ready;
             Log.Info($"pipeOk={response != null} status={response?.Status} ready={ready}");
 
             if (ready)

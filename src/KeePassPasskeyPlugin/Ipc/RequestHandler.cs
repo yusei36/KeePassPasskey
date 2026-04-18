@@ -54,7 +54,7 @@ namespace KeePassPasskeyPlugin.Ipc
 
         private PingResponse HandlePing(PingRequest req)
         {
-            return new PingResponse { Status = IsDatabaseOpen() ? "ready" : "no_database" };
+            return new PingResponse { Status = IsDatabaseOpen() ? PingStatus.Ready : PingStatus.NoDatabase };
         }
 
         private GetCredentialsResponse HandleGetCredentials(GetCredentialsRequest req)
