@@ -16,40 +16,12 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, -PluginA
 
 - **COM server** (`src/KeePassPasskeyProvider/`) — C# EXE, MSIX-packaged, implements `IPluginAuthenticator`, acts as the pipe **client**
 - **KeePass plugin** (`src/KeePassPasskeyPlugin/`) — C# DLL, acts as the pipe **server**, verifies client process before accepting requests
-- **Shared library** (`src/KeePassPasskey.Shared/`) — IPC protocol definitions, Base64URL encoding
+- **Shared library** (`src/KeePassPasskey.Shared/`) — IPC protocol definitions, Base64URL encoding, AuthenticatorData construction, CBOR encoding
 - All crypto (EC P-256 keygen, ECDSA signing) lives in the C# plugin (`EcKeyHelper.cs`)
 - The COM server handles Windows API surface only: CBOR decode/encode, credential cache
 - CLSID: `4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e` (COM server identity, MSIX manifest + `KeePassPasskeyProviderClsid`)
-- AAGUID: `9addb28c-b46f-4402-808f-019651441ff3` (defined once in `KeePassPasskeyProviderAaguid` in the provider; sent to the plugin in every `make_credential` request so the plugin never hardcodes it)
+- AAGUID: `9addb28c-b46f-4402-808f-019651441ff3` (defined once in `KeePassPasskeyProviderAaguid` in the provider)
 - Credentials stored as `KPEX_PASSKEY_*` fields (KeePassXC format)
-
-## Build Commands
-
-### Prerequisites
-- Windows SDK 10.0.26100.7175+ (required for `webauthnplugin.h`)
-- .NET 10 SDK (for KeePassPasskeyProvider)
-- .NET Framework 4.8 SDK (for KeePassPasskeyPlugin)
-- `KeePass.exe` placed in `build/KeePass/` (not shipped): `copy "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\`
-
-### Build C# KeePass plugin
-```
-msbuild src\KeePassPasskeyPlugin\KeePassPasskeyPlugin.csproj /p:Configuration=Release /p:Platform=AnyCPU
-```
-Output: `build\Release\KeePassPasskeyPlugin.dll`
-
-### Build C# COM server (KeePassPasskeyProvider)
-```
-msbuild src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj /p:Configuration=Release /p:Platform=x64
-```
-Output: `build\Release\KeePassPasskeyProvider\KeePassPasskeyProvider.exe`
-
-### Build MSIX package
-```
-msbuild src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj /p:Configuration=Release /p:Platform=x64 /p:SolutionDir=E:\Repos\KeePassPasskey\
-```
-Output: `src\KeePassPasskeyProvider.Package\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64.msix`
-
-Note: `AppxPackageSigningEnabled` is `false` in the wapproj — the MSIX is unsigned and must be signed manually before install.
 
 ## IPC Protocol
 
@@ -85,6 +57,6 @@ Verification is enabled by default in Release builds, disabled in Debug builds. 
 | `src/KeePassPasskey.Shared/Base64Url.cs` | Base64URL encoding/decoding |
 | `src/KeePassPasskeyPlugin/Storage/PasskeyEntryStorage.cs` | KeePassXC-compatible `KPEX_PASSKEY_*` field storage |
 | `src/KeePassPasskeyPlugin/Passkey/EcKeyHelper.cs` | EC P-256 key generation and ECDSA signing |
-| `src/KeePassPasskeyPlugin/Passkey/AuthenticatorData.cs` | WebAuthn authenticatorData construction |
-| `src/KeePassPasskeyPlugin/Passkey/CborWriter.cs` | Minimal CBOR encoder for attestation objects |
+| `src/KeePassPasskey.Shared/AuthenticatorData.cs` | WebAuthn authenticatorData construction |
+| `src/KeePassPasskey.Shared/CborWriter.cs` | Minimal CBOR encoder for attestation objects |
 | `src/KeePassPasskeyProvider.Package/Package.appxmanifest` | MSIX manifest — declares COM server and passkey provider |
