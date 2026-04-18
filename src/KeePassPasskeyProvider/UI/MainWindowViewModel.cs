@@ -5,9 +5,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
-using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Interop;
-using KeePassPasskeyProvider.Ipc;
+using KeePassPasskey.Shared.Ipc;
 using KeePassPasskeyProvider.Plugin;
 using KeePassPasskeyProvider.Util;
 
@@ -26,6 +25,7 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
     private bool _isLogVisible = false;
 
     private readonly FileSystemWatcher? _logWatcher;
+    private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
 
     public string StatusText
     {
@@ -178,9 +178,8 @@ internal sealed class MainWindowViewModel : INotifyPropertyChanged
             StatusColor = Brushes.Gray;
         }
 
-        var pingRequest = new IpcRequest { Type = "ping" };
-        bool ok = PipeClient.SendRequest(pingRequest, out var pingResponse);
-        string pluginStatus = ok ? (pingResponse?.Status ?? "unknown") : "not_running";
+        var pingResponse = _pipeClient.Ping();
+        string pluginStatus = pingResponse != null ? (pingResponse.Status ?? "unknown") : "not_running";
         (PluginStatusText, PluginStatusColor) = pluginStatus switch
         {
             "ready"       => ("Running",          Brushes.Green),

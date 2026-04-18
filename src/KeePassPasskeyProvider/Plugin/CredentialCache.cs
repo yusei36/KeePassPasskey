@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Interop;
-using KeePassPasskeyProvider.Ipc;
+using KeePassPasskey.Shared.Ipc;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.Plugin;
@@ -65,15 +65,16 @@ internal static unsafe class CredentialCache
     private static void SyncToCredentialCache(Guid pluginClsid)
     {
         // 1. Query credentials from KeePass
-        var req = new IpcRequest { Type = "get_credentials" };
-        if (!PipeClient.SendRequest(req, out var resp) || resp == null || resp.Type == "error")
+        var pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
+        var response = pipeClient.GetCredentials(new GetCredentialsRequest());
+        if (response == null)
         {
             Log.Info("KeePass unavailable or error, skipping sync");
             return;
         }
 
         // 2. Parse credential list
-        var kpCredentials = ParseKeePassCredentials(resp.Credentials);
+        var kpCredentials = ParseKeePassCredentials(response.Credentials);
         Log.Info($"KeePass returned {kpCredentials.Count} credentials");
 
         // 3. Get Windows cache

@@ -1,4 +1,4 @@
-﻿using KeePass.Plugins;
+using KeePass.Plugins;
 using KeePassPasskey.Shared;
 using KeePassPasskeyPlugin.Passkey;
 using KeePassPasskeyPlugin.Storage;
@@ -22,50 +22,44 @@ namespace KeePassPasskeyPlugin.Ipc
 
         internal string Handle(string json)
         {
-            IpcRequest req;
+            PipeRequestBase req;
             try
             {
-                req = JsonConvert.DeserializeObject<IpcRequest>(json);
+                req = JsonConvert.DeserializeObject<PipeRequestBase>(json);
             }
             catch (Exception ex)
             {
-                return Error("internal_error", "Failed to parse request: " + ex.Message);
+                return JsonConvert.SerializeObject(new PipeResponseBase { Code = "internal_error", Message = "Failed to parse request: " + ex.Message });
             }
 
             try
             {
-                switch (req.Type)
+                PipeResponseBase response = req switch
                 {
-                    case "ping":         return HandlePing(req);
-                    case "get_credentials": return HandleGetCredentials(req);
-                    case "make_credential": return HandleMakeCredential(req);
-                    case "get_assertion":   return HandleGetAssertion(req);
-                    case "cancel":       return HandleCancel(req);
-                    default:
-                        return Error("internal_error", "Unknown request type: " + req.Type);
-                }
+                    PingRequest r            => HandlePing(r),
+                    GetCredentialsRequest r  => HandleGetCredentials(r),
+                    MakeCredentialRequest r  => HandleMakeCredential(r),
+                    GetAssertionRequest r    => HandleGetAssertion(r),
+                    CancelRequest r          => HandleCancel(r),
+                    _ => new PipeResponseBase { Code = "internal_error", Message = "Unknown request type: " + req.Type }
+                };
+                return JsonConvert.SerializeObject(response);
             }
             catch (Exception ex)
             {
-                return Error("internal_error", ex.Message);
+                return JsonConvert.SerializeObject(new PipeResponseBase { Code = "internal_error", Message = ex.Message });
             }
         }
 
-        private string HandlePing(IpcRequest req)
+        private PingResponse HandlePing(PingRequest req)
         {
-            string status = IsDatabaseOpen() ? "ready" : "no_database";
-
-            return JsonConvert.SerializeObject(new IpcResponse
-            {
-                Type = "ping",
-                Status = status
-            });
+            return new PingResponse { Status = IsDatabaseOpen() ? "ready" : "no_database" };
         }
 
-        private string HandleGetCredentials(IpcRequest req)
+        private GetCredentialsResponse HandleGetCredentials(GetCredentialsRequest req)
         {
             if (!IsDatabaseOpen())
-                return Error("db_locked", "No database open");
+                return new GetCredentialsResponse { Code = "db_locked", Message = "No database open" };
 
             var all = _storage.GetAllCredentials();
             var infos = new List<CredentialInfo>(all.Count);
@@ -87,20 +81,16 @@ namespace KeePassPasskeyPlugin.Ipc
                 });
             }
 
-            return JsonConvert.SerializeObject(new IpcResponse
-            {
-                Type = "get_credentials",
-                Credentials = infos
-            });
+            return new GetCredentialsResponse { Credentials = infos };
         }
 
-        private string HandleMakeCredential(IpcRequest req)
+        private MakeCredentialResponse HandleMakeCredential(MakeCredentialRequest req)
         {
             if (!IsDatabaseOpen())
-                return Error("db_locked", "No database open");
+                return new MakeCredentialResponse { Code = "db_locked", Message = "No database open" };
 
             if (string.IsNullOrEmpty(req.RpId))
-                return Error("internal_error", "rpId is required");
+                return new MakeCredentialResponse { Code = "internal_error", Message = "rpId is required" };
 
             // KeePassXC-style excludeCredentials handling: reject registration only
             // when one of the excluded credential IDs already exists for this RP.
@@ -108,7 +98,7 @@ namespace KeePassPasskeyPlugin.Ipc
             {
                 var existingCredentials = _storage.FindByRpIdAndCredentialIds(req.RpId, req.ExcludeCredentials);
                 if (existingCredentials.Count > 0)
-                    return Error("duplicate", "Credential already exists for this RP");
+                    return new MakeCredentialResponse { Code = "duplicate", Message = "Credential already exists for this RP" };
             }
 
             // Generate EC P-256 key pair
@@ -137,27 +127,26 @@ namespace KeePassPasskeyPlugin.Ipc
             };
 
             if (!_storage.CreatePasskeyEntry(credential))
-                return Error("internal_error", "Failed to create KeePass entry");
+                return new MakeCredentialResponse { Code = "internal_error", Message = "Failed to create KeePass entry" };
 
-            return JsonConvert.SerializeObject(new IpcResponse
+            return new MakeCredentialResponse
             {
-                Type = "make_credential",
                 CredentialId = credentialId,
                 PublicKeyX = Convert.ToBase64String(x),
                 PublicKeyY = Convert.ToBase64String(y),
-            });
+            };
         }
 
-        private string HandleGetAssertion(IpcRequest req)
+        private GetAssertionResponse HandleGetAssertion(GetAssertionRequest req)
         {
             if (!IsDatabaseOpen())
-                return Error("db_locked", "No database open");
+                return new GetAssertionResponse { Code = "db_locked", Message = "No database open" };
 
             if (string.IsNullOrEmpty(req.RpId))
-                return Error("internal_error", "rpId is required");
+                return new GetAssertionResponse { Code = "internal_error", Message = "rpId is required" };
 
             if (string.IsNullOrEmpty(req.ClientDataHash))
-                return Error("internal_error", "clientDataHash is required");
+                return new GetAssertionResponse { Code = "internal_error", Message = "clientDataHash is required" };
 
             // Find matching credential
             List<PasskeyCredential> candidates;
@@ -167,7 +156,7 @@ namespace KeePassPasskeyPlugin.Ipc
                 candidates = _storage.FindByRpId(req.RpId);
 
             if (candidates.Count == 0)
-                return Error("not_found", "No matching credential found for rpId: " + req.RpId);
+                return new GetAssertionResponse { Code = "not_found", Message = "No matching credential found for rpId: " + req.RpId };
 
             // Use first matching credential (platform handles multi-credential selection via autofill UI)
             var credential = candidates[0];
@@ -184,25 +173,20 @@ namespace KeePassPasskeyPlugin.Ipc
             // Sign with private key (returns DER-encoded signature)
             var signature = EcKeyHelper.Sign(credential.PrivateKeyPem, dataToSign);
 
-            return JsonConvert.SerializeObject(new IpcResponse
+            return new GetAssertionResponse
             {
-                Type = "get_assertion",
                 CredentialId = credential.CredentialId,
                 AuthenticatorData = Convert.ToBase64String(authData),
                 Signature = Convert.ToBase64String(signature),
                 UserHandle = credential.UserHandle ?? "",
                 UserName = credential.Username ?? "",
                 UserDisplayName = string.IsNullOrEmpty(credential.Title) ? (credential.Username ?? "") : credential.Title
-            });
+            };
         }
 
-        private string HandleCancel(IpcRequest req)
+        private CancelResponse HandleCancel(CancelRequest req)
         {
-            return JsonConvert.SerializeObject(new IpcResponse
-            {
-                Type = "cancel",
-                Status = "acknowledged"
-            });
+            return new CancelResponse { Status = "acknowledged" };
         }
 
         private bool IsDatabaseOpen()
@@ -210,15 +194,6 @@ namespace KeePassPasskeyPlugin.Ipc
             foreach (var doc in _host.MainWindow.DocumentManager.Documents)
                 if (doc.Database != null && doc.Database.IsOpen) return true;
             return _host.Database != null && _host.Database.IsOpen;
-        }
-
-        private static string Error(string code, string message)
-        {
-            return JsonConvert.SerializeObject(new IpcErrorResponse
-            {
-                Code = code,
-                Message = message
-            });
         }
     }
 }

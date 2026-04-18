@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net48;net10.0-windows</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>KeePassPasskey.Shared</RootNamespace>
     <AssemblyName>KeePassPasskey.Shared</AssemblyName>
     <OutputPath>..\..\build\$(Configuration)\$(TargetFramework)\</OutputPath>

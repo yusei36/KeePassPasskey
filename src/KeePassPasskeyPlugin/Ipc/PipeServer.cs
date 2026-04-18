@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
+using KeePassPasskey.Shared.Ipc;
 
 namespace KeePassPasskeyPlugin.Ipc
 {
@@ -13,7 +14,6 @@ namespace KeePassPasskeyPlugin.Ipc
     /// </summary>
     internal sealed class PipeServer : IDisposable
     {
-        private const string PipeName = "keepass-passkey-provider";
         private const int MaxInstances = 4;
 
         private readonly RequestHandler _handler;
@@ -38,7 +38,7 @@ namespace KeePassPasskeyPlugin.Ipc
             // Wake up the listener by connecting a dummy client
             try
             {
-                using (var dummy = new NamedPipeClientStream(".", PipeName, PipeDirection.Out))
+                using (var dummy = new NamedPipeClientStream(".", PipeConstants.PipeName, PipeDirection.Out))
                     dummy.Connect(100);
             }
             catch { }
@@ -54,7 +54,7 @@ namespace KeePassPasskeyPlugin.Ipc
                 try
                 {
                     pipe = new NamedPipeServerStream(
-                        PipeName,
+                        PipeConstants.PipeName,
                         PipeDirection.InOut,
                         MaxInstances,
                         PipeTransmissionMode.Byte,

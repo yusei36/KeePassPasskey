@@ -2,7 +2,7 @@
 using System.Text;
 using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Interop;
-using KeePassPasskeyProvider.Ipc;
+using KeePassPasskey.Shared.Ipc;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.Plugin;
@@ -16,6 +16,7 @@ namespace KeePassPasskeyProvider.Plugin;
 public sealed class PluginAuthenticator : IPluginAuthenticator
 {
     private volatile bool _cancelled;
+    private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Info(msg, nameof(PipeClient)));
 
     // -----------------------------------------------------------------
     // Helper Methods
@@ -209,9 +210,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
 
-                var req = new IpcRequest
+                var request = new MakeCredentialRequest
                 {
-                    Type = "make_credential",
                     RpId = rpIdUtf8,
                     RpName = rpNameStr,
                     UserId = userIdB64,
@@ -222,22 +222,23 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 // 4. Send to KeePass plugin
                 Log.Info($"sending pipe request rpId={rpIdUtf8}");
-                if (!PipeClient.SendRequest(req, out var resp) || resp == null)
+                var response = _pipeClient.MakeCredential(request);
+                if (response == null)
                 {
                     Log.Warn("pipe failed");
                     return PluginConstants.NTE_NOT_FOUND;
                 }
 
-                if (resp.Type == "error")
+                if (response.Code != null)
                 {
-                    Log.Warn($"KeePass error code={resp.Code}");
-                    return MapErrorCode(resp.Code);
+                    Log.Warn($"KeePass error code={response.Code}");
+                    return MapErrorCode(response.Code);
                 }
 
                 // 5. Build authenticatorData and encode attestation response
-                var credentialIdBytes = Base64Url.Decode(resp.CredentialId!);
-                var ecX = Convert.FromBase64String(resp.PublicKeyX!);
-                var ecY = Convert.FromBase64String(resp.PublicKeyY!);
+                var credentialIdBytes = Base64Url.Decode(response.CredentialId!);
+                var ecX = Convert.FromBase64String(response.PublicKeyX!);
+                var ecY = Convert.FromBase64String(response.PublicKeyY!);
                 var authData = AuthenticatorData.BuildForRegistration(rpIdUtf8, PluginConstants.KeePassPasskeyProviderAaguidBytes, credentialIdBytes, ecX, ecY);
                 int hrEnc = EncodeAttestation(authData, out uint cbEncoded, out byte* pbEncoded);
                 Log.Info($"WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
@@ -305,9 +306,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 var allowList = ExtractCredentialIds(pDecoded->CredentialList);
 
                 // 4. Build JSON pipe request
-                var req = new IpcRequest
+                var request = new GetAssertionRequest
                 {
-                    Type = "get_assertion",
                     RpId = rpIdUtf8,
                     ClientDataHash = clientDataHashB64,
                     AllowCredentials = allowList,
@@ -315,22 +315,23 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 // 5. Send to KeePass plugin
                 Log.Info("sending pipe request");
-                if (!PipeClient.SendRequest(req, out var resp) || resp == null)
+                var response = _pipeClient.GetAssertion(request);
+                if (response == null)
                 {
                     Log.Warn("pipe failed");
                     return PluginConstants.NTE_NOT_FOUND;
                 }
 
-                if (resp.Type == "error")
+                if (response.Code != null)
                 {
-                    Log.Warn($"KeePass error code={resp.Code}");
-                    return MapErrorCode(resp.Code);
+                    Log.Warn($"KeePass error code={response.Code}");
+                    return MapErrorCode(response.Code);
                 }
 
                 // 6. Encode assertion response
                 int hrEnc = EncodeAssertion(
-                    resp.AuthenticatorData, resp.Signature, resp.CredentialId, resp.UserHandle,
-                    resp.UserName, resp.UserDisplayName, out uint cbEncoded, out byte* pbEncoded);
+                    response.AuthenticatorData, response.Signature, response.CredentialId, response.UserHandle,
+                    response.UserName, response.UserDisplayName, out uint cbEncoded, out byte* pbEncoded);
                 Log.Info($"WebAuthNEncodeGetAssertionResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                 if (hrEnc < 0) return hrEnc;
 
@@ -375,10 +376,9 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
         try
         {
-            var req = new IpcRequest { Type = "ping" };
-            bool ok = PipeClient.SendRequest(req, out var resp);
-            bool ready = ok && resp?.Status == "ready";
-            Log.Info($"pipeOk={ok} status={resp?.Status} ready={ready}");
+            var response = _pipeClient.Ping();
+            bool ready = response?.Status == "ready";
+            Log.Info($"pipeOk={response != null} status={response?.Status} ready={ready}");
 
             if (ready)
             {
