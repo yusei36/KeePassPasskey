@@ -27,7 +27,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     public unsafe int MakeCredential(nint pRequestRaw, nint pResponseRaw)
     {
         if (pRequestRaw == 0 || pResponseRaw == 0)
-            return PluginConstants.E_INVALIDARG;
+            return HResults.E_INVALIDARG;
 
         var pRequest  = (WebAuthnPluginOperationRequest*)pRequestRaw;
         var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
@@ -52,7 +52,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
                 if (sigResult < 0) return sigResult;
 
-                if (_cancelled) { Log.Info("cancelled"); return PluginConstants.NTE_USER_CANCELLED; }
+                if (_cancelled) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
 
                 // 3. Build JSON request for KeePass
                 string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -90,7 +90,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (response == null)
                 {
                     Log.Warn("pipe failed");
-                    return PluginConstants.NTE_NOT_FOUND;
+                    return HResults.NTE_NOT_FOUND;
                 }
 
                 if (response.ErrorCode != null)
@@ -115,7 +115,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
                 Log.Info("success");
-                return PluginConstants.S_OK;
+                return HResults.S_OK;
             }
             finally
             {
@@ -135,7 +135,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     public unsafe int GetAssertion(nint pRequestRaw, nint pResponseRaw)
     {
         if (pRequestRaw == 0 || pResponseRaw == 0)
-            return PluginConstants.E_INVALIDARG;
+            return HResults.E_INVALIDARG;
 
         var pRequest  = (WebAuthnPluginOperationRequest*)pRequestRaw;
         var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
@@ -160,7 +160,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
                 if (sigResult < 0) return sigResult;
 
-                if (_cancelled) { Log.Info("cancelled"); return PluginConstants.NTE_USER_CANCELLED; }
+                if (_cancelled) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
 
                 // 3. Extract fields
                 string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -183,7 +183,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (response == null)
                 {
                     Log.Warn("pipe failed");
-                    return PluginConstants.NTE_NOT_FOUND;
+                    return HResults.NTE_NOT_FOUND;
                 }
 
                 if (response.ErrorCode != null)
@@ -203,7 +203,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 pResponse->pbEncodedResponse = pbEncoded;
 
                 Log.Info("success");
-                return PluginConstants.S_OK;
+                return HResults.S_OK;
             }
             finally
             {
@@ -223,7 +223,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     public int CancelOperation(nint pCancelRequest)
     {
         _cancelled = true;
-        return PluginConstants.S_OK;
+        return HResults.S_OK;
     }
 
     // -----------------------------------------------------------------
@@ -231,7 +231,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     // -----------------------------------------------------------------
     public unsafe int GetLockStatus(nint pLockStatusRaw)
     {
-        if (pLockStatusRaw == 0) return PluginConstants.E_INVALIDARG;
+        if (pLockStatusRaw == 0) return HResults.E_INVALIDARG;
         var pLockStatus = (PluginLockStatus*)pLockStatusRaw;
 
         try
@@ -260,13 +260,13 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             }
 
             _lastPingReady = ready;
-            return PluginConstants.S_OK;
+            return HResults.S_OK;
         }
         catch (Exception ex)
         {
             Log.Warn($"exception {ex.Message}");
             *pLockStatus = PluginLockStatus.PluginLocked;
-            return PluginConstants.S_OK;
+            return HResults.S_OK;
         }
     }
 
@@ -298,10 +298,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     /// </summary>
     private static int MapErrorCode(PipeErrorCode? code) => code switch
     {
-        PipeErrorCode.DbLocked => PluginConstants.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
-        PipeErrorCode.Duplicate => PluginConstants.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
-        PipeErrorCode.NotFound => PluginConstants.NTE_NOT_FOUND,
-        _ => PluginConstants.E_FAIL,
+        PipeErrorCode.DbLocked => HResults.HRESULT_FROM_WIN32_ERROR_LOCK_VIOLATION,
+        PipeErrorCode.Duplicate => HResults.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
+        PipeErrorCode.NotFound => HResults.NTE_NOT_FOUND,
+        _ => HResults.E_FAIL,
     };
 
     /// <summary>
@@ -316,7 +316,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         {
             var attestation = new WebAuthnCredentialAttestation
             {
-                dwVersion = PluginConstants.AttestationCurrentVersion,
+                dwVersion = WebAuthnConstants.AttestationCurrentVersion,
                 pwszFormatType = fmtPtr,
                 cbAuthenticatorData = (uint)authData.Length,
                 pbAuthenticatorData = authPtr,
@@ -358,13 +358,13 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         fixed (byte* sigPtr = signatureBytes)
         fixed (byte* uhPtr = userHandleBytes.Length > 0 ? userHandleBytes : new byte[1])
         fixed (byte* credPtr = credIdBytes.Length > 0 ? credIdBytes : new byte[1])
-        fixed (char* typePtr = PluginConstants.CredentialTypePublicKey)
+        fixed (char* typePtr = WebAuthnConstants.CredentialTypePublicKey)
         fixed (char* namePtr = userName ?? string.Empty)
         fixed (char* dispPtr = (userDisplayName ?? userName) ?? string.Empty)
         {
             var cred = new WebAuthnCredential
             {
-                dwVersion = PluginConstants.CredentialVersion,
+                dwVersion = WebAuthnConstants.CredentialVersion,
                 cbId = (uint)credIdBytes.Length,
                 pbId = credPtr,
                 pwszCredentialType = typePtr,
@@ -372,7 +372,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
             // Build the assertion response struct (full v6 size, zero-initialized)
             var assertionResp = new WebAuthnCtapCborGetAssertionResponse();
-            assertionResp.WebAuthNAssertion.dwVersion = PluginConstants.AssertionCurrentVersion;
+            assertionResp.WebAuthNAssertion.dwVersion = WebAuthnConstants.AssertionCurrentVersion;
             assertionResp.WebAuthNAssertion.Credential = cred;
             assertionResp.WebAuthNAssertion.cbAuthenticatorData = (uint)authDataBytes.Length;
             assertionResp.WebAuthNAssertion.pbAuthenticatorData = authPtr;
@@ -387,7 +387,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             WebAuthnUserEntityInformation userInfo = default;
             if (userHandleBytes.Length > 0)
             {
-                userInfo.dwVersion = PluginConstants.UserEntityVersion;
+                userInfo.dwVersion = WebAuthnConstants.UserEntityVersion;
                 userInfo.cbId = (uint)userHandleBytes.Length;
                 userInfo.pbId = uhPtr;
                 userInfo.pwszName = namePtr;
@@ -416,21 +416,21 @@ public sealed class ClassFactory : IClassFactory
     public int CreateInstance(nint pUnkOuter, in Guid riid, out nint ppvObject)
     {
         ppvObject = 0;
-        if (pUnkOuter != 0) return PluginConstants.CLASS_E_NOAGGREGATION;
+        if (pUnkOuter != 0) return HResults.CLASS_E_NOAGGREGATION;
 
         var auth = new PluginAuthenticator();
-        if (riid == PluginConstants.IID_IPluginAuthenticator ||
-            riid == PluginConstants.IID_IUnknown)
+        if (riid == ComIids.IID_IPluginAuthenticator ||
+            riid == ComIids.IID_IUnknown)
         {
             ppvObject = Marshal.GetComInterfaceForObject<PluginAuthenticator, IPluginAuthenticator>(auth);
-            return PluginConstants.S_OK;
+            return HResults.S_OK;
         }
-        return PluginConstants.E_NOINTERFACE;
+        return HResults.E_NOINTERFACE;
     }
 
     public int LockServer(bool fLock)
     {
         // No-op — our process lifecycle is managed by the COM message loop.
-        return PluginConstants.S_OK;
+        return HResults.S_OK;
     }
 }

@@ -244,6 +244,18 @@ internal unsafe struct WebAuthnCtapCborGetAssertionRequest
 }
 
 /// <summary>
+/// Version and type constants from webauthn.h.
+/// </summary>
+internal static class WebAuthnConstants
+{
+    public const uint AttestationCurrentVersion = 8;  // WEBAUTHN_CREDENTIAL_ATTESTATION_CURRENT_VERSION
+    public const uint AssertionCurrentVersion   = 6;  // WEBAUTHN_ASSERTION_CURRENT_VERSION
+    public const uint CredentialVersion         = 1;  // WEBAUTHN_CREDENTIAL_CURRENT_VERSION
+    public const uint UserEntityVersion         = 1;  // WEBAUTHN_USER_ENTITY_INFORMATION_VERSION_1
+    public const string CredentialTypePublicKey = "public-key"; // WEBAUTHN_CREDENTIAL_TYPE_PUBLIC_KEY
+}
+
+/// <summary>
 /// P/Invoke for webauthn.h encode/decode functions.
 /// All calls are resolved at runtime from webauthn.dll.
 /// </summary>

@@ -29,10 +29,10 @@ internal static unsafe class SignatureVerifier
         {
 #if DEBUG
             Log.Warn("no key stored, skipping verification");
-            return PluginConstants.S_OK;
+            return HResults.S_OK;
 #else
             Log.Error("no key stored, rejecting operation");
-            return PluginConstants.NTE_BAD_SIGNATURE;
+            return HResults.NTE_BAD_SIGNATURE;
 #endif
         }
 
@@ -72,7 +72,7 @@ internal static unsafe class SignatureVerifier
                 HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
             if (!valid) Log.Warn("RSA signature invalid");
             else        Log.Info("RSA signature valid");
-            return valid ? PluginConstants.S_OK : PluginConstants.NTE_BAD_SIGNATURE;
+            return valid ? HResults.S_OK : HResults.NTE_BAD_SIGNATURE;
         }
         else
         {
@@ -80,7 +80,7 @@ internal static unsafe class SignatureVerifier
             bool valid = ecdsa.VerifyHash(hash, signature.ToArray());
             if (!valid) Log.Warn("ECDSA signature invalid");
             else        Log.Info("ECDSA signature valid");
-            return valid ? PluginConstants.S_OK : PluginConstants.NTE_BAD_SIGNATURE;
+            return valid ? HResults.S_OK : HResults.NTE_BAD_SIGNATURE;
         }
     }
 

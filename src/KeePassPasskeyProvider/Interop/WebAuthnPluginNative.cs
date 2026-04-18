@@ -119,6 +119,21 @@ internal unsafe struct WebAuthnPluginCredentialDetails
 }
 
 /// <summary>
+/// COM interface IIDs from pluginauthenticator.h and the COM standard.
+/// </summary>
+internal static class ComIids
+{
+    /// <summary>IPluginAuthenticator IID (pluginauthenticator.h MIDL_INTERFACE).</summary>
+    public static readonly Guid IID_IPluginAuthenticator = new("d26bcf6f-b54c-43ff-9f06-d5bf148625f7");
+
+    /// <summary>IClassFactory IID (standard COM).</summary>
+    public static readonly Guid IID_IClassFactory = new("00000001-0000-0000-C000-000000000046");
+
+    /// <summary>IUnknown IID (standard COM).</summary>
+    public static readonly Guid IID_IUnknown = new("00000000-0000-0000-C000-000000000046");
+}
+
+/// <summary>
 /// P/Invoke for webauthnplugin.h functions.
 /// All resolved at runtime from webauthn.dll.
 /// </summary>
