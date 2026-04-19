@@ -40,7 +40,7 @@ $RepoRoot       = Split-Path $PSScriptRoot -Parent
 $AppPackagesDir = "$RepoRoot\build\AppPackages"
 
 $versions = Get-BuildVersions $RepoRoot
-Write-Host "KeePassPasskey $($versions.Version)  [$Configuration]" -ForegroundColor White
+Write-Host "KeePassPasskey Version:$($versions.Version) File Version: $($versions.FileVersion) [$Configuration]" -ForegroundColor White
 
 Assert-Elevation
 

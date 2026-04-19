@@ -46,8 +46,6 @@ function Invoke-BuildWapproj {
         [string]$MSBuild
     )
     $versions = Get-BuildVersions $RepoRoot
-    Write-Host "  Package version: $($versions.FileVersion)"
-
     $manifest         = "$RepoRoot\src\KeePassPasskeyProvider.Package\Package.appxmanifest"
     $originalContent  = [IO.File]::ReadAllText($manifest)
     $patchedContent   = $originalContent -replace '\bVersion="(\d+\.){3}\d+"', "Version=`"$($versions.FileVersion)`""
