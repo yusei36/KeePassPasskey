@@ -138,6 +138,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
             PingStatus.NoDatabase => ("No database open", Brushes.OrangeRed),
             _                     => ("Not running",       Brushes.Gray),
         };
+        Log.Info($"status: {pingResponse?.Status.ToString() ?? "no response"}");
     }
 
     private static bool IsRunningAsPackage()
