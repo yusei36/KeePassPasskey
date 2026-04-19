@@ -26,11 +26,11 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 
 ## Installation
 
-### Option A — MSIX from release
+### Option A — Release zip
 
-1. Download `KeePassPasskeyProvider.Package_x64.msix` from the releases page.
-2. Double-click the MSIX to install (you will be prompted to trust the certificate on first install).
-3. Copy `KeePassPasskey.dll` to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`).
+1. Download `KeePassPasskey-<version>.zip` from the releases page and extract it.
+2. Run `Install.ps1` as Administrator — it trusts the included certificate and installs the MSIX.
+3. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`).
 4. Restart KeePass.
 5. Launch **KeePassPasskey** from the Start menu. Click **Register** and then **Open Passkey Settings** to enable it.
 
@@ -40,7 +40,7 @@ See [Prerequisites](#Prerequisites) below, then run the install script:
 
 ```powershell
 # Run as Administrator
-.\scripts\sign-and-install.ps1
+.\scripts\Build-AndInstall.ps1
 ```
 
 This builds the MSIX, creates a self-signed test certificate, trusts it, installs the package, and launches the provider UI.
@@ -112,5 +112,8 @@ src/
   KeePassPasskeyPlugin/         KeePass plugin (.NET Framework 4.8)
   KeePassPasskeyProvider.Package/  MSIX packaging (wapproj)
 scripts/
-  sign-and-install.ps1          Build, sign, and install for local testing
+  Build-AndInstall.ps1          Build, sign, and install for local testing (requires elevation)
+  Publish-Package.ps1           Build Release, sign, and produce distributable zip
+  Install.ps1                   End-user installer (shipped inside the release zip)
+  Shared.psm1                   Shared PowerShell module used by the scripts above
 ```
