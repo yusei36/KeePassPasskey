@@ -90,6 +90,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     private void ReloadLog()
     {
+        if (!IsLogVisible) return;
         try
         {
             if (!File.Exists(Log.LogFilePath))
