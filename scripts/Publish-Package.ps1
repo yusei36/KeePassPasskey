@@ -88,7 +88,7 @@ Get-ChildItem $buildDir -File | Where-Object { $_.Extension -in $extensions } | 
 Copy-Item $MsixPath "$stagingDir\"
 
 Export-Certificate -Cert $cert -FilePath "$stagingDir\KeePassPasskeyProvider.cer" | Out-Null
-Copy-Item "$PSScriptRoot\Install.ps1" "$stagingDir\Install.ps1"
+Copy-Item "$PSScriptRoot\Install.bat" "$stagingDir\Install.bat"
 Copy-Item "$RepoRoot\README.md"       "$stagingDir\README.md"
 
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
