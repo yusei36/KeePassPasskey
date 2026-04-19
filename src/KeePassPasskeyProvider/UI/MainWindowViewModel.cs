@@ -27,6 +27,11 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     public string LogToggleLabel => IsLogVisible ? "Hide Log" : "Show Log";
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
+    public static string AppVersion { get; } =
+        "v" + (System.Reflection.CustomAttributeExtensions
+            .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>(
+                System.Reflection.Assembly.GetEntryAssembly()!)
+            ?.InformationalVersion ?? "?");
 
     public MainWindowViewModel()
     {
