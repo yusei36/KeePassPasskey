@@ -43,7 +43,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 
 ### Option C - Build and install from source
 
-See [Prerequisites](#Prerequisites) below, then run the install script:
+See [Prerequisites](#Prerequisites) below, then run the build script:
 
 ```powershell
 # Run as Administrator
