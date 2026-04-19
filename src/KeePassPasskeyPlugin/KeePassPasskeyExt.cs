@@ -37,8 +37,7 @@ namespace KeePassPasskey
 
         public override Image SmallIcon => _smallIcon;
 
-        public override string UpdateUrl =>
-            "https://github.com/your-org/KeePassPasskey/raw/main/version.txt";
+        public override string UpdateUrl => "https://github.com/yusei36/KeePassPasskey/raw/master/version.txt";
         public override bool Initialize(IPluginHost host)
         {
             if (host == null) return false;

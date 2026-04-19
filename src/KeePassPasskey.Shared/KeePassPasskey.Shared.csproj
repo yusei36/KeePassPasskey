@@ -7,7 +7,6 @@
     <AssemblyName>KeePassPasskey.Shared</AssemblyName>
     <OutputPath>..\..\build\$(Configuration)\$(TargetFramework)\</OutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <Version>1.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

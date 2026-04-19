@@ -34,10 +34,11 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$RepoRoot  = Split-Path $PSScriptRoot -Parent
+$RepoRoot     = Split-Path $PSScriptRoot -Parent
 $ConfigSuffix = if ($Configuration -eq 'Debug') { '_Debug' } else { '' }
-$MsixPath  = "$RepoRoot\build\AppPackages\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}_Test\KeePassPasskeyProvider.Package_1.0.0.0_x64${ConfigSuffix}.msix"
-$SignTool  = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
+$SignTool     = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
+
+$AppPackagesDir = "$RepoRoot\build\AppPackages"
 $CertSubject = 'CN=KeePassPasskeyProvider'
 
 # ── helpers ────────────────────────────────────────────────────────────────────
@@ -65,21 +66,44 @@ if (-not $SkipBuild) {
     $msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1
     if (-not $msbuild) { throw "MSBuild.exe not found via vswhere." }
 
-    $wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
-    & $msbuild $wapproj `
-        /p:Configuration=$Configuration `
-        /p:Platform=x64 `
-        /p:PlatformToolset=v145 `
-        /p:SolutionDir="$RepoRoot\" `
-        /p:AppxPackageDir="$RepoRoot\build\AppPackages\" `
-        /p:AppxBundle=Never `
-        /p:UapAppxPackageBuildMode=SideLoadOnly `
-        /p:AppxPackageSigningEnabled=false `
-        /m /v:minimal
+    $buildProps = [xml](Get-Content "$RepoRoot\Directory.Build.props")
+    $fileVersion = $buildProps.Project.PropertyGroup.FileVersion
+    if (-not $fileVersion) { throw "FileVersion not found in Directory.Build.props" }
+    Write-Host "  Package version: $fileVersion"
 
-    if ($LASTEXITCODE -ne 0) { throw "msbuild failed with exit code $LASTEXITCODE" }
-    Write-Host "  Build OK."
+    $manifest = "$RepoRoot\src\KeePassPasskeyProvider.Package\Package.appxmanifest"
+    $originalContent = [IO.File]::ReadAllText($manifest)
+    $patchedContent  = $originalContent -replace '\bVersion="(\d+\.){3}\d+"', "Version=`"$fileVersion`""
+    [IO.File]::WriteAllText($manifest, $patchedContent)
+
+    $wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
+    try {
+        & $msbuild $wapproj `
+            /p:Configuration=$Configuration `
+            /p:Platform=x64 `
+            /p:PlatformToolset=v145 `
+            /p:SolutionDir="$RepoRoot\" `
+            /p:AppxPackageDir="$RepoRoot\build\AppPackages\" `
+            /p:AppxBundle=Never `
+            /p:UapAppxPackageBuildMode=SideLoadOnly `
+            /p:AppxPackageSigningEnabled=false `
+            /m /v:minimal
+
+        if ($LASTEXITCODE -ne 0) { throw "msbuild failed with exit code $LASTEXITCODE" }
+        Write-Host "  Build OK."
+    } finally {
+        [IO.File]::WriteAllText($manifest, $originalContent)
+    }
 }
+
+$MsixFolder = Get-ChildItem $AppPackagesDir -Directory -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -like "*KeePassPasskeyProvider*x64${ConfigSuffix}_Test" } |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1
+if (-not $MsixFolder) { throw "No MSIX output folder found under $AppPackagesDir - build the package first or remove -SkipBuild." }
+$MsixPath = Get-ChildItem $MsixFolder.FullName -Filter '*.msix' |
+    Select-Object -First 1 -ExpandProperty FullName
+if (-not $MsixPath) { throw "No .msix file found in $($MsixFolder.FullName)" }
 
 # ── 1. Cert ────────────────────────────────────────────────────────────────────
 Write-Step "Checking for signing certificate ($CertSubject)"

@@ -11,14 +11,9 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <Deterministic>true</Deterministic>
-    <Version>1.0.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
     <Title>KeePassPasskey</Title>
     <Description>KeePass plugin that provides native Windows 11 passkey (FIDO2/WebAuthn) support via the platform authenticator API.</Description>
-    <Company>Uwe Kögel</Company>
     <Product>KeePass Plugin</Product>
-    <Copyright>Copyright © 2026 Uwe Kögel</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
