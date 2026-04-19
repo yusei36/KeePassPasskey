@@ -44,7 +44,9 @@ $RepoRoot       = Split-Path $PSScriptRoot -Parent
 $AppPackagesDir = "$RepoRoot\build\AppPackages"
 
 $versions = Get-BuildVersions $RepoRoot
-Write-Host "KeePassPasskey Version:$($versions.Version) File Version: $($versions.FileVersion) [$Configuration]" -ForegroundColor White
+Write-Host "KeePassPasskey [$Configuration]" -ForegroundColor White
+Write-Host "KVersion:$($versions.Version)" -ForegroundColor White
+Write-Host "FileVersion: $($versions.FileVersion)" -ForegroundColor White
 
 # ── 0. Build ───────────────────────────────────────────────────────────────────
 if (-not $SkipBuild) {
