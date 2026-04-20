@@ -31,7 +31,8 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 1. Download `KeePassPasskey-<version>.zip` from the releases page and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
 3. Run `Install.bat` as Administrator — it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
-4. Open **Advanced Passkey Options** and enable **KeePassPasskey**. Both status indicators should show green.
+4. Open **Advanced Passkey Options** and enable **KeePassPasskey**.
+5. Both status indicators in the **KeePassPasskey** app should show green.
 
 ### Option B - manual
 
@@ -39,7 +40,8 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
 3. Trust the certificate: right-click `KeePassPasskeyProvider.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
 4. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
-5. Launch **KeePassPasskey** from the Start menu, open **Advanced Passkey Options** and enable **KeePassPasskey**. Both status indicators should show green.
+5. Launch **KeePassPasskey** from the Start menu, open **Advanced Passkey Options** and enable **KeePassPasskey**.
+6. Both status indicators in the **KeePassPasskey** app should show green.
 
 ### Option C - Build and install from source
 
@@ -50,7 +52,8 @@ See [Prerequisites](#Prerequisites) below, then:
    .\scripts\Build-AndInstall.ps1 -Configuration Release
    ```
 2. Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass.
-3. Open **Advanced Passkey Options**, enable **KeePassPasskey**, and confirm both status indicators show green.
+3. Open **Advanced Passkey Options** and enable **KeePassPasskey**.
+4. Both status indicators in the **KeePassPasskey** app should show green.
 
 #### Manual registration (CLI alternative)
 
