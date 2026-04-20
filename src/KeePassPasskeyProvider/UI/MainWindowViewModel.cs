@@ -35,6 +35,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel()
     {
+        AutoRegisterIfNeeded();
         DoRefresh();
 
         var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
@@ -53,6 +54,15 @@ internal sealed partial class MainWindowViewModel : ObservableObject
             _logWatcher.Changed += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
             _logWatcher.Created += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
         }
+    }
+
+    private void AutoRegisterIfNeeded()
+    {
+        int stateHr = PluginRegistration.GetState(out _);
+        if (stateHr >= 0) return; // already registered
+
+        int hr = PluginRegistration.Register();
+        ResultMessage = hr >= 0 ? "Registered automatically." : $"Auto-registration failed: 0x{hr:X8}";
     }
 
     [RelayCommand]

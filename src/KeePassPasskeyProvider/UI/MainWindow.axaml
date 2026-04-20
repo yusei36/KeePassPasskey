@@ -44,17 +44,6 @@
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="2." FontWeight="SemiBold" Width="16" />
                     <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock VerticalAlignment="Center">
-							<Run Text="Click " />
-							<Run Text="Register" FontWeight="Bold" />
-							<Run Text=" to register the provider with Windows." />
-						</TextBlock>
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="3." FontWeight="SemiBold" Width="16" />
-                    <StackPanel Orientation="Horizontal" Spacing="4">
                         <TextBlock Text="Open" VerticalAlignment="Center" />
                         <Button Content="Settings → Accounts → Passkeys"
                                 Command="{Binding OpenPasskeySettingsCommand}"
@@ -67,7 +56,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="4." FontWeight="SemiBold" Width="16" />
+                    <TextBlock Text="3." FontWeight="SemiBold" Width="16" />
 					<TextBlock TextWrapping="Wrap">
 						<Run Text="Enable " />
 						<Run Text="KeePassPasskey" FontWeight="Bold" />
@@ -75,7 +64,7 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="5." FontWeight="SemiBold" Width="16" />
+                    <TextBlock Text="4." FontWeight="SemiBold" Width="16" />
                     <TextBlock TextWrapping="Wrap">
                         <Run Text="Both statuses should show " />
                         <Run Text="Running" FontWeight="Bold" />

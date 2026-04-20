@@ -29,8 +29,8 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 ### Option A - automatic (recommended)
 
 1. Download `KeePassPasskey-<version>.zip` from the releases page and extract it.
-2. Run `Install.bat` as Administrator — it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
-3. In the **KeePassPasskey** click **Register** and then **Open Passkey Settings** to enable it.
+2. Run `Install.bat` as Administrator — it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app (auto-registers on first launch).
+3. In the **KeePassPasskey** app click **Open Passkey Settings** to enable it under **Settings → Accounts → Passkeys → Advanced Options**.
 4. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
 
 ### Option B - manual
@@ -38,7 +38,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 1. Download `KeePassPasskey-<version>.zip` from the releases page and extract it.
 2. Trust the certificate: right-click `KeePassPasskeyProvider.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
 3. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
-4. Launch **KeePassPasskey** from the Start menu, click **Register**, then **Open Passkey Settings** to enable it.
+4. Launch **KeePassPasskey** from the Start menu (auto-registers on first launch), then click **Open Passkey Settings** to enable it under **Settings → Accounts → Passkeys → Advanced Options**.
 5. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
 
 ### Option C - Build and install from source
@@ -50,11 +50,13 @@ See [Prerequisites](#Prerequisites) below, then run the build script:
 .\scripts\Build-AndInstall.ps1
 ```
 
-This builds the MSIX, creates a self-signed test certificate, trusts it, installs the package, and launches the provider UI.
+This builds the MSIX, creates a self-signed test certificate, trusts it, installs the package, and launches the provider UI (auto-registers on first launch).
 
-In the provider UI, click **Register** to register the plugin with Windows, then click **Open Passkey Settings** to open **Settings → Accounts → Passkeys → Advanced Options** and enable **KeePassPasskey**.
+In the provider UI, click **Open Passkey Settings** to open **Settings → Accounts → Passkeys → Advanced Options** and enable **KeePassPasskey**.
 
 #### Manual registration (CLI alternative)
+
+If auto-registration fails, you can register manually:
 
 ```powershell
 KeePassPasskeyProvider.exe /register
