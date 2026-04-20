@@ -5,10 +5,11 @@
 
 .DESCRIPTION
     1. Builds the MSIX via msbuild (wapproj).
-    2. Creates a self-signed cert (CN=KeePassPasskeyProvider) if one doesn't exist.
-    3. Signs the MSIX with that cert.
-    4. Trusts the cert in LocalMachine\TrustedPeople (requires elevation).
-    5. Installs the MSIX package.
+    2. Builds the KeePassPasskey plugin DLL.
+    3. Creates a self-signed cert (CN=KeePassPasskeyProvider) if one doesn't exist.
+    4. Signs the MSIX with that cert.
+    5. Trusts the cert in LocalMachine\TrustedPeople (requires elevation).
+    6. Installs the MSIX package.
 
 .PARAMETER Configuration
     Build configuration: Debug or Release. Defaults to Debug.
@@ -41,16 +42,18 @@ $AppPackagesDir = "$RepoRoot\build\AppPackages"
 
 $versions = Get-BuildVersions $RepoRoot
 Write-Host "KeePassPasskey [$Configuration]" -ForegroundColor White
-Write-Host "KVersion:$($versions.Version)" -ForegroundColor White
+Write-Host "Version: $($versions.Version)" -ForegroundColor White
 Write-Host "FileVersion: $($versions.FileVersion)" -ForegroundColor White
 
 Assert-Elevation
 
-# ── 0. Build MSIX ──────────────────────────────────────────────────────────────
+# ── 0. Build ───────────────────────────────────────────────────────────────────
 if (-not $SkipBuild) {
-    Write-Step "Building MSIX package (msbuild)"
     $msbuild = Find-MSBuild
+    Write-Step "Building MSIX package (msbuild)"
     Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
+    Write-Step "Building KeePassPasskey plugin DLL (msbuild)"
+    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
 }
 
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
@@ -92,7 +95,7 @@ if ($pkg) {
     Write-Host "Next steps:" -ForegroundColor Yellow
     Write-Host "  Auto-registers on first launch (or manually: KeePassPasskeyProvider.exe /register)"
     Write-Host "  Enable in: Settings -> Accounts -> Passkeys -> Advanced Options"
-    Write-Host "  Copy KeePassPasskeyPlugin folder to KeePass Plugins folder"
+    Write-Host "  Copy DLLs from build\$Configuration\ to KeePass Plugins\KeePassPasskeyPlugin\ folder"
 
     Write-Step "Launching KeePassPasskey Provider UI"
     $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'

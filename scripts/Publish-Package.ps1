@@ -45,7 +45,7 @@ $AppPackagesDir = "$RepoRoot\build\AppPackages"
 
 $versions = Get-BuildVersions $RepoRoot
 Write-Host "KeePassPasskey [$Configuration]" -ForegroundColor White
-Write-Host "KVersion:$($versions.Version)" -ForegroundColor White
+Write-Host "Version: $($versions.Version)" -ForegroundColor White
 Write-Host "FileVersion: $($versions.FileVersion)" -ForegroundColor White
 
 # ── 0. Build ───────────────────────────────────────────────────────────────────
