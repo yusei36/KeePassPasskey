@@ -27,7 +27,7 @@ internal static class Program
 
         if (isPluginActivated)
         {
-            Log.Info("-PluginActivated received");
+            Log.Info($"-PluginActivated received (log level: {Log.MinLevel})");
             return RunAsPluginServer();
         }
 
@@ -149,7 +149,7 @@ internal static class Program
             }
 
             // Mutex acquired; we are the first instance
-            Log.Info("First instance; starting UI");
+            Log.Info($"First instance; starting UI (log level: {Log.MinLevel})");
             int exitCode = 0;
             var uiThread = new Thread(() =>
             {

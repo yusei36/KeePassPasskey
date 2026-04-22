@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace KeePassPasskeyProvider.Util;
 
 /// <summary>
 /// Appends timestamped lines to %LOCALAPPDATA%\KeePassPasskeyProvider\PasskeyProvider.log -- redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Local\KeePassPasskeyProvider\PasskeyProvider.log
-/// <see cref="Info"/> is only active in DEBUG builds; <see cref="Warn"/> and <see cref="Error"/> are always active.
+/// Log level is read from appsettings.json in the same directory; defaults to Info.
 /// </summary>
 internal static class Log
 {
@@ -18,21 +17,31 @@ internal static class Log
 
     private static readonly string BakPath = LogFilePath + ".bak";
 
-    static Log() => Directory.CreateDirectory(LogDir);
+    private static readonly LogLevel _minLevel;
+
+    public static LogLevel MinLevel => _minLevel;
+
+    static Log()
+    {
+        Directory.CreateDirectory(LogDir);
+        _minLevel = AppSettings.Load(LogDir).LogLevel;
+    }
 
     private const long MaxLogBytes = 1 * 1024 * 1024; // 1 MB
 
     private static readonly object _lock = new();
 
-    [Conditional("DEBUG")]
-    public static void Debug(string message, [CallerMemberName] string member = "") => Append("DEBUG", member, message);
-    public static void Info(string message, [CallerMemberName] string member = "") => Append("INFO ", member, message);
-    public static void Warn(string message, [CallerMemberName] string member = "") => Append("WARN ", member, message);
-    public static void Error(string message, [CallerMemberName] string member = "") => Append("ERROR", member, message);
+    public static void Debug(string message, [CallerMemberName] string member = "") => Append(LogLevel.Debug, "DEBUG", member, message);
+    public static void Info(string message, [CallerMemberName] string member = "") => Append(LogLevel.Info, "INFO ", member, message);
+    public static void Warn(string message, [CallerMemberName] string member = "") => Append(LogLevel.Warn, "WARN ", member, message);
+    public static void Error(string message, [CallerMemberName] string member = "") => Append(LogLevel.Error, "ERROR", member, message);
 
-    private static void Append(string level, string member, string message)
+    private static void Append(LogLevel level, string label, string member, string message)
     {
-        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{level}] {member}: {message}";
+        if (level < _minLevel)
+            return;
+
+        string line = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{label}] {member}: {message}";
         lock (_lock)
         {
             try
