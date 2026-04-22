@@ -155,7 +155,8 @@ internal sealed partial class MainWindowViewModel : ObservableObject
             PingStatus.IncompatibleVersion  => ("Incompatible version", Brushes.OrangeRed),
             _                               => ("Not running",          Brushes.Gray),
         };
-        Log.Info($"status: {pingResponse?.Status}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
+        var status = pingResponse == null ? "no response" : pingResponse.Status.ToString();
+        Log.Info($"status: {status}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
     }
 
     private static bool IsRunningAsPackage()
