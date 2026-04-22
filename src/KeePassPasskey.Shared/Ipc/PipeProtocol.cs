@@ -19,6 +19,9 @@ namespace KeePassPasskey.Shared.Ipc
     public sealed class PingRequest : PipeRequestBase
     {
         public override string Type => "ping";
+
+        [JsonProperty("version")]
+        public string Version { get; set; } = PipeConstants.Version;
     }
 
     public sealed class GetCredentialsRequest : PipeRequestBase
@@ -78,7 +81,8 @@ namespace KeePassPasskey.Shared.Ipc
     public enum PingStatus
     {
         Ready,
-        NoDatabase
+        NoDatabase,
+        IncompatibleVersion
     }
 
     [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
@@ -109,6 +113,9 @@ namespace KeePassPasskey.Shared.Ipc
 
         [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
         public PingStatus? Status { get; set; }
+
+        [JsonProperty("version")]
+        public string Version { get; set; } = PipeConstants.Version;
     }
 
     public sealed class GetCredentialsResponse : PipeResponseBase

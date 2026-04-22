@@ -54,6 +54,9 @@ namespace KeePassPasskey.Ipc
 
         private PingResponse HandlePing(PingRequest req)
         {
+            if (req.Version != PipeConstants.Version)
+                return new PingResponse { Status = PingStatus.IncompatibleVersion };
+
             return new PingResponse { Status = IsDatabaseOpen() ? PingStatus.Ready : PingStatus.NoDatabase };
         }
 

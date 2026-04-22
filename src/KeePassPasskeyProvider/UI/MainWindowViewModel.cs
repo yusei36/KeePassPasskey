@@ -150,11 +150,12 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     {
         (PluginStatusText, PluginStatusColor) = pingResponse?.Status switch
         {
-            PingStatus.Ready      => ("Running",          Brushes.Green),
-            PingStatus.NoDatabase => ("No database open", Brushes.OrangeRed),
-            _                     => ("Not running",       Brushes.Gray),
+            PingStatus.Ready                => ("Running",              Brushes.Green),
+            PingStatus.NoDatabase           => ("No database open",    Brushes.OrangeRed),
+            PingStatus.IncompatibleVersion  => ("Incompatible version", Brushes.OrangeRed),
+            _                               => ("Not running",          Brushes.Gray),
         };
-        Log.Info($"status: {pingResponse?.Status.ToString() ?? "no response"}");
+        Log.Info($"status: {pingResponse?.Status}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
     }
 
     private static bool IsRunningAsPackage()
