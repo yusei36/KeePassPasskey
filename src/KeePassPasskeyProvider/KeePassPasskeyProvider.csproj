@@ -9,15 +9,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableComHosting>false</EnableComHosting>
-    <!-- Self-contained, single-file publish for x64 Windows -->
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <OutputPath>..\..\build\$(Configuration)\KeePassPasskeyProvider\</OutputPath>
+  </PropertyGroup>
+
+  <!-- Self-contained single-file publish — only for Release to keep Debug builds fast -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <OutputPath>..\..\build\$(Configuration)\KeePassPasskeyProvider\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
