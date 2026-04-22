@@ -9,9 +9,7 @@ namespace KeePassPasskeyProvider.Util;
 internal static class Log
 {
     // redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalState\Local\KeePassPasskeyProvider
-    private static readonly string LogDir =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                     "KeePassPasskeyProvider");
+    private static readonly string LogDir = AppSettings.ConfigDir;
 
     public static readonly string LogFilePath = Path.Combine(LogDir, "PasskeyProvider.log");
 
@@ -24,7 +22,7 @@ internal static class Log
     static Log()
     {
         Directory.CreateDirectory(LogDir);
-        _minLevel = AppSettings.Load(LogDir).LogLevel;
+        _minLevel = AppSettings.Current.LogLevel;
     }
 
     private const long MaxLogBytes = 1 * 1024 * 1024; // 1 MB

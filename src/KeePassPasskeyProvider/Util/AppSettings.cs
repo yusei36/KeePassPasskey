@@ -5,6 +5,10 @@ namespace KeePassPasskeyProvider.Util;
 
 internal sealed class AppSettings
 {
+    internal static readonly string ConfigDir =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                     "KeePassPasskeyProvider");
+
     [JsonConverter(typeof(StringEnumConverter))]
 #if DEBUG
     public LogLevel LogLevel { get; init; } = LogLevel.Debug;
@@ -12,9 +16,13 @@ internal sealed class AppSettings
     public LogLevel LogLevel { get; init; } = LogLevel.Info;
 #endif
 
-    public static AppSettings Load(string directory)
+    public bool ShowErrorNotifications { get; init; } = true;
+
+    public static AppSettings Current { get; } = Load();
+
+    private static AppSettings Load()
     {
-        string path = Path.Combine(directory, "appsettings.json");
+        string path = Path.Combine(ConfigDir, "appsettings.json");
         try
         {
             if (!File.Exists(path))

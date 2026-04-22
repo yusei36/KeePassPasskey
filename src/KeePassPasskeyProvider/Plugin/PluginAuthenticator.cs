@@ -94,12 +94,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (response == null)
                 {
                     Log.Warn("pipe failed");
+                    Notifier.ShowPipeError("Passkey creation");
                     return HResults.E_FAIL;
                 }
 
                 if (response.ErrorCode != null)
                 {
                     Log.Warn($"KeePass error code={response.ErrorCode}");
+                    Notifier.ShowMakeCredentialError(rpIdUtf8, response.ErrorCode);
                     return MapErrorCode(response.ErrorCode);
                 }
 
@@ -190,12 +192,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (response == null)
                 {
                     Log.Warn("pipe failed");
+                    Notifier.ShowPipeError("Sign-in");
                     return HResults.NTE_NOT_FOUND;
                 }
 
                 if (response.ErrorCode != null)
                 {
                     Log.Warn($"KeePass error code={response.ErrorCode}");
+                    Notifier.ShowGetAssertionError(rpIdUtf8, response.ErrorCode);
                     return MapErrorCode(response.ErrorCode);
                 }
 
