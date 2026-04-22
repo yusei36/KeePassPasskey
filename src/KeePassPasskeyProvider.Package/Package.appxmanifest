@@ -29,7 +29,7 @@
   </Resources>
 
   <Applications>
-    <Application Id="PasskeyProvider" Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="KeePassPasskeyProvider" Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="KeePassPasskey"
         Description="Stores passkeys in KeePass"
