@@ -119,6 +119,20 @@ internal unsafe struct WebAuthnPluginCredentialDetails
 }
 
 /// <summary>
+/// WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST — passed to WebAuthNPluginPerformUserVerification.
+/// rguidTransactionId is REFGUID = const GUID* (pointer, not inline value).
+/// Layout (x64): HWND(8) + ptr(8) + ptr(8) + ptr(8) = 32 bytes.
+/// </summary>
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct WebAuthnPluginUserVerificationRequest
+{
+    public nint hWnd;                 // HWND (8 bytes x64)
+    public Guid* rguidTransactionId;  // REFGUID = const GUID* (8 bytes)
+    public char* pwszUsername;        // LPCWSTR (8 bytes, nullable)
+    public char* pwszDisplayHint;     // LPCWSTR (8 bytes, nullable)
+}
+
+/// <summary>
 /// COM interface IIDs from pluginauthenticator.h and the COM standard.
 /// </summary>
 internal static class ComIids
@@ -180,5 +194,14 @@ internal static unsafe class WebAuthnPluginApi
     internal static extern void WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(
         uint cCredentialDetails,
         WebAuthnPluginCredentialDetails* pCredentialDetailsArray);
+
+    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+    internal static extern int WebAuthNPluginPerformUserVerification(
+        WebAuthnPluginUserVerificationRequest* pRequest,
+        uint* pcbResponse,
+        byte** ppbResponse);
+
+    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+    internal static extern void WebAuthNPluginFreeUserVerificationResponse(byte* pbResponse);
 }
 

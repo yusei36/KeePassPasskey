@@ -59,6 +59,9 @@ internal static class Win32Native
     internal static extern uint GetCurrentThreadId();
 
     [DllImport("user32.dll")]
+    internal static extern nint GetForegroundWindow();
+
+    [DllImport("user32.dll")]
     internal static extern bool SetForegroundWindow(nint hWnd);
 
     [DllImport("user32.dll")]

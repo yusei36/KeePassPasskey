@@ -18,6 +18,10 @@ internal sealed class AppSettings
 
     public bool ShowErrorNotifications { get; init; } = true;
 
+    public bool RequireUserVerificationForRegistration { get; init; } = true;
+
+    public bool RequireUserVerificationForSignIn { get; init; } = true;
+
     public static AppSettings Current { get; } = Load();
 
     private static AppSettings Load()
@@ -26,7 +30,12 @@ internal sealed class AppSettings
         try
         {
             if (!File.Exists(path))
-                return new AppSettings();
+            {
+                var defaultAppSettings = new AppSettings();
+                Directory.CreateDirectory(ConfigDir);
+                File.WriteAllText(path, JsonConvert.SerializeObject(defaultAppSettings, Formatting.Indented));
+                return defaultAppSettings;
+            }
 
             string json = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<AppSettings>(json) ?? new AppSettings();

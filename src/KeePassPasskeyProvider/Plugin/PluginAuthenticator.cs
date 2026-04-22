@@ -58,7 +58,19 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 if (_cancelled) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
 
-                // 3. Build JSON request for KeePass
+                // 3. User verification via Windows Hello
+                if (AppSettings.Current.RequireUserVerificationForRegistration)
+                {
+                    string uvUsername = pDecoded->pUserInformation != null && pDecoded->pUserInformation->pwszName != null
+                        ? new string(pDecoded->pUserInformation->pwszName) : string.Empty;
+                    string uvDisplayHint = pDecoded->pRpInformation != null && pDecoded->pRpInformation->pwszName != null
+                        ? new string(pDecoded->pRpInformation->pwszName) : string.Empty;
+                    int hrUv = PerformUserVerification(pRequest, uvUsername, uvDisplayHint);
+                    Log.Info($"PerformUserVerification hr=0x{hrUv:X8}");
+                    if (hrUv < 0) return hrUv;
+                }
+
+                // 4. Build JSON request for KeePass
                 string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
                 string userIdB64 = string.Empty;
                 string userNameStr = string.Empty;
@@ -178,7 +190,18 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 var allowList = ExtractCredentialIds(pDecoded->CredentialList);
 
-                // 4. Build JSON pipe request
+                // 4. Perform user verification via Windows Hello
+                if (AppSettings.Current.RequireUserVerificationForSignIn)
+                {
+                    CredentialCache.LookupWindowsCache(rpIdUtf8, allowList, out string uvUsername, out string uvDisplayHint);
+                    Log.Info($"UV cache lookup userName={uvUsername} displayHint={uvDisplayHint}");
+
+                    int hrUv = PerformUserVerification(pRequest, uvUsername, uvDisplayHint);
+                    Log.Info($"PerformUserVerification hr=0x{hrUv:X8}");
+                    if (hrUv < 0) return hrUv;
+                }
+
+                // 5. Build JSON pipe request
                 var request = new GetAssertionRequest
                 {
                     RpId = rpIdUtf8,
@@ -186,7 +209,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     AllowCredentials = allowList,
                 };
 
-                // 5. Send to KeePass plugin
+                // 6. Send to KeePass plugin
                 Log.Info("sending pipe request");
                 var response = _pipeClient.GetAssertion(request);
                 if (response == null)
@@ -203,7 +226,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     return MapErrorCode(response.ErrorCode);
                 }
 
-                // 6. Encode assertion response
+                // 7. Encode assertion response
                 int hrEnc = EncodeAssertion(
                     response.AuthenticatorData, response.Signature, response.CredentialId, response.UserHandle,
                     response.UserName, response.UserDisplayName, out uint cbEncoded, out byte* pbEncoded);
@@ -283,6 +306,38 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             Log.Warn($"exception {ex.Message}");
             *pLockStatus = PluginLockStatus.PluginLocked;
             return HResults.S_OK;
+        }
+    }
+
+    /// <summary>
+    /// Calls WebAuthNPluginPerformUserVerification (Windows Hello prompt).
+    /// username and displayHint are passed as hints; either may be empty.
+    /// </summary>
+    private static unsafe int PerformUserVerification(
+        WebAuthnPluginOperationRequest* pRequest, string username, string displayHint)
+    {
+        nint hwnd = pRequest->hWnd != 0 ? pRequest->hWnd : Win32Native.GetForegroundWindow();
+        Log.Info($"hWnd=0x{hwnd:X} username={username} displayHint={displayHint}");
+
+        Guid transactionId = pRequest->transactionId; // stack copy; &transactionId is stable (no fixed needed)
+        fixed (char* usernamePin = username.Length > 0 ? username : "\0")
+        fixed (char* hintPin = displayHint.Length > 0 ? displayHint : "\0")
+        {
+            var uvReq = new WebAuthnPluginUserVerificationRequest
+            {
+                hWnd               = hwnd,
+                rguidTransactionId = &transactionId,
+                pwszUsername       = username.Length > 0    ? usernamePin : null,
+                pwszDisplayHint    = displayHint.Length > 0 ? hintPin     : null,
+            };
+
+            uint cbResp = 0;
+            byte* pbResp = null;
+            int hr = WebAuthnPluginApi.WebAuthNPluginPerformUserVerification(&uvReq, &cbResp, &pbResp);
+            Log.Info($"WebAuthNPluginPerformUserVerification hr=0x{hr:X8}");
+            if (pbResp != null)
+                WebAuthnPluginApi.WebAuthNPluginFreeUserVerificationResponse(pbResp);
+            return hr;
         }
     }
 

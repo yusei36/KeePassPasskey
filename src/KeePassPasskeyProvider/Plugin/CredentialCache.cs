@@ -63,6 +63,57 @@ internal static unsafe class CredentialCache
         }
     }
 
+    /// <summary>
+    /// Looks up username and display hint from the Windows autofill cache for a given rpId,
+    /// optionally filtered by the allowCredentials list. Falls back to empty strings.
+    /// </summary>
+    public static unsafe void LookupWindowsCache(
+        string rpId, List<string> allowList,
+        out string userName, out string displayHint)
+    {
+        userName = string.Empty;
+        displayHint = string.Empty;
+
+        uint cDetails = 0;
+        WebAuthnPluginCredentialDetails* pDetails = null;
+        int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
+            PluginConstants.KeePassPasskeyProviderClsid, &cDetails, &pDetails);
+        if (hr < 0 || cDetails == 0 || pDetails == null)
+        {
+            if (pDetails != null)
+                WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cDetails, pDetails);
+            return;
+        }
+
+        try
+        {
+            for (uint i = 0; i < cDetails; i++)
+            {
+                var entry = &pDetails[i];
+                string entryRpId = entry->pwszRpId != null ? new string(entry->pwszRpId) : string.Empty;
+                if (!string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (allowList.Count > 0)
+                {
+                    string entryCredId = entry->cbCredentialId > 0
+                        ? Base64Url.Encode(new ReadOnlySpan<byte>(entry->pbCredentialId, (int)entry->cbCredentialId).ToArray())
+                        : string.Empty;
+                    if (!allowList.Contains(entryCredId))
+                        continue;
+                }
+
+                userName = entry->pwszUserName != null ? new string(entry->pwszUserName) : string.Empty;
+                displayHint = entry->pwszUserDisplayName != null ? new string(entry->pwszUserDisplayName) : string.Empty;
+                break;
+            }
+        }
+        finally
+        {
+            WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cDetails, pDetails);
+        }
+    }
+
     private static bool SyncToCredentialCache(Guid pluginClsid)
     {
         // 1. Query credentials from KeePass
