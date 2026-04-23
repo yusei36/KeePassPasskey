@@ -1,0 +1,111 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="KeePassPasskeyProvider.UI.StatusHero">
+    <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+            BorderThickness="1" CornerRadius="8">
+        <StackPanel>
+
+            <!-- Summary row: ring + headline (left), pills (right) -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="18 16 18 14">
+
+                <!-- Left: ring + text -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                    <!-- Status ring -->
+                    <Border Width="44" Height="44" CornerRadius="22"
+                            BorderBrush="{Binding RingBorderBrush}" BorderThickness="1.5"
+                            Background="{Binding RingBackgroundBrush}"
+                            VerticalAlignment="Center">
+                        <Grid>
+                            <!-- Checkmark: visible when ready -->
+                            <Path Data="M3 8.5 L6.5 12 L13 4.5"
+                                  Stroke="White" StrokeThickness="1.6"
+                                  StrokeLineCap="Round" StrokeJoin="Round"
+                                  Width="16" Height="16" Stretch="Uniform"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  IsVisible="{Binding IsReady}" />
+                            <!-- Warning: visible when not ready -->
+                            <Path Data="M8 1.5 L14.5 13.5 L1.5 13.5 Z M8 6 L8 9.2 M8 11.2 L8 11.8"
+                                  Stroke="White" StrokeThickness="1.25"
+                                  StrokeLineCap="Round" StrokeJoin="Round"
+                                  Width="16" Height="16" Stretch="Uniform"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  IsVisible="{Binding IsNotReady}" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Headline + subhead -->
+                    <StackPanel VerticalAlignment="Center" Spacing="3">
+                        <TextBlock Text="{Binding Headline}" FontSize="18" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Subhead}" FontSize="12.5" Opacity="0.6"
+                                   MaxWidth="280" TextWrapping="Wrap" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Right: status pills -->
+                <Grid Grid.Column="1"
+                      ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto"
+                      ColumnSpacing="14" RowSpacing="6"
+                      VerticalAlignment="Center">
+
+                    <TextBlock Grid.Row="0" Grid.Column="0"
+                               Text="KeePass plugin" FontSize="12.5" Opacity="0.6"
+                               VerticalAlignment="Center" />
+                    <Border Grid.Row="0" Grid.Column="1"
+                            Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="999"
+                            Padding="8 2 10 2">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <Ellipse Width="8" Height="8" Fill="{Binding PluginDotColor}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding PluginStatusText}" FontSize="12" FontWeight="Medium" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="Passkey provider" FontSize="12.5" Opacity="0.6"
+                               VerticalAlignment="Center" />
+                    <Border Grid.Row="1" Grid.Column="1"
+                            Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="999"
+                            Padding="8 2 10 2">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <Ellipse Width="8" Height="8" Fill="{Binding ProviderDotColor}" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ProviderPillLabel}" FontSize="12" FontWeight="Medium" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <!-- Divider -->
+            <Border Height="1" Background="{DynamicResource ControlStrokeColorDefaultBrush}" Opacity="0.5" />
+
+            <!-- Action row -->
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8" Margin="18 12 18 14">
+                <Button Grid.Column="0"
+                        Content="Refresh status"
+                        Command="{Binding RefreshCommand}" />
+
+                <!-- Register (shown when not registered) -->
+                <Button Grid.Column="1"
+                        Content="Register"
+                        Command="{Binding RegisterCommand}"
+                        IsVisible="{Binding CanRegister}" />
+
+                <!-- Unregister (shown when registered / enabled) -->
+                <Button Grid.Column="1"
+                        Content="Unregister"
+                        Command="{Binding UnregisterCommand}"
+                        IsVisible="{Binding CanUnregister}" />
+
+                <!-- Open passkey settings (shown when registered but not yet enabled) -->
+                <Button Grid.Column="3"
+                        Content="Open passkey settings"
+                        Command="{Binding OpenPasskeySettingsCommand}"
+                        IsVisible="{Binding ShowOpenPasskeySettings}" />
+            </Grid>
+
+        </StackPanel>
+    </Border>
+</UserControl>

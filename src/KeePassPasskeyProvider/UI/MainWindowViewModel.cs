@@ -13,31 +13,149 @@ namespace KeePassPasskeyProvider.UI;
 
 internal sealed partial class MainWindowViewModel : ObservableObject
 {
-    [ObservableProperty] private string _statusText = "Checking...";
-    [ObservableProperty] private string _pluginStatusText = "Checking...";
-    [ObservableProperty] private string _resultMessage = "";
-    [ObservableProperty] private IBrush _statusColor = Brushes.Gray;
-    [ObservableProperty] private IBrush _pluginStatusColor = Brushes.Gray;
-    [ObservableProperty] private string _logText = "";
-    [ObservableProperty] private bool _isLogVisible;
-    [ObservableProperty] private bool _isRefreshing;
+    // StatusHero
+    [ObservableProperty] private string _headline = "";
+    [ObservableProperty] private string _subhead = "";
+    [ObservableProperty] private IBrush _ringBorderBrush = NeutralBrush;
+    [ObservableProperty] private IBrush _ringBackgroundBrush = NeutralBgBrush;
+    [ObservableProperty] private IBrush _pluginDotColor = NeutralBrush;
+    [ObservableProperty] private string _pluginStatusText = "";
+    [ObservableProperty] private IBrush _providerDotColor = NeutralBrush;
+    [ObservableProperty] private string _providerPillLabel = "Not registered";
+    [ObservableProperty] private bool _canRegister = true;
+    [ObservableProperty] private bool _canUnregister;
+    [ObservableProperty] private bool _showOpenPasskeySettings;
+
+    // SetupGuide
     [ObservableProperty] private bool _isSetupExpanded = true;
     [ObservableProperty] private bool _isReady;
 
+    // Log
+    [ObservableProperty] private string _logText = "";
+    [ObservableProperty] private bool _isLogVisible;
+    [ObservableProperty] private bool _isRefreshing;
+
+    // Internal state
     private bool _pluginRunning;
     private bool _providerEnabled;
+    private bool _isRegistered;
+    private bool _autoregisterError;
+    private PingStatus? _pingStatus;
+
+    // Brushes
+    private static readonly IBrush SuccessBrush    = new SolidColorBrush(Color.Parse("#6ccb5f"));
+    private static readonly IBrush WarningBrush    = new SolidColorBrush(Color.Parse("#fce100"));
+    private static readonly IBrush CriticalBrush   = new SolidColorBrush(Color.Parse("#ff99a4"));
+    private static readonly IBrush SuccessBgBrush  = new SolidColorBrush(Color.FromArgb(0x26, 0x6c, 0xcb, 0x5f));
+    private static readonly IBrush WarningBgBrush  = new SolidColorBrush(Color.FromArgb(0x1E, 0xfc, 0xe1, 0x00));
+    private static readonly IBrush CriticalBgBrush = new SolidColorBrush(Color.FromArgb(0x26, 0xff, 0x99, 0xa4));
+    private static readonly IBrush NeutralBrush    = new SolidColorBrush(Color.Parse("#8a8a8a"));
+    private static readonly IBrush NeutralBgBrush  = new SolidColorBrush(Color.FromArgb(0x14, 0x8a, 0x8a, 0x8a));
 
     public string SetupSubtitle => IsReady
         ? "Everything's in place — tap to review"
         : "4 steps to get KeePassPasskey working";
 
+    public bool IsNotReady => !IsReady;
+
     partial void OnIsReadyChanged(bool value)
     {
         IsSetupExpanded = !value;
         OnPropertyChanged(nameof(SetupSubtitle));
+        OnPropertyChanged(nameof(IsNotReady));
     }
 
     private void UpdateIsReady() => IsReady = _pluginRunning && _providerEnabled;
+
+    private void UpdateStatusDisplay()
+    {
+        bool ready = _pluginRunning && _providerEnabled;
+
+        // Ring
+        if (ready)
+        {
+            RingBorderBrush     = SuccessBrush;
+            RingBackgroundBrush = SuccessBgBrush;
+        }
+        else if (_autoregisterError || !_isRegistered)
+        {
+            RingBorderBrush     = CriticalBrush;
+            RingBackgroundBrush = CriticalBgBrush;
+        }
+        else
+        {
+            RingBorderBrush     = WarningBrush;
+            RingBackgroundBrush = WarningBgBrush;
+        }
+
+        // Headline + Subhead
+        if (_autoregisterError)
+        {
+            Headline = "Automatic registration failed";
+            Subhead  = "You can retry by clicking Register.";
+        }
+        else if (!_isRegistered)
+        {
+            Headline = "Not registered";
+            Subhead  = "KeePassPasskey will register the provider automatically on launch.";
+        }
+        else if (!_providerEnabled)
+        {
+            Headline = "Waiting to be enabled";
+            Subhead  = "Enable KeePassPasskey in Windows Settings → Accounts → Passkeys.";
+        }
+        else if (_pingStatus == PingStatus.IncompatibleVersion)
+        {
+            Headline = "Version mismatch";
+            Subhead  = "Update the plugin or the provider so both are on the same version.";
+        }
+        else if (_pingStatus == PingStatus.NoDatabase)
+        {
+            Headline = "No database open";
+            Subhead  = "Open a KeePass database to use passkeys.";
+        }
+        else if (!_pluginRunning)
+        {
+            Headline = "Plugin not running";
+            Subhead  = "Start KeePass with the KeePassPasskey plugin installed.";
+        }
+        else
+        {
+            Headline = "All systems ready";
+            Subhead  = "Provider is enabled and the KeePass plugin is running.";
+        }
+
+        // Plugin pill
+        PluginDotColor = _pingStatus switch
+        {
+            PingStatus.Ready               => SuccessBrush,
+            PingStatus.NoDatabase          => WarningBrush,
+            PingStatus.IncompatibleVersion => CriticalBrush,
+            _                              => NeutralBrush,
+        };
+
+        // Provider pill
+        if (_providerEnabled)
+        {
+            ProviderDotColor  = SuccessBrush;
+            ProviderPillLabel = "Enabled";
+        }
+        else if (_isRegistered)
+        {
+            ProviderDotColor  = WarningBrush;
+            ProviderPillLabel = "Registered";
+        }
+        else
+        {
+            ProviderDotColor  = NeutralBrush;
+            ProviderPillLabel = "Not registered";
+        }
+
+        // Actions
+        CanRegister             = !_isRegistered;
+        CanUnregister           = _isRegistered;
+        ShowOpenPasskeySettings = _isRegistered && !_providerEnabled && !_autoregisterError;
+    }
 
     private readonly FileSystemWatcher? _logWatcher;
     private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
@@ -75,25 +193,26 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     private void AutoRegisterIfNeeded()
     {
         int stateHr = PluginRegistration.GetState(out _);
-        if (stateHr >= 0) return; // already registered
+        if (stateHr >= 0) return;
 
         int hr = PluginRegistration.Register();
-        ResultMessage = hr >= 0 ? "Registered automatically." : $"Auto-registration failed: 0x{hr:X8}";
+        _autoregisterError = hr < 0;
     }
 
     [RelayCommand]
     private void Register()
     {
+        _autoregisterError = false;
         int hr = PluginRegistration.Register();
-        ResultMessage = hr >= 0 ? "Registered successfully." : $"Registration failed: 0x{hr:X8}";
+        if (hr < 0) _autoregisterError = true;
         DoRefresh();
     }
 
     [RelayCommand]
     private void Unregister()
     {
-        int hr = PluginRegistration.Unregister();
-        ResultMessage = hr >= 0 ? "Unregistered successfully." : $"Unregister failed: 0x{hr:X8}";
+        _autoregisterError = false;
+        PluginRegistration.Unregister();
         DoRefresh();
     }
 
@@ -101,7 +220,6 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     private async Task RefreshAsync()
     {
         IsRefreshing = true;
-        ResultMessage = "";
         RefreshProviderStatus();
         ApplyPingResponse(await Task.Run(() => _pipeClient.Ping()));
         IsRefreshing = false;
@@ -126,7 +244,6 @@ internal sealed partial class MainWindowViewModel : ObservableObject
                 LogText = "(no log file yet)";
                 return;
             }
-            // Open with share so the log writer is not blocked
             using var fs     = new FileStream(Log.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var reader = new StreamReader(fs);
             string all   = reader.ReadToEnd();
@@ -148,35 +265,28 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     private void RefreshProviderStatus()
     {
         int hr = PluginRegistration.GetState(out var state);
-        if (hr >= 0)
-        {
-            bool enabled = state == AuthenticatorState.AuthenticatorState_Enabled;
-            StatusText  = enabled ? "Enabled" : "Disabled";
-            StatusColor = enabled ? Brushes.Green : Brushes.OrangeRed;
-            _providerEnabled = enabled;
-        }
-        else
-        {
-            StatusText  = $"Unknown or not registered (0x{hr:X8})";
-            StatusColor = Brushes.Gray;
-            _providerEnabled = false;
-        }
+        _isRegistered    = hr >= 0;
+        _providerEnabled = hr >= 0 && state == AuthenticatorState.AuthenticatorState_Enabled;
         UpdateIsReady();
+        UpdateStatusDisplay();
     }
 
     private void ApplyPingResponse(PingResponse? pingResponse)
     {
-        (PluginStatusText, PluginStatusColor) = pingResponse?.Status switch
+        _pingStatus    = pingResponse?.Status;
+        _pluginRunning = _pingStatus == PingStatus.Ready;
+
+        PluginStatusText = _pingStatus switch
         {
-            PingStatus.Ready                => ("Running",              Brushes.Green),
-            PingStatus.NoDatabase           => ("No database open",    Brushes.OrangeRed),
-            PingStatus.IncompatibleVersion  => ("Incompatible version", Brushes.OrangeRed),
-            _                               => ("Not running",          Brushes.Gray),
+            PingStatus.Ready               => "Running",
+            PingStatus.NoDatabase          => "No database open",
+            PingStatus.IncompatibleVersion => "Incompatible version",
+            _                              => "Not running",
         };
-        _pluginRunning = pingResponse?.Status == PingStatus.Ready;
+
         UpdateIsReady();
-        var status = pingResponse == null ? "no response" : pingResponse.Status.ToString();
-        Log.Info($"status: {status}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
+        UpdateStatusDisplay();
+        Log.Info($"ApplyPingResponse: status: {_pingStatus?.ToString() ?? "no response"}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
     }
 
     private static bool IsRunningAsPackage()
