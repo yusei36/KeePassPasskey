@@ -13,14 +13,14 @@
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <OutputPath>..\..\build\$(Configuration)\KeePassPasskeyProvider\</OutputPath>
+	  <SelfContained>true</SelfContained>
+	  <PublishSingleFile>true</PublishSingleFile>
+	  <PublishReadyToRun>true</PublishReadyToRun>
+	  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <!-- Self-contained single-file publish — only for Release to keep Debug builds fast -->
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <SelfContained>true</SelfContained>
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KeePassPasskey.Shared.Ipc;
 
-namespace KeePassPasskeyProvider.UI;
+namespace KeePassPasskeyProvider.ViewModels;
 
 internal sealed partial class StatusHeroViewModel : ObservableObject
 {

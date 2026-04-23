@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
+using KeePassPasskeyProvider.ViewModels;
 
 namespace KeePassPasskeyProvider.UI;
 

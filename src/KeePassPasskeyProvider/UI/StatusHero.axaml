@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:KeePassPasskeyProvider.UI"
+             xmlns:conv="using:KeePassPasskeyProvider.Converters"
+             xmlns:vm="using:KeePassPasskeyProvider.ViewModels"
              x:Class="KeePassPasskeyProvider.UI.StatusHero">
     <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
             BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
@@ -13,29 +14,29 @@
                 <!-- Left: ring + text -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
                     <Border Width="44" Height="44" CornerRadius="22" BorderThickness="1.5" VerticalAlignment="Center"
-                            BorderBrush="{Binding Status, Converter={x:Static local:ProviderStatusConverters.RingBorderBrush}}"
-                            Background="{Binding Status, Converter={x:Static local:ProviderStatusConverters.RingBackgroundBrush}}">
+                            BorderBrush="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.RingBorderBrush}}"
+                            Background="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.RingBackgroundBrush}}">
                         <Grid>
                             <Path Data="M3 8.5 L6.5 12 L13 4.5"
                                   Stroke="White" StrokeThickness="1.6"
                                   StrokeLineCap="Round" StrokeJoin="Round"
                                   Width="16" Height="16" Stretch="Uniform"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  IsVisible="{Binding Status, Converter={x:Static local:EnumEqualsConverter.Instance}, ConverterParameter={x:Static local:ProviderStatus.Ready}}" />
+                                  IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsConverter.Instance}, ConverterParameter={x:Static vm:ProviderStatus.Ready}}" />
                             <Path Data="M8 1.5 L14.5 13.5 L1.5 13.5 Z M8 6 L8 9.2 M8 11.2 L8 11.8"
                                   Stroke="White" StrokeThickness="1.25"
                                   StrokeLineCap="Round" StrokeJoin="Round"
                                   Width="16" Height="16" Stretch="Uniform"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  IsVisible="{Binding Status, Converter={x:Static local:EnumEqualsConverter.Negated}, ConverterParameter={x:Static local:ProviderStatus.Ready}}" />
+                                  IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsConverter.Negated}, ConverterParameter={x:Static vm:ProviderStatus.Ready}}" />
                         </Grid>
                     </Border>
 
                     <StackPanel VerticalAlignment="Center" Spacing="3">
                         <TextBlock FontSize="18" FontWeight="SemiBold"
-                                   Text="{Binding Status, Converter={x:Static local:ProviderStatusConverters.Headline}}" />
+                                   Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Headline}}" />
                         <TextBlock FontSize="12.5" Opacity="0.6" MaxWidth="280" TextWrapping="Wrap"
-                                   Text="{Binding Status, Converter={x:Static local:ProviderStatusConverters.Subhead}}" />
+                                   Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Subhead}}" />
                     </StackPanel>
                 </StackPanel>
 
@@ -53,9 +54,9 @@
                             BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Ellipse Width="8" Height="8" VerticalAlignment="Center"
-                                     Fill="{Binding PluginStatus, Converter={x:Static local:PingStatusConverters.DotColor}}" />
+                                     Fill="{Binding PluginStatus, Converter={x:Static conv:PingStatusConverters.DotColor}}" />
                             <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
-                                       Text="{Binding PluginStatus, Converter={x:Static local:PingStatusConverters.Text}}" />
+                                       Text="{Binding PluginStatus, Converter={x:Static conv:PingStatusConverters.Text}}" />
                         </StackPanel>
                     </Border>
 
@@ -67,9 +68,9 @@
                             BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Ellipse Width="8" Height="8" VerticalAlignment="Center"
-                                     Fill="{Binding Status, Converter={x:Static local:ProviderStatusConverters.ProviderDotColor}}" />
+                                     Fill="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.ProviderDotColor}}" />
                             <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
-                                       Text="{Binding Status, Converter={x:Static local:ProviderStatusConverters.ProviderPillText}}" />
+                                       Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.ProviderPillText}}" />
                         </StackPanel>
                     </Border>
                 </Grid>

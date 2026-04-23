@@ -7,7 +7,7 @@ using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.UI;
+namespace KeePassPasskeyProvider.ViewModels;
 
 internal sealed partial class MainWindowViewModel : ObservableObject
 {

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Avalonia.Input;
 using FluentAvalonia.UI.Windowing;
+using KeePassPasskeyProvider.ViewModels;
 
 namespace KeePassPasskeyProvider.UI;
 
