@@ -4,8 +4,5 @@ namespace KeePassPasskeyProvider.UI;
 
 public partial class StatusHero : UserControl
 {
-    public StatusHero()
-    {
-        InitializeComponent();
-    }
+    public StatusHero() => InitializeComponent();
 }

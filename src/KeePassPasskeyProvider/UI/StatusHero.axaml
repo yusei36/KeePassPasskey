@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:KeePassPasskeyProvider.UI"
              x:Class="KeePassPasskeyProvider.UI.StatusHero">
     <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
             BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
@@ -11,34 +12,30 @@
 
                 <!-- Left: ring + text -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
-                    <!-- Status ring -->
-                    <Border Width="44" Height="44" CornerRadius="22"
-                            BorderBrush="{Binding RingBorderBrush}" BorderThickness="1.5"
-                            Background="{Binding RingBackgroundBrush}"
-                            VerticalAlignment="Center">
+                    <Border Width="44" Height="44" CornerRadius="22" BorderThickness="1.5" VerticalAlignment="Center"
+                            BorderBrush="{Binding Status, Converter={x:Static local:ProviderStatusConverters.RingBorderBrush}}"
+                            Background="{Binding Status, Converter={x:Static local:ProviderStatusConverters.RingBackgroundBrush}}">
                         <Grid>
-                            <!-- Checkmark: visible when ready -->
                             <Path Data="M3 8.5 L6.5 12 L13 4.5"
                                   Stroke="White" StrokeThickness="1.6"
                                   StrokeLineCap="Round" StrokeJoin="Round"
                                   Width="16" Height="16" Stretch="Uniform"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  IsVisible="{Binding IsReady}" />
-                            <!-- Warning: visible when not ready -->
+                                  IsVisible="{Binding Status, Converter={x:Static local:EnumEqualsConverter.Instance}, ConverterParameter={x:Static local:ProviderStatus.Ready}}" />
                             <Path Data="M8 1.5 L14.5 13.5 L1.5 13.5 Z M8 6 L8 9.2 M8 11.2 L8 11.8"
                                   Stroke="White" StrokeThickness="1.25"
                                   StrokeLineCap="Round" StrokeJoin="Round"
                                   Width="16" Height="16" Stretch="Uniform"
                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                  IsVisible="{Binding IsNotReady}" />
+                                  IsVisible="{Binding Status, Converter={x:Static local:EnumEqualsConverter.Negated}, ConverterParameter={x:Static local:ProviderStatus.Ready}}" />
                         </Grid>
                     </Border>
 
-                    <!-- Headline + subhead -->
                     <StackPanel VerticalAlignment="Center" Spacing="3">
-                        <TextBlock Text="{Binding Headline}" FontSize="18" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding Subhead}" FontSize="12.5" Opacity="0.6"
-                                   MaxWidth="280" TextWrapping="Wrap" />
+                        <TextBlock FontSize="18" FontWeight="SemiBold"
+                                   Text="{Binding Status, Converter={x:Static local:ProviderStatusConverters.Headline}}" />
+                        <TextBlock FontSize="12.5" Opacity="0.6" MaxWidth="280" TextWrapping="Wrap"
+                                   Text="{Binding Status, Converter={x:Static local:ProviderStatusConverters.Subhead}}" />
                     </StackPanel>
                 </StackPanel>
 
@@ -49,30 +46,30 @@
                       VerticalAlignment="Center">
 
                     <TextBlock Grid.Row="0" Grid.Column="0"
-                               Text="KeePass plugin" FontSize="12.5" Opacity="0.6"
-                               VerticalAlignment="Center" />
+                               Text="KeePass plugin" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
                     <Border Grid.Row="0" Grid.Column="1"
                             Background="{DynamicResource ControlFillColorSecondaryBrush}"
                             BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                            BorderThickness="1" CornerRadius="999"
-                            Padding="8 2 10 2">
+                            BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" Fill="{Binding PluginDotColor}" VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding PluginStatusText}" FontSize="12" FontWeight="Medium" VerticalAlignment="Center" />
+                            <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                                     Fill="{Binding PluginStatus, Converter={x:Static local:PingStatusConverters.DotColor}}" />
+                            <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
+                                       Text="{Binding PluginStatus, Converter={x:Static local:PingStatusConverters.Text}}" />
                         </StackPanel>
                     </Border>
 
                     <TextBlock Grid.Row="1" Grid.Column="0"
-                               Text="Passkey provider" FontSize="12.5" Opacity="0.6"
-                               VerticalAlignment="Center" />
+                               Text="Passkey provider" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
                     <Border Grid.Row="1" Grid.Column="1"
                             Background="{DynamicResource ControlFillColorSecondaryBrush}"
                             BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                            BorderThickness="1" CornerRadius="999"
-                            Padding="8 2 10 2">
+                            BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" Fill="{Binding ProviderDotColor}" VerticalAlignment="Center" />
-                            <TextBlock Text="{Binding ProviderPillLabel}" FontSize="12" FontWeight="Medium" VerticalAlignment="Center" />
+                            <Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                                     Fill="{Binding Status, Converter={x:Static local:ProviderStatusConverters.ProviderDotColor}}" />
+                            <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
+                                       Text="{Binding Status, Converter={x:Static local:ProviderStatusConverters.ProviderPillText}}" />
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -83,27 +80,10 @@
 
             <!-- Action row -->
             <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8" Margin="18 12 18 14">
-                <Button Grid.Column="0"
-                        Content="Refresh status"
-                        Command="{Binding RefreshCommand}" />
-
-                <!-- Register (shown when not registered) -->
-                <Button Grid.Column="1"
-                        Content="Register"
-                        Command="{Binding RegisterCommand}"
-                        IsVisible="{Binding CanRegister}" />
-
-                <!-- Unregister (shown when registered / enabled) -->
-                <Button Grid.Column="1"
-                        Content="Unregister"
-                        Command="{Binding UnregisterCommand}"
-                        IsVisible="{Binding CanUnregister}" />
-
-                <!-- Open passkey settings (shown when registered but not yet enabled) -->
-                <Button Grid.Column="3"
-                        Content="Open passkey settings"
-                        Command="{Binding OpenPasskeySettingsCommand}"
-                        IsVisible="{Binding ShowOpenPasskeySettings}" />
+                <Button Grid.Column="0" Content="Refresh status" Command="{Binding RefreshCommand}" />
+                <Button Grid.Column="1" Content="Register"   Command="{Binding RegisterCommand}"   IsVisible="{Binding CanRegister}" />
+                <Button Grid.Column="1" Content="Unregister" Command="{Binding UnregisterCommand}" IsVisible="{Binding CanUnregister}" />
+                <Button Grid.Column="3" Content="Open passkey settings" Command="{Binding OpenPasskeySettingsCommand}" IsVisible="{Binding ShowOpenPasskeySettings}" />
             </Grid>
 
         </StackPanel>
