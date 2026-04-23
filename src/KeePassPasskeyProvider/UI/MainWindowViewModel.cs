@@ -1,5 +1,9 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -30,10 +34,38 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool _isSetupExpanded = true;
     [ObservableProperty] private bool _isReady;
 
-    // Log
-    [ObservableProperty] private string _logText = "";
+    // Diagnostics
+    [ObservableProperty] private string? _serverVersion;
     [ObservableProperty] private bool _isLogVisible;
+    [ObservableProperty] private string _logText = "";
     [ObservableProperty] private bool _isRefreshing;
+
+    public string ServerVersionShort => ServerVersion != null ? ShortenVersion("v" + ServerVersion) : "";
+    public bool IsServerVersionAvailable => ServerVersion != null;
+    public bool IsServerVersionNotAvailable => ServerVersion is null;
+    public bool IsVersionMismatch => ServerVersion != null && ServerVersion != PipeConstants.Version;
+
+    public static string ClientVersion => AppVersion;
+    public static string ClientVersionShort => ShortenVersion(AppVersion);
+
+    partial void OnServerVersionChanged(string? value)
+    {
+        OnPropertyChanged(nameof(ServerVersionShort));
+        OnPropertyChanged(nameof(IsServerVersionAvailable));
+        OnPropertyChanged(nameof(IsServerVersionNotAvailable));
+        OnPropertyChanged(nameof(IsVersionMismatch));
+    }
+
+    private static string ShortenVersion(string v)
+        => Regex.Replace(v, @"\+([0-9a-f]{8})[0-9a-f]+", "+$1", RegexOptions.IgnoreCase);
+
+    [RelayCommand]
+    private async Task CopyToClipboard(string? text)
+    {
+        if (text is null) return;
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } win })
+            await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+    }
 
     // Internal state
     private bool _pluginRunning;
@@ -275,6 +307,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     {
         _pingStatus    = pingResponse?.Status;
         _pluginRunning = _pingStatus == PingStatus.Ready;
+        ServerVersion  = pingResponse?.Version;
 
         PluginStatusText = _pingStatus switch
         {
@@ -286,7 +319,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
         UpdateIsReady();
         UpdateStatusDisplay();
-        Log.Info($"ApplyPingResponse: status: {_pingStatus?.ToString() ?? "no response"}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
+        Log.Info($"status: {_pingStatus?.ToString() ?? "no response"}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
     }
 
     private static bool IsRunningAsPackage()

@@ -32,20 +32,7 @@
         <!-- Setup guide -->
         <local:SetupGuide />
 
-        <!-- Log viewer -->
-        <Expander Header="Log" IsExpanded="{Binding IsLogVisible, Mode=TwoWay}">
-            <ScrollViewer x:Name="LogScrollViewer"
-                          MaxHeight="220"
-                          HorizontalScrollBarVisibility="Visible"
-                          VerticalScrollBarVisibility="Auto">
-                <SelectableTextBlock x:Name="LogTextBlock"
-                                     Text="{Binding LogText}"
-                                     FontFamily="Consolas,Courier New,monospace"
-                                     FontSize="11"
-                                     TextWrapping="NoWrap"
-                                     Margin="8 6"
-                                     GotFocus="LogTextBlock_GotFocus" />
-            </ScrollViewer>
-        </Expander>
+        <!-- Diagnostics -->
+        <local:Diagnostics />
     </StackPanel>
 </ui:AppWindow>
