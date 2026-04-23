@@ -95,7 +95,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
         => Regex.Replace(v, @"\+([0-9a-f]{8})[0-9a-f]+", "+$1", RegexOptions.IgnoreCase);
 
     private static readonly string _appVersion =
-        "v" + (Assembly.GetEntryAssembly()
+            (Assembly.GetEntryAssembly()
             ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion ?? "?");
 }
