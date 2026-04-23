@@ -1,6 +1,5 @@
-using System.Diagnostics;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 namespace KeePassPasskeyProvider.ViewModels;
 
@@ -8,6 +7,7 @@ internal sealed partial class SetupGuideViewModel : ObservableObject
 {
     [ObservableProperty] private bool _isSetupExpanded = true;
     [ObservableProperty] private bool _isReady;
+    public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
 
     public string SetupSubtitle => IsReady
         ? "Everything's in place — tap to review"
@@ -21,8 +21,4 @@ internal sealed partial class SetupGuideViewModel : ObservableObject
         OnPropertyChanged(nameof(SetupSubtitle));
         OnPropertyChanged(nameof(IsNotReady));
     }
-
-    [RelayCommand]
-    private static void OpenPasskeySettings()
-        => Process.Start(new ProcessStartInfo("ms-settings:savedpasskeys") { UseShellExecute = true });
 }

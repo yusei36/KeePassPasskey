@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using KeePassPasskey.Shared.Ipc;
 
 namespace KeePassPasskeyProvider.ViewModels;
@@ -17,10 +15,7 @@ internal sealed partial class StatusHeroViewModel : ObservableObject
     public ICommand RegisterCommand   { get; }
     public ICommand UnregisterCommand { get; }
     public ICommand RefreshCommand    { get; }
-
-    [RelayCommand]
-    private static void OpenPasskeySettings()
-        => Process.Start(new ProcessStartInfo("ms-settings:savedpasskeys") { UseShellExecute = true });
+    public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
 
     internal StatusHeroViewModel(ICommand register, ICommand unregister, ICommand refresh)
     {
