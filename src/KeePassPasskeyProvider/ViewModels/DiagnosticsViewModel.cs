@@ -18,7 +18,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     [ObservableProperty] private bool _isLogVisible;
     [ObservableProperty] private string _logText = "";
 
-    public string ServerVersionShort => ServerVersion != null ? ShortenVersion("v" + ServerVersion) : "";
+    public string ServerVersionShort => ServerVersion != null ? ShortenVersion(ServerVersion) : "";
     public bool IsServerVersionAvailable => ServerVersion != null;
     public bool IsServerVersionNotAvailable => ServerVersion is null;
     public bool IsVersionMismatch => PingStatus == KeePassPasskey.Shared.Ipc.PingStatus.IncompatibleVersion;
