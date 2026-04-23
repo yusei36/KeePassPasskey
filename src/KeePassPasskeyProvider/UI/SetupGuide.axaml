@@ -93,9 +93,9 @@
                     <TextBlock Text="Verify" FontWeight="SemiBold" FontSize="13" />
                     <TextBlock TextWrapping="Wrap" Opacity="0.7" FontSize="12">
                         <Run Text="Both statuses above should read " />
-                        <Run Text="Running" FontWeight="Bold" />
-                        <Run Text=" / " />
                         <Run Text="Enabled" FontWeight="Bold" />
+                        <Run Text=" / " />
+                        <Run Text="Running" FontWeight="Bold" />
                         <Run Text="." />
                     </TextBlock>
                 </StackPanel>

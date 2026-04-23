@@ -47,22 +47,8 @@
                       VerticalAlignment="Center">
 
                     <TextBlock Grid.Row="0" Grid.Column="0"
-                               Text="KeePass plugin" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
-                    <Border Grid.Row="0" Grid.Column="1"
-                            Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                            BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" VerticalAlignment="Center"
-                                     Fill="{Binding PluginStatus, Converter={x:Static conv:PingStatusConverters.DotColor}}" />
-                            <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
-                                       Text="{Binding PluginStatus, Converter={x:Static conv:PingStatusConverters.Text}}" />
-                        </StackPanel>
-                    </Border>
-
-                    <TextBlock Grid.Row="1" Grid.Column="0"
                                Text="Passkey provider" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
-                    <Border Grid.Row="1" Grid.Column="1"
+                    <Border Grid.Row="0" Grid.Column="1"
                             Background="{DynamicResource ControlFillColorSecondaryBrush}"
                             BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                             BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
@@ -73,6 +59,20 @@
                                        Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.ProviderPillText}}" />
                         </StackPanel>
                     </Border>
+
+					<TextBlock Grid.Row="1" Grid.Column="0"
+                               Text="KeePass plugin" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
+					<Border Grid.Row="1" Grid.Column="1"
+                            Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
+						<StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+							<Ellipse Width="8" Height="8" VerticalAlignment="Center"
+                                     Fill="{Binding PluginStatus, Converter={x:Static conv:PingStatusConverters.DotColor}}" />
+							<TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
+                                       Text="{Binding PluginStatus, Converter={x:Static conv:PingStatusConverters.Text}}" />
+						</StackPanel>
+					</Border>
                 </Grid>
             </Grid>
 
