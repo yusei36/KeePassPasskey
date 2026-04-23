@@ -103,6 +103,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
         _pluginRunning = _pingStatus == PingStatus.Ready;
 
         Diagnostics.ServerVersion = pingResponse?.Version;
+        Diagnostics.PingStatus    = pingResponse?.Status;
         UpdateChildren();
 
         Log.Info($"ApplyPingResponse: status: {_pingStatus?.ToString() ?? "no response"}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
