@@ -27,12 +27,12 @@
         </Border>
 
         <!-- Status hero -->
-        <local:StatusHero />
+        <local:StatusHero DataContext="{Binding StatusHero}" />
 
         <!-- Setup guide -->
-        <local:SetupGuide />
+        <local:SetupGuide DataContext="{Binding SetupGuide}" />
 
         <!-- Diagnostics -->
-        <local:Diagnostics />
+        <local:Diagnostics DataContext="{Binding Diagnostics}" />
     </StackPanel>
 </ui:AppWindow>

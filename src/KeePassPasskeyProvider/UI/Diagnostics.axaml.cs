@@ -7,7 +7,7 @@ namespace KeePassPasskeyProvider.UI;
 
 public partial class Diagnostics : UserControl
 {
-    private MainWindowViewModel? _vm;
+    private DiagnosticsViewModel? _vm;
 
     public Diagnostics()
     {
@@ -19,14 +19,14 @@ public partial class Diagnostics : UserControl
     {
         if (_vm != null)
             _vm.PropertyChanged -= OnViewModelPropertyChanged;
-        _vm = DataContext as MainWindowViewModel;
+        _vm = DataContext as DiagnosticsViewModel;
         if (_vm != null)
             _vm.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(MainWindowViewModel.LogText) && string.IsNullOrEmpty(LogTextBlock.SelectedText))
+        if (e.PropertyName == nameof(DiagnosticsViewModel.LogText) && string.IsNullOrEmpty(LogTextBlock.SelectedText))
             LogScrollViewer.ScrollToEnd();
     }
 

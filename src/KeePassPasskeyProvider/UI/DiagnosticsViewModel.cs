@@ -1,0 +1,96 @@
+using System.Reflection;
+using System.Text.RegularExpressions;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using KeePassPasskey.Shared.Ipc;
+using KeePassPasskeyProvider.Util;
+
+namespace KeePassPasskeyProvider.UI;
+
+internal sealed partial class DiagnosticsViewModel : ObservableObject
+{
+    [ObservableProperty] private string? _serverVersion;
+    [ObservableProperty] private bool _isLogVisible;
+    [ObservableProperty] private string _logText = "";
+
+    public string ServerVersionShort => ServerVersion != null ? ShortenVersion("v" + ServerVersion) : "";
+    public bool IsServerVersionAvailable => ServerVersion != null;
+    public bool IsServerVersionNotAvailable => ServerVersion is null;
+    public bool IsVersionMismatch => ServerVersion != null && ServerVersion != PipeConstants.Version;
+
+    public static string ClientVersion    => s_appVersion;
+    public static string ClientVersionShort => ShortenVersion(s_appVersion);
+
+    partial void OnServerVersionChanged(string? value)
+    {
+        OnPropertyChanged(nameof(ServerVersionShort));
+        OnPropertyChanged(nameof(IsServerVersionAvailable));
+        OnPropertyChanged(nameof(IsServerVersionNotAvailable));
+        OnPropertyChanged(nameof(IsVersionMismatch));
+    }
+
+    partial void OnIsLogVisibleChanged(bool value)
+    {
+        if (value) ReloadLog();
+    }
+
+    [RelayCommand]
+    private async Task CopyToClipboard(string? text)
+    {
+        if (text is null) return;
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } win })
+            await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+    }
+
+    private readonly FileSystemWatcher? _logWatcher;
+
+    internal DiagnosticsViewModel()
+    {
+        string logDir  = Path.GetDirectoryName(Log.LogFilePath)!;
+        string logFile = Path.GetFileName(Log.LogFilePath);
+        if (Directory.Exists(logDir))
+        {
+            _logWatcher = new FileSystemWatcher(logDir, logFile)
+            {
+                NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.Size,
+                EnableRaisingEvents = true,
+            };
+            _logWatcher.Changed += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
+            _logWatcher.Created += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
+        }
+    }
+
+    private void ReloadLog()
+    {
+        if (!IsLogVisible) return;
+        try
+        {
+            if (!File.Exists(Log.LogFilePath))
+            {
+                LogText = "(no log file yet)";
+                return;
+            }
+            using var fs     = new FileStream(Log.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var reader = new StreamReader(fs);
+            string all   = reader.ReadToEnd();
+            string[] lines = all.Split('\n');
+            LogText = lines.Length > 100 ? string.Join('\n', lines[^100..]) : all;
+        }
+        catch (Exception ex)
+        {
+            LogText = $"(could not read log: {ex.Message})";
+        }
+    }
+
+    private static string ShortenVersion(string v)
+        => Regex.Replace(v, @"\+([0-9a-f]{8})[0-9a-f]+", "+$1", RegexOptions.IgnoreCase);
+
+    private static readonly string s_appVersion =
+        "v" + (Assembly.GetEntryAssembly()
+            ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion ?? "?");
+}
