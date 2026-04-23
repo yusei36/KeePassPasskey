@@ -30,8 +30,8 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel()
     {
-        var registerCmd   = new RelayCommand(Register);
-        var unregisterCmd = new RelayCommand(Unregister);
+        var registerCmd   = new AsyncRelayCommand(RegisterAsync);
+        var unregisterCmd = new AsyncRelayCommand(UnregisterAsync);
         var refreshCmd    = new AsyncRelayCommand(RefreshAsync);
 
         StatusHero  = new StatusHeroViewModel(registerCmd, unregisterCmd, refreshCmd);
@@ -55,19 +55,33 @@ internal sealed partial class MainWindowViewModel : ObservableObject
         _autoregisterError = hr < 0;
     }
 
-    private void Register()
+    private async Task RegisterAsync()
     {
         _autoregisterError = false;
         int hr = PluginRegistration.Register();
-        if (hr < 0) _autoregisterError = true;
-        DoRefresh();
+        if (hr < 0)
+        {
+            _autoregisterError = true;
+            await ShowPluginRegistrationErrorAsync("Register", hr);
+        }
+        else
+        {
+            DoRefresh();
+        }
     }
 
-    private void Unregister()
+    private async Task UnregisterAsync()
     {
         _autoregisterError = false;
-        PluginRegistration.Unregister();
-        DoRefresh();
+        int hr = PluginRegistration.Unregister();
+        if (hr < 0)
+        {
+            await ShowPluginRegistrationErrorAsync("Unregister", hr);
+        }
+        else
+        {
+            DoRefresh();
+        }
     }
 
     private async Task RefreshAsync()
@@ -108,6 +122,14 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     {
         StatusHero.Update(_pluginRunning, _providerEnabled, _isRegistered, _autoregisterError, _pingStatus);
         SetupGuide.IsReady = _pluginRunning && _providerEnabled;
+    }
+
+    private static Task ShowPluginRegistrationErrorAsync(string operation, int hr)
+    {
+        string title = $"{operation} failed";
+        string message =
+            $"Windows returned HRESULT 0x{hr:X8} while trying to {operation.ToLowerInvariant()} the passkey provider.";
+        return DialogService.ShowErrorAsync(title, message);
     }
 
     private static bool IsRunningAsPackage()
