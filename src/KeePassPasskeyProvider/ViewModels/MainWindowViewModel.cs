@@ -18,11 +18,6 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private bool _isRefreshing;
 
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
-    public static string AppVersion { get; } =
-        "v" + (System.Reflection.CustomAttributeExtensions
-            .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>(
-                System.Reflection.Assembly.GetEntryAssembly()!)
-            ?.InformationalVersion ?? "?");
 
     // Internal provider state
     private bool _pluginRunning;

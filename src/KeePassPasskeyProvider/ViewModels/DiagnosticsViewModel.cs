@@ -23,8 +23,8 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     public bool IsServerVersionNotAvailable => ServerVersion is null;
     public bool IsVersionMismatch => PingStatus == KeePassPasskey.Shared.Ipc.PingStatus.IncompatibleVersion;
 
-    public static string ClientVersion    => s_appVersion;
-    public static string ClientVersionShort => ShortenVersion(s_appVersion);
+    public static string ClientVersion    => _appVersion;
+    public static string ClientVersionShort => ShortenVersion(_appVersion);
 
     partial void OnServerVersionChanged(string? value)
     {
@@ -94,7 +94,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     private static string ShortenVersion(string v)
         => Regex.Replace(v, @"\+([0-9a-f]{8})[0-9a-f]+", "+$1", RegexOptions.IgnoreCase);
 
-    private static readonly string s_appVersion =
+    private static readonly string _appVersion =
         "v" + (Assembly.GetEntryAssembly()
             ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion ?? "?");
