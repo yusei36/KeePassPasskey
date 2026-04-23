@@ -12,7 +12,7 @@
 
         <StackPanel>
             <!-- Versions strip -->
-            <Border Padding="14 12" Background="#1f1f1f"
+            <Border Padding="14 12"
                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="0 0 0 1">
                 <StackPanel Spacing="6">

@@ -21,7 +21,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     public string ServerVersionShort => ServerVersion != null ? ShortenVersion("v" + ServerVersion) : "";
     public bool IsServerVersionAvailable => ServerVersion != null;
     public bool IsServerVersionNotAvailable => ServerVersion is null;
-    public bool IsVersionMismatch => PingStatus == PingStatus.IncompatibleVersion;
+    public bool IsVersionMismatch => PingStatus == KeePassPasskey.Shared.Ipc.PingStatus.IncompatibleVersion;
 
     public static string ClientVersion    => s_appVersion;
     public static string ClientVersionShort => ShortenVersion(s_appVersion);
