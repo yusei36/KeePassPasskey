@@ -1,11 +1,12 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="KeePassPasskeyProvider.UI.MainWindow"
-        Title="KeePassPasskey"
-        Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
-        Width="650" Height="420" MaxHeight="800"
-        CanResize="False" SizeToContent="Height"
-        WindowStartupLocation="CenterScreen">
+<ui:AppWindow xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:ui="using:FluentAvalonia.UI.Windowing"
+              x:Class="KeePassPasskeyProvider.UI.MainWindow"
+                 Title="KeePassPasskey"
+                 Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
+                 Width="650" MinHeight="350" MaxHeight="800"
+                 CanResize="False" SizeToContent="Height"
+                 WindowStartupLocation="CenterScreen">
     <StackPanel Margin="24" Spacing="14">
         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
             <TextBlock Text="KeePassPasskey" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" />
@@ -25,7 +26,7 @@
         </Border>
 
         <!-- Setup guide -->
-        <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
+        <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                 BorderThickness="1" CornerRadius="4" Padding="12 10">
             <StackPanel Spacing="6">
                 <TextBlock Text="Setup" FontWeight="SemiBold" FontSize="16" />
@@ -90,27 +91,24 @@
             <Button Content="Register"   Command="{Binding RegisterCommand}"   Width="110" HorizontalContentAlignment="Center" />
             <Button Content="Unregister" Command="{Binding UnregisterCommand}" Width="110" HorizontalContentAlignment="Center" />
             <Button Content="Refresh"    Command="{Binding RefreshCommand}"    Width="110" HorizontalContentAlignment="Center" />
-            <Button Content="{Binding LogToggleLabel}" Command="{Binding ToggleLogCommand}" Width="110" HorizontalContentAlignment="Center" />
         </StackPanel>
 
         <TextBlock Text="{Binding ResultMessage}" TextWrapping="Wrap" />
 
-        <!-- Log viewer (collapsed by default) -->
-        <Border IsVisible="{Binding IsLogVisible}"
-                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
-                BorderThickness="1" CornerRadius="4">
+        <!-- Log viewer -->
+        <Expander Header="Log" IsExpanded="{Binding IsLogVisible, Mode=TwoWay}">
             <ScrollViewer x:Name="LogScrollViewer"
                           MaxHeight="220"
                           HorizontalScrollBarVisibility="Visible"
                           VerticalScrollBarVisibility="Auto">
                 <SelectableTextBlock x:Name="LogTextBlock"
-					                 Text="{Binding LogText}"
-									 FontFamily="Consolas,Courier New,monospace"
-									 FontSize="11"
-									 TextWrapping="NoWrap"
-									 Margin="8 6" 
-									 GotFocus="LogTextBlock_GotFocus" />
+                                     Text="{Binding LogText}"
+                                     FontFamily="Consolas,Courier New,monospace"
+                                     FontSize="11"
+                                     TextWrapping="NoWrap"
+                                     Margin="8 6"
+                                     GotFocus="LogTextBlock_GotFocus" />
             </ScrollViewer>
-        </Border>
+        </Expander>
     </StackPanel>
-</Window>
+</ui:AppWindow>

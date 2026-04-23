@@ -19,13 +19,12 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private IBrush _statusColor = Brushes.Gray;
     [ObservableProperty] private IBrush _pluginStatusColor = Brushes.Gray;
     [ObservableProperty] private string _logText = "";
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(LogToggleLabel))] private bool _isLogVisible;
+    [ObservableProperty] private bool _isLogVisible;
     [ObservableProperty] private bool _isRefreshing;
 
     private readonly FileSystemWatcher? _logWatcher;
     private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
 
-    public string LogToggleLabel => IsLogVisible ? "Hide Log" : "Show Log";
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
     public static string AppVersion { get; } =
         "v" + (System.Reflection.CustomAttributeExtensions
@@ -95,12 +94,9 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     private static void OpenPasskeySettings()
         => Process.Start(new ProcessStartInfo("ms-settings:savedpasskeys") { UseShellExecute = true });
 
-    [RelayCommand]
-    private void ToggleLog()
+    partial void OnIsLogVisibleChanged(bool value)
     {
-        IsLogVisible = !IsLogVisible;
-        if (IsLogVisible)
-            ReloadLog();
+        if (value) ReloadLog();
     }
 
     private void ReloadLog()
@@ -116,7 +112,9 @@ internal sealed partial class MainWindowViewModel : ObservableObject
             // Open with share so the log writer is not blocked
             using var fs     = new FileStream(Log.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var reader = new StreamReader(fs);
-            LogText = reader.ReadToEnd();
+            string all   = reader.ReadToEnd();
+            string[] lines = all.Split('\n');
+            LogText = lines.Length > 100 ? string.Join('\n', lines[^100..]) : all;
         }
         catch (Exception ex)
         {

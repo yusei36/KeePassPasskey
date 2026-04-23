@@ -1,12 +1,11 @@
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using System.ComponentModel;
-using Avalonia.Platform;
+using FluentAvalonia.UI.Windowing;
 
 namespace KeePassPasskeyProvider.UI;
 
-public partial class MainWindow : Window
+public partial class MainWindow : AppWindow
 {
     public MainWindow()
     {
