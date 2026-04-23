@@ -106,7 +106,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
         Diagnostics.PingStatus    = pingResponse?.Status;
         UpdateChildren();
 
-        Log.Info($"ApplyPingResponse: status: {_pingStatus?.ToString() ?? "no response"}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
+        Log.Info($"status: {_pingStatus?.ToString() ?? "no response"}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
     }
 
     private void UpdateChildren()
