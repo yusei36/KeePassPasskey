@@ -21,6 +21,23 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private string _logText = "";
     [ObservableProperty] private bool _isLogVisible;
     [ObservableProperty] private bool _isRefreshing;
+    [ObservableProperty] private bool _isSetupExpanded = true;
+    [ObservableProperty] private bool _isReady;
+
+    private bool _pluginRunning;
+    private bool _providerEnabled;
+
+    public string SetupSubtitle => IsReady
+        ? "Everything's in place — tap to review"
+        : "4 steps to get KeePassPasskey working";
+
+    partial void OnIsReadyChanged(bool value)
+    {
+        IsSetupExpanded = !value;
+        OnPropertyChanged(nameof(SetupSubtitle));
+    }
+
+    private void UpdateIsReady() => IsReady = _pluginRunning && _providerEnabled;
 
     private readonly FileSystemWatcher? _logWatcher;
     private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
@@ -136,12 +153,15 @@ internal sealed partial class MainWindowViewModel : ObservableObject
             bool enabled = state == AuthenticatorState.AuthenticatorState_Enabled;
             StatusText  = enabled ? "Enabled" : "Disabled";
             StatusColor = enabled ? Brushes.Green : Brushes.OrangeRed;
+            _providerEnabled = enabled;
         }
         else
         {
             StatusText  = $"Unknown or not registered (0x{hr:X8})";
             StatusColor = Brushes.Gray;
+            _providerEnabled = false;
         }
+        UpdateIsReady();
     }
 
     private void ApplyPingResponse(PingResponse? pingResponse)
@@ -153,6 +173,8 @@ internal sealed partial class MainWindowViewModel : ObservableObject
             PingStatus.IncompatibleVersion  => ("Incompatible version", Brushes.OrangeRed),
             _                               => ("Not running",          Brushes.Gray),
         };
+        _pluginRunning = pingResponse?.Status == PingStatus.Ready;
+        UpdateIsReady();
         var status = pingResponse == null ? "no response" : pingResponse.Status.ToString();
         Log.Info($"status: {status}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
     }

@@ -1,6 +1,7 @@
 <ui:AppWindow xmlns="https://github.com/avaloniaui"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:ui="using:FluentAvalonia.UI.Windowing"
+              xmlns:local="using:KeePassPasskeyProvider.UI"
               x:Class="KeePassPasskeyProvider.UI.MainWindow"
                  Title="KeePassPasskey"
                  Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
@@ -26,55 +27,7 @@
         </Border>
 
         <!-- Setup guide -->
-        <Border BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                BorderThickness="1" CornerRadius="4" Padding="12 10">
-            <StackPanel Spacing="6">
-                <TextBlock Text="Setup" FontWeight="SemiBold" FontSize="16" />
-
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="1." FontWeight="SemiBold" Width="16" />
-                    <TextBlock TextWrapping="Wrap">
-                        <Run Text="Copy " />
-                        <Run Text="KeePassPasskeyPlugin" FontWeight="Bold" />
-						<Run Text=" folder to the KeePass " />
-                        <Run Text="Plugins" FontWeight="Bold" />
-                        <Run Text=" folder and (re)start KeePass." />
-                    </TextBlock>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="2." FontWeight="SemiBold" Width="16" />
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock Text="Open" VerticalAlignment="Center" />
-                        <Button Content="Settings → Accounts → Passkeys"
-                                Command="{Binding OpenPasskeySettingsCommand}"
-                                Padding="8 2" FontSize="12" />
-						<TextBlock TextWrapping="Wrap">
-							<Run Text="then navigate to " />
-							<Run Text="Advanced Options" FontWeight="Bold" />
-						</TextBlock>
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="3." FontWeight="SemiBold" Width="16" />
-					<TextBlock TextWrapping="Wrap">
-						<Run Text="Enable " />
-						<Run Text="KeePassPasskey" FontWeight="Bold" />
-					</TextBlock>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock Text="4." FontWeight="SemiBold" Width="16" />
-                    <TextBlock TextWrapping="Wrap">
-                        <Run Text="Both statuses should show " />
-                        <Run Text="Running" FontWeight="Bold" />
-                        <Run Text=" / " />
-                        <Run Text="Enabled" FontWeight="Bold" />
-                    </TextBlock>
-                </StackPanel>
-            </StackPanel>
-        </Border>
+        <local:SetupGuide />
 
         <!-- Status rows -->
         <Grid ColumnDefinitions="160,18,Auto" RowDefinitions="Auto,Auto">
