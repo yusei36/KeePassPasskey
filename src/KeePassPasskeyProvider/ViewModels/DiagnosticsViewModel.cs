@@ -14,7 +14,7 @@ namespace KeePassPasskeyProvider.ViewModels;
 internal sealed partial class DiagnosticsViewModel : ObservableObject
 {
     [ObservableProperty] private string? _serverVersion;
-    [ObservableProperty] private PingStatus? _pingStatus;
+    [ObservableProperty] private PingStatus _pingStatus;
     [ObservableProperty] private bool _isLogVisible;
     [ObservableProperty] private string _logText = "";
 
@@ -33,7 +33,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
         OnPropertyChanged(nameof(IsServerVersionNotAvailable));
     }
 
-    partial void OnPingStatusChanged(PingStatus? value)
+    partial void OnPingStatusChanged(PingStatus value)
     {
         OnPropertyChanged(nameof(IsVersionMismatch));
     }

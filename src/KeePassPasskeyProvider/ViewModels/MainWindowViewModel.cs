@@ -25,7 +25,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     private bool _providerEnabled;
     private bool _isRegistered;
     private bool _autoregisterError;
-    private PingStatus? _pingStatus;
+    private PingStatus _pingStatus;
 
     private readonly PipeClient _pipeClient = new(msg => Log.Debug(msg, nameof(PipeClient)));
 
@@ -111,14 +111,14 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     private void ApplyPingResponse(PingResponse? pingResponse)
     {
-        _pingStatus    = pingResponse?.Status;
+        _pingStatus    = pingResponse?.Status ?? PingStatus.NotConnected;
         _pluginRunning = _pingStatus == PingStatus.Ready;
 
         Diagnostics.ServerVersion = pingResponse?.Version;
-        Diagnostics.PingStatus    = pingResponse?.Status;
+        Diagnostics.PingStatus    = _pingStatus;
         UpdateChildren();
 
-        Log.Info($"status: {_pingStatus?.ToString() ?? "no response"}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
+        Log.Info($"status: {_pingStatus}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
     }
 
     private void UpdateChildren()

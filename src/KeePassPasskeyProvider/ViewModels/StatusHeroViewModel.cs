@@ -7,7 +7,7 @@ namespace KeePassPasskeyProvider.ViewModels;
 internal sealed partial class StatusHeroViewModel : ObservableObject
 {
     [ObservableProperty] private ProviderStatus _status;
-    [ObservableProperty] private PingStatus? _pluginStatus;
+    [ObservableProperty] private PingStatus _pluginStatus;
     [ObservableProperty] private bool _canRegister = true;
     [ObservableProperty] private bool _canUnregister;
     [ObservableProperty] private bool _showOpenPasskeySettings;
@@ -29,7 +29,7 @@ internal sealed partial class StatusHeroViewModel : ObservableObject
         bool providerEnabled,
         bool isRegistered,
         bool autoregisterError,
-        PingStatus? pingStatus)
+        PingStatus pingStatus)
     {
         PluginStatus            = pingStatus;
         CanRegister             = !isRegistered;

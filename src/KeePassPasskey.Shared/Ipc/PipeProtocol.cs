@@ -80,6 +80,7 @@ namespace KeePassPasskey.Shared.Ipc
     [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
     public enum PingStatus
     {
+        NotConnected,
         Ready,
         NoDatabase,
         IncompatibleVersion

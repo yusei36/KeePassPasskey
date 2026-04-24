@@ -1,6 +1,7 @@
 <ui:AppWindow xmlns="https://github.com/avaloniaui"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:ui="using:FluentAvalonia.UI.Windowing"
+              xmlns:fa="using:FluentAvalonia.UI.Controls"
               xmlns:local="using:KeePassPasskeyProvider.UI"
               x:Class="KeePassPasskeyProvider.UI.MainWindow"
               Title="KeePassPasskey"
@@ -10,14 +11,11 @@
               WindowStartupLocation="CenterScreen">
     <StackPanel Margin="24 24 24 0" Spacing="14">
         <!-- Not-packaged warning -->
-        <Border IsVisible="{Binding IsNotPackaged}"
-                Background="#FFF3CD" BorderBrush="#FFC107" BorderThickness="1"
-                CornerRadius="4" Padding="12 8">
-            <TextBlock TextWrapping="Wrap" Foreground="#856404">
-                <Run Text="Warning: " FontWeight="Bold" />
-                <Run Text="This app is not running from an installed MSIX package. Register and Unregister will not work correctly. Please install the package first." />
-            </TextBlock>
-        </Border>
+        <fa:InfoBar Title="Not installed as package"
+                    Message="Register and Unregister will not work correctly. Please install the MSIX package first."
+                    Severity="Warning"
+                    IsOpen="{Binding IsNotPackaged}"
+                    IsClosable="False" />
 
         <!-- Status hero -->
         <local:StatusHero DataContext="{Binding StatusHero}" />
