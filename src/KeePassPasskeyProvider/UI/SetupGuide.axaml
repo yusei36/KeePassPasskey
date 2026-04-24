@@ -4,8 +4,7 @@
     <Expander IsExpanded="{Binding IsSetupExpanded, Mode=TwoWay}">
         <Expander.Header>
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <TextBlock Text="Setup" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
-                <TextBlock Text="{Binding SetupSubtitle}" Opacity="0.5" FontSize="12" VerticalAlignment="Center" />
+                <TextBlock Text="Setup guide" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
             </StackPanel>
         </Expander.Header>
 
