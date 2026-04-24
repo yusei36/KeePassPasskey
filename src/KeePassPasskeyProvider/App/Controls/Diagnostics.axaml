@@ -17,7 +17,7 @@
 						IsClosable="False" />
 			
             <!-- Versions strip -->
-            <Border Padding="14 12"
+            <Border Padding="4 12 0 12"
                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="0 0 0 1">
                 <StackPanel Spacing="6">
