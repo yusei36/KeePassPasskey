@@ -87,7 +87,7 @@ Write-Host "  Installed."
 Write-Step "Verifying installation"
 $pkg = Get-AppxPackage -Name '*KeePassPasskeyProvider*'
 if ($pkg) {
-    $logDir = "$env:LocalAppData\Packages\$($pkg.PackageFamilyName)\LocalState\Logs"
+    $logDir = "$env:LocalAppData\Packages\$($pkg.PackageFamilyName)\LocalCache\Logs"
     Write-Host "  Package installed: $($pkg.PackageFullName)" -ForegroundColor Green
     Write-Host "  InstallLocation  : $($pkg.InstallLocation)"
     Write-Host "  Log directory    : $logDir"
