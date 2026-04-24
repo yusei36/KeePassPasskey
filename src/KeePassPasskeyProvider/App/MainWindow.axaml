@@ -9,7 +9,7 @@
               Width="650"
               CanResize="False" SizeToContent="Height"
               WindowStartupLocation="CenterScreen">
-    <StackPanel Margin="24 24 24 0" Spacing="14">
+    <StackPanel Margin="24 0" Spacing="12">
         <!-- Not-packaged warning -->
         <fa:InfoBar Title="Not installed as package"
                     Message="Register and Unregister will not work correctly. Please install the MSIX package first."

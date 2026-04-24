@@ -21,8 +21,8 @@ internal static class ProviderStatusConverters
     public static readonly IValueConverter Subhead = Make(v => (v as ProviderStatus? ?? ProviderStatus.NotRegistered) switch
     {
         ProviderStatus.AutoregisterFailed => "You can retry by clicking Register.",
-        ProviderStatus.NotRegistered      => "KeePassPasskey will register the provider automatically on launch.",
-        ProviderStatus.WaitingToBeEnabled => "Enable KeePassPasskey in Windows Settings → Accounts → Passkeys.",
+        ProviderStatus.NotRegistered      => "Click Register to set up KeePassPasskey as your passkey provider.",
+        ProviderStatus.WaitingToBeEnabled => "Enable KeePassPasskey in Windows Settings → Accounts → Passkeys → Advanced options.",
         ProviderStatus.VersionMismatch    => "Update the plugin or the provider so both are on the same version.",
         ProviderStatus.NoDatabase         => "Open a KeePass database to use passkeys.",
         ProviderStatus.PluginNotRunning   => "Start KeePass with the KeePassPasskey plugin installed.",

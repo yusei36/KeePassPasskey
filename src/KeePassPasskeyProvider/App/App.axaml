@@ -3,6 +3,6 @@
              xmlns:sty="using:FluentAvalonia.Styling"
              x:Class="KeePassPasskeyProvider.App.App">
     <Application.Styles>
-        <sty:FluentAvaloniaTheme />
+        <sty:FluentAvaloniaTheme PreferUserAccentColor="True" />
     </Application.Styles>
 </Application>
