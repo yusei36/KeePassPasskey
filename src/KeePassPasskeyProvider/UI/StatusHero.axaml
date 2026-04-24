@@ -52,28 +52,31 @@
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="18 16 18 14">
 
                 <!-- Left: ring + text -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
-                    <Border Width="44" Height="44" CornerRadius="22" BorderThickness="1.5" VerticalAlignment="Center"
+                <Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="14" VerticalAlignment="Center">
+                    <Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" BorderThickness="1.5" VerticalAlignment="Center"
                             Classes.ringSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}"
-                            Classes.ringCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,VersionMismatch,NoDatabase,PluginNotRunning'}"
-                            Classes.ringCritical="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered'}">
+                            Classes.ringCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,PluginNotRunning'}"
+                            Classes.ringCritical="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,VersionMismatch'}">
                         <Grid>
                             <fa:SymbolIcon Symbol="Accept" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsConverter.Instance}, ConverterParameter={x:Static vm:ProviderStatus.Ready}}" />
+                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}" />
                             <fa:SymbolIcon Symbol="Important" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsConverter.Negated}, ConverterParameter={x:Static vm:ProviderStatus.Ready}}" />
+                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,PluginNotRunning'}" />
+							<fa:SymbolIcon Symbol="Dismiss" FontSize="18"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,VersionMismatch'}" />
                         </Grid>
                     </Border>
 
-                    <StackPanel VerticalAlignment="Center" Spacing="3">
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                         <TextBlock FontSize="18" FontWeight="SemiBold"
                                    Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Headline}}" />
-                        <TextBlock FontSize="12.5" Opacity="0.6" MaxWidth="280" TextWrapping="Wrap"
+                        <TextBlock FontSize="12.5" Opacity="0.6" TextWrapping="Wrap"
                                    Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Subhead}}" />
                     </StackPanel>
-                </StackPanel>
+                </Grid>
 
                 <!-- Right: status pills -->
                 <Grid Grid.Column="1"

@@ -6,12 +6,16 @@
         <Expander.Header>
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                 <TextBlock Text="Diagnostics" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
-                <TextBlock Text="Version mismatch" FontSize="12" Foreground="{DynamicResource SystemFillColorCautionBrush}" VerticalAlignment="Center"
-                           IsVisible="{Binding IsVersionMismatch}" />
             </StackPanel>
         </Expander.Header>
 
         <StackPanel>
+			<!-- Version mismatch warning -->
+			<ui:InfoBar Title="Version mismatch"
+						Severity="Error"
+						IsOpen="{Binding IsVersionMismatch}"
+						IsClosable="False" />
+			
             <!-- Versions strip -->
             <Border Padding="14 12"
                     BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
@@ -72,14 +76,6 @@
 							<ui:SymbolIcon Symbol="Copy" FontSize="14" />
 						</Button>
 					</Grid>
-
-					<!-- Version mismatch warning -->
-                    <ui:InfoBar Title="Version mismatch"
-                                Message="Plugin and provider versions don't match. Reinstall either the plugin or the app so both are the same."
-                                Severity="Warning"
-                                IsOpen="{Binding IsVersionMismatch}"
-                                IsClosable="False"
-                                Margin="0 4 0 0" />
 
                 </StackPanel>
             </Border>
