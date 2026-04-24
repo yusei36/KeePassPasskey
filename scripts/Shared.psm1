@@ -51,6 +51,11 @@ function Invoke-BuildWapproj {
     $patchedContent   = $originalContent -replace '\bVersion="(\d+\.){3}\d+"', "Version=`"$($versions.FileVersion)`""
     [IO.File]::WriteAllText($manifest, $patchedContent)
 
+    # Restore with PublishReadyToRun=true so the runtime pack is in the NuGet cache before msbuild publish.
+    $csproj = "$RepoRoot\src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj"
+    & dotnet restore $csproj -r win-x64 /p:PublishReadyToRun=true --nologo -v quiet
+    if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
+
     $wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
     try {
         & $MSBuild $wapproj `
