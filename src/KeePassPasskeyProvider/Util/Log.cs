@@ -8,8 +8,7 @@ namespace KeePassPasskeyProvider.Util;
 /// </summary>
 internal static class Log
 {
-    // redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local\KeePassPasskeyProvider
-    private static readonly string LogDir = AppSettings.ConfigDir;
+    public static readonly string LogDir = AppSettings.ConfigDir;
 
     public static readonly string LogFilePath = Path.Combine(LogDir, "PasskeyProvider.log");
 

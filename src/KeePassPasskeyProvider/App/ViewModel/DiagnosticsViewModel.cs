@@ -43,12 +43,24 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
         if (value) ReloadLog();
     }
 
+    public static string LogDirPath => Log.LogDir;
+
     [RelayCommand]
     private async Task CopyToClipboard(string? text)
     {
         if (text is null) return;
         if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } win })
             await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+    }
+
+    [RelayCommand]
+    private void OpenLogDir()
+    {
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName        = LogDirPath,
+            UseShellExecute = true,
+        });
     }
 
     private readonly FileSystemWatcher? _logWatcher;

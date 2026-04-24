@@ -5,6 +5,7 @@ namespace KeePassPasskeyProvider.Util;
 
 internal sealed class AppSettings
 {
+    // redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local\KeePassPasskeyProvider
     internal static readonly string ConfigDir =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                      "KeePassPasskeyProvider");

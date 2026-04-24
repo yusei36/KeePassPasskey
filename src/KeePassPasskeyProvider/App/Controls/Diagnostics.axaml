@@ -32,9 +32,9 @@
                                 Background="{DynamicResource ControlFillColorSecondaryBrush}"
                                 BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                                 BorderThickness="1" CornerRadius="4" Padding="8 4">
-                            <TextBlock Text="{Binding ClientVersionShort}"
-                                       FontFamily="Consolas,Courier New,monospace"
-                                       FontSize="11.5" Opacity="0.7" />
+							<SelectableTextBlock Text="{Binding ClientVersionShort}"
+                                                 FontFamily="Consolas,Courier New,monospace"
+                                                 FontSize="11.5" Opacity="0.7" />
                         </Border>
                         <Button Grid.Column="2"
                                 Padding="4"
@@ -57,10 +57,10 @@
                                 BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                                 BorderThickness="1" CornerRadius="4" Padding="8 4">
 							<Panel>
-								<TextBlock Text="{Binding ServerVersionShort}"
-                                           FontFamily="Consolas,Courier New,monospace"
-                                           FontSize="11.5" Opacity="0.7"
-                                           IsVisible="{Binding IsServerVersionAvailable}" />
+								<SelectableTextBlock Text="{Binding ServerVersionShort}"
+                                                     FontFamily="Consolas,Courier New,monospace"
+                                                     FontSize="11.5" Opacity="0.7"
+                                                     IsVisible="{Binding IsServerVersionAvailable}" />
 								<TextBlock Text="not running"
                                            FontFamily="Consolas,Courier New,monospace"
                                            FontSize="11.5" Opacity="0.35"
@@ -74,6 +74,29 @@
                                 IsVisible="{Binding IsServerVersionAvailable}"
                                 ToolTip.Tip="Copy plugin version">
 							<ui:SymbolIcon Symbol="Copy" FontSize="14" />
+						</Button>
+					</Grid>
+
+					<!-- Log directory row -->
+					<Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
+						<TextBlock Grid.Column="0"
+                                   Text="Log directory"
+                                   FontFamily="Consolas,Courier New,monospace"
+                                   FontSize="12.5" FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+						<Border Grid.Column="1"
+                                Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="4" Padding="8 4">
+							<SelectableTextBlock Text="{Binding LogDirPath}"
+                                                 FontFamily="Consolas,Courier New,monospace"
+                                                 FontSize="11.5" Opacity="0.7" />
+						</Border>
+						<Button Grid.Column="2"
+                                Padding="4"
+                                Command="{Binding OpenLogDirCommand}"
+                                ToolTip.Tip="Open log directory">
+							<ui:SymbolIcon Symbol="Folder" FontSize="14" />
 						</Button>
 					</Grid>
 
