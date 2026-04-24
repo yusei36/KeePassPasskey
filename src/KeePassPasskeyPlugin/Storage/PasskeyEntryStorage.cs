@@ -11,6 +11,9 @@ namespace KeePassPasskey.Storage
 {
     internal sealed class PasskeyEntryStorage
     {
+        private static readonly Guid PasskeyGroupUuid = new Guid("c3eeec14-998f-458c-924d-79bb98732a18");
+        private const string PasskeyGroupName = "KeePass Passkeys";
+        private const string KeePassXcPasskeyGroupName = "KeePassXC-Browser Passkeys";
         private const string FieldCredentialId = "KPEX_PASSKEY_CREDENTIAL_ID";
         private const string FieldPrivateKey = "KPEX_PASSKEY_PRIVATE_KEY_PEM";
         private const string FieldRelyingParty = "KPEX_PASSKEY_RELYING_PARTY";
@@ -48,11 +51,12 @@ namespace KeePassPasskey.Storage
             var db = _host.Database;
             if (db == null || !db.IsOpen) return false;
 
-            db.RootGroup.AddEntry(entry, true);
+            var targetGroup = GetOrCreatePasskeyGroup(db);
+            targetGroup.AddEntry(entry, true);
 
             _host.MainWindow.Invoke(new MethodInvoker(() =>
             {
-                _host.MainWindow.UpdateUI(false, null, true, db.RootGroup, true, null, true);
+                _host.MainWindow.UpdateUI(false, null, true, targetGroup, true, null, true);
                 if (KeePass.Program.Config.Application.AutoSaveAfterEntryEdit)
                     _host.MainWindow.SaveDatabase(db, null);
             }));
@@ -160,6 +164,35 @@ namespace KeePassPasskey.Storage
                 group = group.ParentGroup;
             }
             return true;
+        }
+
+        private PwGroup GetOrCreatePasskeyGroup(PwDatabase db)
+        {
+            // 1. Check if KeePassXC-Browser Passkeys group exists from KeePassXC-Browser -- if so, reuse it.
+            var root = db.RootGroup;
+            var existingKeePassXcGroup = FindGroupByName(root, KeePassXcPasskeyGroupName);
+            if (existingKeePassXcGroup != null) return existingKeePassXcGroup;
+
+            // 2. Otherwise, find or create our own group by UUID.
+            var uuid = new PwUuid(PasskeyGroupUuid.ToByteArray());
+            var group = root.FindGroup(uuid, true);
+            if (group != null) return group;
+
+            group = new PwGroup(false, true, PasskeyGroupName, PwIcon.Key);
+            group.Uuid = uuid;
+            root.AddGroup(group, true);
+            return group;
+        }
+
+        private static PwGroup FindGroupByName(PwGroup root, string name)
+        {
+            foreach (var group in root.GetGroups(true))
+            {
+                if (string.Equals(group.Name, name, StringComparison.Ordinal))
+                    return group;
+            }
+
+            return null;
         }
 
         private List<PwDatabase> GetSearchDatabases()
