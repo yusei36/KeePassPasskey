@@ -20,11 +20,11 @@
                 </Border>
                 <StackPanel Grid.Column="1" Spacing="2">
                     <TextBlock Text="Install the plugin" FontWeight="SemiBold" FontSize="13" />
-                    <TextBlock TextWrapping="Wrap" Opacity="0.7" FontSize="12">
+                    <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
                         <Run Text="Copy the " />
-                        <Run Text="KeePassPasskeyPlugin" FontFamily="Consolas,Courier New,monospace" />
+                        <Run Text="KeePassPasskeyPlugin" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text=" folder into your KeePass " />
-                        <Run Text="Plugins" FontFamily="Consolas,Courier New,monospace" />
+                        <Run Text="Plugins" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text=" folder and restart KeePass." />
                     </TextBlock>
                 </StackPanel>
@@ -43,11 +43,11 @@
                 </Border>
                 <StackPanel Grid.Column="1" Spacing="4">
                     <TextBlock Text="Open Windows passkey settings" FontWeight="SemiBold" FontSize="13" />
-                    <TextBlock TextWrapping="Wrap" Opacity="0.7" FontSize="12">
+                    <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
                         <Run Text="Go to " />
-                        <Run Text="Settings › Accounts › Passkeys" FontWeight="SemiBold" />
+                        <Run Text="Settings › Accounts › Passkeys" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text=", then open " />
-                        <Run Text="Advanced options" FontStyle="Italic" />
+                        <Run Text="Advanced options" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text="." />
                     </TextBlock>
                     <Button Content="Open passkey settings"
@@ -69,9 +69,9 @@
                 </Border>
                 <StackPanel Grid.Column="1" Spacing="2">
                     <TextBlock Text="Enable KeePassPasskey" FontWeight="SemiBold" FontSize="13" />
-                    <TextBlock TextWrapping="Wrap" Opacity="0.7" FontSize="12">
+                    <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
                         <Run Text="Toggle " />
-                        <Run Text="KeePassPasskey" FontWeight="SemiBold" />
+                        <Run Text="KeePassPasskey" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text=" on in the passkey provider list." />
                     </TextBlock>
                 </StackPanel>
@@ -90,11 +90,11 @@
                 </Border>
                 <StackPanel Grid.Column="1" Spacing="2">
                     <TextBlock Text="Verify" FontWeight="SemiBold" FontSize="13" />
-                    <TextBlock TextWrapping="Wrap" Opacity="0.7" FontSize="12">
+                    <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
                         <Run Text="Both statuses above should read " />
-                        <Run Text="Enabled" FontWeight="Bold" />
+                        <Run Text="Enabled" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text=" / " />
-                        <Run Text="Running" FontWeight="Bold" />
+                        <Run Text="Running" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text="." />
                     </TextBlock>
                 </StackPanel>
