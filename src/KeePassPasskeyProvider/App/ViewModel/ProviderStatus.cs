@@ -1,4 +1,4 @@
-namespace KeePassPasskeyProvider.ViewModels;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 internal enum ProviderStatus
 {

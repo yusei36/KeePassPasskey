@@ -1,7 +1,7 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace KeePassPasskeyProvider.ViewModels;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 internal sealed partial class SetupGuideViewModel : ObservableObject
 {

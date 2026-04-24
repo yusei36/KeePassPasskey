@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace KeePassPasskeyProvider.UI;
+namespace KeePassPasskeyProvider.App.Controls;
 
 public partial class StatusHero : UserControl
 {

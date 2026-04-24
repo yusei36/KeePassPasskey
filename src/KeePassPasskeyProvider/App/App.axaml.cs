@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace KeePassPasskeyProvider.UI;
+namespace KeePassPasskeyProvider.App;
 
 public class App : Application
 {

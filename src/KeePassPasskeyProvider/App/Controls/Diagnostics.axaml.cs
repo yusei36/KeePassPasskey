@@ -2,9 +2,9 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
-using KeePassPasskeyProvider.ViewModels;
+using KeePassPasskeyProvider.App.ViewModel;
 
-namespace KeePassPasskeyProvider.UI;
+namespace KeePassPasskeyProvider.App.Controls;
 
 public partial class Diagnostics : UserControl
 {

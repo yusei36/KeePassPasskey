@@ -2,8 +2,8 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:ui="using:FluentAvalonia.UI.Windowing"
               xmlns:fa="using:FluentAvalonia.UI.Controls"
-              xmlns:local="using:KeePassPasskeyProvider.UI"
-              x:Class="KeePassPasskeyProvider.UI.MainWindow"
+              xmlns:ctrl="using:KeePassPasskeyProvider.App.Controls"
+              x:Class="KeePassPasskeyProvider.App.MainWindow"
               Title="KeePassPasskey"
               Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
               Width="650"
@@ -18,12 +18,12 @@
                     IsClosable="False" />
 
         <!-- Status hero -->
-        <local:StatusHero DataContext="{Binding StatusHero}" />
+        <ctrl:StatusHero DataContext="{Binding StatusHero}" />
 
         <!-- Setup guide -->
-        <local:SetupGuide DataContext="{Binding SetupGuide}" />
+        <ctrl:SetupGuide DataContext="{Binding SetupGuide}" />
 
         <!-- Diagnostics -->
-        <local:Diagnostics DataContext="{Binding Diagnostics}" />
+        <ctrl:Diagnostics DataContext="{Binding Diagnostics}" />
     </StackPanel>
 </ui:AppWindow>

@@ -6,9 +6,10 @@ using CommunityToolkit.Mvvm.Input;
 using KeePassPasskey.Shared.Ipc;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
+using KeePassPasskeyProvider.App.Utils;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.ViewModels;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 internal sealed partial class MainWindowViewModel : ObservableObject
 {

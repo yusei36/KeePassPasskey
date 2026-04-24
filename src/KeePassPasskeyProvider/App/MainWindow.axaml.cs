@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using Avalonia.Input;
 using FluentAvalonia.UI.Windowing;
-using KeePassPasskeyProvider.ViewModels;
+using KeePassPasskeyProvider.App.ViewModel;
 
-namespace KeePassPasskeyProvider.UI;
+namespace KeePassPasskeyProvider.App;
 
 public partial class MainWindow : AppWindow
 {

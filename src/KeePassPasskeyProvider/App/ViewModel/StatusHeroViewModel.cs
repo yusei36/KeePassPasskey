@@ -2,7 +2,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using KeePassPasskey.Shared.Ipc;
 
-namespace KeePassPasskeyProvider.ViewModels;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 internal sealed partial class StatusHeroViewModel : ObservableObject
 {

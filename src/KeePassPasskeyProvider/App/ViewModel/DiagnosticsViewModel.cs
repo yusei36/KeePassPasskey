@@ -9,7 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using KeePassPasskey.Shared.Ipc;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.ViewModels;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 internal sealed partial class DiagnosticsViewModel : ObservableObject
 {

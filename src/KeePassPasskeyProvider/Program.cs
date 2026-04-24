@@ -1,9 +1,7 @@
 ﻿using System.Runtime.InteropServices;
-using System.Threading;
 using Avalonia;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
-using KeePassPasskeyProvider.UI;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
@@ -186,7 +184,7 @@ internal static class Program
     }
 
     private static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+        => AppBuilder.Configure<App.App>()
             .UsePlatformDetect()
             .LogToTrace();
 
