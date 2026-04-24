@@ -56,7 +56,7 @@ namespace KeePassPasskey.Storage
 
             _host.MainWindow.Invoke(new MethodInvoker(() =>
             {
-                _host.MainWindow.UpdateUI(false, null, true, targetGroup, true, null, true);
+                _host.MainWindow.UpdateUI(false, null, true, null, true, null, true);
                 if (KeePass.Program.Config.Application.AutoSaveAfterEntryEdit)
                     _host.MainWindow.SaveDatabase(db, null);
             }));
