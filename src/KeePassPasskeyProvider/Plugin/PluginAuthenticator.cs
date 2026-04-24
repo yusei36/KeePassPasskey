@@ -251,7 +251,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         }
     }
 
-    /// <summary>IPluginAuthenticator.CancelOperation implementation. Sets the cancellation flag.</summary>
+    /// <summary>IPluginAuthenticator.CancelOperation implementation. Verifies the cancel signature and sets the cancellation flag.</summary>
     public unsafe int CancelOperation(nint pCancelRequest)
     {
         if (pCancelRequest == 0) return HResults.E_INVALIDARG;
@@ -259,6 +259,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         var pCancel = (WebAuthnPluginCancelOperationRequest*)pCancelRequest;
         if (pCancel->transactionId != _currentTransactionId)
             return HResults.NTE_NOT_FOUND;
+
+        int sigResult = SignatureVerifier.VerifyIfKeyAvailable(
+            (byte*)&pCancel->transactionId, (uint)sizeof(Guid),
+            pCancel->pbRequestSignature, pCancel->cbRequestSignature);
+        Log.Info($"CancelOperation signature hr=0x{sigResult:X8}");
+        if (sigResult < 0) return sigResult;
 
         _cancelled = true;
         return HResults.S_OK;
