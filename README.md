@@ -38,7 +38,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 
 1. Download `KeePassPasskey-<version>.zip` from the releases page and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
-3. Trust the certificate: right-click `KeePassPasskeyProvider.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
+3. Trust the certificate: right-click `KeePassPasskey.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
 4. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
 5. Launch **KeePassPasskey** from the Start menu, open **Advanced Passkey Options** and enable **KeePassPasskey**.
 6. Both status indicators in the **KeePassPasskey** app should show green.

@@ -1,6 +1,6 @@
 Set-StrictMode -Version Latest
 
-$script:CertSubject  = 'CN=KeePassPasskeyProvider'
+$script:CertSubject  = 'CN=KeePassPasskey'
 $script:SignToolPath = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
 
 function Write-Step([string]$msg) {
@@ -123,8 +123,9 @@ function Get-OrCreateCertificate([switch]$SkipCreate) {
         -Type Custom `
         -Subject $script:CertSubject `
         -KeyUsage DigitalSignature `
-        -FriendlyName 'KeePassPasskey Test' `
+        -FriendlyName 'KeePassPasskey' `
         -CertStoreLocation 'Cert:\CurrentUser\My' `
+        -NotAfter (Get-Date).AddYears(5) `
         -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}')
     Write-Host "  Created  Thumbprint=$($cert.Thumbprint)"
     return $cert
@@ -144,16 +145,28 @@ function Add-TrustedCertificate([System.Security.Cryptography.X509Certificates.X
     $store.Close()
 }
 
-# Signs an MSIX with the given certificate thumbprint.
-function Invoke-SignMsix([string]$MsixPath, [string]$Thumbprint) {
+# Signs any file with the given certificate thumbprint.
+function Invoke-SignFile([string]$FilePath, [string]$Thumbprint) {
     if (-not (Test-Path $script:SignToolPath)) {
         throw "signtool.exe not found at:`n  $script:SignToolPath`nInstall the Windows SDK 10.0.26100."
     }
-    & $script:SignToolPath sign /fd SHA256 /sha1 $Thumbprint $MsixPath
+    & $script:SignToolPath sign /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 /sha1 $Thumbprint /q $FilePath
     if ($LASTEXITCODE -ne 0) { throw "signtool exited with code $LASTEXITCODE" }
-    Write-Host "  Signed OK."
+    Write-Host "  Signed OK: $(Split-Path $FilePath -Leaf)"
+}
+
+function Invoke-SignMsix([string]$MsixPath, [string]$Thumbprint) {
+    Invoke-SignFile -FilePath $MsixPath -Thumbprint $Thumbprint
+}
+
+# Reads ProductVersion (includes git hash) from the plugin DLL via PE resource — no assembly loading.
+function Get-PluginVersion([string]$BuildDir) {
+    $dllPath = Join-Path $BuildDir 'KeePassPasskey.dll'
+    if (-not (Test-Path $dllPath)) { throw "Plugin DLL not found: $dllPath" }
+    return [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dllPath).ProductVersion
 }
 
 Export-ModuleMember -Function Write-Step, Assert-Elevation, Find-MSBuild, Get-BuildVersions,
                                Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
-                               Get-OrCreateCertificate, Add-TrustedCertificate, Invoke-SignMsix
+                               Get-OrCreateCertificate, Add-TrustedCertificate, Invoke-SignFile, Invoke-SignMsix,
+                               Get-PluginVersion

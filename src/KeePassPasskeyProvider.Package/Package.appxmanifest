@@ -10,7 +10,7 @@
 
   <Identity
     Name="KeePassPasskeyProvider"
-    Publisher="CN=KeePassPasskeyProvider"
+    Publisher="CN=KeePassPasskey"
     Version="0.0.0.0"
     ProcessorArchitecture="x64" />
 

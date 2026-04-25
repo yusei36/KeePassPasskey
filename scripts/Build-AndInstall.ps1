@@ -6,7 +6,7 @@
 .DESCRIPTION
     1. Builds the MSIX via msbuild (wapproj).
     2. Builds the KeePassPasskey plugin DLL.
-    3. Creates a self-signed cert (CN=KeePassPasskeyProvider) if one doesn't exist.
+    3. Creates a self-signed cert (CN=KeePassPasskey) if one doesn't exist.
     4. Signs the MSIX with that cert.
     5. Trusts the cert in LocalMachine\TrustedPeople (requires elevation).
     6. Installs the MSIX package.
@@ -41,9 +41,7 @@ $RepoRoot       = Split-Path $PSScriptRoot -Parent
 $AppPackagesDir = "$RepoRoot\build\AppPackages"
 
 $versions = Get-BuildVersions $RepoRoot
-Write-Host "KeePassPasskey [$Configuration]" -ForegroundColor White
-Write-Host "Version: $($versions.Version)" -ForegroundColor White
-Write-Host "FileVersion: $($versions.FileVersion)" -ForegroundColor White
+Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
 
 Assert-Elevation
 
@@ -84,27 +82,24 @@ if ($existing) {
 Add-AppxPackage -Path $MsixPath
 Write-Host "  Installed."
 
-Write-Step "Verifying installation"
 $pkg = Get-AppxPackage -Name '*KeePassPasskeyProvider*'
 if ($pkg) {
-    $logDir = "$env:LocalAppData\Packages\$($pkg.PackageFamilyName)\LocalCache\Logs"
-    Write-Host "  Package installed: $($pkg.PackageFullName)" -ForegroundColor Green
-    Write-Host "  InstallLocation  : $($pkg.InstallLocation)"
-    Write-Host "  Log directory    : $logDir"
+    $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
+    if (Test-Path $exe) { Start-Process $exe }
+
+    $logDir         = "$env:LocalAppData\Packages\$($pkg.PackageFamilyName)\LocalCache\Logs"
+    $productVersion = Get-PluginVersion -BuildDir "$RepoRoot\build\$Configuration"
+
+    Write-Step "Done"
+    Write-Host "  Version:   $productVersion ($Configuration)" -ForegroundColor Green
+    Write-Host "  Package:   $($pkg.PackageFullName)" -ForegroundColor Green
+    Write-Host "  Location:  $($pkg.InstallLocation)" -ForegroundColor Green
+    Write-Host "  Logs:      $logDir" -ForegroundColor Green
     Write-Host ""
     Write-Host "Next steps:" -ForegroundColor Yellow
     Write-Host "  Auto-registers on first launch (or manually: KeePassPasskeyProvider.exe /register)"
     Write-Host "  Enable in: Settings -> Accounts -> Passkeys -> Advanced Options"
     Write-Host "  Copy DLLs from build\$Configuration\ to KeePass Plugins\KeePassPasskeyPlugin\ folder"
-
-    Write-Step "Launching KeePassPasskey Provider UI"
-    $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
-    if (Test-Path $exe) {
-        Start-Process $exe
-        Write-Host "  Launched." -ForegroundColor Green
-    } else {
-        Write-Warning "Executable not found at: $exe"
-    }
 } else {
     Write-Warning "Package not found after install - check above for errors."
 }
