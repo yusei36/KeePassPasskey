@@ -5,10 +5,21 @@ namespace KeePassPasskeyProvider.Util;
 
 internal sealed class AppSettings
 {
-    // redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local\KeePassPasskeyProvider
-    internal static readonly string ConfigDir =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                     "KeePassPasskeyProvider");
+    internal static readonly string ConfigDir = GetConfigDir();
+
+    private static string GetConfigDir()
+    {
+        try
+        {
+            // When MSIX-packaged, ApplicationData.Current.LocalFolder.Path returns the real physical
+            // package path (%LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local), not the virtual one.
+            return Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "KeePassPasskeyProvider");
+        }
+        catch
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KeePassPasskeyProvider");
+        }
+    }
 
     [JsonConverter(typeof(StringEnumConverter))]
 #if DEBUG

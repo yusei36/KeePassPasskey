@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace KeePassPasskeyProvider.Util;
 
 /// <summary>
-/// Appends timestamped lines to %LOCALAPPDATA%\KeePassPasskeyProvider\PasskeyProvider.log -- redirects in msix to: %LOCALAPPDATA%\Packages\<PackageFamilyName>\LocalCache\Local\KeePassPasskeyProvider\PasskeyProvider.log
+/// Appends timestamped lines to PasskeyProvider.log.
 /// Log level is read from appsettings.json in the same directory; defaults to Info.
 /// </summary>
 internal static class Log
