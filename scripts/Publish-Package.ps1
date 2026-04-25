@@ -10,9 +10,11 @@
     4. Signs the MSIX.
     5. Produces a zip archive ready for distribution:
          KeePassPasskey-<version>.zip
-           KeePassPasskey.dll
+           KeePassPasskeyPlugin/   All plugin DLLs (Release) or DLLs + PDBs (Debug)
            KeePassPasskeyProvider.Package_<version>_x64.msix
-           Install.ps1
+           KeePassPasskey.cer
+           Install.bat
+           README.md
 
 .PARAMETER Configuration
     Build configuration: Debug or Release. Defaults to Release.
