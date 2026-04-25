@@ -10,5 +10,5 @@ internal static class ProviderCommands
         new RelayCommand(OpenPasskeySettings);
 
     private static void OpenPasskeySettings()
-        => Process.Start(new ProcessStartInfo("ms-settings:savedpasskeys") { UseShellExecute = true });
+        => Process.Start(new ProcessStartInfo("ms-settings:passkeys-advancedoptions") { UseShellExecute = true });
 }
