@@ -38,7 +38,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
         StatusHero  = new StatusHeroViewModel(registerCmd, unregisterCmd, refreshCmd);
         SetupGuide  = new SetupGuideViewModel();
-        Diagnostics = new DiagnosticsViewModel();
+        Diagnostics = new DiagnosticsViewModel(registerCmd, unregisterCmd);
         SetupGuide.PropertyChanged += OnSetupGuidePropertyChanged;
         Diagnostics.PropertyChanged += OnDiagnosticsPropertyChanged;
 

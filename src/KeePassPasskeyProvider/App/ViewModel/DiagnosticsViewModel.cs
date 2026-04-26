@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -17,6 +18,8 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     [ObservableProperty] private PingStatus _pingStatus;
     [ObservableProperty] private bool _isLogVisible;
     [ObservableProperty] private string _logText = "";
+    public ICommand RegisterCommand   { get; }
+    public ICommand UnregisterCommand { get; }
 
     public string ServerVersionShort => ServerVersion != null ? ShortenVersion(ServerVersion) : "";
     public bool IsServerVersionAvailable => ServerVersion != null;
@@ -65,8 +68,10 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
 
     private readonly FileSystemWatcher? _logWatcher;
 
-    internal DiagnosticsViewModel()
+    internal DiagnosticsViewModel(ICommand register, ICommand unregister)
     {
+        RegisterCommand   = register;
+        UnregisterCommand = unregister;
         string logDir  = Path.GetDirectoryName(Log.LogFilePath)!;
         string logFile = Path.GetFileName(Log.LogFilePath);
         if (Directory.Exists(logDir))

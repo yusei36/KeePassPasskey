@@ -100,12 +100,30 @@
 						</Button>
 					</Grid>
 
+					<!-- COM Server actions -->
+					<Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+						<TextBlock Grid.Column="0"
+								   Text="COM Server actions"
+								   FontFamily="Consolas,Courier New,monospace"
+								   FontSize="12.5" FontWeight="SemiBold"
+								   VerticalAlignment="Center" />
+						<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+							<Button Content="Register"
+									Command="{Binding RegisterCommand}"
+									Padding="8 3" FontSize="12" />
+							<Button Content="Unregister"
+									Command="{Binding UnregisterCommand}"
+									Padding="8 3" FontSize="12" />
+						</StackPanel>
+					</Grid>
+
                 </StackPanel>
             </Border>
 
             <!-- Log -->
             <ScrollViewer x:Name="LogScrollViewer"
                           MaxHeight="220"
+                          Margin="0 18 0 0"
                           HorizontalScrollBarVisibility="Visible"
                           VerticalScrollBarVisibility="Auto">
                 <SelectableTextBlock x:Name="LogTextBlock"
