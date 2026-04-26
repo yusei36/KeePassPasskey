@@ -10,11 +10,12 @@
     4. Signs the MSIX.
     5. Produces a zip archive ready for distribution:
          KeePassPasskey-<version>.zip
-           KeePassPasskeyPlugin/   All plugin DLLs (Release) or DLLs + PDBs (Debug)
+           KeePassPasskeyPlugin/        All plugin DLLs (Release) or DLLs + PDBs (Debug)
            KeePassPasskeyProvider.Package_<version>_x64.msix
            KeePassPasskey.cer
            Install.bat
            README.md
+           THIRD_PARTY_NOTICES.txt
 
 .PARAMETER Configuration
     Build configuration: Debug or Release. Defaults to Release.
@@ -83,10 +84,13 @@ $zipName    = "KeePassPasskey-$($versions.Version).zip"
 $stagingDir = "$RepoRoot\build\publish-staging"
 $zipPath    = "$RepoRoot\build\$zipName"
 
-Write-Step "Assembling release archive: $zipName"
-
 if (Test-Path $stagingDir) { Remove-Item $stagingDir -Recurse -Force }
 New-Item $stagingDir -ItemType Directory | Out-Null
+
+Write-Step "Generating third-party license notices"
+Invoke-GenerateLicenseNotices -RepoRoot $RepoRoot -OutputFile "$stagingDir\THIRD_PARTY_NOTICES.txt"
+
+Write-Step "Assembling release archive: $zipName"
 
 $pluginDir  = "$stagingDir\KeePassPasskeyPlugin"
 New-Item $pluginDir -ItemType Directory | Out-Null

@@ -159,6 +159,40 @@ function Invoke-SignMsix([string]$MsixPath, [string]$Thumbprint) {
     Invoke-SignFile -FilePath $MsixPath -Thumbprint $Thumbprint
 }
 
+function Invoke-GenerateLicenseNotices {
+    param(
+        [string]$RepoRoot,
+        [string]$OutputFile
+    )
+    $toolList = & dotnet tool list --global 2>&1
+    if (-not ($toolList | Select-String 'nuget-license')) {
+        Write-Host "  Installing nuget-license..."
+        & dotnet tool install --global nuget-license --verbosity quiet
+        if ($LASTEXITCODE -ne 0) { throw "Failed to install nuget-license" }
+    }
+    $projects = Get-ChildItem -Path "$RepoRoot\src" -Filter '*.csproj' -Recurse | Select-Object -ExpandProperty FullName
+
+    $result = [System.Collections.Generic.List[string]]::new()
+
+    foreach ($proj in $projects) {
+        $projName  = [IO.Path]::GetFileNameWithoutExtension($proj)
+        $lines     = & nuget-license -i $proj --include-transitive
+        if ($LASTEXITCODE -ne 0) { throw "nuget-license failed (exit $LASTEXITCODE) for $(Split-Path $proj -Leaf)" }
+        $dataLines = @($lines | Where-Object { $_ })
+
+        $result.Add('')
+        $result.Add("# $projName")
+        if ($dataLines.Count -eq 0) {
+            $result.Add('  (no third-party packages)')
+        } else {
+            foreach ($line in $dataLines) { $result.Add([string]$line) }
+        }
+    }
+
+    $result | Set-Content -Path $OutputFile -Encoding utf8
+    Write-Host "  Generated: $(Split-Path $OutputFile -Leaf)"
+}
+
 # Reads ProductVersion (includes git hash) from the plugin DLL via PE resource — no assembly loading.
 function Get-PluginVersion([string]$BuildDir) {
     $dllPath = Join-Path $BuildDir 'KeePassPasskey.dll'
@@ -169,4 +203,4 @@ function Get-PluginVersion([string]$BuildDir) {
 Export-ModuleMember -Function Write-Step, Assert-Elevation, Find-MSBuild, Get-BuildVersions,
                                Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
                                Get-OrCreateCertificate, Add-TrustedCertificate, Invoke-SignFile, Invoke-SignMsix,
-                               Get-PluginVersion
+                               Invoke-GenerateLicenseNotices, Get-PluginVersion
