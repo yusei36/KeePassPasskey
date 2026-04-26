@@ -7,8 +7,13 @@
               Title="KeePassPasskey"
               Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
               Width="650"
-              CanResize="False" SizeToContent="Height" ShowAsDialog="True"
+              CanResize="False" SizeToContent="Height"
               WindowStartupLocation="CenterScreen">
+	<ui:AppWindow.Styles>
+		<Style Selector="ui|AppWindow /template/ ui|MinMaxCloseControl /template/ Button#MaxRestoreButton">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+	</ui:AppWindow.Styles>
     <StackPanel Margin="24 0" Spacing="12">
         <!-- Not-packaged warning -->
         <fa:InfoBar Title="Not installed as package"
