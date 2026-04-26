@@ -1,6 +1,6 @@
 # KeePassPasskey
 
-Use your KeePass database as a native Windows 11 passkey provider. Websites that support passkeys can create and use credentials stored in KeePass.
+A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically — no browser extension required.
 
 ## How it works
 
