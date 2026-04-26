@@ -42,15 +42,13 @@
                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <StackPanel Grid.Column="1" Spacing="4">
-                    <TextBlock Text="Open Windows passkey settings" FontWeight="SemiBold" FontSize="13" />
+                    <TextBlock Text="Open Advanced Passkey Options" FontWeight="SemiBold" FontSize="13" />
                     <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
                         <Run Text="Go to " />
-                        <Run Text="Settings › Accounts › Passkeys" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-                        <Run Text=", then open " />
-                        <Run Text="Advanced options" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-                        <Run Text="." />
+                        <Run Text="Settings › Accounts › Passkeys › Advanced options" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
+                        <Run Text=", or use the button below." />
                     </TextBlock>
-                    <Button Content="Open passkey settings"
+                    <Button Content="Advanced Passkey Options"
                             Command="{Binding OpenPasskeySettingsCommand}"
                             Padding="6 2" FontSize="12" HorizontalAlignment="Left" />
                 </StackPanel>

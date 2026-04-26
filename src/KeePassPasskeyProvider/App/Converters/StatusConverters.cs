@@ -22,7 +22,7 @@ internal static class ProviderStatusConverters
     {
         ProviderStatus.AutoregisterFailed => "You can retry by clicking Register.",
         ProviderStatus.NotRegistered      => "Click Register to set up KeePassPasskey as your passkey provider.",
-        ProviderStatus.WaitingToBeEnabled => "Enable KeePassPasskey in Windows Settings → Accounts → Passkeys → Advanced options.",
+        ProviderStatus.WaitingToBeEnabled => "Click Advanced Passkey Options below to enable KeePassPasskey.",
         ProviderStatus.VersionMismatch    => "Update the plugin or the provider so both are on the same version.",
         ProviderStatus.NoDatabase         => "Open a KeePass database to use passkeys.",
         ProviderStatus.PluginNotRunning   => "Start KeePass with the KeePassPasskey plugin installed.",

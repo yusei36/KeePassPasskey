@@ -127,7 +127,7 @@
                 <Button Grid.Column="0" Content="Refresh status" Command="{Binding RefreshCommand}" Classes="accent" />
                 <Button Grid.Column="1" Content="Register"   Command="{Binding RegisterCommand}"   IsVisible="{Binding CanRegister}" />
                 <Button Grid.Column="1" Content="Unregister" Command="{Binding UnregisterCommand}" IsVisible="{Binding CanUnregister}" />
-                <Button Grid.Column="3" Content="Open passkey settings" Command="{Binding OpenPasskeySettingsCommand}" IsVisible="{Binding ShowOpenPasskeySettings}" />
+                <Button Grid.Column="3" Content="Advanced Passkey Options" Command="{Binding OpenPasskeySettingsCommand}" IsVisible="{Binding ShowOpenPasskeySettings}" />
             </Grid>
 
         </StackPanel>
