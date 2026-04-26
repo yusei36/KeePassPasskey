@@ -7,7 +7,7 @@
               Title="KeePassPasskey"
               Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
               Width="650"
-              CanResize="False" SizeToContent="Height"
+              CanResize="False" SizeToContent="Height" ShowAsDialog="True"
               WindowStartupLocation="CenterScreen">
     <StackPanel Margin="24 0" Spacing="12">
         <!-- Not-packaged warning -->
