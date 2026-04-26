@@ -75,6 +75,7 @@ Write-Step "Installing MSIX"
 $existing = Get-AppxPackage -Name '*KeePassPasskeyProvider*'
 if ($existing) {
     Write-Host "  Removing existing package: $($existing.PackageFullName)"
+    Stop-Process -Name KeePassPasskeyProvider -Force -ErrorAction SilentlyContinue
     Remove-AppxPackage -Package $existing.PackageFullName
     Write-Host "  Removed."
 }
