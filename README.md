@@ -2,6 +2,8 @@
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically — no browser extension required.
 
+**[GitHub](https://github.com/yusei36/KeePassPasskey) · [Releases](https://github.com/yusei36/KeePassPasskey/releases)**
+
 ## How it works
 
 Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project implements that COM server and a KeePass plugin that handles the actual cryptography:
@@ -28,7 +30,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 
 ### Option A - automatic (recommended)
 
-1. Download `KeePassPasskey-<version>.zip` from the releases page and extract it.
+1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
 3. Run `Install.bat` as Administrator — it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
 4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
@@ -36,7 +38,7 @@ Browser → Windows (webauthn.dll) → KeePassPasskeyProvider.exe (COM, MSIX)
 
 ### Option B - manual
 
-1. Download `KeePassPasskey-<version>.zip` from the releases page and extract it.
+1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
 3. Trust the certificate: right-click `KeePassPasskey.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
 4. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
