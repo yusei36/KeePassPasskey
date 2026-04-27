@@ -2,7 +2,7 @@
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically — no browser extension required.
 
-**[GitHub](https://github.com/yusei36/KeePassPasskey) · [Releases](https://github.com/yusei36/KeePassPasskey/releases)**
+**GitHub repo:** [github.com/yusei36/KeePassPasskey](https://github.com/yusei36/KeePassPasskey) · **Download:** [Latest release](https://github.com/yusei36/KeePassPasskey/releases/latest)
 
 ## How it works
 
