@@ -1,0 +1,30 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - version.txt
+      - README.md
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push to keepasspasskey.github.io
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git clone https://x-access-token:${{ secrets.PAGES_DEPLOY_TOKEN }}@github.com/keepasspasskey/keepasspasskey.github.io.git pages-repo
+
+          cp version.txt pages-repo/version.txt
+          cp README.md pages-repo/README.md
+
+          cd pages-repo
+          git add version.txt README.md
+          git diff --cached --quiet || git commit -m "Update website files (yusei36/KeePassPasskey@${{ github.sha }})"
+          git push
