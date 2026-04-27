@@ -178,7 +178,7 @@ namespace KeePassPasskey.Storage
             var group = root.FindGroup(uuid, true);
             if (group != null) return group;
 
-            group = new PwGroup(false, true, PasskeyGroupName, PwIcon.Key);
+            group = new PwGroup(false, true, PasskeyGroupName, PwIcon.Folder);
             group.Uuid = uuid;
             root.AddGroup(group, true);
             return group;
