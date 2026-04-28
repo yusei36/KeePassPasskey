@@ -53,7 +53,20 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     private void AutoRegisterIfNeeded()
     {
         int stateHr = PluginRegistration.GetState(out _);
-        if (stateHr >= 0) return;
+        if (stateHr >= 0)
+        {
+            // Already registered — verify the signing key is present
+            if (SignatureVerifier.LoadSigningPublicKey() != null) return;
+
+#if DEBUG
+             Log.Warn("registered but signing key missing, allowing operations for development");
+             return;
+#else
+            // Registered but signing key missing — unregister so we can re-register cleanly
+            Log.Warn("registered but signing key missing, re-registering");
+            PluginRegistration.Unregister();
+#endif
+        }
 
         int hr = PluginRegistration.Register();
         _autoregisterError = hr < 0;
