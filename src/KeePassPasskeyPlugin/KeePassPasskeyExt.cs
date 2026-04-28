@@ -52,7 +52,7 @@ namespace KeePassPasskey
 
             var storage = new PasskeyEntryStorage(_host);
             var handler = new RequestHandler(_host, storage);
-            _pipeServer = new PipeServer(handler);
+            _pipeServer = new PipeServer(handler, PluginLog);
             _pipeServer.Start();
 
             return true;
@@ -62,6 +62,21 @@ namespace KeePassPasskey
         {
             _pipeServer?.Stop();
             _pipeServer = null;
+        }
+
+        private static readonly string _logPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "KeePassPasskeyProvider", "plugin.log");
+
+        private static void PluginLog(string message)
+        {
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(_logPath));
+                File.AppendAllText(_logPath,
+                    $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}{Environment.NewLine}");
+            }
+            catch { }
         }
 
         // Environment.OSVersion lies on .NET Framework without a matching manifest — use RtlGetVersion instead.

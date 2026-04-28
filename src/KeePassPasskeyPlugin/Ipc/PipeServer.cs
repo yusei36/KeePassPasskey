@@ -17,12 +17,14 @@ namespace KeePassPasskey.Ipc
         private const int MaxInstances = 4;
 
         private readonly RequestHandler _handler;
+        private readonly Action<string> _log;
         private volatile bool _running;
         private Thread _listenThread;
 
-        internal PipeServer(RequestHandler handler)
+        internal PipeServer(RequestHandler handler, Action<string> log = null)
         {
             _handler = handler;
+            _log = log;
         }
 
         internal void Start()
@@ -97,8 +99,7 @@ namespace KeePassPasskey.Ipc
                     // Verify the connecting client before processing any requests
                     if (!ClientVerifier.VerifyClient(pipe.SafePipeHandle, out string reason))
                     {
-                        System.Diagnostics.Debug.WriteLine($"[KeePassPasskey] Client verification failed: {reason}");
-                        // Close connection without responding
+                        _log?.Invoke($"Client verification failed: {reason}");
                         return;
                     }
 

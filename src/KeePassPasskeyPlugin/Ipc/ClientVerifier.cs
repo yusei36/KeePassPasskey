@@ -1,24 +1,21 @@
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32.SafeHandles;
 
 namespace KeePassPasskey.Ipc
 {
     /// <summary>
     /// Verifies that connecting pipe clients are legitimate KeePassPasskeyProvider instances.
-    /// Supports both MSIX-packaged apps and standalone signed executables.
     /// </summary>
     internal static class ClientVerifier
     {
-        // Expected package family name for the MSIX-packaged provider
+        // Expected package family name for the MSIX-packaged provider.
+        // Debug builds accept any package starting with the base name to allow self-signed dev certs.
+#if DEBUG
         private const string ExpectedPackageFamilyName = "KeePassPasskeyProvider";
-
-        // Expected executable name
-        private const string ExpectedExeName = "KeePassPasskeyProvider.exe";
+#else
+        private const string ExpectedPackageFamilyName = "KeePassPasskeyProvider_rcm79ea08mqe4";
+#endif
 
         /// <summary>
         /// Verifies that the client connected to the pipe is the legitimate provider.
@@ -29,7 +26,6 @@ namespace KeePassPasskey.Ipc
         public static bool VerifyClient(SafePipeHandle pipeHandle, out string reason)
         {
             reason = null;
-
             try
             {
                 // 1. Get the client process ID
@@ -39,45 +35,28 @@ namespace KeePassPasskey.Ipc
                     return false;
                 }
 
-                // 2. Get process information
-                Process clientProcess;
-                try
-                {
-                    clientProcess = Process.GetProcessById((int)clientPid);
-                }
-                catch (ArgumentException)
-                {
-                    reason = $"Client process {clientPid} no longer exists";
-                    return false;
-                }
-
-                // 3. Get the executable path
-                string exePath;
-                try
-                {
-                    exePath = GetProcessPath(clientPid);
-                }
-                catch (Exception ex)
-                {
-                    reason = $"Failed to get process path: {ex.Message}";
-                    return false;
-                }
-
-                if (string.IsNullOrEmpty(exePath))
-                {
-                    reason = "Could not determine client executable path";
-                    return false;
-                }
-
-                // 4. Check if it's an MSIX package
+                // 2. Verify the client is our MSIX-packaged provider.
+                // The Package Family Name is derived from the package name and a hash of the
+                // publisher certificate's public key. Only packages signed with a matching
+                // private key can produce this exact PFN.
                 string packageFamilyName = GetPackageFamilyName(clientPid);
-                if (!string.IsNullOrEmpty(packageFamilyName))
+                if (packageFamilyName == null)
                 {
-                    return VerifyMsixPackage(packageFamilyName, exePath, out reason);
+                    reason = "Client is not an MSIX-packaged application";
+                    return false;
                 }
 
-                // 5. If not packaged, verify Authenticode signature
-                return VerifySignature(exePath, out reason);
+#if DEBUG
+                if (!packageFamilyName.StartsWith(ExpectedPackageFamilyName, StringComparison.OrdinalIgnoreCase))
+#else
+                if (!packageFamilyName.Equals(ExpectedPackageFamilyName, StringComparison.OrdinalIgnoreCase))
+#endif
+                {
+                    reason = $"Unexpected package: {packageFamilyName}";
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception ex)
             {
@@ -86,111 +65,11 @@ namespace KeePassPasskey.Ipc
             }
         }
 
-        private static bool VerifyMsixPackage(string packageFamilyName, string exePath, out string reason)
-        {
-            reason = null;
-
-            // Check package family name contains expected identifier
-            if (!packageFamilyName.StartsWith(ExpectedPackageFamilyName, StringComparison.OrdinalIgnoreCase))
-            {
-                reason = $"Unexpected package: {packageFamilyName}";
-                return false;
-            }
-
-            // Verify path is in WindowsApps (protected directory)
-            string windowsApps = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                "WindowsApps");
-
-            if (!exePath.StartsWith(windowsApps, StringComparison.OrdinalIgnoreCase))
-            {
-                reason = $"Package not in WindowsApps: {exePath}";
-                return false;
-            }
-
-            // Verified: it's our MSIX package running from protected location
-            return true;
-        }
-
-        private static bool VerifySignature(string exePath, out string reason)
-        {
-            reason = null;
-
-            // Check executable name
-            string fileName = Path.GetFileName(exePath);
-            if (!fileName.Equals(ExpectedExeName, StringComparison.OrdinalIgnoreCase))
-            {
-                reason = $"Unexpected executable: {fileName}";
-                return false;
-            }
-
-            // Verify Authenticode signature
-            try
-            {
-                var cert = X509Certificate.CreateFromSignedFile(exePath);
-                if (cert == null)
-                {
-                    reason = "Executable is not signed";
-                    return false;
-                }
-
-                // Optionally verify specific certificate properties
-                // For now, just verify it's signed
-                var cert2 = new X509Certificate2(cert);
-
-                // Check certificate is valid
-                if (cert2.NotAfter < DateTime.Now || cert2.NotBefore > DateTime.Now)
-                {
-                    reason = "Signing certificate has expired or is not yet valid";
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                reason = $"Signature verification failed: {ex.Message}";
-                return false;
-            }
-        }
-
-        private static string GetProcessPath(uint pid)
-        {
-            // Use QueryFullProcessImageName for better compatibility
-            IntPtr hProcess = OpenProcess(
-                PROCESS_QUERY_LIMITED_INFORMATION,
-                false,
-                pid);
-
-            if (hProcess == IntPtr.Zero)
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-
-            try
-            {
-                var buffer = new char[4096];
-                uint size = (uint)buffer.Length;
-
-                if (!QueryFullProcessImageName(hProcess, 0, buffer, ref size))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-
-                return new string(buffer, 0, (int)size);
-            }
-            finally
-            {
-                CloseHandle(hProcess);
-            }
-        }
-
         private static string GetPackageFamilyName(uint pid)
         {
-            IntPtr hProcess = OpenProcess(
-                PROCESS_QUERY_LIMITED_INFORMATION,
-                false,
-                pid);
-
+            IntPtr hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid);
             if (hProcess == IntPtr.Zero)
                 return null;
-
             try
             {
                 uint length = 0;
@@ -205,7 +84,6 @@ namespace KeePassPasskey.Ipc
 
                 var buffer = new char[length];
                 result = GetPackageFamilyName(hProcess, ref length, buffer);
-
                 if (result != ERROR_SUCCESS)
                     return null;
 
@@ -226,31 +104,16 @@ namespace KeePassPasskey.Ipc
         private const int APPMODEL_ERROR_NO_PACKAGE = 15700;
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool GetNamedPipeClientProcessId(
-            SafePipeHandle Pipe,
-            out uint ClientProcessId);
+        private static extern bool GetNamedPipeClientProcessId(SafePipeHandle Pipe, out uint ClientProcessId);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr OpenProcess(
-            uint dwDesiredAccess,
-            bool bInheritHandle,
-            uint dwProcessId);
+        private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool CloseHandle(IntPtr hObject);
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool QueryFullProcessImageName(
-            IntPtr hProcess,
-            uint dwFlags,
-            [Out] char[] lpExeName,
-            ref uint lpdwSize);
-
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern int GetPackageFamilyName(
-            IntPtr hProcess,
-            ref uint packageFamilyNameLength,
-            [Out] char[] packageFamilyName);
+        private static extern int GetPackageFamilyName(IntPtr hProcess, ref uint packageFamilyNameLength, [Out] char[] packageFamilyName);
 
         #endregion
     }
