@@ -44,20 +44,32 @@ namespace KeePassPasskey
         {
             if (host == null) return false;
 
-            // Windows 11 24H2 required (build 26100+) for the passkey provider API.
-            if (GetRealWindowsBuildNumber() < 26100)
-                return false;
-
             Log.Configure(Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "KeePassPasskeyProvider", "Plugin.log"));
 
+            // Windows 11 24H2 required (build 26100+) for the passkey provider API.
+            var buildVersion = GetRealWindowsBuildNumber();
+            if (buildVersion < 26100)
+            {
+                Log.Error("Unsupported Windows version: build = " + buildVersion + " but plugin requires build >= 26100 (Windows 11 24H2)");
+                return false;
+            }
+
             _host = host;
 
-            var storage = new PasskeyEntryStorage(_host);
-            var handler = new RequestHandler(_host, storage);
-            _pipeServer = new PipeServer(handler);
-            _pipeServer.Start();
+            try
+            {
+                var storage = new PasskeyEntryStorage(_host);
+                var handler = new RequestHandler(_host, storage);
+                _pipeServer = new PipeServer(handler);
+                _pipeServer.Start();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Failed to start pipe server: " + ex.Message);
+                throw;
+            }
 
             return true;
         }
