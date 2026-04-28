@@ -88,7 +88,7 @@ if ($pkg) {
     $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
     if (Test-Path $exe) { Start-Process $exe }
 
-    $logDir         = "$env:LocalAppData\Packages\$($pkg.PackageFamilyName)\LocalCache\Logs"
+    $logDir         = "$env:LocalAppData\KeePassPasskeyProvider"
     $productVersion = Get-PluginVersion -BuildDir "$RepoRoot\build\$Configuration"
 
     Write-Step "Done"
