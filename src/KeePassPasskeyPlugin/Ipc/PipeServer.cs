@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
+using KeePassPasskey.Shared;
 using KeePassPasskey.Shared.Ipc;
 
 namespace KeePassPasskey.Ipc
@@ -17,14 +18,12 @@ namespace KeePassPasskey.Ipc
         private const int MaxInstances = 4;
 
         private readonly RequestHandler _handler;
-        private readonly Action<string> _log;
         private volatile bool _running;
         private Thread _listenThread;
 
-        internal PipeServer(RequestHandler handler, Action<string> log = null)
+        internal PipeServer(RequestHandler handler)
         {
             _handler = handler;
-            _log = log;
         }
 
         internal void Start()
@@ -99,7 +98,7 @@ namespace KeePassPasskey.Ipc
                     // Verify the connecting client before processing any requests
                     if (!ClientVerifier.VerifyClient(pipe.SafePipeHandle, out string reason))
                     {
-                        _log?.Invoke($"Client verification failed: {reason}");
+                        Log.Warn($"Client verification failed: {reason}");
                         return;
                     }
 
@@ -113,7 +112,10 @@ namespace KeePassPasskey.Ipc
                     }
                 }
             }
-            catch { }
+            catch(Exception ex)
+            {
+                Log.Error($"Unexpected error: {ex.Message}");
+            }
         }
 
         private static string ReadMessage(Stream stream)

@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using Microsoft.Win32;
 using KeePassPasskeyProvider.Interop;
-using KeePassPasskeyProvider.Util;
+using KeePassPasskey.Shared;
 
 namespace KeePassPasskeyProvider.Plugin;
 

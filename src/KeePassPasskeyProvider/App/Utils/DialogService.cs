@@ -1,8 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using FluentAvalonia.UI.Controls;
-
-using KeePassPasskeyProvider.Util;
+using KeePassPasskey.Shared;
 
 namespace KeePassPasskeyProvider.App.Utils;
 

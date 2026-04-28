@@ -1,7 +1,7 @@
 ﻿using System.Formats.Cbor;
 using Microsoft.Win32;
 using KeePassPasskeyProvider.Interop;
-using KeePassPasskeyProvider.Util;
+using KeePassPasskey.Shared;
 
 namespace KeePassPasskeyProvider.Plugin;
 

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
+using KeePassPasskey.Shared;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
 using KeePassPasskeyProvider.Util;
@@ -20,6 +21,10 @@ internal static class Program
     [MTAThread]
     static int Main(string[] args)
     {
+        Log.Configure(
+            Path.Combine(AppSettings.ConfigDir, "Provider.log"),
+            AppSettings.Current.LogLevel);
+
         bool isPluginActivated = args.Any(a =>
             string.Equals(a, "-PluginActivated", StringComparison.OrdinalIgnoreCase));
 

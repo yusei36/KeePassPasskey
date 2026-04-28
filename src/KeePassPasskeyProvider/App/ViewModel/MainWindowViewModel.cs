@@ -3,11 +3,11 @@ using System.Runtime.InteropServices;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KeePassPasskey.Shared;
 using KeePassPasskey.Shared.Ipc;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
 using KeePassPasskeyProvider.App.Utils;
-using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 

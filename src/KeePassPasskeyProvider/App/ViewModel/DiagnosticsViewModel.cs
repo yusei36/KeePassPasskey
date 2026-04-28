@@ -7,8 +7,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using KeePassPasskey.Shared;
 using KeePassPasskey.Shared.Ipc;
-using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
@@ -18,6 +18,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     [ObservableProperty] private PingStatus _pingStatus;
     [ObservableProperty] private bool _isLogVisible;
     [ObservableProperty] private string _logText = "";
+    [ObservableProperty] private string _pluginLogText = "";
     public ICommand RegisterCommand   { get; }
     public ICommand UnregisterCommand { get; }
 
@@ -26,7 +27,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     public bool IsServerVersionNotAvailable => ServerVersion is null;
     public bool IsVersionMismatch => PingStatus == KeePassPasskey.Shared.Ipc.PingStatus.IncompatibleVersion;
 
-    public static string ClientVersion    => _appVersion;
+    public static string ClientVersion     => _appVersion;
     public static string ClientVersionShort => ShortenVersion(_appVersion);
 
     partial void OnServerVersionChanged(string? value)
@@ -43,7 +44,11 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
 
     partial void OnIsLogVisibleChanged(bool value)
     {
-        if (value) ReloadLog();
+        if (value)
+        {
+            ReloadLog();
+            ReloadPluginLog();
+        }
     }
 
     public static string LogDirPath => Log.LogDir;
@@ -67,44 +72,58 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     }
 
     private readonly FileSystemWatcher? _logWatcher;
+    private readonly FileSystemWatcher? _pluginLogWatcher;
+
+    private static readonly string _pluginLogFilePath = Path.Combine(Log.LogDir, "Plugin.log");
 
     internal DiagnosticsViewModel(ICommand register, ICommand unregister)
     {
         RegisterCommand   = register;
         UnregisterCommand = unregister;
-        string logDir  = Path.GetDirectoryName(Log.LogFilePath)!;
-        string logFile = Path.GetFileName(Log.LogFilePath);
+
+        string logDir = Path.GetDirectoryName(Log.LogFilePath)!;
         if (Directory.Exists(logDir))
         {
-            _logWatcher = new FileSystemWatcher(logDir, logFile)
-            {
-                NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.Size,
-                EnableRaisingEvents = true,
-            };
-            _logWatcher.Changed += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
-            _logWatcher.Created += (_, _) => Dispatcher.UIThread.Post(ReloadLog);
+            _logWatcher = CreateWatcher(logDir, Path.GetFileName(Log.LogFilePath), ReloadLog);
+            _pluginLogWatcher = CreateWatcher(logDir, Path.GetFileName(_pluginLogFilePath), ReloadPluginLog);
         }
     }
 
-    private void ReloadLog()
+    private static FileSystemWatcher CreateWatcher(string dir, string file, Action reload)
+    {
+        var watcher = new FileSystemWatcher(dir, file)
+        {
+            NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.Size,
+            EnableRaisingEvents = true,
+        };
+        watcher.Changed += (_, _) => Dispatcher.UIThread.Post(reload);
+        watcher.Created += (_, _) => Dispatcher.UIThread.Post(reload);
+        return watcher;
+    }
+
+    private void ReloadLog() => ReloadLogFile(Log.LogFilePath, text => LogText = text);
+
+    private void ReloadPluginLog() => ReloadLogFile(_pluginLogFilePath, text => PluginLogText = text);
+
+    private void ReloadLogFile(string filePath, Action<string> setText)
     {
         if (!IsLogVisible) return;
         try
         {
-            if (!File.Exists(Log.LogFilePath))
+            if (!File.Exists(filePath))
             {
-                LogText = "(no log file yet)";
+                setText("(no log file yet)");
                 return;
             }
-            using var fs     = new FileStream(Log.LogFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var fs     = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var reader = new StreamReader(fs);
-            string all   = reader.ReadToEnd();
-            string[] lines = all.Split('\n');
-            LogText = lines.Length > 100 ? string.Join('\n', lines[^100..]) : all;
+            string all       = reader.ReadToEnd();
+            string[] lines   = all.Split('\n');
+            setText(lines.Length > 100 ? string.Join('\n', lines[^100..]) : all);
         }
         catch (Exception ex)
         {
-            LogText = $"(could not read log: {ex.Message})";
+            setText($"(could not read log: {ex.Message})");
         }
     }
 

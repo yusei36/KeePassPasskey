@@ -121,19 +121,34 @@
             </Border>
 
             <!-- Log -->
-            <ScrollViewer x:Name="LogScrollViewer"
-                          MaxHeight="220"
-                          Margin="0 18 0 0"
-                          HorizontalScrollBarVisibility="Visible"
-                          VerticalScrollBarVisibility="Auto">
-                <SelectableTextBlock x:Name="LogTextBlock"
-                                     Text="{Binding LogText}"
-                                     FontFamily="Consolas,Courier New,monospace"
-                                     FontSize="11"
-                                     TextWrapping="NoWrap"
-                                     Margin="8 6"
-                                     GotFocus="LogTextBlock_GotFocus" />
-            </ScrollViewer>
+            <TabControl Margin="0 4 0 0" Height="240">
+                <TabItem Header="Provider">
+                    <ScrollViewer x:Name="LogScrollViewer"
+                                  HorizontalScrollBarVisibility="Visible"
+                                  VerticalScrollBarVisibility="Auto">
+                        <SelectableTextBlock x:Name="LogTextBlock"
+                                             Text="{Binding LogText}"
+                                             FontFamily="Consolas,Courier New,monospace"
+                                             FontSize="11"
+                                             TextWrapping="NoWrap"
+                                             Margin="8 6"
+                                             GotFocus="LogTextBlock_GotFocus" />
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="Plugin">
+                    <ScrollViewer x:Name="PluginLogScrollViewer"
+                                  HorizontalScrollBarVisibility="Visible"
+                                  VerticalScrollBarVisibility="Auto">
+                        <SelectableTextBlock x:Name="PluginLogTextBlock"
+                                             Text="{Binding PluginLogText}"
+                                             FontFamily="Consolas,Courier New,monospace"
+                                             FontSize="11"
+                                             TextWrapping="NoWrap"
+                                             Margin="8 6"
+                                             GotFocus="PluginLogTextBlock_GotFocus" />
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
         </StackPanel>
     </Expander>
 </UserControl>

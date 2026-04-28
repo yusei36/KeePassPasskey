@@ -1,5 +1,6 @@
-﻿using KeePass.Plugins;
+using KeePass.Plugins;
 using KeePassPasskey.Ipc;
+using KeePassPasskey.Shared;
 using KeePassPasskey.Storage;
 using System;
 using System.Drawing;
@@ -38,21 +39,24 @@ namespace KeePassPasskey
         public override Image SmallIcon => _smallIcon;
 
         public override string UpdateUrl => "https://keepasspasskey.github.io/version.txt";
+
         public override bool Initialize(IPluginHost host)
         {
             if (host == null) return false;
 
             // Windows 11 24H2 required (build 26100+) for the passkey provider API.
             if (GetRealWindowsBuildNumber() < 26100)
-            {
                 return false;
-            }
+
+            Log.Configure(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "KeePassPasskeyProvider", "Plugin.log"));
 
             _host = host;
 
             var storage = new PasskeyEntryStorage(_host);
             var handler = new RequestHandler(_host, storage);
-            _pipeServer = new PipeServer(handler, PluginLog);
+            _pipeServer = new PipeServer(handler);
             _pipeServer.Start();
 
             return true;
@@ -62,21 +66,6 @@ namespace KeePassPasskey
         {
             _pipeServer?.Stop();
             _pipeServer = null;
-        }
-
-        private static readonly string _logPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "KeePassPasskeyProvider", "plugin.log");
-
-        private static void PluginLog(string message)
-        {
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(_logPath));
-                File.AppendAllText(_logPath,
-                    $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}{Environment.NewLine}");
-            }
-            catch { }
         }
 
         // Environment.OSVersion lies on .NET Framework without a matching manifest — use RtlGetVersion instead.

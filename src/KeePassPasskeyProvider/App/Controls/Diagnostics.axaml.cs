@@ -29,6 +29,8 @@ public partial class Diagnostics : UserControl
     {
         if (e.PropertyName == nameof(DiagnosticsViewModel.LogText) && string.IsNullOrEmpty(LogTextBlock.SelectedText))
             LogScrollViewer.ScrollToEnd();
+        else if (e.PropertyName == nameof(DiagnosticsViewModel.PluginLogText) && string.IsNullOrEmpty(PluginLogTextBlock.SelectedText))
+            PluginLogScrollViewer.ScrollToEnd();
     }
 
     private void LogTextBlock_GotFocus(object sender, GotFocusEventArgs e)
@@ -36,6 +38,14 @@ public partial class Diagnostics : UserControl
         var offset = LogScrollViewer.Offset;
         Dispatcher.UIThread.Post(() =>
             LogScrollViewer.Offset = offset,
+            DispatcherPriority.Loaded);
+    }
+
+    private void PluginLogTextBlock_GotFocus(object sender, GotFocusEventArgs e)
+    {
+        var offset = PluginLogScrollViewer.Offset;
+        Dispatcher.UIThread.Post(() =>
+            PluginLogScrollViewer.Offset = offset,
             DispatcherPriority.Loaded);
     }
 }
