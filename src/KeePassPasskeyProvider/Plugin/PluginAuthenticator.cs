@@ -112,8 +112,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 if (response.ErrorCode != null)
                 {
-                    Log.Warn($"KeePass error code={response.ErrorCode}");
-                    Notifier.ShowMakeCredentialError(rpIdUtf8, response.ErrorCode);
+                    Log.Warn($"KeePass error code={response.ErrorCode}, message={response.ErrorMessage}");
+                    Notifier.ShowMakeCredentialError(rpIdUtf8, response.ErrorCode, response.ErrorMessage);
                     return MapErrorCode(response.ErrorCode);
                 }
 
@@ -221,8 +221,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 if (response.ErrorCode != null)
                 {
-                    Log.Warn($"KeePass error code={response.ErrorCode}");
-                    Notifier.ShowGetAssertionError(rpIdUtf8, response.ErrorCode);
+                    Log.Warn($"KeePass error code={response.ErrorCode}, message={response.ErrorMessage}");
+                    Notifier.ShowGetAssertionError(rpIdUtf8, response.ErrorCode, response.ErrorMessage);
                     return MapErrorCode(response.ErrorCode);
                 }
 

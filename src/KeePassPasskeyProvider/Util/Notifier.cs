@@ -9,23 +9,27 @@ internal static class Notifier
 {
     private static readonly bool _enabled = AppSettings.Current.ShowErrorNotifications;
 
-    public static void ShowMakeCredentialError(string rpId, PipeErrorCode? code) =>
-        ShowError("Passkey creation failed", ErrorBody(code, rpId));
+    public static void ShowMakeCredentialError(string rpId, PipeErrorCode? code, string? errorMessage = null) =>
+        ShowError("Passkey creation failed", ErrorBody(code, rpId, errorMessage));
 
-    public static void ShowGetAssertionError(string rpId, PipeErrorCode? code) =>
-        ShowError("Sign-in failed", ErrorBody(code, rpId));
+    public static void ShowGetAssertionError(string rpId, PipeErrorCode? code, string? errorMessage = null) =>
+        ShowError("Sign-in failed", ErrorBody(code, rpId, errorMessage));
 
     public static void ShowPipeError(string operation) =>
         ShowError($"{operation} failed", "KeePass is not running or the database is locked.");
 
-    private static string ErrorBody(PipeErrorCode? code, string rpId) => code switch
+    private static string ErrorBody(PipeErrorCode? code, string rpId, string? errorMessage)
     {
-        PipeErrorCode.DbLocked    => "The KeePass database is locked. Please unlock KeePass and try again.",
-        PipeErrorCode.Duplicate   => $"A passkey for {rpId} already exists.",
-        PipeErrorCode.NotFound    => $"No passkey found for {rpId}.",
-        PipeErrorCode.InternalError => "An internal error occurred in KeePass.",
-        _                         => "An unexpected error occurred.",
-    };
+        var detail = string.IsNullOrWhiteSpace(errorMessage) ? "" : $"\n{errorMessage}";
+        return code switch
+        {
+            PipeErrorCode.DbLocked      => "The KeePass database is locked. Please unlock KeePass and try again.",
+            PipeErrorCode.Duplicate     => $"A passkey for {rpId} already exists.",
+            PipeErrorCode.NotFound      => $"No passkey found for {rpId}.",
+            PipeErrorCode.InternalError => "An internal error occurred in KeePass:" + detail,
+            _                           => "An unexpected error occurred:" + detail,
+        };
+    }
 
     private static void ShowError(string title, string body)
     {
