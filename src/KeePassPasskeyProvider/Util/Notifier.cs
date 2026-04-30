@@ -1,5 +1,4 @@
-using Windows.Data.Xml.Dom;
-using Windows.UI.Notifications;
+using Microsoft.Toolkit.Uwp.Notifications;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 
@@ -36,31 +35,14 @@ internal static class Notifier
         if (!_enabled) return;
         try
         {
-            var xml = $"""
-                <toast>
-                  <visual>
-                    <binding template="ToastGeneric">
-                      <text>{Escape(title)}</text>
-                      <text>{Escape(body)}</text>
-                    </binding>
-                  </visual>
-                </toast>
-                """;
-
-            var doc = new XmlDocument();
-            doc.LoadXml(xml);
-            var notification = new ToastNotification(doc)
-            {
-                ExpirationTime = DateTimeOffset.Now.AddSeconds(30)
-            };
-            ToastNotificationManager.CreateToastNotifier().Show(notification);
+            new ToastContentBuilder()
+                .AddText(title)
+                .AddText(body)
+                .Show(toast => toast.ExpirationTime = DateTimeOffset.Now.AddSeconds(30));
         }
         catch (Exception ex)
         {
             Log.Warn($"toast failed: {ex.Message}");
         }
     }
-
-    private static string Escape(string s) =>
-        s.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 }
