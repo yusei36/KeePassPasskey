@@ -139,24 +139,35 @@ namespace KeePassPasskey.Storage
                 {
                     if (!IsSearchable(entry)) continue;
                     if (entry.Strings.Exists(FieldCredentialId) && entry.Strings.Exists(FieldRelyingParty))
-                        results.Add(ExtractCredential(entry));
+                        results.Add(ExtractCredentialMetadata(entry));
                 }
             }
             return results;
+        }
+
+        // Returns only public metadata — no private key material. Used for listing credentials.
+        private static PasskeyCredential ExtractCredentialMetadata(PwEntry entry)
+        {
+            return new PasskeyCredential
+            {
+                CredentialId = entry.Strings.ReadSafe(FieldCredentialId),
+                RelyingParty = entry.Strings.ReadSafe(FieldRelyingParty),
+                UserHandle = entry.Strings.ReadSafe(FieldUserHandle),
+                Username = entry.Strings.ReadSafe(FieldUsername),
+                Title = entry.Strings.ReadSafe(PwDefs.TitleField),
+            };
         }
 
         internal PasskeyCredential ExtractCredential(PwEntry entry)
         {
             var pem = entry.Strings.ReadSafe(FieldPrivateKey);
 
-            // DetectAlgorithm is best-effort for listing/caching — Sign() does its own detection.
-            // A bad PEM on one entry must not abort the whole GetAllCredentials loop.
             PasskeyAlgorithm algorithm = PasskeyAlgorithm.ES256;
             if (!string.IsNullOrEmpty(pem))
             {
                 try { algorithm = PasskeyKeyHelper.DetectAlgorithm(pem); }
-                catch (CryptographicException ex) 
-                { 
+                catch (CryptographicException ex)
+                {
                     Log.Warn($"Failed to detect passkey algorithm for entry '{entry.Strings.ReadSafe(PwDefs.TitleField)}': {ex.Message}");
                 }
             }
