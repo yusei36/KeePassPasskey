@@ -1,7 +1,7 @@
-﻿using System.Formats.Cbor;
 using Microsoft.Win32;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskey.Shared;
+using PeterO.Cbor;
 
 namespace KeePassPasskeyProvider.Plugin;
 
@@ -43,9 +43,9 @@ internal static unsafe class PluginRegistration
 
             WebAuthnPluginAddAuthenticatorResponse* pResponse = null;
             int hr = WebAuthnPluginApi.WebAuthNPluginAddAuthenticator(&options, &pResponse);
-            if (hr < 0) 
-            { 
-                Log.Error($"WebAuthNPluginAddAuthenticator failed hr=0x{hr:X8}"); 
+            if (hr < 0)
+            {
+                Log.Error($"WebAuthNPluginAddAuthenticator failed hr=0x{hr:X8}");
                 return hr;
             }
             Log.Info($"WebAuthNPluginAddAuthenticator hr=0x{hr:X8}");
@@ -93,62 +93,40 @@ internal static unsafe class PluginRegistration
         return hr;
     }
 
-
     /// <summary>
     /// Builds the CTAP2 authenticatorGetInfo CBOR blob.
     /// Format: {1: ["FIDO_2_0", "FIDO_2_1"], 2: ["prf", "hmac-secret"],
     ///          3: h'AAGUID', 4: {rk:true,up:true,uv:true},
-    ///          9: ["internal"], 10: [{alg:-7,type:"public-key"}]}
+    ///          9: ["internal"], 10: [{alg:-7,type:"public-key"},{alg:-8,...},{alg:-257,...}]}
+    /// Keys sorted per CTAP2 canonical ordering.
     /// </summary>
     private static byte[] BuildAuthenticatorInfoCbor()
     {
-        ReadOnlySpan<byte> aaguid = PluginConstants.KeePassPasskeyProviderAaguidBytes;
-        var writer = new CborWriter(CborConformanceMode.Canonical, convertIndefiniteLengthEncodings: true);
+        var encodeOptions = new CBOREncodeOptions("ctap2canonical=true");
+        var info = CBORObject.NewMap();
 
-        writer.WriteStartMap(6); // map with 6 entries
+        // 1: versions
+        info.Add(1, CBORObject.NewArray().Add("FIDO_2_0").Add("FIDO_2_1"));
 
-        // 1: versions ["FIDO_2_0", "FIDO_2_1"]
-        writer.WriteInt32(1);
-        writer.WriteStartArray(2);
-        writer.WriteTextString("FIDO_2_0");
-        writer.WriteTextString("FIDO_2_1");
-        writer.WriteEndArray();
-
-        // 2: extensions ["prf", "hmac-secret"]
-        writer.WriteInt32(2);
-        writer.WriteStartArray(2);
-        writer.WriteTextString("prf");
-        writer.WriteTextString("hmac-secret");
-        writer.WriteEndArray();
+        // 2: extensions
+        info.Add(2, CBORObject.NewArray().Add("prf").Add("hmac-secret"));
 
         // 3: aaguid (16-byte bstr)
-        writer.WriteInt32(3);
-        writer.WriteByteString(aaguid);
+        info.Add(3, PluginConstants.KeePassPasskeyProviderAaguidBytes);
 
         // 4: options {rk:true, up:true, uv:true}
-        writer.WriteInt32(4);
-        writer.WriteStartMap(3);
-        writer.WriteTextString("rk"); writer.WriteBoolean(true);
-        writer.WriteTextString("up"); writer.WriteBoolean(true);
-        writer.WriteTextString("uv"); writer.WriteBoolean(true);
-        writer.WriteEndMap();
+        info.Add(4, CBORObject.NewMap().Add("rk", true).Add("up", true).Add("uv", true));
 
-        // 9: transports ["internal"]
-        writer.WriteInt32(9);
-        writer.WriteStartArray(1);
-        writer.WriteTextString("internal");
-        writer.WriteEndArray();
+        // 9: transports
+        info.Add(9, CBORObject.NewArray().Add("internal"));
 
-        // 10: algorithms [{alg:-7, type:"public-key"}]
-        writer.WriteInt32(10);
-        writer.WriteStartArray(1);
-        writer.WriteStartMap(2);
-        writer.WriteTextString("alg"); writer.WriteInt32(-7);
-        writer.WriteTextString("type"); writer.WriteTextString("public-key");
-        writer.WriteEndMap();
-        writer.WriteEndArray();
+        // 10: algorithms — ES256, EdDSA, RS256
+        var algorithms = CBORObject.NewArray();
+        algorithms.Add(CBORObject.NewMap().Add("alg", -7).Add("type", "public-key"));
+        algorithms.Add(CBORObject.NewMap().Add("alg", -8).Add("type", "public-key"));
+        algorithms.Add(CBORObject.NewMap().Add("alg", -257).Add("type", "public-key"));
+        info.Add(10, algorithms);
 
-        writer.WriteEndMap();
-        return writer.Encode();
+        return info.EncodeToBytes(encodeOptions);
     }
 }

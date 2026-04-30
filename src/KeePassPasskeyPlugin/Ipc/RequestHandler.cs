@@ -1,6 +1,7 @@
 using KeePass.Plugins;
 using KeePassPasskey.Shared;
 using KeePassPasskey.Shared.Ipc;
+using KeePassPasskey.Shared.Passkey;
 using KeePassPasskey.Passkey;
 using KeePassPasskey.Storage;
 using Newtonsoft.Json;
@@ -12,6 +13,9 @@ namespace KeePassPasskey.Ipc
 {
     internal sealed class RequestHandler
     {
+        private static readonly PasskeyAlgorithm[] SupportedAlgorithmsByPriority =
+            { PasskeyAlgorithm.ES256, PasskeyAlgorithm.EdDSA, PasskeyAlgorithm.RS256 };
+
         private readonly IPluginHost _host;
         private readonly PasskeyEntryStorage _storage;
 
@@ -30,25 +34,25 @@ namespace KeePassPasskey.Ipc
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage ="Failed to parse request: " + ex.Message });
+                return JsonConvert.SerializeObject(new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to parse request: " + ex.Message });
             }
 
             try
             {
                 PipeResponseBase response = req switch
                 {
-                    PingRequest r            => HandlePing(r),
-                    GetCredentialsRequest r  => HandleGetCredentials(r),
-                    MakeCredentialRequest r  => HandleMakeCredential(r),
-                    GetAssertionRequest r    => HandleGetAssertion(r),
-                    CancelRequest r          => HandleCancel(r),
-                    _ => new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage ="Unknown request type: " + req.Type }
+                    PingRequest r           => HandlePing(r),
+                    GetCredentialsRequest r => HandleGetCredentials(r),
+                    MakeCredentialRequest r => HandleMakeCredential(r),
+                    GetAssertionRequest r   => HandleGetAssertion(r),
+                    CancelRequest r         => HandleCancel(r),
+                    _ => new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Unknown request type: " + req.Type }
                 };
                 return JsonConvert.SerializeObject(response);
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage =ex.Message });
+                return JsonConvert.SerializeObject(new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = ex.Message });
             }
         }
 
@@ -63,7 +67,7 @@ namespace KeePassPasskey.Ipc
         private GetCredentialsResponse HandleGetCredentials(GetCredentialsRequest req)
         {
             if (!IsDatabaseOpen())
-                return new GetCredentialsResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage ="No database open" };
+                return new GetCredentialsResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage = "No database open" };
 
             var all = _storage.GetAllCredentials();
             var infos = new List<CredentialInfo>(all.Count);
@@ -91,23 +95,27 @@ namespace KeePassPasskey.Ipc
         private MakeCredentialResponse HandleMakeCredential(MakeCredentialRequest req)
         {
             if (!IsDatabaseOpen())
-                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage ="No database open" };
+                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage = "No database open" };
 
             if (string.IsNullOrEmpty(req.RpId))
-                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage ="rpId is required" };
+                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "rpId is required" };
 
-            // KeePassXC-style excludeCredentials handling: reject registration only
-            // when one of the excluded credential IDs already exists for this RP.
+            // KeePassXC-style excludeCredentials: reject if any excluded credential exists for this RP
             if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
             {
                 var existingCredentials = _storage.FindByRpIdAndCredentialIds(req.RpId, req.ExcludeCredentials);
                 if (existingCredentials.Count > 0)
-                    return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage ="Credential already exists for this RP" };
+                    return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
             }
 
-            // Generate EC P-256 key pair
-            byte[] x, y, d;
-            EcKeyHelper.GenerateKeyPair(out x, out y, out d);
+            // Algorithm selection: ES256 > EdDSA > RS256, intersected with RP preference
+            var chosenAlg = SelectAlgorithm(req.PubKeyCredParams);
+            if (chosenAlg == null)
+                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.UnsupportedAlgorithm, ErrorMessage = "No supported algorithm in pubKeyCredParams" };
+
+            // Generate key pair and COSE key
+            var (pem, pubComponents) = PasskeyKeyHelper.GenerateKeyPair(chosenAlg.Value);
+            var coseKeyBytes = PasskeyKeyHelper.BuildCoseKey(chosenAlg.Value, pubComponents);
 
             // Generate 32-byte random credential ID
             var credentialIdBytes = new byte[32];
@@ -115,10 +123,6 @@ namespace KeePassPasskey.Ipc
                 rng.GetBytes(credentialIdBytes);
             var credentialId = Base64Url.Encode(credentialIdBytes);
 
-            // Export private key as PEM (includes public key)
-            var pem = EcKeyHelper.ExportPrivateKeyPem(d, x, y);
-
-            // Create KeePass entry
             var credential = new PasskeyCredential
             {
                 CredentialId = credentialId,
@@ -131,26 +135,25 @@ namespace KeePassPasskey.Ipc
             };
 
             if (!_storage.CreatePasskeyEntry(credential))
-                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage ="Failed to create KeePass entry" };
+                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to create KeePass entry" };
 
             return new MakeCredentialResponse
             {
                 CredentialId = credentialId,
-                PublicKeyX = Convert.ToBase64String(x),
-                PublicKeyY = Convert.ToBase64String(y),
+                CoseKey = Base64Url.Encode(coseKeyBytes),
             };
         }
 
         private GetAssertionResponse HandleGetAssertion(GetAssertionRequest req)
         {
             if (!IsDatabaseOpen())
-                return new GetAssertionResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage ="No database open" };
+                return new GetAssertionResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage = "No database open" };
 
             if (string.IsNullOrEmpty(req.RpId))
-                return new GetAssertionResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage ="rpId is required" };
+                return new GetAssertionResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "rpId is required" };
 
             if (string.IsNullOrEmpty(req.ClientDataHash))
-                return new GetAssertionResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage ="clientDataHash is required" };
+                return new GetAssertionResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "clientDataHash is required" };
 
             // Find matching credential
             List<PasskeyCredential> candidates;
@@ -160,22 +163,19 @@ namespace KeePassPasskey.Ipc
                 candidates = _storage.FindByRpId(req.RpId);
 
             if (candidates.Count == 0)
-                return new GetAssertionResponse { ErrorCode = PipeErrorCode.NotFound, ErrorMessage ="No matching credential found for rpId: " + req.RpId };
+                return new GetAssertionResponse { ErrorCode = PipeErrorCode.NotFound, ErrorMessage = "No matching credential found for rpId: " + req.RpId };
 
-            // Use first matching credential (platform handles multi-credential selection via autofill UI)
             var credential = candidates[0];
 
-            // Build authenticator data (sign count = 0, not incremented per KeePassXC behavior)
             var authData = AuthenticatorData.BuildForAuthentication(req.RpId, 0);
 
-            // Concatenate authData + clientDataHash for signing
             var clientDataHashBytes = Convert.FromBase64String(req.ClientDataHash);
             var dataToSign = new byte[authData.Length + clientDataHashBytes.Length];
             Array.Copy(authData, 0, dataToSign, 0, authData.Length);
             Array.Copy(clientDataHashBytes, 0, dataToSign, authData.Length, clientDataHashBytes.Length);
-
-            // Sign with private key (returns DER-encoded signature)
-            var signature = EcKeyHelper.Sign(credential.PrivateKeyPem, dataToSign);
+            
+            // Sign with private key
+            var signature = PasskeyKeyHelper.Sign(credential.PrivateKeyPem, dataToSign);
 
             return new GetAssertionResponse
             {
@@ -198,6 +198,20 @@ namespace KeePassPasskey.Ipc
             foreach (var doc in _host.MainWindow.DocumentManager.Documents)
                 if (doc.Database != null && doc.Database.IsOpen) return true;
             return _host.Database != null && _host.Database.IsOpen;
+        }
+
+        private static PasskeyAlgorithm? SelectAlgorithm(List<int> pubKeyCredParams)
+        {
+            if (pubKeyCredParams == null || pubKeyCredParams.Count == 0)
+                return PasskeyAlgorithm.ES256;
+
+            var requested = new HashSet<int>(pubKeyCredParams);
+            foreach (var alg in SupportedAlgorithmsByPriority)
+            {
+                if (requested.Contains((int)alg))
+                    return alg;
+            }
+            return null;
         }
     }
 }

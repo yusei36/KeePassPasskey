@@ -56,6 +56,9 @@ namespace KeePassPasskey.Shared.Ipc
 
         [JsonProperty("excludeCredentials", NullValueHandling = NullValueHandling.Ignore)]
         public List<string> ExcludeCredentials { get; set; }
+
+        [JsonProperty("pubKeyCredParams", NullValueHandling = NullValueHandling.Ignore)]
+        public List<int> PubKeyCredParams { get; set; }
     }
 
     public sealed class GetAssertionRequest : PipeRequestBase
@@ -92,7 +95,8 @@ namespace KeePassPasskey.Shared.Ipc
         DbLocked,
         Duplicate,
         NotFound,
-        InternalError
+        InternalError,
+        UnsupportedAlgorithm,
     }
 
     [JsonConverter(typeof(PipeResponseConverter))]
@@ -134,11 +138,8 @@ namespace KeePassPasskey.Shared.Ipc
         [JsonProperty("credentialId")]
         public string CredentialId { get; set; }
 
-        [JsonProperty("publicKeyX")]
-        public string PublicKeyX { get; set; }
-
-        [JsonProperty("publicKeyY")]
-        public string PublicKeyY { get; set; }
+        [JsonProperty("coseKey", NullValueHandling = NullValueHandling.Ignore)]
+        public string CoseKey { get; set; }
     }
 
     public sealed class GetAssertionResponse : PipeResponseBase

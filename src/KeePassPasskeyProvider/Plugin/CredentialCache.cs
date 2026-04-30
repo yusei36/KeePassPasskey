@@ -124,6 +124,11 @@ internal static unsafe class CredentialCache
             Log.Info("KeePass unavailable or error, skipping sync");
             return false;
         }
+        if (response.ErrorCode != null)
+        {
+            Log.Warn($"GetCredentials returned error={response.ErrorCode}, skipping sync");
+            return false;
+        }
 
         // 2. Parse credential list
         var kpCredentials = ParseKeePassCredentials(response.Credentials);

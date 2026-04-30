@@ -89,6 +89,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     rpNameStr = new string(pDecoded->pRpInformation->pwszName);
 
                 var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
+                var pubKeyCredParams = ExtractPubKeyCredParams(pDecoded->WebAuthNCredentialParameters);
 
                 var request = new MakeCredentialRequest
                 {
@@ -98,6 +99,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     UserName = userNameStr,
                     UserDisplayName = userDisplayStr,
                     ExcludeCredentials = excludeList,
+                    PubKeyCredParams = pubKeyCredParams.Count > 0 ? pubKeyCredParams : null,
                 };
 
                 // 4. Send to KeePass plugin
@@ -119,9 +121,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 // 5. Build authenticatorData and encode attestation response
                 var credentialIdBytes = Base64Url.Decode(response.CredentialId!);
-                var ecX = Convert.FromBase64String(response.PublicKeyX!);
-                var ecY = Convert.FromBase64String(response.PublicKeyY!);
-                var authData = AuthenticatorData.BuildForRegistration(rpIdUtf8, PluginConstants.KeePassPasskeyProviderAaguidBytes, credentialIdBytes, ecX, ecY);
+                var coseKeyBytes = Base64Url.Decode(response.CoseKey!);
+                var authData = AuthenticatorData.BuildForRegistration(rpIdUtf8, PluginConstants.KeePassPasskeyProviderAaguidBytes, credentialIdBytes, coseKeyBytes);
                 int hrEnc = EncodeAttestation(authData, out uint cbEncoded, out byte* pbEncoded);
                 Log.Info($"WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                 if (hrEnc < 0) return hrEnc;
@@ -370,6 +371,17 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     }
 
     /// <summary>
+    /// Extracts COSE algorithm IDs from the RP's pubKeyCredParams list.
+    /// </summary>
+    private static unsafe List<int> ExtractPubKeyCredParams(WebAuthnCoseCredentialParameters credParams)
+    {
+        var algs = new List<int>((int)credParams.cCredentialParameters);
+        for (uint i = 0; i < credParams.cCredentialParameters; i++)
+            algs.Add(credParams.pCredentialParameters[i].lAlg);
+        return algs;
+    }
+
+    /// <summary>
     /// Maps error codes from the KeePass plugin response to Windows HRESULTs.
     /// Used by both MakeCredential and GetAssertion.
     /// </summary>
@@ -378,6 +390,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         PipeErrorCode.DbLocked => HResults.E_FAIL,
         PipeErrorCode.Duplicate => HResults.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
         PipeErrorCode.NotFound => HResults.NTE_NOT_FOUND,
+        PipeErrorCode.UnsupportedAlgorithm => HResults.E_FAIL,
         _ => HResults.E_FAIL,
     };
 

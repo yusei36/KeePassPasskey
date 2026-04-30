@@ -11,10 +11,8 @@ namespace KeePassPasskey.Shared
         // Flags: UP(0x01) | UV(0x04) | BE(0x08) | BS(0x10) = 0x1D
         private const byte AuthenticationFlags = 0x1D;
 
-        public static byte[] BuildForRegistration(string rpId, byte[] aaguid, byte[] credentialId, byte[] ecX, byte[] ecY)
+        public static byte[] BuildForRegistration(string rpId, byte[] aaguid, byte[] credentialId, byte[] coseKey)
         {
-            byte[] coseKey = BuildCoseEs256Key(ecX, ecY);
-
             using (var ms = new MemoryStream())
             {
                 WriteRpIdHash(ms, rpId);
@@ -38,19 +36,6 @@ namespace KeePassPasskey.Shared
                 WriteUInt32BE(ms, signCount);
                 return ms.ToArray();
             }
-        }
-
-        private static byte[] BuildCoseEs256Key(byte[] x, byte[] y)
-        {
-            // COSE Key: {1: 2, 3: -7, -1: 1, -2: x, -3: y}
-            var cbor = new CborWriter();
-            cbor.WriteMapStart(5);
-            cbor.WriteUnsignedInt(1); cbor.WriteUnsignedInt(2);
-            cbor.WriteUnsignedInt(3); cbor.WriteNegativeInt(-7);
-            cbor.WriteNegativeInt(-1); cbor.WriteUnsignedInt(1);
-            cbor.WriteNegativeInt(-2); cbor.WriteByteString(x);
-            cbor.WriteNegativeInt(-3); cbor.WriteByteString(y);
-            return cbor.ToArray();
         }
 
         private static void WriteRpIdHash(MemoryStream ms, string rpId)

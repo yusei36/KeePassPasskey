@@ -1,4 +1,6 @@
-﻿namespace KeePassPasskey.Passkey
+using KeePassPasskey.Shared.Passkey;
+
+namespace KeePassPasskey.Passkey
 {
     internal sealed class PasskeyCredential
     {
@@ -10,5 +12,6 @@
         internal string Title { get; set; }
         internal string RpName { get; set; }
         internal string Origin { get; set; }
+        internal PasskeyAlgorithm Algorithm { get; set; }
     }
 }

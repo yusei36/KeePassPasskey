@@ -2,9 +2,12 @@
 using KeePassLib;
 using KeePassLib.Security;
 using KeePassPasskey.Passkey;
+using KeePassPasskey.Shared;
+using KeePassPasskey.Shared.Passkey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace KeePassPasskey.Storage
@@ -143,14 +146,29 @@ namespace KeePassPasskey.Storage
 
         internal PasskeyCredential ExtractCredential(PwEntry entry)
         {
+            var pem = entry.Strings.ReadSafe(FieldPrivateKey);
+
+            // DetectAlgorithm is best-effort for listing/caching — Sign() does its own detection.
+            // A bad PEM on one entry must not abort the whole GetAllCredentials loop.
+            PasskeyAlgorithm algorithm = PasskeyAlgorithm.ES256;
+            if (!string.IsNullOrEmpty(pem))
+            {
+                try { algorithm = PasskeyKeyHelper.DetectAlgorithm(pem); }
+                catch (CryptographicException ex) 
+                { 
+                    Log.Warn($"Failed to detect passkey algorithm for entry '{entry.Strings.ReadSafe(PwDefs.TitleField)}': {ex.Message}");
+                }
+            }
+
             return new PasskeyCredential
             {
                 CredentialId = entry.Strings.ReadSafe(FieldCredentialId),
-                PrivateKeyPem = entry.Strings.ReadSafe(FieldPrivateKey),
+                PrivateKeyPem = pem,
                 RelyingParty = entry.Strings.ReadSafe(FieldRelyingParty),
                 UserHandle = entry.Strings.ReadSafe(FieldUserHandle),
                 Username = entry.Strings.ReadSafe(FieldUsername),
                 Title = entry.Strings.ReadSafe(PwDefs.TitleField),
+                Algorithm = algorithm,
             };
         }
 
