@@ -111,6 +111,26 @@ namespace KeePassPasskey.Storage
             return results;
         }
 
+        internal bool HasAnyExcludeCredentialForRpId(string rpId, List<string> credentialIds)
+        {
+            var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
+            foreach (var db in GetSearchDatabases())
+            {
+                foreach (var entry in db.RootGroup.GetEntries(true))
+                {
+                    if (!IsSearchable(entry)) continue;
+                    if (!entry.Strings.Exists(FieldCredentialId)) continue;
+                    var entryCredId = entry.Strings.ReadSafe(FieldCredentialId);
+                    if (!credIdSet.Contains(entryCredId)) continue;
+                    if (!entry.Strings.Exists(FieldRelyingParty)) continue;
+                    var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
+                    if (string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         internal bool HasCredentialForRpId(string rpId, string credentialIdBase64Url)
         {
             foreach (var db in GetSearchDatabases())

@@ -103,8 +103,7 @@ namespace KeePassPasskey.Ipc
             // KeePassXC-style excludeCredentials: reject if any excluded credential exists for this RP
             if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
             {
-                var existingCredentials = _storage.FindByRpIdAndCredentialIds(req.RpId, req.ExcludeCredentials);
-                if (existingCredentials.Count > 0)
+                if (_storage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials))
                     return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
             }
 
