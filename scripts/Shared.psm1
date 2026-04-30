@@ -170,9 +170,12 @@ function Invoke-GenerateLicenseNotices {
         & dotnet tool install --global nuget-license --verbosity quiet
         if ($LASTEXITCODE -ne 0) { throw "Failed to install nuget-license" }
     }
-    $projects = Get-ChildItem -Path "$RepoRoot\src" -Filter '*.csproj' -Recurse | Select-Object -ExpandProperty FullName
 
-    $result = [System.Collections.Generic.List[string]]::new()
+    $projects = Get-ChildItem -Path "$RepoRoot\src" -Filter '*.csproj' -Recurse |
+                       Select-Object -ExpandProperty FullName
+
+    $result   = [System.Collections.Generic.List[string]]::new()
+    $seenPkgs = @{}
 
     foreach ($proj in $projects) {
         $projName  = [IO.Path]::GetFileNameWithoutExtension($proj)
@@ -186,6 +189,43 @@ function Invoke-GenerateLicenseNotices {
             $result.Add('  (no third-party packages)')
         } else {
             foreach ($line in $dataLines) { $result.Add([string]$line) }
+        }
+
+        $jsonLines = & nuget-license -i $proj --include-transitive -o Json
+        if ($LASTEXITCODE -ne 0) { throw "nuget-license JSON pass failed for $(Split-Path $proj -Leaf)" }
+        ($jsonLines | ConvertFrom-Json) | ForEach-Object {
+            $key = "$($_.PackageId)_$($_.PackageVersion)"
+            if (-not $seenPkgs.ContainsKey($key)) { $seenPkgs[$key] = $_ }
+        }
+    }
+
+    # SPDX-identified packages grouped by expression, text fetched from the SPDX data repository
+    $byLicense = $seenPkgs.Values |
+                 Where-Object { $_.License } |
+                 Group-Object License |
+                 Sort-Object Name
+
+    $result.Add('')
+    $result.Add('---')
+    $result.Add('# License Texts')
+
+    foreach ($group in $byLicense) {
+        $expression = $group.Name
+        $pkgs       = $group.Group | Sort-Object PackageId
+
+        $result.Add('')
+        $result.Add("## $expression")
+        $result.Add('')
+        $result.Add('Packages:')
+        foreach ($pkg in $pkgs) { $result.Add("  $($pkg.PackageId) $($pkg.PackageVersion)") }
+        $result.Add('')
+
+        $spdxUrl = "https://raw.githubusercontent.com/spdx/license-list-data/main/text/$expression.txt"
+        try {
+            $licText = (Invoke-WebRequest -Uri $spdxUrl -UseBasicParsing -ErrorAction Stop).Content
+            foreach ($line in ($licText -split '\r?\n')) { $result.Add($line) }
+        } catch {
+            $result.Add("[License text unavailable. See: $spdxUrl]")
         }
     }
 
