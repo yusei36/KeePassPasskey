@@ -57,7 +57,6 @@ Browser → Windows → KeePassPasskeyProvider.exe (COM, MSIX)
 | KeePass.exe | Place at `build\KeePass\KeePass.exe` |
 
 ```powershell
-# Copy KeePass.exe into the build tree (not shipped with this repo)
 Copy-Item "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\
 ```
 
