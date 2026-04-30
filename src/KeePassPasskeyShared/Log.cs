@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace KeePassPasskey.Shared
+namespace KeePassPasskeyShared
 {
     /// <summary>
     /// Appends timestamped lines to a log file.

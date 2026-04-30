@@ -1,4 +1,4 @@
-namespace KeePassPasskey.Shared.Passkey
+namespace KeePassPasskeyShared.Passkey
 {
     public enum PasskeyAlgorithm
     {

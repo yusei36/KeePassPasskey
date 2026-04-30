@@ -1,4 +1,4 @@
-using KeePassPasskey.Shared;
+using KeePassPasskeyShared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

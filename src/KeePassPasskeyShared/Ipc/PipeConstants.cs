@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace KeePassPasskey.Shared.Ipc
+namespace KeePassPasskeyShared.Ipc
 {
     public static class PipeConstants
     {

@@ -2,8 +2,8 @@
 using KeePassLib;
 using KeePassLib.Security;
 using KeePassPasskey.Passkey;
-using KeePassPasskey.Shared;
-using KeePassPasskey.Shared.Passkey;
+using KeePassPasskeyShared;
+using KeePassPasskeyShared.Passkey;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -7,8 +7,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using KeePassPasskey.Shared;
-using KeePassPasskey.Shared.Ipc;
+using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
@@ -25,7 +25,7 @@ internal sealed partial class DiagnosticsViewModel : ObservableObject
     public string ServerVersionShort => ServerVersion != null ? ShortenVersion(ServerVersion) : "";
     public bool IsServerVersionAvailable => ServerVersion != null;
     public bool IsServerVersionNotAvailable => ServerVersion is null;
-    public bool IsVersionMismatch => PingStatus == KeePassPasskey.Shared.Ipc.PingStatus.IncompatibleVersion;
+    public bool IsVersionMismatch => PingStatus == KeePassPasskeyShared.Ipc.PingStatus.IncompatibleVersion;
 
     public static string ClientVersion     => _appVersion;
     public static string ClientVersionShort => ShortenVersion(_appVersion);

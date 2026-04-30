@@ -3,8 +3,8 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
-using KeePassPasskey.Shared;
-using KeePassPasskey.Shared.Ipc;
+using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskey.Ipc
 {

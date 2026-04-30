@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KeePassPasskey.Shared\KeePassPasskey.Shared.csproj" />
+    <ProjectReference Include="..\KeePassPasskeyShared\KeePassPasskeyShared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

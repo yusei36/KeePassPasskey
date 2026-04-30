@@ -114,7 +114,7 @@ Credentials created here can be read by KeePassXC and vice versa. Three algorith
 
 ```
 src/
-  KeePassPasskey.Shared/        IPC protocol definitions, Base64URL helpers
+  KeePassPasskeyShared/         IPC protocol definitions and shared helpers
   KeePassPasskeyProvider/       COM server (.NET 10, x64)
   KeePassPasskeyPlugin/         KeePass plugin (.NET Framework 4.8)
   KeePassPasskeyProvider.Package/  MSIX packaging (wapproj)

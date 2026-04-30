@@ -2,7 +2,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace KeePassPasskey.Shared
+namespace KeePassPasskeyShared
 {
     public static class AuthenticatorData
     {

@@ -1,6 +1,6 @@
 using KeePass.Plugins;
 using KeePassPasskey.Ipc;
-using KeePassPasskey.Shared;
+using KeePassPasskeyShared;
 using KeePassPasskey.Storage;
 using System;
 using System.Drawing;

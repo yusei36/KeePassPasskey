@@ -1,6 +1,6 @@
 using System;
 
-namespace KeePassPasskey.Shared
+namespace KeePassPasskeyShared
 {
     public static class Base64Url
     {

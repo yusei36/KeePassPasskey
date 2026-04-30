@@ -1,4 +1,4 @@
-using KeePassPasskey.Shared.Passkey;
+using KeePassPasskeyShared.Passkey;
 
 namespace KeePassPasskey.Passkey
 {

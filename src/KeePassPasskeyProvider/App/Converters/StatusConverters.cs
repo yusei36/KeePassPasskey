@@ -1,6 +1,6 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
-using KeePassPasskey.Shared.Ipc;
+using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.App.ViewModel;
 
 namespace KeePassPasskeyProvider.App.Converters;

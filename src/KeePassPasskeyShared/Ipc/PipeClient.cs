@@ -4,7 +4,7 @@ using System.IO.Pipes;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace KeePassPasskey.Shared.Ipc
+namespace KeePassPasskeyShared.Ipc
 {
     /// <summary>
     /// Synchronous named-pipe client for the KeePass passkey plugin IPC protocol.

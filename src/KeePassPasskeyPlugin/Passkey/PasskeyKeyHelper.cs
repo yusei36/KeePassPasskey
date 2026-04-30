@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using KeePassPasskey.Shared.Passkey;
+using KeePassPasskeyShared.Passkey;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.EdEC;
 using Org.BouncyCastle.Asn1.Nist;

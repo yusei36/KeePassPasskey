@@ -5,7 +5,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace KeePassPasskey.Shared.Ipc
+namespace KeePassPasskeyShared.Ipc
 {
     // All messages use length-prefixed framing: [4-byte LE uint32 length][UTF-8 JSON]
 

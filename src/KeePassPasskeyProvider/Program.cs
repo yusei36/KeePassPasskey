@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
-using KeePassPasskey.Shared;
+using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
 using KeePassPasskeyProvider.Util;

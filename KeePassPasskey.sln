@@ -9,7 +9,7 @@ Project("{C7167F0D-BC9F-4E6A-AF43-B78BC42E4F7E}") = "KeePassPasskeyProvider.Pack
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePassPasskeyProvider", "src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj", "{D4E5F6A7-B8C9-0123-DEF0-123456789ABC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePassPasskey.Shared", "src\KeePassPasskey.Shared\KeePassPasskey.Shared.csproj", "{C2EE0C9A-996A-42B6-A453-5CB5CCE5677F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeePassPasskeyShared", "src\KeePassPasskeyShared\KeePassPasskeyShared.csproj", "{C2EE0C9A-996A-42B6-A453-5CB5CCE5677F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

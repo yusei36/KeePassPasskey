@@ -1,7 +1,7 @@
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using KeePassPasskey.Shared;
-using KeePassPasskey.Shared.Ipc;
+using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.Util;
 

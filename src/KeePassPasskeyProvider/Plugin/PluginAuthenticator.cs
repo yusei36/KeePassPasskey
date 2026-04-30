@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
-using KeePassPasskey.Shared;
+using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Interop;
-using KeePassPasskey.Shared.Ipc;
+using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.Plugin;

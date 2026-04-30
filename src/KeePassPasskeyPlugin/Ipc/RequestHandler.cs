@@ -1,7 +1,7 @@
 using KeePass.Plugins;
-using KeePassPasskey.Shared;
-using KeePassPasskey.Shared.Ipc;
-using KeePassPasskey.Shared.Passkey;
+using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Passkey;
 using KeePassPasskey.Passkey;
 using KeePassPasskey.Storage;
 using Newtonsoft.Json;

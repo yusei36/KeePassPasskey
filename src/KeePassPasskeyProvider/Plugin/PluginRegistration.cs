@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 using KeePassPasskeyProvider.Interop;
-using KeePassPasskey.Shared;
+using KeePassPasskeyShared;
 using PeterO.Cbor;
 
 namespace KeePassPasskeyProvider.Plugin;
