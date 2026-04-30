@@ -1,11 +1,8 @@
 name: Deploy Website
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - version.txt
-      - README.md
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
