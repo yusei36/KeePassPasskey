@@ -35,6 +35,7 @@ namespace KeePassPasskey.Storage
         internal bool CreatePasskeyEntry(PasskeyCredential credential)
         {
             var entry = new PwEntry(true, true);
+            entry.IconId = PwIcon.MultiKeys;
             entry.Strings.Set(PwDefs.TitleField, new ProtectedString(false,
                 string.Format("{0} (Passkey)", credential.RpName ?? credential.RelyingParty)));
             entry.Strings.Set(PwDefs.UserNameField, new ProtectedString(false, credential.Username ?? ""));
@@ -196,7 +197,7 @@ namespace KeePassPasskey.Storage
             var group = root.FindGroup(uuid, true);
             if (group != null) return group;
 
-            group = new PwGroup(false, true, PasskeyGroupName, PwIcon.Folder);
+            group = new PwGroup(false, true, PasskeyGroupName, PwIcon.MultiKeys);
             group.Uuid = uuid;
             root.AddGroup(group, true);
             return group;
