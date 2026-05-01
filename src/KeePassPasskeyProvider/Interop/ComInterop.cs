@@ -1,7 +1,5 @@
 ﻿using KeePassPasskeyProvider.Plugin;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
 
 namespace KeePassPasskeyProvider.Interop;
 
