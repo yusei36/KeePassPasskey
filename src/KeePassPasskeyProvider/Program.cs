@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Plugin;
@@ -25,6 +27,9 @@ internal static class Program
             Path.Combine(AppSettings.ConfigDir, "Provider.log"),
             AppSettings.Current.LogLevel);
 
+        if (IsToastActivation())
+            return 0;
+
         bool isPluginActivated = args.Any(a =>
             string.Equals(a, "-PluginActivated", StringComparison.OrdinalIgnoreCase));
 
@@ -42,6 +47,18 @@ internal static class Program
         Win32Native.AttachConsole(Win32Native.ATTACH_PARENT_PROCESS);
 
         return RunManagementCommand(args);
+    }
+
+    private static bool IsToastActivation()
+    {
+        try
+        {
+            return AppInstance.GetActivatedEventArgs()?.Kind == ActivationKind.ToastNotification;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     /// <summary>

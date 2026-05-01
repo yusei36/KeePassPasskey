@@ -4,6 +4,15 @@ using Newtonsoft.Json.Converters;
 
 namespace KeePassPasskeyProvider.Util;
 
+[Flags]
+public enum UserVerificationMode
+{
+    None         = 0,
+    WindowsHello = 1,
+    Notification = 2,
+    Both         = WindowsHello | Notification,
+}
+
 internal sealed class AppSettings
 {
     internal static readonly string ConfigDir = Path.Combine(
@@ -19,9 +28,13 @@ internal sealed class AppSettings
 
     public bool ShowErrorNotifications { get; init; } = true;
 
-    public bool RequireUserVerificationForRegistration { get; init; } = true;
+    public int NotificationVerificationTimeoutSeconds { get; init; } = 30;
 
-    public bool RequireUserVerificationForSignIn { get; init; } = true;
+    [JsonConverter(typeof(StringEnumConverter))]
+    public UserVerificationMode RegistrationVerification { get; init; } = UserVerificationMode.Notification;
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public UserVerificationMode SignInVerification { get; init; } = UserVerificationMode.Notification;
 
     public static AppSettings Current { get; } = Load();
 
