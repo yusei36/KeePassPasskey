@@ -4,6 +4,7 @@ using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Util;
+using KeePassPasskeyProvider.Plugin.UserVerification;
 
 namespace KeePassPasskeyProvider.Plugin;
 
@@ -77,7 +78,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     rpNameStr = new string(pDecoded->pRpInformation->pwszName);
 
                 // 4. User verification
-                int hrUv = UserVerification.VerifyForRegistration((nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr);
+                int hrUv = UserVerifierDispatcher.VerifyForRegistration((nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr);
                 Log.Info($"UserVerification hr=0x{hrUv:X8}");
                 if (hrUv < 0) return hrUv;
 
@@ -187,7 +188,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 // 4. User verification
                 CredentialCache.LookupWindowsCache(rpIdUtf8, allowList, out string uvUsername, out string uvDisplayHint);
                 Log.Info($"UV cache lookup userName={uvUsername} displayHint={uvDisplayHint}");
-                int hrUv = UserVerification.VerifyForSignIn((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint);
+                int hrUv = UserVerifierDispatcher.VerifyForSignIn((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint);
                 Log.Info($"UserVerification hr=0x{hrUv:X8}");
                 if (hrUv < 0) return hrUv;
 

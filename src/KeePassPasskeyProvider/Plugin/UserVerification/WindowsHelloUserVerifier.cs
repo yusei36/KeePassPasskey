@@ -2,7 +2,7 @@ using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Util;
 using KeePassPasskeyShared;
 
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Plugin.UserVerification;
 
 internal sealed class WindowsHelloUserVerifier : IUserVerifier
 {

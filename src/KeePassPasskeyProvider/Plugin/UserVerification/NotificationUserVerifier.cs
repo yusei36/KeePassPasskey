@@ -3,7 +3,7 @@ using Windows.UI.Notifications;
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Plugin.UserVerification;
 
 internal sealed class NotificationUserVerifier : IUserVerifier
 {

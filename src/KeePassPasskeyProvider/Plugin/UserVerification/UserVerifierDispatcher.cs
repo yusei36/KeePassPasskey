@@ -1,9 +1,9 @@
 using KeePassPasskeyProvider.Interop;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Plugin.UserVerification;
 
-internal static class UserVerification
+internal static class UserVerifierDispatcher
 {
     private static readonly IUserVerifier[] _verifiers =
     [
