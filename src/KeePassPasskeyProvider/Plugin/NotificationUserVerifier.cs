@@ -92,6 +92,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
                 update.Values["statusText"] = $"Cancelling in {remaining}s";
                 notifier.Update(update, tag);
             }
+            notifier.Hide(toast);
+            tcs.TrySetResult(false);
         });
 
         return tcs.Task.GetAwaiter().GetResult();
