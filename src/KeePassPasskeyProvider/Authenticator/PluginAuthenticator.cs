@@ -213,7 +213,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (response.ErrorCode != null)
                 {
                     Log.Warn($"KeePass error code={response.ErrorCode}, message={response.ErrorMessage}");
-                    Notifier.ShowGetAssertionError(rpIdUtf8, response.ErrorCode, response.ErrorMessage);
+                    Notifier.ShowGetAssertionError(rpIdUtf8, uvUsername, response.ErrorCode, response.ErrorMessage);
                     return MapErrorCode(response.ErrorCode);
                 }
 

@@ -11,20 +11,21 @@ internal static class Notifier
     public static void ShowMakeCredentialError(string rpId, PipeErrorCode? code, string? errorMessage = null) =>
         ShowError("Passkey creation failed", ErrorBody(code, rpId, errorMessage));
 
-    public static void ShowGetAssertionError(string rpId, PipeErrorCode? code, string? errorMessage = null) =>
-        ShowError("Sign-in failed", ErrorBody(code, rpId, errorMessage));
+    public static void ShowGetAssertionError(string rpId, string username, PipeErrorCode? code, string? errorMessage = null) =>
+        ShowError("Sign-in failed", ErrorBody(code, rpId, errorMessage, username));
 
     public static void ShowPipeError(string operation) =>
         ShowError($"{operation} failed", "KeePass is not running or the database is locked.");
 
-    private static string ErrorBody(PipeErrorCode? code, string rpId, string? errorMessage)
+    private static string ErrorBody(PipeErrorCode? code, string rpId, string? errorMessage, string username = "")
     {
         var detail = string.IsNullOrWhiteSpace(errorMessage) ? "" : $"\n{errorMessage}";
+        string user = username.Length > 0 ? $" for {username}" : "";
         return code switch
         {
             PipeErrorCode.DbLocked      => "The KeePass database is locked. Please unlock KeePass and try again.",
             PipeErrorCode.Duplicate     => $"A passkey for {rpId} already exists.",
-            PipeErrorCode.NotFound      => $"No passkey found for {rpId}.",
+            PipeErrorCode.NotFound      => $"No passkey found{user} on {rpId}.",
             PipeErrorCode.InternalError => "An internal error occurred in KeePass:" + detail,
             _                           => "An unexpected error occurred:" + detail,
         };
