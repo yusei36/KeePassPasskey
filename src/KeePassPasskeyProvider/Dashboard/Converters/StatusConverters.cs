@@ -1,9 +1,9 @@
-using System.Globalization;
+﻿using System.Globalization;
 using Avalonia.Data.Converters;
 using KeePassPasskeyShared.Ipc;
-using KeePassPasskeyProvider.App.ViewModel;
+using KeePassPasskeyProvider.Dashboard.ViewModel;
 
-namespace KeePassPasskeyProvider.App.Converters;
+namespace KeePassPasskeyProvider.Dashboard.Converters;
 
 internal static class ProviderStatusConverters
 {

@@ -1,6 +1,6 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="KeePassPasskeyProvider.App.Controls.SetupGuide">
+             x:Class="KeePassPasskeyProvider.Dashboard.Controls.SetupGuide">
     <Expander IsExpanded="{Binding IsSetupExpanded, Mode=TwoWay}">
         <Expander.Header>
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">

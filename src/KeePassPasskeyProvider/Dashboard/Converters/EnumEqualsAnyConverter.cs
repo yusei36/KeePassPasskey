@@ -1,7 +1,7 @@
-using System.Globalization;
+﻿using System.Globalization;
 using Avalonia.Data.Converters;
 
-namespace KeePassPasskeyProvider.App.Converters;
+namespace KeePassPasskeyProvider.Dashboard.Converters;
 
 internal sealed class EnumEqualsAnyConverter : IValueConverter
 {

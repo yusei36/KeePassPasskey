@@ -1,10 +1,11 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using KeePassPasskeyProvider.App.ViewModel;
+using KeePassPasskeyProvider.Dashboard;
+using KeePassPasskeyProvider.Dashboard.ViewModel;
 using KeePassPasskeyProvider.Authenticator;
 
-namespace KeePassPasskeyProvider.App;
+namespace KeePassPasskeyProvider;
 
 public class App : Application
 {

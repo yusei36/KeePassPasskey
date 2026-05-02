@@ -1,8 +1,8 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-namespace KeePassPasskeyProvider.App.ViewModel;
+namespace KeePassPasskeyProvider.Dashboard.ViewModel;
 
 internal static class ProviderCommands
 {

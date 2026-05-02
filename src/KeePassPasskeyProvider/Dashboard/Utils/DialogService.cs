@@ -1,9 +1,9 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using FluentAvalonia.UI.Controls;
 using KeePassPasskeyShared;
 
-namespace KeePassPasskeyProvider.App.Utils;
+namespace KeePassPasskeyProvider.Dashboard.Utils;
 
 internal static class DialogService
 {

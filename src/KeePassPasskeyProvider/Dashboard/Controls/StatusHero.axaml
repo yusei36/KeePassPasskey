@@ -1,9 +1,9 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:fa="using:FluentAvalonia.UI.Controls"
-             xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
-             xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
-             x:Class="KeePassPasskeyProvider.App.Controls.StatusHero">
+             xmlns:conv="using:KeePassPasskeyProvider.Dashboard.Converters"
+             xmlns:vm="using:KeePassPasskeyProvider.Dashboard.ViewModel"
+             x:Class="KeePassPasskeyProvider.Dashboard.Controls.StatusHero">
     <UserControl.Styles>
         <!-- Status ring border + background -->
         <Style Selector="Border.ringSuccess">

@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,10 +7,10 @@ using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
-using KeePassPasskeyProvider.App.Utils;
+using KeePassPasskeyProvider.Dashboard.Utils;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.App.ViewModel;
+namespace KeePassPasskeyProvider.Dashboard.ViewModel;
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {

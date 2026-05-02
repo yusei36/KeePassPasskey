@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Avalonia;
@@ -10,7 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 
-namespace KeePassPasskeyProvider.App.ViewModel;
+namespace KeePassPasskeyProvider.Dashboard.ViewModel;
 
 public sealed partial class DiagnosticsViewModel : ObservableObject
 {

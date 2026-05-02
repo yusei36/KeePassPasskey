@@ -1,4 +1,4 @@
-namespace KeePassPasskeyProvider.App.ViewModel;
+﻿namespace KeePassPasskeyProvider.Dashboard.ViewModel;
 
 public enum ProviderStatus
 {

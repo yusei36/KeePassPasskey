@@ -1,10 +1,10 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
-using KeePassPasskeyProvider.App.ViewModel;
+using KeePassPasskeyProvider.Dashboard.ViewModel;
 
-namespace KeePassPasskeyProvider.App.Controls;
+namespace KeePassPasskeyProvider.Dashboard.Controls;
 
 public partial class Diagnostics : UserControl
 {

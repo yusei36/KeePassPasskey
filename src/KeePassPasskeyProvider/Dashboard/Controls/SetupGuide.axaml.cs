@@ -1,6 +1,6 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 
-namespace KeePassPasskeyProvider.App.Controls;
+namespace KeePassPasskeyProvider.Dashboard.Controls;
 
 public partial class SetupGuide : UserControl
 {
