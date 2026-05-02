@@ -62,8 +62,13 @@ if (-not $SkipBuild) {
 
 # ── 1. Locate build artifacts ──────────────────────────────────────────────────
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
+$buildDir = "$RepoRoot\build\$Configuration"
 
-# ── 2. Sign MSIX ───────────────────────────────────────────────────────────────
+# ── 2. Merge plugin DLLs ───────────────────────────────────────────────────────
+Write-Step "Merging plugin DLLs with ILRepack"
+Invoke-ILRepack -BuildDir $buildDir -Configuration $Configuration
+
+# ── 3. Sign MSIX ───────────────────────────────────────────────────────────────
 Write-Step "Checking for signing certificate"
 $cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
 $thumb = $cert.Thumbprint
@@ -71,14 +76,12 @@ $thumb = $cert.Thumbprint
 Write-Step "Signing MSIX"
 Invoke-SignMsix -MsixPath $MsixPath -Thumbprint $thumb
 
-$buildDir = "$RepoRoot\build\$Configuration"
-
 Write-Step "Signing plugin DLLs"
 Get-ChildItem $buildDir -Filter 'KeePassPasskey*.dll' | ForEach-Object {
     Invoke-SignFile -FilePath $_.FullName -Thumbprint $thumb
 }
 
-# ── 3. Assemble zip ────────────────────────────────────────────────────────────
+# ── 4. Assemble zip ────────────────────────────────────────────────────────────
 $versions   = Get-BuildVersions $RepoRoot
 $zipName    = "KeePassPasskey-$($versions.Version).zip"
 $stagingDir = "$RepoRoot\build\publish-staging"

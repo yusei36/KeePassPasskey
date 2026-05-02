@@ -240,7 +240,60 @@ function Get-PluginVersion([string]$BuildDir) {
     return [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dllPath).ProductVersion
 }
 
+function Invoke-ILRepack {
+    param(
+        [string]$BuildDir,
+        [string]$Configuration
+    )
+
+    $toolList = & dotnet tool list --global 2>&1
+    if (-not ($toolList | Select-String 'dotnet-ilrepack')) {
+        Write-Host "  Installing dotnet-ilrepack..."
+        & dotnet tool install --global dotnet-ilrepack --verbosity quiet
+        if ($LASTEXITCODE -ne 0) { throw "Failed to install dotnet-ilrepack" }
+    }
+
+    $primaryDll = Join-Path $BuildDir 'KeePassPasskey.dll'
+    if (-not (Test-Path $primaryDll)) { throw "Primary DLL not found: $primaryDll" }
+
+    # Sort: third-party packages first, then KeePassPasskey* — ensures Newtonsoft.Json
+    # is already loaded by the time ILRepack processes KeePassPasskeyShared.dll.
+    $secondaryDlls = @(Get-ChildItem $BuildDir -Filter '*.dll' |
+                       Where-Object { $_.Name -ne 'KeePassPasskey.dll' } |
+                       Sort-Object { if ($_.Name -like 'KeePassPasskey*') { 1 } else { 0 } }, Name |
+                       Select-Object -ExpandProperty FullName)
+
+    if ($secondaryDlls.Count -eq 0) {
+        Write-Host "  No secondary DLLs found; skipping merge."
+        return
+    }
+
+    $mergedDll  = Join-Path $BuildDir 'KeePassPasskey_merged.dll'
+    $repackArgs = @("/out:$mergedDll")
+    if ($Configuration -eq 'Debug') { $repackArgs += '/debug' }
+    $repackArgs += $primaryDll
+    $repackArgs += $secondaryDlls
+
+    & ilrepack @repackArgs
+    if ($LASTEXITCODE -ne 0) { throw "ILRepack failed with exit code $LASTEXITCODE" }
+
+    Move-Item $mergedDll $primaryDll -Force
+
+    $mergedPdb = [IO.Path]::ChangeExtension($mergedDll, '.pdb')
+    if (Test-Path $mergedPdb) {
+        Move-Item $mergedPdb ([IO.Path]::ChangeExtension($primaryDll, '.pdb')) -Force
+    }
+
+    foreach ($dll in $secondaryDlls) {
+        Remove-Item $dll -Force
+        $pdb = [IO.Path]::ChangeExtension($dll, '.pdb')
+        if (Test-Path $pdb) { Remove-Item $pdb -Force }
+    }
+
+    Write-Host "  Merged $($secondaryDlls.Count + 1) assemblies into KeePassPasskey.dll"
+}
+
 Export-ModuleMember -Function Write-Step, Assert-Elevation, Find-MSBuild, Get-BuildVersions,
                                Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
                                Get-OrCreateCertificate, Add-TrustedCertificate, Invoke-SignFile, Invoke-SignMsix,
-                               Invoke-GenerateLicenseNotices, Get-PluginVersion
+                               Invoke-GenerateLicenseNotices, Get-PluginVersion, Invoke-ILRepack
