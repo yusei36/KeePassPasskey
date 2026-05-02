@@ -23,14 +23,16 @@ internal sealed class NotificationUserVerifier : IUserVerifier
     public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId)
     {
         string user = username.Length > 0 ? $" as {username}" : "";
+        string hint = displayHint.Length > 0 && displayHint != rpId ? $"KeePass entry: {displayHint}" : "";
         return ShowToast(
             title: "Authentication requested",
             body:  $"Sign in{user} on {rpId}.",
+            hint:  hint,
             confirmText: "Approve",
             tag: transactionId.ToString("N")) ? HResults.S_OK : HResults.NTE_USER_CANCELLED;
     }
 
-    private static bool ShowToast(string title, string body, string confirmText, string tag)
+    private static bool ShowToast(string title, string body, string confirmText, string tag, string hint = "")
     {
         int timeoutMilliseconds = AppSettings.Current.NotificationVerificationTimeoutMilliseconds;
         int timeoutSeconds      = timeoutMilliseconds / 1000;
@@ -45,8 +47,12 @@ internal sealed class NotificationUserVerifier : IUserVerifier
             .SetToastScenario(ToastScenario.Alarm)
             .AddAudio(new ToastAudio { Silent = true })
             .AddText(title)
-            .AddText(body)
-            .AddVisualChild(new AdaptiveProgressBar
+            .AddText(body);
+
+        if (hint.Length > 0)
+            builder.AddText(hint);
+
+        builder.AddVisualChild(new AdaptiveProgressBar
             {
                 Value               = new BindableProgressBarValue("progress"),
                 ValueStringOverride = char.ConvertFromUtf32(0x2003), // U+2003 EM SPACE (hides % value)
