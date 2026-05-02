@@ -10,6 +10,31 @@ namespace KeePassPasskeyProvider.Authenticator;
 /// </summary>
 internal static unsafe class PluginRegistration
 {
+    /// <summary>
+    /// Ensures the plugin is registered and the signing key is present.
+    /// Re-registers if the key is missing. Returns false if registration failed.
+    /// </summary>
+    public static bool EnsureRegistered()
+    {
+        int stateHr = GetState(out _);
+        if (stateHr >= 0)
+        {
+            if (SignatureVerifier.LoadSigningPublicKey() != null) return true;
+
+#if DEBUG
+            Log.Warn("registered but signing key missing, allowing operations for development");
+            return true;
+#else
+            Log.Warn("registered but signing key missing, re-registering");
+            Unregister();
+#endif
+        }
+
+        int hr = Register();
+        if (hr < 0) Log.Error($"auto-registration failed hr=0x{hr:X8}");
+        return hr >= 0;
+    }
+
     /// <summary>Registers the plugin with the Windows passkey platform.</summary>
     public static int Register()
     {

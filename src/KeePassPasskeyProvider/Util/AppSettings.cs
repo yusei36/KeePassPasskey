@@ -28,7 +28,13 @@ internal sealed class AppSettings
 
     public bool ShowErrorNotifications { get; init; } = true;
 
-    public int NotificationVerificationTimeoutSeconds { get; init; } = 30;
+    public int NotificationVerificationTimeoutMilliseconds { get; init; } = 30_000;
+
+    public int CredentialSyncIntervalMilliseconds { get; init; } = 30_000;
+
+    public int StatusRefreshIntervalMilliseconds { get; init; } = 30_000;
+
+    public int CredentialSyncShutdownThreshold { get; init; } = 10;
 
     [JsonConverter(typeof(StringEnumConverter))]
     public UserVerificationMode RegistrationVerification { get; init; } = UserVerificationMode.Notification;

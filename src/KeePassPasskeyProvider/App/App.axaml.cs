@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using KeePassPasskeyProvider.App.ViewModel;
+using KeePassPasskeyProvider.Authenticator;
 
 namespace KeePassPasskeyProvider.App;
 
@@ -14,7 +16,11 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow();
+        {
+            bool autoRegisterSucceeded = PluginRegistration.EnsureRegistered();
+            var vm = new MainWindowViewModel(autoRegisterSucceeded);
+            desktop.MainWindow = new MainWindow(vm);
+        }
         base.OnFrameworkInitializationCompleted();
     }
 }

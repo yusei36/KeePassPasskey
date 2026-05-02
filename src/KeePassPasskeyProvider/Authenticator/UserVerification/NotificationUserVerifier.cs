@@ -32,7 +32,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
     private static bool ShowToast(string title, string body, string confirmText, string tag)
     {
-        int timeoutSeconds = AppSettings.Current.NotificationVerificationTimeoutSeconds;
+        int timeoutMilliseconds = AppSettings.Current.NotificationVerificationTimeoutMilliseconds;
+        int timeoutSeconds      = timeoutMilliseconds / 1000;
         var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cts = new CancellationTokenSource();
 
@@ -62,7 +63,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
         {
             Tag            = tag,
             Data           = initialData,
-            ExpirationTime = DateTimeOffset.Now.AddSeconds(timeoutSeconds)
+            ExpirationTime = DateTimeOffset.Now.AddMilliseconds(timeoutMilliseconds)
         };
 
         toast.Activated += (s, a) =>

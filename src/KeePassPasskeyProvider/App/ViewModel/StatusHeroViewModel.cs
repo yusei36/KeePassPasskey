@@ -4,7 +4,7 @@ using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
-internal sealed partial class StatusHeroViewModel : ObservableObject
+public sealed partial class StatusHeroViewModel : ObservableObject
 {
     [ObservableProperty] private ProviderStatus _status;
     [ObservableProperty] private PingStatus _pluginStatus;

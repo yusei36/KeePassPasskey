@@ -1,6 +1,6 @@
 namespace KeePassPasskeyProvider.App.ViewModel;
 
-internal enum ProviderStatus
+public enum ProviderStatus
 {
     NotRegistered,
     AutoregisterFailed,

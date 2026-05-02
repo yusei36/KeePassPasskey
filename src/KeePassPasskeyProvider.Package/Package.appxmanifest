@@ -45,7 +45,7 @@
       <Extensions>
         <com:Extension Category="windows.comServer">
           <com:ComServer>
-            <com:ExeServer Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" Arguments="-PluginActivated" DisplayName="KeePassPasskey Provider">
+            <com:ExeServer Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" Arguments="-ActivateAuthenticator" DisplayName="KeePassPasskey Provider">
               <com:Class Id="4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e" DisplayName="KeePassPasskey Provider" />
             </com:ExeServer>
           </com:ComServer>

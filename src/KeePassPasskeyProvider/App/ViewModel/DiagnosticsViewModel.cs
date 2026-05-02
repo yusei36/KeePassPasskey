@@ -12,7 +12,7 @@ using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
-internal sealed partial class DiagnosticsViewModel : ObservableObject
+public sealed partial class DiagnosticsViewModel : ObservableObject
 {
     [ObservableProperty] private string? _serverVersion;
     [ObservableProperty] private PingStatus _pingStatus;

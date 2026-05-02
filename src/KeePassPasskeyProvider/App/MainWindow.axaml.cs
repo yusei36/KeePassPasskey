@@ -7,12 +7,13 @@ namespace KeePassPasskeyProvider.App;
 
 public partial class MainWindow : AppWindow
 {
-    public MainWindow()
+    public MainWindow() : this(new MainWindowViewModel()) { } // required by Avalonia XAML loader
+
+    public MainWindow(MainWindowViewModel viewModel)
     {
         InitializeComponent();
-        var vm = new MainWindowViewModel();
-        DataContext = vm;
-        vm.PropertyChanged += OnViewModelPropertyChanged;
+        DataContext = viewModel;
+        viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

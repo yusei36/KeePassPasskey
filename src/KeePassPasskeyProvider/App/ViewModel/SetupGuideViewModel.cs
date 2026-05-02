@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
-internal sealed partial class SetupGuideViewModel : ObservableObject
+public sealed partial class SetupGuideViewModel : ObservableObject
 {
     [ObservableProperty] private bool _isSetupExpanded = true;
     [ObservableProperty] private bool _isReady;

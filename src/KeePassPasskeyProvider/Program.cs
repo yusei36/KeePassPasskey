@@ -1,4 +1,3 @@
-﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -11,15 +10,11 @@ namespace KeePassPasskeyProvider;
 
 /// <summary>
 /// Entry point for the managed passkey COM server.
-/// Handles both -PluginActivated (COM server mode)
+/// Handles both -ActivateAuthenticator (COM server mode)
 /// and /register | /unregister | /status (management mode).
 /// </summary>
 internal static class Program
 {
-    private const int SyncIntervalMs = 30_000;
-    // Exit after ~10 minutes of continuous pipe failure (KeePass unreachable).
-    private const int MaxConsecutiveSyncFailures = 20;
-
     [MTAThread]
     static int Main(string[] args)
     {
@@ -30,13 +25,13 @@ internal static class Program
         if (IsToastActivation())
             return 0;
 
-        bool isPluginActivated = args.Any(a =>
-            string.Equals(a, "-PluginActivated", StringComparison.OrdinalIgnoreCase));
+        bool activateAuthenticator = args.Any(a =>
+            string.Equals(a, "-ActivateAuthenticator", StringComparison.OrdinalIgnoreCase));
 
-        if (isPluginActivated)
+        if (activateAuthenticator)
         {
-            Log.Info($"-PluginActivated received (log level: {Log.MinLevel})");
-            return RunAsPluginServer();
+            Log.Info($"-ActivateAuthenticator received (log level: {Log.MinLevel})");
+            return ComServer.RunComServer();
         }
 
         // No args: show management UI
@@ -59,94 +54,6 @@ internal static class Program
         {
             return false;
         }
-    }
-
-    /// <summary>
-    /// COM server mode (-PluginActivated). Must be initialized as MTA by [MTAThread].
-    /// Registers the class factory, syncs credentials, and runs the Win32 message loop.
-    /// </summary>
-    private static int RunAsPluginServer()
-    {
-        var factory = new ClassFactory();
-        uint cookie;
-        try
-        {
-            cookie = ComServer.Register(factory);
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"RegisterClassFactory failed: {ex.Message}");
-            return Marshal.GetHRForException(ex);
-        }
-        Log.Info($"registered class factory cookie={cookie}");
-
-        // Initial credential sync
-        Log.Info("initial SyncToWindowsCache");
-        CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
-
-        // Capture main thread ID so the sync task can post WM_QUIT here to wake GetMessage.
-        uint mainThreadId = Win32Native.GetCurrentThreadId();
-
-        // Background sync thread
-        using var cts = new CancellationTokenSource();
-        var syncTask = Task.Run(() => SyncLoop(cts.Token, mainThreadId));
-
-        // Win32 message loop
-        Log.Info("entering message loop");
-        Win32Native.MSG msg;
-        while (Win32Native.GetMessage(out msg, 0, 0, 0) > 0)
-        {
-            Win32Native.TranslateMessage(in msg);
-            Win32Native.DispatchMessage(in msg);
-        }
-        Log.Info("message loop exited");
-
-        cts.Cancel();
-        syncTask.Wait(5000);
-
-        ComServer.Revoke(cookie);
-        Log.Info("exiting");
-        return 0;
-    }
-
-    private static async Task SyncLoop(CancellationToken token, uint mainThreadId)
-    {
-        int consecutiveFailures = 0;
-
-        while (!token.IsCancellationRequested)
-        {
-            try
-            {
-                await Task.Delay(SyncIntervalMs, token);
-                Log.Info("periodic SyncToWindowsCache");
-                bool reached = CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
-
-                if (reached)
-                {
-                    consecutiveFailures = 0;
-                }
-                else
-                {
-                    consecutiveFailures++;
-                    Log.Warn($"KeePass unreachable, failures={consecutiveFailures}/{MaxConsecutiveSyncFailures}");
-                    if (consecutiveFailures >= MaxConsecutiveSyncFailures)
-                    {
-                        Log.Info("idle shutdown — KeePass unreachable for too long");
-                        Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);
-                        break;
-                    }
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"exception {ex.Message}");
-            }
-        }
-        Log.Info("exiting");
     }
 
     /// <summary>

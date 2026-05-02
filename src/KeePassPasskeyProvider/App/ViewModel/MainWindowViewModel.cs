@@ -8,10 +8,11 @@ using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.App.Utils;
+using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
-internal sealed partial class MainWindowViewModel : ObservableObject
+public sealed partial class MainWindowViewModel : ObservableObject
 {
     public StatusHeroViewModel  StatusHero  { get; }
     public SetupGuideViewModel  SetupGuide  { get; }
@@ -30,8 +31,9 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     private readonly PipeClient _pipeClient = new(msg => Log.Debug(msg, nameof(PipeClient)));
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(bool autoRegisterSucceeded = true)
     {
+        _autoregisterError = !autoRegisterSucceeded;
         var registerCmd   = new AsyncRelayCommand(RegisterAsync);
         var unregisterCmd = new AsyncRelayCommand(UnregisterAsync);
         var refreshCmd    = new AsyncRelayCommand(RefreshAsync);
@@ -42,34 +44,11 @@ internal sealed partial class MainWindowViewModel : ObservableObject
         SetupGuide.PropertyChanged += OnSetupGuidePropertyChanged;
         Diagnostics.PropertyChanged += OnDiagnosticsPropertyChanged;
 
-        AutoRegisterIfNeeded();
         DoRefresh();
 
-        var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(AppSettings.Current.StatusRefreshIntervalMilliseconds) };
         timer.Tick += (_, _) => DoRefresh();
         timer.Start();
-    }
-
-    private void AutoRegisterIfNeeded()
-    {
-        int stateHr = PluginRegistration.GetState(out _);
-        if (stateHr >= 0)
-        {
-            // Already registered — verify the signing key is present
-            if (SignatureVerifier.LoadSigningPublicKey() != null) return;
-
-#if DEBUG
-             Log.Warn("registered but signing key missing, allowing operations for development");
-             return;
-#else
-            // Registered but signing key missing — unregister so we can re-register cleanly
-            Log.Warn("registered but signing key missing, re-registering");
-            PluginRegistration.Unregister();
-#endif
-        }
-
-        int hr = PluginRegistration.Register();
-        _autoregisterError = hr < 0;
     }
 
     private async Task RegisterAsync()
