@@ -1,4 +1,4 @@
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Authenticator;
 
 internal static class PluginConstants
 {

@@ -1,8 +1,8 @@
-using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
 using KeePassPasskeyShared;
 
-namespace KeePassPasskeyProvider.Plugin.UserVerification;
+namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal sealed class WindowsHelloUserVerifier : IUserVerifier
 {

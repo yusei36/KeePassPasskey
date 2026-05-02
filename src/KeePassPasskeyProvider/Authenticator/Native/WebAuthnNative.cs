@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
-namespace KeePassPasskeyProvider.Interop;
+namespace KeePassPasskeyProvider.Authenticator.Native;
 
 /// <summary>
 /// Struct layouts from webauthn.h (Windows SDK 10.0.26100.0).

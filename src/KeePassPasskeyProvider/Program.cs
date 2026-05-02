@@ -3,8 +3,8 @@ using Avalonia;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using KeePassPasskeyShared;
-using KeePassPasskeyProvider.Interop;
-using KeePassPasskeyProvider.Plugin;
+using KeePassPasskeyProvider.Authenticator;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
@@ -71,7 +71,7 @@ internal static class Program
         uint cookie;
         try
         {
-            cookie = ComRegistration.RegisterClassFactory(factory);
+            cookie = ComServer.Register(factory);
         }
         catch (Exception ex)
         {
@@ -104,7 +104,7 @@ internal static class Program
         cts.Cancel();
         syncTask.Wait(5000);
 
-        ComRegistration.RevokeClassFactory(cookie);
+        ComServer.Revoke(cookie);
         Log.Info("exiting");
         return 0;
     }

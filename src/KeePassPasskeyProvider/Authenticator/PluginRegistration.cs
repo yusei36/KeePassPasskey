@@ -1,9 +1,9 @@
 using Microsoft.Win32;
-using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
 using PeterO.Cbor;
 
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Authenticator;
 
 /// <summary>
 /// Manages registration/unregistration of the plugin with the Windows passkey platform.

@@ -5,8 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
-using KeePassPasskeyProvider.Interop;
-using KeePassPasskeyProvider.Plugin;
+using KeePassPasskeyProvider.Authenticator;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.App.Utils;
 
 namespace KeePassPasskeyProvider.App.ViewModel;

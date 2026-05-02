@@ -1,9 +1,9 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
-using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Plugin.UserVerification;
+namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal sealed class NotificationUserVerifier : IUserVerifier
 {

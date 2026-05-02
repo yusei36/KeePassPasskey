@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
-namespace KeePassPasskeyProvider.Interop;
+namespace KeePassPasskeyProvider.Util;
 
 /// <summary>
 /// Hand-rolled P/Invoke for Win32 APIs used by the COM server host.

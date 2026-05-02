@@ -1,10 +1,10 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32;
-using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
 
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Authenticator;
 
 /// <summary>
 /// Verifies the platform-supplied operation signing signature.

@@ -1,12 +1,12 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using KeePassPasskeyShared;
-using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Util;
-using KeePassPasskeyProvider.Plugin.UserVerification;
+using KeePassPasskeyProvider.Authenticator.UserVerification;
 
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Authenticator;
 
 /// <summary>
 /// Managed implementation of IPluginAuthenticator.
@@ -306,10 +306,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         }
     }
 
-    /// <summary>
-    /// Calls WebAuthNPluginPerformUserVerification (Windows Hello prompt).
-    /// username and displayHint are passed as hints; either may be empty.
-    /// </summary>
     /// <summary>
     /// Verifies the request signature by extracting fields from the request pointer.
     /// </summary>

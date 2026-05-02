@@ -1,7 +1,8 @@
-﻿using KeePassPasskeyProvider.Plugin;
+using KeePassPasskeyProvider.Authenticator;
+using KeePassPasskeyProvider.Util;
 using System.Runtime.InteropServices;
 
-namespace KeePassPasskeyProvider.Interop;
+namespace KeePassPasskeyProvider.Authenticator.Native;
 
 /// <summary>
 /// Declared as a C# interface so Marshal.GetComInterfaceForObject can produce

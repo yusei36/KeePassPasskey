@@ -1,7 +1,7 @@
-using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Plugin.UserVerification;
+namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal static class UserVerifierDispatcher
 {

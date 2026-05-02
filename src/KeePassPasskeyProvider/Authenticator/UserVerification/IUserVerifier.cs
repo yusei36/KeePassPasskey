@@ -1,6 +1,6 @@
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Plugin.UserVerification;
+namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal interface IUserVerifier
 {

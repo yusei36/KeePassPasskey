@@ -1,10 +1,10 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
-using KeePassPasskeyProvider.Interop;
+using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Plugin;
+namespace KeePassPasskeyProvider.Authenticator;
 
 /// <summary>
 /// Synchronises KeePass credentials with the Windows platform autofill cache.

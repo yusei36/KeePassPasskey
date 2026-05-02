@@ -1,4 +1,4 @@
-namespace KeePassPasskeyProvider.Interop;
+namespace KeePassPasskeyProvider.Authenticator.Native;
 
 internal static class HResults
 {

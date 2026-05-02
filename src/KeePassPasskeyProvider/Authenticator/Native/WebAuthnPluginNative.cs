@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
-namespace KeePassPasskeyProvider.Interop;
+namespace KeePassPasskeyProvider.Authenticator.Native;
 
 /// <summary>
 /// Struct layouts from webauthnplugin.h + pluginauthenticator.h (Windows SDK 10.0.26100.0).
@@ -204,4 +204,3 @@ internal static unsafe class WebAuthnPluginApi
     [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
     internal static extern void WebAuthNPluginFreeUserVerificationResponse(byte* pbResponse);
 }
-
