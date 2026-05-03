@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using FluentAvalonia.UI.Windowing;
 using KeePassPasskeyProvider.Dashboard.ViewModel;
@@ -14,6 +16,16 @@ public partial class MainWindow : AppWindow
         InitializeComponent();
         DataContext = viewModel;
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
+    }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        if (e.NameScope.Find<Image>("Icon") is { } icon)
+        {
+            icon.Width = 20;
+            icon.Height = 20;
+        }
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
