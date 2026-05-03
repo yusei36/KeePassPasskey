@@ -12,7 +12,7 @@ Windows 11 routes passkey operations through a COM server registered as a plugin
 
 ```
           Browser
-             ↓  (webauthn.dll)
+             ↓  (Windows WebAuthn API)
           Windows
              ↓  (COM)
 KeePassPasskeyProvider.exe
