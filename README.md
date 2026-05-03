@@ -11,11 +11,15 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project implements that COM server and a KeePass plugin that handles the actual cryptography:
 
 ```
-Browser → Windows → KeePassPasskeyProvider.exe (COM, MSIX)
-                                ↓  Named pipe JSON
-                    KeePassPasskey.dll (KeePass plugin)
-                                ↓  KeePass Plugin API
-                    KeePass Database (KPEX_PASSKEY_* fields)
+          Browser
+             ↓  (webauthn.dll)
+          Windows
+             ↓  (COM)
+KeePassPasskeyProvider.exe
+             ↓  (Named pipe JSON)
+    KeePassPasskey.dll
+             ↓  (KeePass entry)
+     KeePass Database
 ```
 
 - **KeePassPasskeyProvider.exe** — COM server, MSIX-packaged, handles the Windows WebAuthn API surface and credential cache sync
