@@ -19,7 +19,7 @@
   <ItemGroup>
     <!-- KeePass.exe must be placed in build\KeePass\ (not shipped) -->
     <Reference Include="KeePass">
-      <HintPath>..\..\build\KeePass\KeePass.exe</HintPath>
+      <HintPath>..\..\build\KeePass.exe</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
