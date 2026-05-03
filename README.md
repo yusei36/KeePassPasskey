@@ -29,7 +29,7 @@ KeePassPasskeyProvider.exe
 ## Requirements
 
 - Windows 11 24H2 or later
-- [KeePass 2.54](https://keepass.info/) or later
+- [KeePass](https://keepass.info/) 2.54 or later
 
 ## Installation
 
