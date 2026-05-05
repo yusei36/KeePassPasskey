@@ -103,7 +103,7 @@
 					<!-- COM Server actions -->
 					<Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
 						<TextBlock Grid.Column="0"
-								   Text="COM Server actions"
+								   Text="Provider Registration"
 								   FontFamily="Consolas,Courier New,monospace"
 								   FontSize="12.5" FontWeight="SemiBold"
 								   VerticalAlignment="Center" />
