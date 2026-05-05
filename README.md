@@ -57,7 +57,7 @@ KeePassPasskeyProvider.exe
 | Requirement | Notes |
 |---|---|
 | Visual Studio 2026 | With .NET desktop development workload |
-| Windows SDK 10.0.26100.7175+ | Required for `webauthnplugin.h` |
+| Windows SDK 10.0.26100.7175+ | Required for wapproj build and code signing |
 | .NET 10 SDK | For KeePassPasskeyProvider |
 | .NET Framework 4.8 SDK | For KeePassPasskeyPlugin |
 | KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` — minimum supported version, used only for compilation |
