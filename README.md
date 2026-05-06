@@ -1,5 +1,3 @@
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-
 # KeePassPasskey
 
 [![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github)](https://github.com/yusei36/KeePassPasskey)
