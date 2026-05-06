@@ -4,7 +4,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases)](https://github.com/yusei36/KeePassPasskey/releases/latest)
 [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey)](https://github.com/yusei36/KeePassPasskey/releases/latest)
 
-A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically — no browser extension required.
+A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically - no browser extension required.
 
 ## Requirements
 
@@ -27,8 +27,8 @@ KeePassPasskeyProvider.exe
      KeePass Database
 ```
 
-- **KeePassPasskeyProvider.exe** — COM server, MSIX-packaged, handles the Windows WebAuthn API surface and credential cache sync
-- **KeePassPasskey.dll** — KeePass plugin, handles key generation and signing, stores credentials in the open database
+- **KeePassPasskeyProvider.exe** - COM server, MSIX-packaged, handles the Windows WebAuthn API surface and credential cache sync
+- **KeePassPasskey.dll** - KeePass plugin, handles key generation and signing, stores credentials in the open database
 - Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so they are readable by KeePassXC and vice versa
 
 ## Installation
@@ -37,7 +37,7 @@ KeePassPasskeyProvider.exe
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
-3. Run `Install.bat` as Administrator — it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
+3. Run `Install.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
 4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 5. Both status indicators in the **KeePassPasskey** app should show green.
 
@@ -60,18 +60,18 @@ KeePassPasskeyProvider.exe
 | Windows SDK 10.0.26100.7175+ | Required for wapproj build and code signing |
 | .NET 10 SDK | For KeePassPasskeyProvider |
 | .NET Framework 4.8 SDK | For KeePassPasskeyPlugin |
-| KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` — minimum supported version, used only for compilation |
-| KeePass.exe (current, for debugging) | Place at `build\KeePass\KeePass.exe` — your installed/current version, used to launch KeePass during development |
+| KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` - minimum supported version, used only for compilation |
+| KeePass.exe (current, for debugging) | Place at `build\KeePass\KeePass.exe` - your installed/current version, used to launch KeePass during development |
 
 ```powershell
-# Compile-time reference — KeePass 2.54 (minimum supported version)
+# Compile-time reference - KeePass 2.54 (minimum supported version)
 Copy-Item "path\to\KeePass-2.54\KeePass.exe" build\
 
-# Debug/run target — your current KeePass installation
+# Debug/run target - your current KeePass installation
 Copy-Item "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\
 ```
 
-Then run the build script as Administrator — builds the MSIX, signs it, and installs:
+Then run the build script as Administrator - builds the MSIX, signs it, and installs:
 
 ```powershell
 .\scripts\Build-AndInstall.ps1 -Configuration Release
@@ -101,8 +101,8 @@ Passkeys are stored as standard KeePass entries using [KeePassXC's passkey field
 | `KPEX_PASSKEY_RELYING_PARTY` | Relying party ID (e.g. `github.com`) |
 | `KPEX_PASSKEY_USERNAME` | User name from registration |
 | `KPEX_PASSKEY_USER_HANDLE` | Base64url user handle |
-| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag — always `1` |
-| `KPEX_PASSKEY_FLAG_BS` | Backup State flag — always `1` |
+| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag - always `1` |
+| `KPEX_PASSKEY_FLAG_BS` | Backup State flag - always `1` |
 
 Credentials created here can be read by KeePassXC and vice versa. Three algorithms are supported: **ES256** (EC P-256), **EdDSA** (Ed25519), and **RS256** (RSA-2048). The algorithm is encoded in the PKCS#8 OID and requires no separate field, matching KeePassXC's storage format exactly.
 
