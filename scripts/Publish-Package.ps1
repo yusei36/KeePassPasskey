@@ -106,6 +106,7 @@ Copy-Item $MsixPath "$stagingDir\"
 Export-Certificate -Cert $cert -FilePath "$stagingDir\KeePassPasskey.cer" | Out-Null
 Copy-Item "$PSScriptRoot\Install.bat" "$stagingDir\Install.bat"
 Copy-Item "$RepoRoot\README.md"       "$stagingDir\README.md"
+Copy-Item "$RepoRoot\LICENSE"         "$stagingDir\LICENSE"
 
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path "$stagingDir\*" -DestinationPath $zipPath
