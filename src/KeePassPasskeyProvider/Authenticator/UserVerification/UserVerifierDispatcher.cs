@@ -1,5 +1,8 @@
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
+using KeePassPasskeyShared;
+using Microsoft.Toolkit.Uwp.Notifications;
+using Windows.UI.Notifications;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
@@ -25,6 +28,17 @@ internal static class UserVerifierDispatcher
 
     private static int Dispatch(UserVerificationMode mode, Func<IUserVerifier, int> call)
     {
+        if (mode.HasFlag(UserVerificationMode.Notification))
+        {
+            var setting = ToastNotificationManagerCompat.CreateToastNotifier().Setting;
+            if (setting != NotificationSetting.Enabled)
+            {
+                Log.Warn($"Notifications disabled ({setting}), falling back to Windows Hello", nameof(UserVerifierDispatcher));
+                mode &= ~UserVerificationMode.Notification;
+                mode |= UserVerificationMode.WindowsHello;
+            }
+        }
+
         foreach (var verifier in _verifiers)
         {
             if (!mode.HasFlag(verifier.Mode)) continue;
