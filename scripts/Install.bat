@@ -38,6 +38,7 @@ set "PS1=%~dp0install_user.ps1"
     echo "Done." ^| Tee-Object -FilePath $log -Append
     echo Unregister-ScheduledTask -TaskName 'InstallKeePassPasskeyMSIX' -Confirm:$false
     echo Remove-Item $PSCommandPath
+    echo Start-Sleep -Seconds 10
 ) > "%PS1%"
 
 echo Creating and running scheduled task...
