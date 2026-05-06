@@ -1,10 +1,10 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>0.2.1</VersionPrefix>
+    <VersionPrefix>0.2.2</VersionPrefix>
     <VersionSuffix>beta.1</VersionSuffix>
     <Version>$(VersionPrefix)-$(VersionSuffix)</Version>
-    <AssemblyVersion>0.2.1.0</AssemblyVersion>
-    <FileVersion>0.2.1.0</FileVersion>
+    <AssemblyVersion>0.2.2.0</AssemblyVersion>
+    <FileVersion>0.2.2.0</FileVersion>
     <Company>Uwe Kögel</Company>
     <Copyright>Copyright © 2026 Uwe Kögel</Copyright>
   </PropertyGroup>
