@@ -6,6 +6,11 @@
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically — no browser extension required.
 
+## Requirements
+
+- Windows 11 24H2 or later
+- [KeePass](https://keepass.info/) 2.54 or later
+
 ## How it works
 
 Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project implements that COM server and a KeePass plugin that handles the actual cryptography:
@@ -25,11 +30,6 @@ KeePassPasskeyProvider.exe
 - **KeePassPasskeyProvider.exe** — COM server, MSIX-packaged, handles the Windows WebAuthn API surface and credential cache sync
 - **KeePassPasskey.dll** — KeePass plugin, handles key generation and signing, stores credentials in the open database
 - Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so they are readable by KeePassXC and vice versa
-
-## Requirements
-
-- Windows 11 24H2 or later
-- [KeePass](https://keepass.info/) 2.54 or later
 
 ## Installation
 
