@@ -36,7 +36,6 @@ set "PS1=%~dp0install_user.ps1"
     echo "Starting KeePassPasskeyProvider..." ^| Tee-Object -FilePath $log -Append
     echo Start-Process KeePassPasskeyProvider.exe
     echo "Done." ^| Tee-Object -FilePath $log -Append
-    echo Unregister-ScheduledTask -TaskName 'InstallKeePassPasskeyMSIX' -Confirm:$false
     echo Remove-Item $PSCommandPath
     echo Start-Sleep -Seconds 10
 ) > "%PS1%"
