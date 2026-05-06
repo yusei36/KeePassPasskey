@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/yusei36/KeePassPasskey/blob/master/README.md
+    about: Read the documentation before opening an issue

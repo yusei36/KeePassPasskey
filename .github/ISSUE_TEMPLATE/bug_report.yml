@@ -1,0 +1,103 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much detail as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the issue.
+      placeholder: |
+        1. Open browser and navigate to ...
+        2. Click "Sign in with passkey"
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: input
+    id: windows_version
+    attributes:
+      label: Windows Version
+      description: "Run: winver"
+      placeholder: "e.g. Windows 11 24H2 (26100)"
+    validations:
+      required: true
+
+  - type: input
+    id: keepass_version
+    attributes:
+      label: KeePass Version
+      placeholder: "e.g. 2.57.1"
+    validations:
+      required: true
+
+  - type: input
+    id: plugin_version
+    attributes:
+      label: KeePassPasskey Version
+      placeholder: "e.g. 1.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: "e.g. Chrome 124, Edge 123, Firefox 125"
+    validations:
+      required: false
+
+  - type: input
+    id: website
+    attributes:
+      label: Website
+      description: The website or service where the issue occurred.
+      placeholder: "e.g. github.com, microsoft.com"
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste any relevant log output from `%LOCALAPPDATA%\KeePassPasskey\`
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might be relevant. If you have screenshots that help illustrate the issue, feel free to paste or drag them in here.
+    validations:
+      required: false
