@@ -58,7 +58,7 @@ namespace KeePassPasskey.Storage
             var targetGroup = GetOrCreatePasskeyGroup(db);
             targetGroup.AddEntry(entry, true);
 
-            _host.MainWindow.Invoke(new MethodInvoker(() =>
+            _host.MainWindow.BeginInvoke(new MethodInvoker(() =>
             {
                 _host.MainWindow.UpdateUI(false, null, true, null, true, null, true);
                 if (KeePass.Program.Config.Application.AutoSaveAfterEntryEdit)
