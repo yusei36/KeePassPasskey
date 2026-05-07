@@ -40,7 +40,7 @@ internal static unsafe class CredentialCache
             WebAuthnPluginCredentialDetails* pExisting = null;
             int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
                 pluginClsid, &cExisting, &pExisting);
-            Log.Info($"GetAllCredentials hr=0x{hrGet:X8} count={cExisting}");
+            if (hrGet < 0) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
 
             if (hrGet < 0 || cExisting == 0 || pExisting == null)
             {
@@ -132,14 +132,13 @@ internal static unsafe class CredentialCache
 
         // 2. Parse credential list
         var kpCredentials = ParseKeePassCredentials(response.Credentials);
-        Log.Info($"KeePass returned {kpCredentials.Count} credentials");
 
         // 3. Get Windows cache
         uint cExisting = 0;
         WebAuthnPluginCredentialDetails* pExisting = null;
         int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
             pluginClsid, &cExisting, &pExisting);
-        Log.Info($"GetAllCredentials hr=0x{hrGet:X8} count={cExisting}");
+        if (hrGet < 0) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
 
         // Collect existing entries as managed objects for comparison
         var existingList = new List<ManagedCredentialDetails>();
@@ -193,7 +192,7 @@ internal static unsafe class CredentialCache
             {
                 int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveCredentials(
                     pluginClsid, (uint)natives.Length, ptr);
-                Log.Info($"RemoveCredentials hr=0x{hr:X8} count={natives.Length}", nameof(SyncToCredentialCache));
+                if (hr < 0) Log.Error($"RemoveCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
             }
         }
         finally
@@ -212,7 +211,7 @@ internal static unsafe class CredentialCache
             {
                 int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorAddCredentials(
                     pluginClsid, (uint)natives.Length, ptr);
-                Log.Info($"AddCredentials hr=0x{hr:X8} count={natives.Length}", nameof(SyncToCredentialCache));
+                if (hr < 0) Log.Error($"AddCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
             }
         }
         finally
