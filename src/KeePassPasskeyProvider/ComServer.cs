@@ -63,7 +63,6 @@ internal static class ComServer
             try
             {
                 await Task.Delay(AppSettings.Current.CredentialSyncIntervalMilliseconds, token);
-                Log.Info("periodic SyncToWindowsCache");
                 bool reached = CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
                 if (reached)
