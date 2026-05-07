@@ -55,7 +55,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         _autoregisterError = false;
         int hr = PluginRegistration.Register();
-        if (hr < 0)
+        if (hr < HResults.S_OK)
         {
             _autoregisterError = true;
             await ShowPluginRegistrationErrorAsync("Register", hr);
@@ -70,7 +70,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         _autoregisterError = false;
         int hr = PluginRegistration.Unregister();
-        if (hr < 0)
+        if (hr < HResults.S_OK)
         {
             await ShowPluginRegistrationErrorAsync("Unregister", hr);
         }
@@ -97,8 +97,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private void RefreshProviderStatus()
     {
         int hr = PluginRegistration.GetState(out var state);
-        _isRegistered    = hr >= 0;
-        _providerEnabled = hr >= 0 && state == AuthenticatorState.AuthenticatorState_Enabled;
+        _isRegistered    = hr >= HResults.S_OK;
+        _providerEnabled = hr >= HResults.S_OK && state == AuthenticatorState.AuthenticatorState_Enabled;
         UpdateChildren();
     }
 

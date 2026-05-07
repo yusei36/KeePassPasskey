@@ -43,7 +43,7 @@ internal static class UserVerifierDispatcher
         {
             if (!mode.HasFlag(verifier.Mode)) continue;
             int hr = call(verifier);
-            if (hr < 0) return hr;
+            if (hr < HResults.S_OK) return hr;
         }
         return HResults.S_OK;
     }

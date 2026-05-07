@@ -59,7 +59,7 @@ internal static class ComRegistration
                 Win32Native.REGCLS_MULTIPLEUSE,
                 out uint cookie);
 
-            if (hr < 0)
+            if (hr < HResults.S_OK)
                 Marshal.ThrowExceptionForHR(hr);
 
             return cookie;

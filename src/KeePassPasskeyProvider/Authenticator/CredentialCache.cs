@@ -40,9 +40,9 @@ internal static unsafe class CredentialCache
             WebAuthnPluginCredentialDetails* pExisting = null;
             int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
                 pluginClsid, &cExisting, &pExisting);
-            if (hrGet < 0) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
+            if (hrGet < HResults.S_OK) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
 
-            if (hrGet < 0 || cExisting == 0 || pExisting == null)
+            if (hrGet < HResults.S_OK || cExisting == 0 || pExisting == null)
             {
                 if (pExisting != null)
                     WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
@@ -78,7 +78,7 @@ internal static unsafe class CredentialCache
         WebAuthnPluginCredentialDetails* pDetails = null;
         int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
             PluginConstants.KeePassPasskeyProviderClsid, &cDetails, &pDetails);
-        if (hr < 0 || cDetails == 0 || pDetails == null)
+        if (hr < HResults.S_OK || cDetails == 0 || pDetails == null)
         {
             if (pDetails != null)
                 WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cDetails, pDetails);
@@ -138,11 +138,11 @@ internal static unsafe class CredentialCache
         WebAuthnPluginCredentialDetails* pExisting = null;
         int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
             pluginClsid, &cExisting, &pExisting);
-        if (hrGet < 0) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
+        if (hrGet < HResults.S_OK) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
 
         // Collect existing entries as managed objects for comparison
         var existingList = new List<ManagedCredentialDetails>();
-        if (hrGet >= 0 && cExisting > 0 && pExisting != null)
+        if (hrGet >= HResults.S_OK && cExisting > 0 && pExisting != null)
         {
             for (uint i = 0; i < cExisting; i++)
                 existingList.Add(ManagedCredentialDetails.FromNative(&pExisting[i]));
@@ -192,7 +192,7 @@ internal static unsafe class CredentialCache
             {
                 int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveCredentials(
                     pluginClsid, (uint)natives.Length, ptr);
-                if (hr < 0) Log.Error($"RemoveCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
+                if (hr < HResults.S_OK) Log.Error($"RemoveCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
             }
         }
         finally
@@ -211,7 +211,7 @@ internal static unsafe class CredentialCache
             {
                 int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorAddCredentials(
                     pluginClsid, (uint)natives.Length, ptr);
-                if (hr < 0) Log.Error($"AddCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
+                if (hr < HResults.S_OK) Log.Error($"AddCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
             }
         }
         finally

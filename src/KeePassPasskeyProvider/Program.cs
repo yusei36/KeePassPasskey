@@ -130,27 +130,27 @@ internal static class Program
             case "/register":
             {
                 int hr = PluginRegistration.Register();
-                if (hr >= 0)
+                if (hr >= HResults.S_OK)
                     Console.WriteLine("KeePassPasskey Provider registered successfully.");
                 else
                     Console.WriteLine($"Registration failed: 0x{hr:X8}");
-                return hr >= 0 ? 0 : 1;
+                return hr >= HResults.S_OK ? 0 : 1;
             }
 
             case "/unregister":
             {
                 int hr = PluginRegistration.Unregister();
-                if (hr >= 0)
+                if (hr >= HResults.S_OK)
                     Console.WriteLine("KeePassPasskey Provider unregistered.");
                 else
                     Console.WriteLine($"Unregister failed: 0x{hr:X8}");
-                return hr >= 0 ? 0 : 1;
+                return hr >= HResults.S_OK ? 0 : 1;
             }
 
             case "/status":
             {
                 int hr = PluginRegistration.GetState(out var state);
-                if (hr >= 0)
+                if (hr >= HResults.S_OK)
                 {
                     string stateStr = state == AuthenticatorState.AuthenticatorState_Enabled
                         ? "Enabled" : "Disabled";
@@ -160,7 +160,7 @@ internal static class Program
                 {
                     Console.WriteLine($"GetPluginState failed: 0x{hr:X8}");
                 }
-                return hr >= 0 ? 0 : 1;
+                return hr >= HResults.S_OK ? 0 : 1;
             }
 
             default:
