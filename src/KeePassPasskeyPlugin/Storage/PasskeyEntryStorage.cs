@@ -165,7 +165,7 @@ namespace KeePassPasskey.Storage
             return results;
         }
 
-        // Returns only public metadata — no private key material. Used for listing credentials.
+        // Returns only public metadata - no private key material. Used for listing credentials.
         private static PasskeyCredential ExtractCredentialMetadata(PwEntry entry)
         {
             return new PasskeyCredential
@@ -218,16 +218,18 @@ namespace KeePassPasskey.Storage
 
         private PwGroup GetOrCreatePasskeyGroup(PwDatabase db)
         {
-            // 1. Check if KeePassXC-Browser Passkeys group exists from KeePassXC-Browser -- if so, reuse it.
             var root = db.RootGroup;
-            var existingKeePassXcGroup = FindGroupByName(root, KeePassXcPasskeyGroupName);
-            if (existingKeePassXcGroup != null) return existingKeePassXcGroup;
 
-            // 2. Otherwise, find or create our own group by UUID.
+            // 1. Find the Passkeys group by UUID.
             var uuid = new PwUuid(PasskeyGroupUuid.ToByteArray());
             var group = root.FindGroup(uuid, true);
             if (group != null) return group;
 
+            // 2. Fall back to KeePassXC-Browser Passkeys group for compatibility.
+            var existingKeePassXcGroup = FindGroupByName(root, KeePassXcPasskeyGroupName);
+            if (existingKeePassXcGroup != null) return existingKeePassXcGroup;
+
+            // 3. Create the Passkeys group.
             group = new PwGroup(false, true, PasskeyGroupName, PwIcon.MultiKeys);
             group.Uuid = uuid;
             root.AddGroup(group, true);
