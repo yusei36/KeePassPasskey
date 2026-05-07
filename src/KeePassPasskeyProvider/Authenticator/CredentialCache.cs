@@ -164,7 +164,7 @@ internal static unsafe class CredentialCache
             if (!matchedAndSame) toAdd.Add(kp);
         }
 
-        // 5. Apply — remove first (pExisting pointers still valid), then free, then add
+        // 5. Apply - remove first (pExisting pointers still valid), then free, then add
         if (toRemove.Count > 0)
         {
             ApplyRemove(pluginClsid, toRemove);

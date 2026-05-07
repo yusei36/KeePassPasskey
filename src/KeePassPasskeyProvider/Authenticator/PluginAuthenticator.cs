@@ -281,7 +281,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 *pLockStatus = PluginLockStatus.PluginUnlocked;
                 if (_lastPingReady != true)
                 {
-                    Log.Info("reconnected — syncing cache");
+                    Log.Info("reconnected - syncing cache");
                     CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
                 }
             }
@@ -290,7 +290,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 *pLockStatus = PluginLockStatus.PluginLocked;
                 if (_lastPingReady != false)
                 {
-                    Log.Info("disconnected — clearing cache");
+                    Log.Info("disconnected - clearing cache");
                     CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
                 }
             }
@@ -478,7 +478,7 @@ public sealed class ClassFactory : IClassFactory
 
     public int LockServer(bool fLock)
     {
-        // No-op — our process lifecycle is managed by the COM message loop.
+        // No-op - our process lifecycle is managed by the COM message loop.
         return HResults.S_OK;
     }
 }

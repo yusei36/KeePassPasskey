@@ -76,7 +76,7 @@ internal static class ComServer
                     Log.Warn($"KeePass unreachable, failures={consecutiveFailures}/{AppSettings.Current.CredentialSyncShutdownThreshold}");
                     if (consecutiveFailures >= AppSettings.Current.CredentialSyncShutdownThreshold)
                     {
-                        Log.Info("idle shutdown — KeePass unreachable for too long");
+                        Log.Info("idle shutdown - KeePass unreachable for too long");
                         Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);
                         break;
                     }

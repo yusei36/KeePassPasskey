@@ -38,7 +38,7 @@ internal static class Program
         if (args.Length == 0)
             return RunManagementUI();
 
-        // /register | /unregister | /status — attach to parent console so output is visible
+        // /register | /unregister | /status - attach to parent console so output is visible
         Win32Native.AttachConsole(Win32Native.ATTACH_PARENT_PROCESS);
 
         return RunManagementCommand(args);

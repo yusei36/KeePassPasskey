@@ -233,7 +233,7 @@ function Invoke-GenerateLicenseNotices {
     Write-Host "  Generated: $(Split-Path $OutputFile -Leaf)"
 }
 
-# Reads ProductVersion (includes git hash) from the plugin DLL via PE resource — no assembly loading.
+# Reads ProductVersion (includes git hash) from the plugin DLL via PE resource - no assembly loading.
 function Get-PluginVersion([string]$BuildDir) {
     $dllPath = Join-Path $BuildDir 'KeePassPasskey.dll'
     if (-not (Test-Path $dllPath)) { throw "Plugin DLL not found: $dllPath" }
@@ -256,7 +256,7 @@ function Invoke-ILRepack {
     $primaryDll = Join-Path $BuildDir 'KeePassPasskey.dll'
     if (-not (Test-Path $primaryDll)) { throw "Primary DLL not found: $primaryDll" }
 
-    # Sort: third-party packages first, then KeePassPasskey* — ensures Newtonsoft.Json
+    # Sort: third-party packages first, then KeePassPasskey* - ensures Newtonsoft.Json
     # is already loaded by the time ILRepack processes KeePassPasskeyShared.dll.
     $secondaryDlls = @(Get-ChildItem $BuildDir -Filter '*.dll' |
                        Where-Object { $_.Name -ne 'KeePassPasskey.dll' } |

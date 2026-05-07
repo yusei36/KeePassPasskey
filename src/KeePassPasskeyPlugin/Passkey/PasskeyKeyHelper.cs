@@ -26,7 +26,7 @@ namespace KeePassPasskey.Passkey
     {
         private static readonly SecureRandom Rng = new SecureRandom();
 
-        // secp256r1 / prime256v1 OID — used to produce named-curve PKCS#8 matching Botan/KeePassXC
+        // secp256r1 / prime256v1 OID - used to produce named-curve PKCS#8 matching Botan/KeePassXC
         private static readonly DerObjectIdentifier P256Oid = new DerObjectIdentifier("1.2.840.10045.3.1.7");
 
         internal static (string privateKeyPem, PublicKeyComponents pub) GenerateKeyPair(PasskeyAlgorithm alg)
@@ -177,7 +177,7 @@ namespace KeePassPasskey.Passkey
             if (privateKey is Ed25519PrivateKeyParameters edKey)
             {
                 // PrivateKeyInfoFactory.CreatePrivateKeyInfo(Ed25519PrivateKeyParameters) produces PKCS#8 v1
-                // with [1] public key — KeePassXC/Botan only accept v0 without the embedded public key.
+                // with [1] public key - KeePassXC/Botan only accept v0 without the embedded public key.
                 var pki = new Org.BouncyCastle.Asn1.Pkcs.PrivateKeyInfo(
                     new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519),
                     new DerOctetString(edKey.GetEncoded()));
@@ -186,7 +186,7 @@ namespace KeePassPasskey.Passkey
             else if (privateKey is RsaPrivateCrtKeyParameters rsaKey)
             {
                 // PemWriter.WriteObject(RsaPrivateCrtKeyParameters) produces "BEGIN RSA PRIVATE KEY"
-                // (PKCS#1 format) — KeePassXC/Botan only accept "BEGIN PRIVATE KEY" (PKCS#8).
+                // (PKCS#1 format) - KeePassXC/Botan only accept "BEGIN PRIVATE KEY" (PKCS#8).
                 var rsaStruct = new Org.BouncyCastle.Asn1.Pkcs.RsaPrivateKeyStructure(
                     rsaKey.Modulus, rsaKey.PublicExponent, rsaKey.Exponent,
                     rsaKey.P, rsaKey.Q, rsaKey.DP, rsaKey.DQ, rsaKey.QInv);
@@ -199,13 +199,13 @@ namespace KeePassPasskey.Passkey
             else if (privateKey is ECPrivateKeyParameters ecKey)
             {
                 // PemWriter.WriteObject(ECPrivateKeyParameters) produces "BEGIN EC PRIVATE KEY"
-                // (SEC1 format) — KeePassXC/Botan only accept "BEGIN PRIVATE KEY" (PKCS#8).
+                // (SEC1 format) - KeePassXC/Botan only accept "BEGIN PRIVATE KEY" (PKCS#8).
                 var q = ecKey.Parameters.G.Multiply(ecKey.D).Normalize();
                 var ecStruct = new ECPrivateKeyStructure(
                     ecKey.Parameters.N.BitLength,
                     ecKey.D,
                     new DerBitString(q.GetEncoded(false)), // uncompressed public key [1]
-                    null);                                  // no [0] — curve OID is in AlgorithmIdentifier
+                    null);                                  // no [0] - curve OID is in AlgorithmIdentifier
                 var algId = new AlgorithmIdentifier(
                     X9ObjectIdentifiers.IdECPublicKey,
                     P256Oid);

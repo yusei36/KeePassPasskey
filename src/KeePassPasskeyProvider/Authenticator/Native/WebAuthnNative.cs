@@ -89,7 +89,7 @@ internal unsafe struct WebAuthnUserEntityInformation
 }
 
 /// <summary>
-/// WEBAUTHN_ASSERTION — version 6 (CURRENT_VERSION), 176 bytes on x64.
+/// WEBAUTHN_ASSERTION - version 6 (CURRENT_VERSION), 176 bytes on x64.
 /// We declare all fields through v6 so the embedded struct layout in
 /// WebAuthnCtapCborGetAssertionResponse is correct.
 /// </summary>
@@ -133,7 +133,7 @@ internal unsafe struct WebAuthnAssertion
 }
 
 /// <summary>
-/// WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE — passed to WebAuthNEncodeGetAssertionResponse.
+/// WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE - passed to WebAuthNEncodeGetAssertionResponse.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnCtapCborGetAssertionResponse
@@ -151,7 +151,7 @@ internal unsafe struct WebAuthnCtapCborGetAssertionResponse
 }
 
 /// <summary>
-/// WEBAUTHN_CREDENTIAL_ATTESTATION — version 8 (CURRENT_VERSION), 192 bytes on x64.
+/// WEBAUTHN_CREDENTIAL_ATTESTATION - version 8 (CURRENT_VERSION), 192 bytes on x64.
 /// All fields must be declared so that WebAuthNEncodeMakeCredentialResponse reads
 /// the correct offsets when dwVersion = CURRENT_VERSION.
 /// </summary>
@@ -219,7 +219,7 @@ internal unsafe struct WebAuthnCtapCborMakeCredentialRequest
     public WebAuthnUserEntityInformation* pUserInformation;
     public WebAuthnCoseCredentialParameters WebAuthNCredentialParameters;
     public WebAuthnCredentialList CredentialList;
-    // remaining fields (cbCborExtensionsMap, etc.) omitted — not accessed
+    // remaining fields (cbCborExtensionsMap, etc.) omitted - not accessed
 }
 
 /// <summary>
@@ -239,7 +239,7 @@ internal unsafe struct WebAuthnCtapCborGetAssertionRequest
     // implicit 4-byte padding
     public byte* pbClientDataHash;
     public WebAuthnCredentialList CredentialList;
-    // remaining fields omitted — not accessed
+    // remaining fields omitted - not accessed
 }
 
 /// <summary>

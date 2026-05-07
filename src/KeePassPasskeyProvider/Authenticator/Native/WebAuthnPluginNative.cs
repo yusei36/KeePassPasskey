@@ -25,7 +25,7 @@ internal enum WebAuthnPluginRequestType : uint
 }
 
 /// <summary>
-/// WEBAUTHN_PLUGIN_OPERATION_REQUEST — passed in by the platform (read only).
+/// WEBAUTHN_PLUGIN_OPERATION_REQUEST - passed in by the platform (read only).
 /// Layout (x64): HWND(8) + GUID(16) + DWORD(4) + [4 pad] + ptr(8) + DWORD(4) + DWORD(4) + ptr(8) = 56 bytes.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
@@ -37,12 +37,12 @@ internal unsafe struct WebAuthnPluginOperationRequest
     // implicit 4-byte padding before pointer
     public byte* pbRequestSignature;               // 8 bytes
     public WebAuthnPluginRequestType requestType;  // 4 bytes (enum = DWORD)
-    public uint cbEncodedRequest;                  // 4 bytes  (no pad — two DWORDs in a row)
+    public uint cbEncodedRequest;                  // 4 bytes  (no pad - two DWORDs in a row)
     public byte* pbEncodedRequest;                 // 8 bytes  (48 is 8-byte aligned ✓)
 }
 
 /// <summary>
-/// WEBAUTHN_PLUGIN_OPERATION_RESPONSE — written by the authenticator.
+/// WEBAUTHN_PLUGIN_OPERATION_RESPONSE - written by the authenticator.
 /// Layout: DWORD(4) + [4 pad] + ptr(8) = 16 bytes.
 /// pbEncodedResponse is allocated by WebAuthNEncode*, owned and freed by the platform.
 /// </summary>
@@ -55,7 +55,7 @@ internal unsafe struct WebAuthnPluginOperationResponse
 }
 
 /// <summary>
-/// WEBAUTHN_PLUGIN_CANCEL_OPERATION_REQUEST — passed in by the platform.
+/// WEBAUTHN_PLUGIN_CANCEL_OPERATION_REQUEST - passed in by the platform.
 /// Layout: GUID(16) + DWORD(4) + [4 pad] + ptr(8) = 32 bytes.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
@@ -68,7 +68,7 @@ internal unsafe struct WebAuthnPluginCancelOperationRequest
 }
 
 /// <summary>
-/// WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_OPTIONS — built by us, passed to WebAuthNPluginAddAuthenticator.
+/// WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_OPTIONS - built by us, passed to WebAuthNPluginAddAuthenticator.
 /// rclsid is REFCLSID = const CLSID* (8-byte pointer on x64).
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
@@ -88,7 +88,7 @@ internal unsafe struct WebAuthnPluginAddAuthenticatorOptions
 }
 
 /// <summary>
-/// WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_RESPONSE — received from WebAuthNPluginAddAuthenticator.
+/// WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_RESPONSE - received from WebAuthNPluginAddAuthenticator.
 /// Layout: DWORD(4) + [4 pad] + ptr(8) = 16 bytes.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
@@ -100,7 +100,7 @@ internal unsafe struct WebAuthnPluginAddAuthenticatorResponse
 }
 
 /// <summary>
-/// WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS — one entry in the Windows autofill cache.
+/// WEBAUTHN_PLUGIN_CREDENTIAL_DETAILS - one entry in the Windows autofill cache.
 /// Layout: 64 bytes (4 DWORD/pointer pairs + 4 pointers).
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
@@ -119,7 +119,7 @@ internal unsafe struct WebAuthnPluginCredentialDetails
 }
 
 /// <summary>
-/// WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST — passed to WebAuthNPluginPerformUserVerification.
+/// WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST - passed to WebAuthNPluginPerformUserVerification.
 /// rguidTransactionId is REFGUID = const GUID* (pointer, not inline value).
 /// Layout (x64): HWND(8) + ptr(8) + ptr(8) + ptr(8) = 32 bytes.
 /// </summary>

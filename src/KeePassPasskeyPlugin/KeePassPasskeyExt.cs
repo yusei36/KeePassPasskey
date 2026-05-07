@@ -80,7 +80,7 @@ namespace KeePassPasskey
             _pipeServer = null;
         }
 
-        // Environment.OSVersion lies on .NET Framework without a matching manifest — use RtlGetVersion instead.
+        // Environment.OSVersion lies on .NET Framework without a matching manifest - use RtlGetVersion instead.
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct OSVERSIONINFOEX
         {

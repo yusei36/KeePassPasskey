@@ -145,7 +145,7 @@ internal static unsafe class PluginRegistration
         // 9: transports
         info.Add(9, CBORObject.NewArray().Add("internal"));
 
-        // 10: algorithms — ES256, EdDSA, RS256
+        // 10: algorithms - ES256, EdDSA, RS256
         var algorithms = CBORObject.NewArray();
         algorithms.Add(CBORObject.NewMap().Add("alg", -7).Add("type", "public-key"));
         algorithms.Add(CBORObject.NewMap().Add("alg", -8).Add("type", "public-key"));
