@@ -17,7 +17,7 @@ internal static unsafe class PluginRegistration
     public static bool EnsureRegistered()
     {
         int stateHr = GetState(out _);
-        if (stateHr >= 0)
+        if (stateHr >= HResults.S_OK)
         {
             if (SignatureVerifier.LoadSigningPublicKey() != null) return true;
 
@@ -31,16 +31,14 @@ internal static unsafe class PluginRegistration
         }
 
         int hr = Register();
-        if (hr < 0) Log.Error($"auto-registration failed hr=0x{hr:X8}");
-        return hr >= 0;
+        if (hr < HResults.S_OK) Log.Error($"auto-registration failed hr=0x{hr:X8}");
+        return hr >= HResults.S_OK;
     }
 
     /// <summary>Registers the plugin with the Windows passkey platform.</summary>
     public static int Register()
     {
-        Log.Info("entry");
         byte[] authenticatorInfo = BuildAuthenticatorInfoCbor();
-        Log.Info($"CBOR blob {authenticatorInfo.Length} bytes");
 
         Guid clsid = PluginConstants.KeePassPasskeyProviderClsid;
 
@@ -68,12 +66,11 @@ internal static unsafe class PluginRegistration
 
             WebAuthnPluginAddAuthenticatorResponse* pResponse = null;
             int hr = WebAuthnPluginApi.WebAuthNPluginAddAuthenticator(&options, &pResponse);
-            if (hr < 0)
+            if (hr < HResults.S_OK)
             {
                 Log.Error($"WebAuthNPluginAddAuthenticator failed hr=0x{hr:X8}");
                 return hr;
             }
-            Log.Info($"WebAuthNPluginAddAuthenticator hr=0x{hr:X8}");
 
             try
             {
@@ -95,16 +92,20 @@ internal static unsafe class PluginRegistration
             }
         }
 
-        Log.Info("success");
-        return 0; // S_OK
+        Log.Info("succeeded");
+        return HResults.S_OK;
     }
 
     /// <summary>Unregisters the plugin from the Windows passkey platform.</summary>
     public static int Unregister()
     {
-        Log.Info("entry");
         int hr = WebAuthnPluginApi.WebAuthNPluginRemoveAuthenticator(PluginConstants.KeePassPasskeyProviderClsid);
-        Log.Info($"hr=0x{hr:X8}");
+        if (hr < HResults.S_OK)
+        {
+            Log.Error($"WebAuthNPluginRemoveAuthenticator failed hr=0x{hr:X8}");
+            return hr;
+        }
+        Log.Info($"succeeded");
         return hr;
     }
 
