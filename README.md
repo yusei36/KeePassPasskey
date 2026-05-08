@@ -49,6 +49,7 @@ KeePassPasskeyProvider.exe
 4. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
 5. Launch **KeePassPasskey** from the Start menu, click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 6. Both status indicators in the **KeePassPasskey** app should show green.
+7. (Optional) Remove the certificate: open **certlm.msc** → **Trusted People** → **Certificates**, find **KeePassPasskey**, and delete it. The certificate is only needed during installation.
 
 ## Building
 
