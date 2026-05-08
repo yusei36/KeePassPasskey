@@ -62,7 +62,7 @@ internal static class Program
     /// </summary>
     private static int RunManagementUI()
     {
-        const string MutexName = "Global\\KeePassPasskeyProvider_UI";
+        const string MutexName = "Local\\KeePassPasskeyProvider_UI";
         var mutex = new Mutex(false, MutexName);
 
         try
