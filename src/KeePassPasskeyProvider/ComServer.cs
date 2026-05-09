@@ -1,5 +1,7 @@
 using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
+using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
@@ -25,7 +27,9 @@ internal static class ComServer
 
         PluginRegistration.EnsureRegistered();
 
-        // Initial credential sync
+        // Initial config + credential sync
+        Log.Info("initial SyncConfig");
+        SyncConfig();
         Log.Info("initial SyncToWindowsCache");
         CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
@@ -34,7 +38,7 @@ internal static class ComServer
 
         // Background sync thread
         using var cts = new CancellationTokenSource();
-        var syncTask = Task.Run(() => SyncCredentialCacheLoop(cts.Token, mainThreadId));
+        var syncTask = Task.Run(() => SyncLoop(cts.Token, mainThreadId));
 
         // Win32 message loop
         Log.Info("entering message loop");
@@ -54,30 +58,73 @@ internal static class ComServer
         return 0;
     }
 
-    private static async Task SyncCredentialCacheLoop(CancellationToken token, uint mainThreadId)
+    private static bool SyncConfig()
+    {
+        var configResponse = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient))).GetConfig();
+        if (configResponse == null)
+        {
+            Log.Info("KeePass unavailable or error, skipping config sync");
+            return false;
+        }
+        if (configResponse.ErrorCode != null)
+        {
+            Log.Warn($"GetConfig returned error={configResponse.ErrorCode} errorMessage={configResponse.ErrorMessage}, skipping config sync");
+            return false;
+        }
+
+        if (!configResponse.Config.Equals(KeePassPasskeyConfig.Current))
+        {
+            KeePassPasskeyConfig.Current = configResponse.Config;
+            ConfigPersistence.Save(configResponse.Config);
+        }
+
+        return true;
+    }
+
+    private static async Task SyncLoop(CancellationToken token, uint mainThreadId)
     {
         int consecutiveFailures = 0;
+        var lastConfigSync     = DateTime.UtcNow;
+        var lastCredentialSync = DateTime.UtcNow;
 
         while (!token.IsCancellationRequested)
         {
             try
             {
-                await Task.Delay(AppSettings.Current.CredentialSyncIntervalMilliseconds, token);
-                bool reached = CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+                var nextConfigSync     = lastConfigSync     + TimeSpan.FromMilliseconds(KeePassPasskeyConfig.Current.ConfigSyncIntervalMilliseconds);
+                var nextCredentialSync = lastCredentialSync + TimeSpan.FromMilliseconds(KeePassPasskeyConfig.Current.CredentialSyncIntervalMilliseconds);
+                var delay = (nextConfigSync < nextCredentialSync ? nextConfigSync : nextCredentialSync) - DateTime.UtcNow;
 
-                if (reached)
+                if (delay > TimeSpan.Zero)
+                    await Task.Delay(delay, token);
+
+                var now = DateTime.UtcNow;
+
+                if (now >= nextConfigSync)
                 {
-                    consecutiveFailures = 0;
+                    SyncConfig();
+                    lastConfigSync = now;
                 }
-                else
+
+                if (now >= nextCredentialSync)
                 {
-                    consecutiveFailures++;
-                    Log.Warn($"KeePass unreachable, failures={consecutiveFailures}/{AppSettings.Current.CredentialSyncShutdownThreshold}");
-                    if (consecutiveFailures >= AppSettings.Current.CredentialSyncShutdownThreshold)
+                    bool credentialSyncSuccessful = CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+                    lastCredentialSync = now;
+
+                    if (credentialSyncSuccessful)
                     {
-                        Log.Info("idle shutdown - KeePass unreachable for too long");
-                        Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);
-                        break;
+                        consecutiveFailures = 0;
+                    }
+                    else
+                    {
+                        consecutiveFailures++;
+                        Log.Warn($"KeePass unreachable, failures={consecutiveFailures}/{KeePassPasskeyConfig.Current.CredentialSyncShutdownThreshold}");
+                        if (consecutiveFailures >= KeePassPasskeyConfig.Current.CredentialSyncShutdownThreshold)
+                        {
+                            Log.Info("idle shutdown - KeePass unreachable for too long");
+                            Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);
+                            break;
+                        }
                     }
                 }
             }

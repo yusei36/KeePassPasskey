@@ -1,4 +1,5 @@
 using KeePass.Plugins;
+using KeePassPasskey.Config;
 using KeePassPasskey.Ipc;
 using KeePassPasskeyShared;
 using KeePassPasskey.Storage;
@@ -61,7 +62,8 @@ namespace KeePassPasskey
             try
             {
                 var storage = new PasskeyEntryStorage(_host);
-                var handler = new RequestHandler(_host, storage);
+                var settings = new PluginSettings(_host);
+                var handler = new RequestHandler(_host, storage, settings);
                 _pipeServer = new PipeServer(handler);
                 _pipeServer.Start();
             }

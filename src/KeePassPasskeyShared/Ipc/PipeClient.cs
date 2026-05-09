@@ -38,6 +38,12 @@ namespace KeePassPasskeyShared.Ipc
         public CancelResponse Cancel()
             => Send<CancelResponse>(new CancelRequest());
 
+        public GetConfigResponse GetConfig()
+            => Send<GetConfigResponse>(new GetConfigRequest());
+
+        public SetConfigResponse SetConfig(SetConfigRequest request)
+            => Send<SetConfigResponse>(request);
+
         private TResponse Send<TResponse>(PipeRequestBase request) where TResponse : PipeResponseBase
         {
             try

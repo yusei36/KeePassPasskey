@@ -2,6 +2,7 @@ using KeePass.Plugins;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Passkey;
+using KeePassPasskey.Config;
 using KeePassPasskey.Passkey;
 using KeePassPasskey.Storage;
 using Newtonsoft.Json;
@@ -18,11 +19,13 @@ namespace KeePassPasskey.Ipc
 
         private readonly IPluginHost _host;
         private readonly PasskeyEntryStorage _storage;
+        private readonly PluginSettings _settings;
 
-        internal RequestHandler(IPluginHost host, PasskeyEntryStorage storage)
+        internal RequestHandler(IPluginHost host, PasskeyEntryStorage storage, PluginSettings settings)
         {
             _host = host;
             _storage = storage;
+            _settings = settings;
         }
 
         internal string Handle(string json)
@@ -46,6 +49,8 @@ namespace KeePassPasskey.Ipc
                     MakeCredentialRequest r => HandleMakeCredential(r),
                     GetAssertionRequest r   => HandleGetAssertion(r),
                     CancelRequest r         => HandleCancel(r),
+                    GetConfigRequest r      => HandleGetConfig(r),
+                    SetConfigRequest r      => HandleSetConfig(r),
                     _ => new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Unknown request type: " + req.Type }
                 };
                 return JsonConvert.SerializeObject(response);
@@ -190,6 +195,17 @@ namespace KeePassPasskey.Ipc
         private CancelResponse HandleCancel(CancelRequest req)
         {
             return new CancelResponse { Status = "acknowledged" };
+        }
+
+        private GetConfigResponse HandleGetConfig(GetConfigRequest req)
+        {
+            return new GetConfigResponse { Config = _settings.Load() };
+        }
+
+        private SetConfigResponse HandleSetConfig(SetConfigRequest req)
+        {
+            _settings.Save(req.Config);
+            return new SetConfigResponse();
         }
 
         private bool IsDatabaseOpen()

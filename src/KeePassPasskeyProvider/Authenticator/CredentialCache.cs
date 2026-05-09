@@ -121,12 +121,12 @@ internal static unsafe class CredentialCache
         var response = pipeClient.GetCredentials(new GetCredentialsRequest());
         if (response == null)
         {
-            Log.Info("KeePass unavailable or error, skipping sync");
+            Log.Info("KeePass unavailable or error, skipping credential sync");
             return false;
         }
         if (response.ErrorCode != null)
         {
-            Log.Warn($"GetCredentials returned error={response.ErrorCode}, skipping sync");
+            Log.Warn($"GetCredentials returned error={response.ErrorCode} errorMessage={response.ErrorMessage}, skipping credential sync");
             return false;
         }
 

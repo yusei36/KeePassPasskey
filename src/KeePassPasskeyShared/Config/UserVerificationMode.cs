@@ -1,0 +1,16 @@
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace KeePassPasskeyShared.Config
+{
+    [Flags]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum UserVerificationMode
+    {
+        None         = 0,
+        WindowsHello = 1,
+        Notification = 2,
+        Both         = WindowsHello | Notification,
+    }
+}

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using KeePassPasskeyShared.Config;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -78,6 +79,19 @@ namespace KeePassPasskeyShared.Ipc
     public sealed class CancelRequest : PipeRequestBase
     {
         public override string Type => "cancel";
+    }
+
+    public sealed class GetConfigRequest : PipeRequestBase
+    {
+        public override string Type => "get_config";
+    }
+
+    public sealed class SetConfigRequest : PipeRequestBase
+    {
+        public override string Type => "set_config";
+
+        [JsonProperty("config")]
+        public KeePassPasskeyConfig Config { get; set; }
     }
 
     [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
@@ -173,6 +187,19 @@ namespace KeePassPasskeyShared.Ipc
         public string Status { get; set; }
     }
 
+    public sealed class GetConfigResponse : PipeResponseBase
+    {
+        public GetConfigResponse() { Type = "get_config"; }
+
+        [JsonProperty("config")]
+        public KeePassPasskeyConfig Config { get; set; }
+    }
+
+    public sealed class SetConfigResponse : PipeResponseBase
+    {
+        public SetConfigResponse() { Type = "set_config"; }
+    }
+
     public sealed class CredentialInfo
     {
         [JsonProperty("credentialId")]
@@ -207,6 +234,8 @@ namespace KeePassPasskeyShared.Ipc
                 "make_credential"  => new MakeCredentialRequest(),
                 "get_assertion"    => new GetAssertionRequest(),
                 "cancel"           => new CancelRequest(),
+                "get_config"       => new GetConfigRequest(),
+                "set_config"       => new SetConfigRequest(),
                 _ => throw new JsonSerializationException($"Unknown request type: {type}")
             };
             serializer.Populate(jobj.CreateReader(), result);
@@ -233,6 +262,8 @@ namespace KeePassPasskeyShared.Ipc
                 "make_credential"  => new MakeCredentialResponse(),
                 "get_assertion"    => new GetAssertionResponse(),
                 "cancel"           => new CancelResponse(),
+                "get_config"       => new GetConfigResponse(),
+                "set_config"       => new SetConfigResponse(),
                 _                  => new PipeResponseBase()
             };
             serializer.Populate(jobj.CreateReader(), result);

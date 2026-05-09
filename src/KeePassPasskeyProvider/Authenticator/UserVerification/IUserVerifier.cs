@@ -1,4 +1,4 @@
-using KeePassPasskeyProvider.Util;
+using KeePassPasskeyShared.Config;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
