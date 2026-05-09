@@ -17,3 +17,6 @@ packages/
 src/KeePassPasskeyProvider.Package/AppPackages/
 src/KeePassPasskeyProvider.Package/bin/
 src/KeePassPasskeyProvider.Package/obj/
+
+# Documentation output
+/docs/
