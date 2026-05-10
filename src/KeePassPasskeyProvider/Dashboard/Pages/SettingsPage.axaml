@@ -1,13 +1,150 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="KeePassPasskeyProvider.Dashboard.Pages.SettingsPage">
-    <StackPanel Margin="16 16 16 16" Spacing="8">
-        <TextBlock Text="Settings"
-                   FontSize="20"
-                   FontWeight="SemiBold" />
-        <TextBlock Text="Settings are not yet configurable here."
-                   Opacity="0.55"
-                   FontSize="13"
-                   Margin="0 8 0 0" />
-    </StackPanel>
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:vm="using:KeePassPasskeyProvider.Dashboard.ViewModel"
+             xmlns:utils="using:KeePassPasskeyProvider.Dashboard.Utils"
+             x:Class="KeePassPasskeyProvider.Dashboard.Pages.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             x:CompileBindings="True">
+
+    <ScrollViewer>
+        <StackPanel Spacing="8" Margin="16">
+            <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 4">
+                <TextBlock Text="Settings"
+                           Theme="{StaticResource TitleTextBlockStyle}" />
+                <Button Grid.Column="1"
+                        Command="{Binding SaveCommand}"
+                        IsEnabled="{Binding !IsSaving}"
+                        ToolTip.Tip="Save settings"
+                        VerticalAlignment="Center">
+                    <ui:SymbolIcon Symbol="Save" FontSize="18" />
+                </Button>
+            </Grid>
+
+            <ui:SettingsExpander Header="User Verification"
+                                 IconSource="OtherUser"
+                                 Description="Require proof of identity before passkey operations"
+                                 IsExpanded="True">
+
+                <ui:SettingsExpanderItem Content="Registration"
+                                         Description="How users confirm identity when registering a new passkey">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ComboBox SelectedItem="{Binding RegistrationVerification}"
+                                  ItemsSource="{Binding VerificationModes}"
+                                  MinWidth="160" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="Sign-in"
+                                         Description="How users confirm identity when signing in with a passkey">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ComboBox SelectedItem="{Binding SignInVerification}"
+                                  ItemsSource="{Binding VerificationModes}"
+                                  MinWidth="160" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="Notification timeout (s)"
+                                         Description="How long to wait for the user to approve a notification">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ui:NumberBox Value="{Binding NotificationTimeoutSeconds}"
+                                      Minimum="5"
+                                      Maximum="300"
+                                      SmallChange="5"
+                                      ValidationMode="InvalidInputOverwritten"
+                                      SpinButtonPlacementMode="Compact"
+                                      MinWidth="100"
+                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+            </ui:SettingsExpander>
+
+            <ui:SettingsExpander Header="Notifications"
+                                 IconSource="Mail"
+                                 Description="Show a system notification when a passkey error occurs">
+                <ui:SettingsExpander.Footer>
+                    <ToggleSwitch IsChecked="{Binding ShowErrorNotifications}"
+                                  OnContent="On"
+                                  OffContent="Off"
+                                  Margin="0 0 4 0" />
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+
+            <ui:SettingsExpander Header="Logging"
+                                 IconSource="Document"
+                                 Description="Verbosity of the provider and plugin log files">
+                <ui:SettingsExpander.Footer>
+                    <ComboBox SelectedItem="{Binding LogLevel}"
+                              ItemsSource="{Binding LogLevels}"
+                              MinWidth="120" />
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+
+            <ui:SettingsExpander Header="Advanced"
+                                 IconSource="Setting"
+                                 Description="Timing and resilience settings for background sync"
+                                 IsExpanded="False">
+
+                <ui:SettingsExpanderItem Content="Status refresh interval (s)"
+                                         Description="How often the dashboard polls for provider status">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ui:NumberBox Value="{Binding StatusRefreshIntervalSeconds}"
+                                      Minimum="1"
+                                      Maximum="3600"
+                                      SmallChange="5"
+                                      ValidationMode="InvalidInputOverwritten"
+                                      SpinButtonPlacementMode="Compact"
+                                      MinWidth="100"
+                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+				<ui:SettingsExpanderItem Content="Credential sync interval (s)"
+                                         Description="How often passkey metadata are synced from KeePass to the Windows credential cache.&#10;Set to 0 to disable.">
+					<ui:SettingsExpanderItem.Footer>
+						<ui:NumberBox Value="{Binding CredentialSyncIntervalSeconds}"
+                                      Minimum="0"
+                                      Maximum="3600"
+                                      SmallChange="5"
+                                      ValidationMode="InvalidInputOverwritten"
+                                      SpinButtonPlacementMode="Compact"
+                                      MinWidth="100"
+                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+					</ui:SettingsExpanderItem.Footer>
+				</ui:SettingsExpanderItem>
+				
+                <ui:SettingsExpanderItem Content="Max credential cache sync retries"
+                                         Description="Background sync pauses after this many failures and resumes on the next passkey request">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ui:NumberBox Value="{Binding CredentialSyncShutdownThreshold}"
+                                      Minimum="1"
+                                      Maximum="100"
+                                      SmallChange="1"
+                                      ValidationMode="InvalidInputOverwritten"
+                                      SpinButtonPlacementMode="Compact"
+                                      MinWidth="100" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+				<ui:SettingsExpanderItem Content="Config sync interval (s)"
+                                         Description="How often the background process fetches settings from KeePass.&#10;Set to 0 to disable.">
+					<ui:SettingsExpanderItem.Footer>
+						<ui:NumberBox Value="{Binding ConfigSyncIntervalSeconds}"
+                                      Minimum="0"
+                                      Maximum="3600"
+                                      SmallChange="5"
+                                      ValidationMode="InvalidInputOverwritten"
+                                      SpinButtonPlacementMode="Compact"
+                                      MinWidth="100"
+                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+					</ui:SettingsExpanderItem.Footer>
+				</ui:SettingsExpanderItem>
+
+            </ui:SettingsExpander>
+
+
+        </StackPanel>
+    </ScrollViewer>
+
 </UserControl>

@@ -91,22 +91,36 @@ internal static class ComServer
         {
             try
             {
-                var nextConfigSync     = lastConfigSync     + TimeSpan.FromMilliseconds(KeePassPasskeyConfig.Current.ConfigSyncIntervalMilliseconds);
-                var nextCredentialSync = lastCredentialSync + TimeSpan.FromMilliseconds(KeePassPasskeyConfig.Current.CredentialSyncIntervalMilliseconds);
-                var delay = (nextConfigSync < nextCredentialSync ? nextConfigSync : nextCredentialSync) - DateTime.UtcNow;
+                var cfg = KeePassPasskeyConfig.Current;
+                bool configSyncEnabled     = cfg.ConfigSyncIntervalMilliseconds > 0;
+                bool credentialSyncEnabled = cfg.CredentialSyncIntervalMilliseconds > 0;
 
+                if (!configSyncEnabled && !credentialSyncEnabled)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(5), token);
+                    continue;
+                }
+
+                var nextConfigSync     = configSyncEnabled
+                    ? lastConfigSync     + TimeSpan.FromMilliseconds(cfg.ConfigSyncIntervalMilliseconds)
+                    : DateTime.MaxValue;
+                var nextCredentialSync = credentialSyncEnabled
+                    ? lastCredentialSync + TimeSpan.FromMilliseconds(cfg.CredentialSyncIntervalMilliseconds)
+                    : DateTime.MaxValue;
+
+                var delay = (nextConfigSync < nextCredentialSync ? nextConfigSync : nextCredentialSync) - DateTime.UtcNow;
                 if (delay > TimeSpan.Zero)
                     await Task.Delay(delay, token);
 
                 var now = DateTime.UtcNow;
 
-                if (now >= nextConfigSync)
+                if (configSyncEnabled && now >= nextConfigSync)
                 {
                     SyncConfig();
                     lastConfigSync = now;
                 }
 
-                if (now >= nextCredentialSync)
+                if (credentialSyncEnabled && now >= nextCredentialSync)
                 {
                     bool credentialSyncSuccessful = CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
                     lastCredentialSync = now;
@@ -118,8 +132,8 @@ internal static class ComServer
                     else
                     {
                         consecutiveFailures++;
-                        Log.Warn($"KeePass unreachable, failures={consecutiveFailures}/{KeePassPasskeyConfig.Current.CredentialSyncShutdownThreshold}");
-                        if (consecutiveFailures >= KeePassPasskeyConfig.Current.CredentialSyncShutdownThreshold)
+                        Log.Warn($"KeePass unreachable, failures={consecutiveFailures}/{cfg.CredentialSyncShutdownThreshold}");
+                        if (consecutiveFailures >= cfg.CredentialSyncShutdownThreshold)
                         {
                             Log.Info("idle shutdown - KeePass unreachable for too long");
                             Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);

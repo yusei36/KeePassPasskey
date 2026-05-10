@@ -28,7 +28,7 @@ namespace KeePassPasskeyShared.Config
 #endif
 
         [JsonProperty("configSyncIntervalMilliseconds")]
-        public int ConfigSyncIntervalMilliseconds { get; set; } = 300_000;
+        public int ConfigSyncIntervalMilliseconds { get; set; } = 30_000;
 
         [JsonProperty("credentialSyncIntervalMilliseconds")]
         public int CredentialSyncIntervalMilliseconds { get; set; } = 30_000;
