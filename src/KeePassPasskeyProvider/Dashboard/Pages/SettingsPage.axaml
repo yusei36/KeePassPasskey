@@ -63,7 +63,7 @@
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
                                       SpinButtonPlacementMode="Inline"
-                                      MinWidth="135"
+                                      MinWidth="120"
 									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
@@ -81,20 +81,19 @@
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
 
-            <ui:SettingsExpander Header="Logging"
-                                 IconSource="Document"
-                                 Description="Verbosity of the provider and plugin log files">
-                <ui:SettingsExpander.Footer>
-                    <ComboBox SelectedItem="{Binding LogLevel}"
-                              ItemsSource="{Binding LogLevels}"
-                              MinWidth="120" />
-                </ui:SettingsExpander.Footer>
-            </ui:SettingsExpander>
-
             <ui:SettingsExpander Header="Advanced"
                                  IconSource="Setting"
-                                 Description="Timing and resilience settings for background sync"
+                                 Description="Timing, resilience and logging settings"
                                  IsExpanded="False">
+
+                <ui:SettingsExpanderItem Content="Log level"
+                                         Description="Verbosity of the provider and plugin log files">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ComboBox SelectedItem="{Binding LogLevel}"
+                                  ItemsSource="{Binding LogLevels}"
+                                  MinWidth="120" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
 
                 <ui:SettingsExpanderItem Content="Status refresh interval"
                                          Description="How often the app polls for provider status">
@@ -105,7 +104,7 @@
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
                                       SpinButtonPlacementMode="Inline"
-                                      MinWidth="135"
+                                      MinWidth="120"
 									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
@@ -119,7 +118,7 @@
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
                                       SpinButtonPlacementMode="Inline"
-                                      MinWidth="135"
+                                      MinWidth="120"
 									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
 					</ui:SettingsExpanderItem.Footer>
 				</ui:SettingsExpanderItem>
@@ -133,7 +132,7 @@
                                       SmallChange="1"
                                       ValidationMode="InvalidInputOverwritten"
                                       SpinButtonPlacementMode="Inline"
-                                      MinWidth="100" />
+                                      MinWidth="120" />
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
@@ -146,7 +145,7 @@
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
                                       SpinButtonPlacementMode="Inline"
-                                      MinWidth="135"
+                                      MinWidth="120"
 									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
 					</ui:SettingsExpanderItem.Footer>
 				</ui:SettingsExpanderItem>
