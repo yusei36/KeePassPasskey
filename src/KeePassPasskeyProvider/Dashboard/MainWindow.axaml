@@ -13,6 +13,9 @@
 			<Setter Property="IsVisible" Value="False"/>
 		</Style>
 	</ui:AppWindow.Styles>
+	<ui:AppWindow.Resources>
+		<Thickness x:Key="NavigationViewButtonHolderGridMargin">0</Thickness>
+	</ui:AppWindow.Resources>
     <Grid RowDefinitions="Auto,*">
         <!-- Not-packaged warning -->
         <fa:InfoBar Grid.Row="0"
@@ -25,6 +28,7 @@
 
         <!-- NavigationView -->
         <fa:NavigationView Grid.Row="1"
+						   Margin="0"
                            x:Name="NavView"
                            PaneDisplayMode="Left"
                            IsSettingsVisible="False"

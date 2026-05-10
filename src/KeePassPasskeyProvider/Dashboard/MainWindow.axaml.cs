@@ -25,6 +25,11 @@ public partial class MainWindow : AppWindow
         DataContext = viewModel;
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
         NavView.SelectionChanged += NavView_SelectionChanged;
+        NavView.TemplateApplied += (_, e) =>
+        {
+            if (e.NameScope.Find<Grid>("ItemsContainerGrid") is { } grid)
+                grid.Margin = new Avalonia.Thickness(0);
+        };
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -59,7 +64,7 @@ public partial class MainWindow : AppWindow
                 NavView.Content = _diagnosticsPage;
                 break;
             case "settings":
-                _settingsPage ??= new SettingsPage();
+                _settingsPage ??= new SettingsPage(new SettingsViewModel());
                 NavView.Content = _settingsPage;
                 break;
         }
