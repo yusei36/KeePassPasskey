@@ -10,6 +10,17 @@ namespace KeePassPasskeyShared.Ipc
 {
     // All messages use length-prefixed framing: [4-byte LE uint32 length][UTF-8 JSON]
 
+    public static class PipeMessageTypes
+    {
+        public const string Ping           = "ping";
+        public const string GetCredentials = "get_credentials";
+        public const string MakeCredential = "make_credential";
+        public const string GetAssertion   = "get_assertion";
+        public const string Cancel         = "cancel";
+        public const string GetSettings    = "get_settings";
+        public const string SaveSettings   = "save_settings";
+    }
+
     [JsonConverter(typeof(PipeRequestConverter))]
     public abstract class PipeRequestBase
     {
@@ -19,7 +30,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class PingRequest : PipeRequestBase
     {
-        public override string Type => "ping";
+        public override string Type => PipeMessageTypes.Ping;
 
         [JsonProperty("version")]
         public string Version { get; set; } = PipeConstants.Version;
@@ -27,7 +38,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class GetCredentialsRequest : PipeRequestBase
     {
-        public override string Type => "get_credentials";
+        public override string Type => PipeMessageTypes.GetCredentials;
 
         [JsonProperty("rpId", NullValueHandling = NullValueHandling.Ignore)]
         public string RpId { get; set; }
@@ -38,7 +49,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class MakeCredentialRequest : PipeRequestBase
     {
-        public override string Type => "make_credential";
+        public override string Type => PipeMessageTypes.MakeCredential;
 
         [JsonProperty("rpId")]
         public string RpId { get; set; }
@@ -64,7 +75,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class GetAssertionRequest : PipeRequestBase
     {
-        public override string Type => "get_assertion";
+        public override string Type => PipeMessageTypes.GetAssertion;
 
         [JsonProperty("rpId")]
         public string RpId { get; set; }
@@ -78,17 +89,17 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class CancelRequest : PipeRequestBase
     {
-        public override string Type => "cancel";
+        public override string Type => PipeMessageTypes.Cancel;
     }
 
     public sealed class GetSettingsRequest : PipeRequestBase
     {
-        public override string Type => "get_settings";
+        public override string Type => PipeMessageTypes.GetSettings;
     }
 
     public sealed class SaveSettingsRequest : PipeRequestBase
     {
-        public override string Type => "save_settings";
+        public override string Type => PipeMessageTypes.SaveSettings;
 
         [JsonProperty("settings")]
         public KeePassPasskeySettings Settings { get; set; }
@@ -128,7 +139,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class PingResponse : PipeResponseBase
     {
-        public PingResponse() { Type = "ping"; }
+        public PingResponse() { Type = PipeMessageTypes.Ping; }
 
         [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
         public PingStatus? Status { get; set; }
@@ -139,7 +150,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class GetCredentialsResponse : PipeResponseBase
     {
-        public GetCredentialsResponse() { Type = "get_credentials"; }
+        public GetCredentialsResponse() { Type = PipeMessageTypes.GetCredentials; }
 
         [JsonProperty("credentials")]
         public List<CredentialInfo> Credentials { get; set; }
@@ -147,7 +158,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class MakeCredentialResponse : PipeResponseBase
     {
-        public MakeCredentialResponse() { Type = "make_credential"; }
+        public MakeCredentialResponse() { Type = PipeMessageTypes.MakeCredential; }
 
         [JsonProperty("credentialId")]
         public string CredentialId { get; set; }
@@ -158,7 +169,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class GetAssertionResponse : PipeResponseBase
     {
-        public GetAssertionResponse() { Type = "get_assertion"; }
+        public GetAssertionResponse() { Type = PipeMessageTypes.GetAssertion; }
 
         [JsonProperty("credentialId")]
         public string CredentialId { get; set; }
@@ -181,7 +192,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class CancelResponse : PipeResponseBase
     {
-        public CancelResponse() { Type = "cancel"; }
+        public CancelResponse() { Type = PipeMessageTypes.Cancel; }
 
         [JsonProperty("status")]
         public string Status { get; set; }
@@ -189,7 +200,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class GetSettingsResponse : PipeResponseBase
     {
-        public GetSettingsResponse() { Type = "get_settings"; }
+        public GetSettingsResponse() { Type = PipeMessageTypes.GetSettings; }
 
         [JsonProperty("settings")]
         public KeePassPasskeySettings Settings { get; set; }
@@ -197,7 +208,7 @@ namespace KeePassPasskeyShared.Ipc
 
     public sealed class SaveSettingsResponse : PipeResponseBase
     {
-        public SaveSettingsResponse() { Type = "save_settings"; }
+        public SaveSettingsResponse() { Type = PipeMessageTypes.SaveSettings; }
     }
 
     public sealed class CredentialInfo
@@ -229,13 +240,13 @@ namespace KeePassPasskeyShared.Ipc
             string type = (string)jobj["type"];
             PipeRequestBase result = type switch
             {
-                "ping"             => new PingRequest(),
-                "get_credentials"  => new GetCredentialsRequest(),
-                "make_credential"  => new MakeCredentialRequest(),
-                "get_assertion"    => new GetAssertionRequest(),
-                "cancel"           => new CancelRequest(),
-                "get_settings"     => new GetSettingsRequest(),
-                "save_settings"    => new SaveSettingsRequest(),
+                PipeMessageTypes.Ping           => new PingRequest(),
+                PipeMessageTypes.GetCredentials => new GetCredentialsRequest(),
+                PipeMessageTypes.MakeCredential => new MakeCredentialRequest(),
+                PipeMessageTypes.GetAssertion   => new GetAssertionRequest(),
+                PipeMessageTypes.Cancel         => new CancelRequest(),
+                PipeMessageTypes.GetSettings    => new GetSettingsRequest(),
+                PipeMessageTypes.SaveSettings   => new SaveSettingsRequest(),
                 _ => throw new JsonSerializationException($"Unknown request type: {type}")
             };
             serializer.Populate(jobj.CreateReader(), result);
@@ -257,14 +268,14 @@ namespace KeePassPasskeyShared.Ipc
             string type = (string)jobj["type"];
             PipeResponseBase result = type switch
             {
-                "ping"             => new PingResponse(),
-                "get_credentials"  => new GetCredentialsResponse(),
-                "make_credential"  => new MakeCredentialResponse(),
-                "get_assertion"    => new GetAssertionResponse(),
-                "cancel"           => new CancelResponse(),
-                "get_settings"     => new GetSettingsResponse(),
-                "save_settings"    => new SaveSettingsResponse(),
-                _                  => new PipeResponseBase()
+                PipeMessageTypes.Ping           => new PingResponse(),
+                PipeMessageTypes.GetCredentials => new GetCredentialsResponse(),
+                PipeMessageTypes.MakeCredential => new MakeCredentialResponse(),
+                PipeMessageTypes.GetAssertion   => new GetAssertionResponse(),
+                PipeMessageTypes.Cancel         => new CancelResponse(),
+                PipeMessageTypes.GetSettings    => new GetSettingsResponse(),
+                PipeMessageTypes.SaveSettings   => new SaveSettingsResponse(),
+                _                               => new PipeResponseBase()
             };
             serializer.Populate(jobj.CreateReader(), result);
             return result;
