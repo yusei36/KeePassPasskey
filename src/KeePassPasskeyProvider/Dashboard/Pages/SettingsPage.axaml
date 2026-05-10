@@ -8,10 +8,15 @@
              x:CompileBindings="True">
 
     <Grid RowDefinitions="Auto,*">
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="16 16 16 4">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Margin="16 16 16 4">
             <TextBlock Text="Settings"
                        Theme="{StaticResource TitleTextBlockStyle}" />
-            <Button Grid.Column="1"
+            <ui:SymbolIcon Grid.Column="1" Symbol="ImportantFilled" FontSize="16"
+                           VerticalAlignment="Center" Margin="0 0 4 0"
+                           IsVisible="{Binding HasUnsavedChanges}"
+                           Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                           ToolTip.Tip="You have unsaved changes" />
+            <Button Grid.Column="2"
                     Command="{Binding SaveCommand}"
                     IsEnabled="{Binding !IsSaving}"
                     ToolTip.Tip="Save settings"

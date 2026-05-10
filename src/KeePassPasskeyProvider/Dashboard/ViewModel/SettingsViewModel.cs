@@ -1,5 +1,4 @@
-using System;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -26,6 +25,32 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private double _credentialSyncShutdownThreshold;
     [ObservableProperty] private bool _isSaving;
     [ObservableProperty] private Theme _theme = Theme.System;
+    [ObservableProperty] private bool _hasUnsavedChanges;
+
+    private bool _isLoading;
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges)))
+            CheckForUnsavedChanges();
+    }
+
+    private void CheckForUnsavedChanges() =>
+        HasUnsavedChanges = !BuildSettings().Equals(KeePassPasskeySettings.Current);
+
+    private KeePassPasskeySettings BuildSettings() => new()
+    {
+        RegistrationVerification               = RegistrationVerification,
+        SignInVerification                     = SignInVerification,
+        ShowErrorNotifications                 = ShowErrorNotifications,
+        NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
+        LogLevel                               = LogLevel,
+        CredentialSyncIntervalMilliseconds     = (int)CredentialSyncIntervalSeconds * 1000,
+        StatusRefreshIntervalMilliseconds      = (int)StatusRefreshIntervalSeconds * 1000,
+        CredentialSyncShutdownThreshold        = (int)CredentialSyncShutdownThreshold,
+        Theme                                  = Theme,
+    };
 
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
     public static LogLevel[] LogLevels { get; } = (LogLevel[])Enum.GetValues(typeof(LogLevel));
@@ -64,6 +89,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     private void LoadFromCurrent()
     {
+        _isLoading = true;
         var c = KeePassPasskeySettings.Current;
         RegistrationVerification       = c.RegistrationVerification;
         SignInVerification              = c.SignInVerification;
@@ -74,6 +100,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         StatusRefreshIntervalSeconds   = c.StatusRefreshIntervalMilliseconds / 1000;
         CredentialSyncShutdownThreshold = c.CredentialSyncShutdownThreshold;
         Theme = c.Theme;
+        _isLoading = false;
+        HasUnsavedChanges = false;
     }
 
     [RelayCommand]
@@ -82,18 +110,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         IsSaving = true;
         try
         {
-            var settings = new KeePassPasskeySettings
-            {
-                RegistrationVerification               = RegistrationVerification,
-                SignInVerification                     = SignInVerification,
-                ShowErrorNotifications                 = ShowErrorNotifications,
-                NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
-                LogLevel                               = LogLevel,
-                CredentialSyncIntervalMilliseconds     = (int)CredentialSyncIntervalSeconds * 1000,
-                StatusRefreshIntervalMilliseconds      = (int)StatusRefreshIntervalSeconds * 1000,
-                CredentialSyncShutdownThreshold        = (int)CredentialSyncShutdownThreshold,
-                Theme                                  = Theme,
-            };
+            var settings = BuildSettings();
 
             var response = await Task.Run(() =>
                 new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)))
@@ -108,6 +125,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
             KeePassPasskeySettings.Current = settings;
             SettingsCache.Save(settings);
+            HasUnsavedChanges = false;
         }
         finally
         {
