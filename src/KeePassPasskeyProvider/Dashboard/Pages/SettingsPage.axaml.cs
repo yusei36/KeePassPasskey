@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -15,6 +16,13 @@ public partial class SettingsPage : UserControl
     {
         InitializeComponent();
         DataContext = viewModel;
+        viewModel.PropertyChanged += OnViewModelPropertyChanged;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SettingsViewModel.IsSaving) && sender is SettingsViewModel vm)
+            Cursor = vm.IsSaving ? new Cursor(StandardCursorType.Wait) : Cursor.Default;
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
