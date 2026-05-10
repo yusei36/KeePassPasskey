@@ -1,14 +1,22 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Windowing;
+using KeePassPasskeyProvider.Dashboard.Pages;
 using KeePassPasskeyProvider.Dashboard.ViewModel;
 
 namespace KeePassPasskeyProvider.Dashboard;
 
 public partial class MainWindow : AppWindow
 {
+    private HomePage? _homePage;
+    private DiagnosticsPage? _diagnosticsPage;
+    private SettingsPage? _settingsPage;
+
     public MainWindow() : this(new MainWindowViewModel()) { } // required by Avalonia XAML loader
 
     public MainWindow(MainWindowViewModel viewModel)
@@ -16,6 +24,7 @@ public partial class MainWindow : AppWindow
         InitializeComponent();
         DataContext = viewModel;
         viewModel.PropertyChanged += OnViewModelPropertyChanged;
+        NavView.SelectionChanged += NavView_SelectionChanged;
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -25,6 +34,34 @@ public partial class MainWindow : AppWindow
         {
             icon.Width = 20;
             icon.Height = 20;
+        }
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
+    }
+
+    private void NavView_SelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs args)
+    {
+        if (args.SelectedItem is not NavigationViewItem item) return;
+        var vm = (MainWindowViewModel)DataContext!;
+        switch (item.Tag?.ToString())
+        {
+            case "home":
+                _homePage ??= new HomePage { DataContext = vm };
+                NavView.Content = _homePage;
+                break;
+            case "diagnostics":
+                vm.Diagnostics.IsLogVisible = true;
+                _diagnosticsPage ??= new DiagnosticsPage { DataContext = vm.Diagnostics };
+                NavView.Content = _diagnosticsPage;
+                break;
+            case "settings":
+                _settingsPage ??= new SettingsPage();
+                NavView.Content = _settingsPage;
+                break;
         }
     }
 

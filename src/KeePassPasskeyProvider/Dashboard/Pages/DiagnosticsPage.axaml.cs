@@ -1,16 +1,16 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using KeePassPasskeyProvider.Dashboard.ViewModel;
 
-namespace KeePassPasskeyProvider.Dashboard.Controls;
+namespace KeePassPasskeyProvider.Dashboard.Pages;
 
-public partial class Diagnostics : UserControl
+public partial class DiagnosticsPage : UserControl
 {
     private DiagnosticsViewModel? _vm;
 
-    public Diagnostics()
+    public DiagnosticsPage()
     {
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;

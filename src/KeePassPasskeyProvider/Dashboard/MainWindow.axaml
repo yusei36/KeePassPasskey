@@ -2,33 +2,47 @@
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:ui="using:FluentAvalonia.UI.Windowing"
               xmlns:fa="using:FluentAvalonia.UI.Controls"
-              xmlns:ctrl="using:KeePassPasskeyProvider.Dashboard.Controls"
               x:Class="KeePassPasskeyProvider.Dashboard.MainWindow"
               Title="KeePassPasskey"
               Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
-              Width="650"
-              CanResize="False" SizeToContent="Height"
+              Width="780" Height="600"
+              CanResize="False"
               WindowStartupLocation="CenterScreen">
 	<ui:AppWindow.Styles>
 		<Style Selector="ui|AppWindow /template/ ui|MinMaxCloseControl /template/ Button#MaxRestoreButton">
 			<Setter Property="IsVisible" Value="False"/>
 		</Style>
 	</ui:AppWindow.Styles>
-    <StackPanel Margin="24 0" Spacing="12">
+    <Grid RowDefinitions="Auto,*">
         <!-- Not-packaged warning -->
-        <fa:InfoBar Title="Not installed as package"
+        <fa:InfoBar Grid.Row="0"
+                    Margin="8 4 8 0"
+                    Title="Not installed as package"
                     Message="Register and Unregister will not work correctly. Please install the MSIX package first."
                     Severity="Warning"
                     IsOpen="{Binding IsNotPackaged}"
-                    IsClosable="False" />
+                    IsClosable="True" />
 
-        <!-- Status hero -->
-        <ctrl:StatusHero DataContext="{Binding StatusHero}" />
-
-        <!-- Setup guide -->
-        <ctrl:SetupGuide DataContext="{Binding SetupGuide}" />
-
-        <!-- Diagnostics -->
-        <ctrl:Diagnostics DataContext="{Binding Diagnostics}" />
-    </StackPanel>
+        <!-- NavigationView -->
+        <fa:NavigationView Grid.Row="1"
+                           x:Name="NavView"
+                           PaneDisplayMode="Left"
+                           IsSettingsVisible="False"
+                           OpenPaneLength="200"
+                           IsPaneOpen="False">
+            <fa:NavigationView.MenuItems>
+                <fa:NavigationViewItem Content="Home"
+                                       Tag="home"
+                                       IconSource="Home" />
+                <fa:NavigationViewItem Content="Diagnostics"
+                                       Tag="diagnostics"
+                                       IconSource="Repair" />
+            </fa:NavigationView.MenuItems>
+            <fa:NavigationView.FooterMenuItems>
+                <fa:NavigationViewItem Content="Settings"
+                                       Tag="settings"
+                                       IconSource="Setting" />
+            </fa:NavigationView.FooterMenuItems>
+        </fa:NavigationView>
+    </Grid>
 </ui:AppWindow>

@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="KeePassPasskeyProvider.Dashboard.Pages.SettingsPage">
+    <StackPanel Margin="16 16 16 16" Spacing="8">
+        <TextBlock Text="Settings"
+                   FontSize="20"
+                   FontWeight="SemiBold" />
+        <TextBlock Text="Settings are not yet configurable here."
+                   Opacity="0.55"
+                   FontSize="13"
+                   Margin="0 8 0 0" />
+    </StackPanel>
+</UserControl>

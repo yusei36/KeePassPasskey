@@ -41,8 +41,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
         StatusHero  = new StatusHeroViewModel(registerCmd, unregisterCmd, refreshCmd);
         SetupGuide  = new SetupGuideViewModel();
         Diagnostics = new DiagnosticsViewModel(registerCmd, unregisterCmd);
-        SetupGuide.PropertyChanged += OnSetupGuidePropertyChanged;
-        Diagnostics.PropertyChanged += OnDiagnosticsPropertyChanged;
 
         DoRefresh();
 
@@ -118,18 +116,6 @@ public sealed partial class MainWindowViewModel : ObservableObject
     {
         StatusHero.Update(_pluginRunning, _providerEnabled, _isRegistered, _autoregisterError, _pingStatus);
         SetupGuide.IsReady = _pluginRunning && _providerEnabled;
-    }
-
-    private void OnSetupGuidePropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(SetupGuideViewModel.IsSetupExpanded) && SetupGuide.IsSetupExpanded)
-            Diagnostics.IsLogVisible = false;
-    }
-
-    private void OnDiagnosticsPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(DiagnosticsViewModel.IsLogVisible) && Diagnostics.IsLogVisible)
-            SetupGuide.IsSetupExpanded = false;
     }
 
     private static Task ShowPluginRegistrationErrorAsync(string operation, int hr)
