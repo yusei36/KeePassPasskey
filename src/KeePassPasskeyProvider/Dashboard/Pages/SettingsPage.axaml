@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:vm="using:KeePassPasskeyProvider.Dashboard.ViewModel"
-             xmlns:utils="using:KeePassPasskeyProvider.Dashboard.Utils"
+			 xmlns:utils="using:KeePassPasskeyProvider.Dashboard.Utils"
              x:Class="KeePassPasskeyProvider.Dashboard.Pages.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
@@ -44,7 +44,7 @@
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
-                <ui:SettingsExpanderItem Content="Notification timeout (s)"
+                <ui:SettingsExpanderItem Content="Notification timeout"
                                          Description="How long to wait for the user to approve a notification">
                     <ui:SettingsExpanderItem.Footer>
                         <ui:NumberBox Value="{Binding NotificationTimeoutSeconds}"
@@ -52,9 +52,9 @@
                                       Maximum="300"
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Compact"
-                                      MinWidth="100"
-                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+                                      SpinButtonPlacementMode="Inline"
+                                      MinWidth="135"
+									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
@@ -86,7 +86,7 @@
                                  Description="Timing and resilience settings for background sync"
                                  IsExpanded="False">
 
-                <ui:SettingsExpanderItem Content="Status refresh interval (s)"
+                <ui:SettingsExpanderItem Content="Status refresh interval"
                                          Description="How often the dashboard polls for provider status">
                     <ui:SettingsExpanderItem.Footer>
                         <ui:NumberBox Value="{Binding StatusRefreshIntervalSeconds}"
@@ -94,13 +94,13 @@
                                       Maximum="3600"
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Compact"
-                                      MinWidth="100"
-                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+                                      SpinButtonPlacementMode="Inline"
+                                      MinWidth="135"
+									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
-				<ui:SettingsExpanderItem Content="Credential sync interval (s)"
+				<ui:SettingsExpanderItem Content="Credential sync interval"
                                          Description="How often passkey metadata are synced from KeePass to the Windows credential cache.&#10;Set to 0 to disable.">
 					<ui:SettingsExpanderItem.Footer>
 						<ui:NumberBox Value="{Binding CredentialSyncIntervalSeconds}"
@@ -108,9 +108,9 @@
                                       Maximum="3600"
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Compact"
-                                      MinWidth="100"
-                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+                                      SpinButtonPlacementMode="Inline"
+                                      MinWidth="135"
+									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
 					</ui:SettingsExpanderItem.Footer>
 				</ui:SettingsExpanderItem>
 				
@@ -122,12 +122,12 @@
                                       Maximum="100"
                                       SmallChange="1"
                                       ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Compact"
+                                      SpinButtonPlacementMode="Inline"
                                       MinWidth="100" />
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
-				<ui:SettingsExpanderItem Content="Config sync interval (s)"
+				<ui:SettingsExpanderItem Content="Config sync interval"
                                          Description="How often the background process fetches settings from KeePass.&#10;Set to 0 to disable.">
 					<ui:SettingsExpanderItem.Footer>
 						<ui:NumberBox Value="{Binding ConfigSyncIntervalSeconds}"
@@ -135,9 +135,9 @@
                                       Maximum="3600"
                                       SmallChange="5"
                                       ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Compact"
-                                      MinWidth="100"
-                                      NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+                                      SpinButtonPlacementMode="Inline"
+                                      MinWidth="135"
+									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
 					</ui:SettingsExpanderItem.Footer>
 				</ui:SettingsExpanderItem>
 

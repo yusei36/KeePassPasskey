@@ -20,46 +20,60 @@ public partial class SettingsPage : UserControl
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
-        foreach (var nb in this.GetVisualDescendants().OfType<NumberBox>())
-        {
-            nb.ValueChanged += NumberBox_ValueChanged;
-            if (nb.NumberFormatter != null)
-            {
-                nb.GotFocus += NumberBox_GotFocus;
-                var textBox = nb.GetVisualDescendants().OfType<TextBox>().FirstOrDefault();
-                if (textBox != null)
-                    textBox.LostFocus += InnerTextBox_LostFocus;
-            }
-        }
+        this.AddHandler(GotFocusEvent, OnAnyGotFocus, RoutingStrategies.Bubble);
+        this.AddHandler(KeyDownEvent, OnAnyKeyDown, RoutingStrategies.Tunnel);
     }
 
     protected override void OnUnloaded(RoutedEventArgs e)
     {
         base.OnUnloaded(e);
+        this.RemoveHandler(GotFocusEvent, OnAnyGotFocus);
+        this.RemoveHandler(KeyDownEvent, OnAnyKeyDown);
         foreach (var nb in this.GetVisualDescendants().OfType<NumberBox>())
-        {
             nb.ValueChanged -= NumberBox_ValueChanged;
-            if (nb.NumberFormatter != null)
+    }
+
+    private static void OnAnyGotFocus(object? sender, GotFocusEventArgs e)
+    {
+        if (e.Source is not TextBox tb) return;
+        var nb = tb.GetVisualAncestors().OfType<NumberBox>().FirstOrDefault();
+        if (nb == null) return;
+
+        // Lazily subscribe ValueChanged so NaN is always caught, even for
+        // NumberBoxes inside collapsed SettingsExpanders not present at OnLoaded.
+        nb.ValueChanged -= NumberBox_ValueChanged;
+        nb.ValueChanged += NumberBox_ValueChanged;
+
+        if (nb.NumberFormatter == null) return;
+
+        // Strip "s" so the user edits just the number.
+        StripSecondsSuffix(tb);
+
+        // Subscribe a one-shot LostFocus on the inner TextBox so it fires
+        // directly on the TextBox — BEFORE the bubbled event reaches NumberBox
+        // and triggers ValidateInput.
+        void OnLostFocus(object? s, RoutedEventArgs _)
+        {
+            if (s is TextBox t)
             {
-                nb.GotFocus -= NumberBox_GotFocus;
-                var textBox = nb.GetVisualDescendants().OfType<TextBox>().FirstOrDefault();
-                if (textBox != null)
-                    textBox.LostFocus -= InnerTextBox_LostFocus;
+                StripSecondsSuffix(t);
+                t.LostFocus -= OnLostFocus;
             }
         }
+        tb.LostFocus += OnLostFocus;
     }
 
-    private static void NumberBox_GotFocus(object? sender, GotFocusEventArgs e)
+    private static void OnAnyKeyDown(object? sender, KeyEventArgs e)
     {
-        if (sender is not NumberBox nb) return;
-        var textBox = nb.GetVisualDescendants().OfType<TextBox>().FirstOrDefault();
-        if (textBox?.Text != null && textBox.Text.EndsWith("s", StringComparison.OrdinalIgnoreCase))
-            textBox.Text = textBox.Text[..^1];
+        if (e.Key != Key.Enter) return;
+        if (e.Source is not TextBox tb) return;
+        var nb = tb.GetVisualAncestors().OfType<NumberBox>().FirstOrDefault();
+        if (nb?.NumberFormatter == null) return;
+        StripSecondsSuffix(tb);
     }
 
-    private static void InnerTextBox_LostFocus(object? sender, RoutedEventArgs e)
+    private static void StripSecondsSuffix(TextBox tb)
     {
-        if (sender is not TextBox tb) return;
         if (tb.Text?.EndsWith("s", StringComparison.OrdinalIgnoreCase) == true)
             tb.Text = tb.Text[..^1];
     }
