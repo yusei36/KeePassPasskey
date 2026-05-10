@@ -35,7 +35,7 @@
                            OpenPaneLength="200"
                            IsPaneOpen="False">
             <fa:NavigationView.MenuItems>
-                <fa:NavigationViewItem Content="Home"
+                <fa:NavigationViewItem Content="Status"
                                        Tag="home"
                                        IconSource="Home" />
                 <fa:NavigationViewItem Content="Diagnostics"
