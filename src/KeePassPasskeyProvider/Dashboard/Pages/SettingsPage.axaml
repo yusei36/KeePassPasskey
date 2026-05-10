@@ -152,6 +152,70 @@
 
             </ui:SettingsExpander>
 
+            <ui:SettingsExpander Header="About"
+                                 IconSource="Help"
+                                 Description="Version, source code and license"
+                                 IsExpanded="False">
+
+                <ui:SettingsExpanderItem Content="Copyright"
+                                         Description="&#169; 2026 Uwe K&#246;gel" />
+
+                <ui:SettingsExpanderItem Content="Version"
+                                         Description="{Binding AppVersion}">
+                    <ui:SettingsExpanderItem.Footer>
+                        <Button Command="{Binding CopyToClipboardCommand}"
+                                CommandParameter="{Binding AppVersionFull}"
+                                ToolTip.Tip="Copy version">
+                            <ui:SymbolIcon Symbol="Copy" FontSize="14" />
+                        </Button>
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="Website"
+                                         Description="keepasspasskey.github.io">
+                    <ui:SettingsExpanderItem.Footer>
+                        <Button Command="{Binding OpenUrlCommand}"
+                                CommandParameter="https://keepasspasskey.github.io"
+                                ToolTip.Tip="Open website">
+                            <ui:SymbolIcon Symbol="Globe" FontSize="14" />
+                        </Button>
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="Source code"
+                                         Description="github.com/yusei36/KeePassPasskey">
+                    <ui:SettingsExpanderItem.Footer>
+                        <Button Command="{Binding OpenUrlCommand}"
+                                CommandParameter="https://github.com/yusei36/KeePassPasskey"
+                                ToolTip.Tip="Open source code on GitHub">
+                            <ui:SymbolIcon Symbol="Globe" FontSize="14" />
+                        </Button>
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="Report a bug"
+                                         Description="github.com/yusei36/KeePassPasskey/issues">
+                    <ui:SettingsExpanderItem.Footer>
+                        <Button Command="{Binding OpenUrlCommand}"
+                                CommandParameter="https://github.com/yusei36/KeePassPasskey/issues"
+                                ToolTip.Tip="Open issue tracker on GitHub">
+                            <ui:SymbolIcon Symbol="Globe" FontSize="14" />
+                        </Button>
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="License"
+                                         Description="GNU General Public License v3.0">
+                    <ui:SettingsExpanderItem.Footer>
+                        <Button Command="{Binding OpenUrlCommand}"
+                                CommandParameter="https://www.gnu.org/licenses/gpl-3.0.html"
+                                ToolTip.Tip="Open license text">
+                            <ui:SymbolIcon Symbol="Globe" FontSize="14" />
+                        </Button>
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+            </ui:SettingsExpander>
 
         </StackPanel>
     </ScrollViewer>

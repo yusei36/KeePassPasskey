@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -29,6 +31,25 @@ public sealed partial class SettingsViewModel : ObservableObject
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
     public static LogLevel[] LogLevels { get; } = (LogLevel[])Enum.GetValues(typeof(LogLevel));
     public static Theme[] Themes { get; } = (Theme[])Enum.GetValues(typeof(Theme));
+
+    public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
+    public string AppVersionFull => DiagnosticsViewModel.ClientVersion;
+
+    [RelayCommand]
+    private void OpenUrl(string url) =>
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName        = url,
+            UseShellExecute = true,
+        });
+
+    [RelayCommand]
+    private async Task CopyToClipboard(string? text)
+    {
+        if (text is null) return;
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } win })
+            await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+    }
 
     partial void OnThemeChanged(Theme value) => ApplyTheme(value);
 
