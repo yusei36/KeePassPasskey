@@ -26,7 +26,10 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private bool _isSaving;
     [ObservableProperty] private Theme _theme = Theme.System;
     [ObservableProperty] private bool _hasUnsavedChanges;
+    [ObservableProperty] private bool _hasNonDefaultSettings;
+    [ObservableProperty] private bool _canResetToDefaults;
 
+    private static readonly KeePassPasskeySettings DefaultSettings = new();
     private bool _isLoading;
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -36,8 +39,13 @@ public sealed partial class SettingsViewModel : ObservableObject
             CheckForUnsavedChanges();
     }
 
-    private void CheckForUnsavedChanges() =>
-        HasUnsavedChanges = !BuildSettings().Equals(KeePassPasskeySettings.Current);
+    private void CheckForUnsavedChanges()
+    {
+        var current = BuildSettings();
+        HasUnsavedChanges     = !current.Equals(KeePassPasskeySettings.Current);
+        HasNonDefaultSettings = !current.Equals(DefaultSettings);
+        CanResetToDefaults    = HasNonDefaultSettings && !KeePassPasskeySettings.Current.Equals(DefaultSettings);
+    }
 
     private KeePassPasskeySettings BuildSettings() => new()
     {
@@ -88,6 +96,9 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void Reset() => LoadFromCurrent();
 
+    [RelayCommand]
+    private void ResetToDefaults() => LoadFrom(new KeePassPasskeySettings());
+
     internal void ReloadFromCurrent() => LoadFromCurrent();
 
     internal async Task SyncFromKeePassAsync()
@@ -107,21 +118,22 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     public SettingsViewModel() => LoadFromCurrent();
 
-    private void LoadFromCurrent()
+    private void LoadFromCurrent() => LoadFrom(KeePassPasskeySettings.Current);
+
+    private void LoadFrom(KeePassPasskeySettings c)
     {
         _isLoading = true;
-        var c = KeePassPasskeySettings.Current;
-        RegistrationVerification       = c.RegistrationVerification;
-        SignInVerification              = c.SignInVerification;
-        ShowErrorNotifications         = c.ShowErrorNotifications;
-        NotificationTimeoutSeconds     = c.NotificationVerificationTimeoutMilliseconds / 1000;
-        LogLevel                       = c.LogLevel;
-        CredentialSyncIntervalSeconds  = c.CredentialSyncIntervalMilliseconds / 1000;
-        StatusRefreshIntervalSeconds   = c.StatusRefreshIntervalMilliseconds / 1000;
+        RegistrationVerification        = c.RegistrationVerification;
+        SignInVerification               = c.SignInVerification;
+        ShowErrorNotifications          = c.ShowErrorNotifications;
+        NotificationTimeoutSeconds      = c.NotificationVerificationTimeoutMilliseconds / 1000;
+        LogLevel                        = c.LogLevel;
+        CredentialSyncIntervalSeconds   = c.CredentialSyncIntervalMilliseconds / 1000;
+        StatusRefreshIntervalSeconds    = c.StatusRefreshIntervalMilliseconds / 1000;
         CredentialSyncShutdownThreshold = c.CredentialSyncShutdownThreshold;
-        Theme = c.Theme;
+        Theme                           = c.Theme;
         _isLoading = false;
-        HasUnsavedChanges = false;
+        CheckForUnsavedChanges();
     }
 
     [RelayCommand]

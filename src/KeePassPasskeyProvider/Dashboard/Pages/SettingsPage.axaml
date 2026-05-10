@@ -8,7 +8,7 @@
              x:CompileBindings="True">
 
     <Grid RowDefinitions="Auto,*">
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto" Margin="16 16 16 4">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto,Auto" Margin="16 16 16 4">
             <TextBlock Text="Settings"
                        Theme="{StaticResource TitleTextBlockStyle}" />
             <ui:SymbolIcon Grid.Column="1" Symbol="ImportantFilled" FontSize="16"
@@ -25,7 +25,17 @@
                     Margin="0 0 4 0">
                 <ui:SymbolIcon Symbol="Undo" FontSize="18" />
             </Button>
-            <Button Grid.Column="3"
+			<Button Grid.Column="3"
+                    Command="{Binding ResetToDefaultsCommand}"
+                    IsEnabled="{Binding !IsSaving}"
+                    IsVisible="{Binding CanResetToDefaults}"
+                    ToolTip.Tip="Reset to defaults"
+                    VerticalAlignment="Center"
+                    Margin="0 0 4 0">
+				<PathIcon Width="18" Height="18"
+						  Data="M11.197 2.43934C11.7828 1.85355 12.7326 1.85355 13.3184 2.43934L17.561 6.68198C18.1468 7.26777 18.1468 8.21751 17.561 8.8033L9.36408 17.0002H14.5001C14.7763 17.0002 15.0001 17.2241 15.0001 17.5002C15.0001 17.7764 14.7763 18.0002 14.5001 18.0002H7.81974C7.40996 18.0217 6.99303 17.876 6.68003 17.5629L2.43739 13.3203C1.8516 12.7345 1.8516 11.7848 2.43739 11.199L11.197 2.43934ZM9.7811 15.169L4.83135 10.2192L3.14449 11.9061C2.94923 12.1014 2.94923 12.4179 3.14449 12.6132L7.38713 16.8558C7.5824 17.0511 7.89898 17.0511 8.09424 16.8558L9.7811 15.169Z" />
+			</Button>
+            <Button Grid.Column="4"
                     Command="{Binding SaveCommand}"
                     IsEnabled="{Binding !IsSaving}"
                     ToolTip.Tip="Save settings"
