@@ -12,7 +12,7 @@
 		<Style Selector="ui|AppWindow /template/ ui|MinMaxCloseControl /template/ Button#MaxRestoreButton">
 			<Setter Property="IsVisible" Value="False"/>
 		</Style>
-	</ui:AppWindow.Styles>
+    </ui:AppWindow.Styles>
 	<ui:AppWindow.Resources>
 		<Thickness x:Key="NavigationViewButtonHolderGridMargin">0</Thickness>
 	</ui:AppWindow.Resources>

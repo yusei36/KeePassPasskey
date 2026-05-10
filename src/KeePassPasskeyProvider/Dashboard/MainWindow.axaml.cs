@@ -39,6 +39,11 @@ public partial class MainWindow : AppWindow
         {
             icon.Width = 20;
             icon.Height = 20;
+            icon.Margin = new Avalonia.Thickness(12, 0, 0, 0);
+        }
+        if (e.NameScope.Find<TextBlock>("TitleText") is { } title)
+        {
+            title.Margin = new Avalonia.Thickness(36, 0, 0, 0);
         }
     }
 
