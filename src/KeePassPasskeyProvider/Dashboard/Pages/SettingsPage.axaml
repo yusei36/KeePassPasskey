@@ -21,6 +21,16 @@
                 </Button>
             </Grid>
 
+            <ui:SettingsExpander Header="Appearance"
+                                 IconSource="DarkTheme"
+                                 Description="Application appearance and theme">
+                <ui:SettingsExpander.Footer>
+                    <ComboBox SelectedItem="{Binding Theme}"
+                              ItemsSource="{Binding Themes}"
+                              MinWidth="120" />
+                </ui:SettingsExpander.Footer>
+            </ui:SettingsExpander>
+
             <ui:SettingsExpander Header="User Verification"
                                  IconSource="OtherUser"
                                  Description="Require proof of identity before passkey operations"
@@ -87,7 +97,7 @@
                                  IsExpanded="False">
 
                 <ui:SettingsExpanderItem Content="Status refresh interval"
-                                         Description="How often the dashboard polls for provider status">
+                                         Description="How often the app polls for provider status">
                     <ui:SettingsExpanderItem.Footer>
                         <ui:NumberBox Value="{Binding StatusRefreshIntervalSeconds}"
                                       Minimum="1"

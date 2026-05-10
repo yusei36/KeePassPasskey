@@ -5,7 +5,7 @@
               x:Class="KeePassPasskeyProvider.Dashboard.MainWindow"
               Title="KeePassPasskey"
               Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
-              Width="780" Height="600"
+              Width="800" Height="650"
               CanResize="False"
               WindowStartupLocation="CenterScreen">
 	<ui:AppWindow.Styles>

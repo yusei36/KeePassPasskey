@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
@@ -22,9 +24,21 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private double _configSyncIntervalSeconds;
     [ObservableProperty] private double _credentialSyncShutdownThreshold;
     [ObservableProperty] private bool _isSaving;
+    [ObservableProperty] private Theme _theme = Theme.System;
 
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
     public static LogLevel[] LogLevels { get; } = (LogLevel[])Enum.GetValues(typeof(LogLevel));
+    public static Theme[] Themes { get; } = (Theme[])Enum.GetValues(typeof(Theme));
+
+    partial void OnThemeChanged(Theme value) => ApplyTheme(value);
+
+    internal static void ApplyTheme(Theme theme) =>
+        Application.Current!.RequestedThemeVariant = theme switch
+        {
+            Theme.Light => ThemeVariant.Light,
+            Theme.Dark  => ThemeVariant.Dark,
+            _           => ThemeVariant.Default,
+        };
 
     public SettingsViewModel() => LoadFromCurrent();
 
@@ -40,6 +54,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         StatusRefreshIntervalSeconds   = c.StatusRefreshIntervalMilliseconds / 1000;
         ConfigSyncIntervalSeconds      = c.ConfigSyncIntervalMilliseconds / 1000;
         CredentialSyncShutdownThreshold = c.CredentialSyncShutdownThreshold;
+        Theme = c.Theme;
     }
 
     [RelayCommand]
@@ -59,6 +74,7 @@ public sealed partial class SettingsViewModel : ObservableObject
                 StatusRefreshIntervalMilliseconds      = (int)StatusRefreshIntervalSeconds * 1000,
                 ConfigSyncIntervalMilliseconds         = (int)ConfigSyncIntervalSeconds * 1000,
                 CredentialSyncShutdownThreshold        = (int)CredentialSyncShutdownThreshold,
+                Theme                                  = Theme,
             };
 
             var response = await Task.Run(() =>
