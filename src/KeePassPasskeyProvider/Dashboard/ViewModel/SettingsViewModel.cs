@@ -85,6 +85,9 @@ public sealed partial class SettingsViewModel : ObservableObject
             _           => ThemeVariant.Default,
         };
 
+    [RelayCommand]
+    private void Reset() => LoadFromCurrent();
+
     public SettingsViewModel() => LoadFromCurrent();
 
     private void LoadFromCurrent()
