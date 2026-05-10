@@ -2,148 +2,180 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
              x:Class="KeePassPasskeyProvider.Dashboard.Pages.DiagnosticsPage">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="16 16 16 16">
-            <!-- Version mismatch warning -->
-            <ui:InfoBar Title="Version mismatch"
-                        Severity="Error"
-                        IsOpen="{Binding IsVersionMismatch}"
-                        IsVisible="{Binding IsVersionMismatch}"
-                        IsClosable="False"
-                        Margin="0 4 0 8" />
+    <UserControl.Styles>
+        <Style Selector="TabControl#LogTabControl > TabItem">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Padding" Value="4 3 10 3" />
+            <Setter Property="MinHeight" Value="0" />
+        </Style>
+    </UserControl.Styles>
+    <Grid RowDefinitions="Auto,*" Margin="16">
+        <TextBlock Grid.Row="0"
+                   Text="Diagnostics"
+                   Theme="{StaticResource TitleTextBlockStyle}"
+                   Margin="0 0 0 4" />
 
-            <!-- Versions strip -->
-            <Border Padding="4 0 0 12"
-                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                    BorderThickness="0 0 0 1">
-                <StackPanel Spacing="6">
-                    <!-- Provider version row -->
-                    <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
-                        <TextBlock Grid.Column="0"
-                                   Text="KeePassPasskeyProvider"
-                                   FontFamily="Consolas,Courier New,monospace"
-                                   FontSize="12.5" FontWeight="SemiBold"
-                                   VerticalAlignment="Center" />
-                        <Border Grid.Column="1"
-                                Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                                BorderThickness="1" CornerRadius="4" Padding="8 4">
-                            <SelectableTextBlock Text="{Binding ClientVersionShort}"
-                                                 FontFamily="Consolas,Courier New,monospace"
-                                                 FontSize="11.5" Opacity="0.7" />
-                        </Border>
-                        <Button Grid.Column="2"
-                                Padding="4"
-                                Command="{Binding CopyToClipboardCommand}"
-                                CommandParameter="{Binding ClientVersion}"
-                                ToolTip.Tip="Copy provider version">
-                            <ui:SymbolIcon Symbol="Copy" FontSize="14" />
-                        </Button>
-                    </Grid>
+        <Border Grid.Row="1"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16"
+                Margin="0 8 0 0">
+            <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
 
-                    <!-- Plugin version row -->
-                    <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
-                        <TextBlock Grid.Column="0"
-                                   Text="KeePassPasskeyPlugin"
-                                   FontFamily="Consolas,Courier New,monospace"
-                                   FontSize="12.5" FontWeight="SemiBold"
-                                   VerticalAlignment="Center" />
-                        <Border Grid.Column="1"
-                                Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                                BorderThickness="1" CornerRadius="4" Padding="8 4">
-                            <Panel>
-                                <SelectableTextBlock Text="{Binding ServerVersionShort}"
-                                                     FontFamily="Consolas,Courier New,monospace"
-                                                     FontSize="11.5" Opacity="0.7"
-                                                     IsVisible="{Binding IsServerVersionAvailable}" />
-                                <TextBlock Text="not running"
+                    <!-- Version mismatch warning -->
+                    <ui:InfoBar Grid.Row="0"
+                                Title="Version mismatch"
+                                Severity="Error"
+                                IsOpen="{Binding IsVersionMismatch}"
+                                IsVisible="{Binding IsVersionMismatch}"
+                                IsClosable="False" />
+
+                    <!-- Versions strip -->
+                    <Border Grid.Row="1" Padding="4 0 0 12"
+                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="0 0 0 1">
+                        <StackPanel Spacing="6">
+                            <!-- Provider version row -->
+                            <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
+                                <TextBlock Grid.Column="0"
+                                           Text="KeePassPasskeyProvider"
                                            FontFamily="Consolas,Courier New,monospace"
-                                           FontSize="11.5" Opacity="0.35"
-                                           IsVisible="{Binding IsServerVersionNotAvailable}" />
-                            </Panel>
-                        </Border>
-                        <Button Grid.Column="2"
-                                Padding="4"
-                                Command="{Binding CopyToClipboardCommand}"
-                                CommandParameter="{Binding ServerVersion}"
-                                IsVisible="{Binding IsServerVersionAvailable}"
-                                ToolTip.Tip="Copy plugin version">
-                            <ui:SymbolIcon Symbol="Copy" FontSize="14" />
-                        </Button>
-                    </Grid>
+                                           FontSize="12.5" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Border Grid.Column="1"
+                                        Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1" CornerRadius="4" Padding="8 4">
+                                    <SelectableTextBlock Text="{Binding ClientVersionShort}"
+                                                         FontFamily="Consolas,Courier New,monospace"
+                                                         FontSize="11.5" Opacity="0.7" />
+                                </Border>
+                                <Button Grid.Column="2"
+                                        Padding="4"
+                                        Command="{Binding CopyToClipboardCommand}"
+                                        CommandParameter="{Binding ClientVersion}"
+                                        ToolTip.Tip="Copy provider version">
+                                    <ui:SymbolIcon Symbol="Copy" FontSize="14" />
+                                </Button>
+                            </Grid>
 
-                    <!-- Log directory row -->
-                    <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
-                        <TextBlock Grid.Column="0"
-                                   Text="Log directory"
-                                   FontFamily="Consolas,Courier New,monospace"
-                                   FontSize="12.5" FontWeight="SemiBold"
-                                   VerticalAlignment="Center" />
-                        <Border Grid.Column="1"
-                                Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                                BorderThickness="1" CornerRadius="4" Padding="8 4">
-                            <SelectableTextBlock Text="{Binding LogDirPath}"
-                                                 FontFamily="Consolas,Courier New,monospace"
-                                                 FontSize="11.5" Opacity="0.7" />
-                        </Border>
-                        <Button Grid.Column="2"
-                                Padding="4"
-                                Command="{Binding OpenLogDirCommand}"
-                                ToolTip.Tip="Open log directory">
-                            <ui:SymbolIcon Symbol="Folder" FontSize="14" />
-                        </Button>
-                    </Grid>
+                            <!-- Plugin version row -->
+                            <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
+                                <TextBlock Grid.Column="0"
+                                           Text="KeePassPasskeyPlugin"
+                                           FontFamily="Consolas,Courier New,monospace"
+                                           FontSize="12.5" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Border Grid.Column="1"
+                                        Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1" CornerRadius="4" Padding="8 4">
+                                    <Panel>
+                                        <SelectableTextBlock Text="{Binding ServerVersionShort}"
+                                                             FontFamily="Consolas,Courier New,monospace"
+                                                             FontSize="11.5" Opacity="0.7"
+                                                             IsVisible="{Binding IsServerVersionAvailable}" />
+                                        <TextBlock Text="not running"
+                                                   FontFamily="Consolas,Courier New,monospace"
+                                                   FontSize="11.5" Opacity="0.35"
+                                                   IsVisible="{Binding IsServerVersionNotAvailable}" />
+                                    </Panel>
+                                </Border>
+                                <Button Grid.Column="2"
+                                        Padding="4"
+                                        Command="{Binding CopyToClipboardCommand}"
+                                        CommandParameter="{Binding ServerVersion}"
+                                        IsVisible="{Binding IsServerVersionAvailable}"
+                                        ToolTip.Tip="Copy plugin version">
+                                    <ui:SymbolIcon Symbol="Copy" FontSize="14" />
+                                </Button>
+                            </Grid>
 
-                    <!-- COM Server actions -->
-                    <Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
-                        <TextBlock Grid.Column="0"
-                                   Text="Provider Registration"
-                                   FontFamily="Consolas,Courier New,monospace"
-                                   FontSize="12.5" FontWeight="SemiBold"
-                                   VerticalAlignment="Center" />
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
-                            <Button Content="Register"
-                                    Command="{Binding RegisterCommand}"
-                                    Padding="8 3" FontSize="12" />
-                            <Button Content="Unregister"
-                                    Command="{Binding UnregisterCommand}"
-                                    Padding="8 3" FontSize="12" />
+                            <!-- Log directory row -->
+                            <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
+                                <TextBlock Grid.Column="0"
+                                           Text="Log directory"
+                                           FontFamily="Consolas,Courier New,monospace"
+                                           FontSize="12.5" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Border Grid.Column="1"
+                                        Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                        BorderThickness="1" CornerRadius="4" Padding="8 4">
+                                    <SelectableTextBlock Text="{Binding LogDirPath}"
+                                                         FontFamily="Consolas,Courier New,monospace"
+                                                         FontSize="11.5" Opacity="0.7" />
+                                </Border>
+                                <Button Grid.Column="2"
+                                        Padding="4"
+                                        Command="{Binding OpenLogDirCommand}"
+                                        ToolTip.Tip="Open log directory">
+                                    <ui:SymbolIcon Symbol="Folder" FontSize="14" />
+                                </Button>
+                            </Grid>
+
+                            <!-- COM Server actions -->
+                            <Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+                                <TextBlock Grid.Column="0"
+                                           Text="Provider Registration"
+                                           FontFamily="Consolas,Courier New,monospace"
+                                           FontSize="12.5" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                    <Button Content="Register"
+                                            Command="{Binding RegisterCommand}"
+                                            Padding="8 3" FontSize="12" />
+                                    <Button Content="Unregister"
+                                            Command="{Binding UnregisterCommand}"
+                                            Padding="8 3" FontSize="12" />
+                                </StackPanel>
+                            </Grid>
                         </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </Border>
+                    </Border>
 
-            <!-- Log -->
-            <TabControl Margin="0 4 0 0" Height="320">
-                <TabItem Header="Provider">
-                    <ScrollViewer x:Name="LogScrollViewer"
-                                  HorizontalScrollBarVisibility="Visible"
-                                  VerticalScrollBarVisibility="Auto">
-                        <SelectableTextBlock x:Name="LogTextBlock"
-                                             Text="{Binding LogText}"
-                                             FontFamily="Consolas,Courier New,monospace"
-                                             FontSize="11"
-                                             TextWrapping="NoWrap"
-                                             Margin="8 6"
-                                             GotFocus="LogTextBlock_GotFocus" />
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem Header="Plugin">
-                    <ScrollViewer x:Name="PluginLogScrollViewer"
-                                  HorizontalScrollBarVisibility="Visible"
-                                  VerticalScrollBarVisibility="Auto">
-                        <SelectableTextBlock x:Name="PluginLogTextBlock"
-                                             Text="{Binding PluginLogText}"
-                                             FontFamily="Consolas,Courier New,monospace"
-                                             FontSize="11"
-                                             TextWrapping="NoWrap"
-                                             Margin="8 6"
-                                             GotFocus="PluginLogTextBlock_GotFocus" />
-                    </ScrollViewer>
-                </TabItem>
-            </TabControl>
-        </StackPanel>
-    </ScrollViewer>
+                    <!-- Log -->
+                    <TabControl Grid.Row="2" x:Name="LogTabControl" Padding="4">
+                        <TabItem Header="Provider.log">
+                            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                <ScrollViewer x:Name="LogScrollViewer"
+                                              Padding="8 6"
+                                              HorizontalScrollBarVisibility="Visible"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <SelectableTextBlock x:Name="LogTextBlock"
+                                                         Text="{Binding LogText}"
+                                                         FontFamily="Consolas,Courier New,monospace"
+                                                         FontSize="11"
+                                                         TextWrapping="NoWrap"
+                                                         GotFocus="LogTextBlock_GotFocus" />
+                                </ScrollViewer>
+                            </Border>
+                        </TabItem>
+                        <TabItem Header="Plugin.log">
+                            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                <ScrollViewer x:Name="PluginLogScrollViewer"
+                                              Padding="8 6"
+                                              HorizontalScrollBarVisibility="Visible"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <SelectableTextBlock x:Name="PluginLogTextBlock"
+                                                         Text="{Binding PluginLogText}"
+                                                         FontFamily="Consolas,Courier New,monospace"
+                                                         FontSize="11"
+                                                         TextWrapping="NoWrap"
+                                                         GotFocus="PluginLogTextBlock_GotFocus" />
+                                </ScrollViewer>
+                            </Border>
+                        </TabItem>
+                    </TabControl>
+
+                </Grid>
+            </Border>
+    </Grid>
 </UserControl>
