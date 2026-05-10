@@ -10,7 +10,9 @@ internal static class ConfigPersistence
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "KeePassPasskeyProvider");
 
-    private static readonly string CachePath = Path.Combine(ConfigDir, "KeePassPasskeyConfig.cached.json");
+    internal const string ConfigFileName = "KeePassPasskeyConfig.cached.json";
+
+    private static readonly string CachePath = Path.Combine(ConfigDir, ConfigFileName);
 
     internal static KeePassPasskeyConfig? TryLoad()
     {

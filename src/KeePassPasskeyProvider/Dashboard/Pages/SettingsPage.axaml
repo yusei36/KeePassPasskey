@@ -137,20 +137,6 @@
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
-				<ui:SettingsExpanderItem Content="Config sync interval"
-                                         Description="How often the background process fetches settings from KeePass.&#10;Set to 0 to disable.">
-					<ui:SettingsExpanderItem.Footer>
-						<ui:NumberBox Value="{Binding ConfigSyncIntervalSeconds}"
-                                      Minimum="0"
-                                      Maximum="3600"
-                                      SmallChange="5"
-                                      ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Inline"
-                                      MinWidth="120"
-									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
-					</ui:SettingsExpanderItem.Footer>
-				</ui:SettingsExpanderItem>
-
             </ui:SettingsExpander>
 
             <ui:SettingsExpander Header="About"

@@ -23,7 +23,6 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private LogLevel _logLevel;
     [ObservableProperty] private double _credentialSyncIntervalSeconds;
     [ObservableProperty] private double _statusRefreshIntervalSeconds;
-    [ObservableProperty] private double _configSyncIntervalSeconds;
     [ObservableProperty] private double _credentialSyncShutdownThreshold;
     [ObservableProperty] private bool _isSaving;
     [ObservableProperty] private Theme _theme = Theme.System;
@@ -73,7 +72,6 @@ public sealed partial class SettingsViewModel : ObservableObject
         LogLevel                       = c.LogLevel;
         CredentialSyncIntervalSeconds  = c.CredentialSyncIntervalMilliseconds / 1000;
         StatusRefreshIntervalSeconds   = c.StatusRefreshIntervalMilliseconds / 1000;
-        ConfigSyncIntervalSeconds      = c.ConfigSyncIntervalMilliseconds / 1000;
         CredentialSyncShutdownThreshold = c.CredentialSyncShutdownThreshold;
         Theme = c.Theme;
     }
@@ -93,7 +91,6 @@ public sealed partial class SettingsViewModel : ObservableObject
                 LogLevel                               = LogLevel,
                 CredentialSyncIntervalMilliseconds     = (int)CredentialSyncIntervalSeconds * 1000,
                 StatusRefreshIntervalMilliseconds      = (int)StatusRefreshIntervalSeconds * 1000,
-                ConfigSyncIntervalMilliseconds         = (int)ConfigSyncIntervalSeconds * 1000,
                 CredentialSyncShutdownThreshold        = (int)CredentialSyncShutdownThreshold,
                 Theme                                  = Theme,
             };
