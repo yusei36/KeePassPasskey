@@ -1,6 +1,6 @@
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
 
@@ -17,13 +17,13 @@ internal static class UserVerifierDispatcher
     public static int VerifyForRegistration(
         nint pRequest, Guid transactionId,
         string rpId, string rpName, string uvUsername, string uvDisplayHint)
-        => Dispatch(KeePassPasskeyConfig.Current.RegistrationVerification,
+        => Dispatch(KeePassPasskeySettings.Current.RegistrationVerification,
             v => v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId));
 
     public static int VerifyForSignIn(
         nint pRequest, Guid transactionId,
         string rpId, string uvUsername, string uvDisplayHint)
-        => Dispatch(KeePassPasskeyConfig.Current.SignInVerification,
+        => Dispatch(KeePassPasskeySettings.Current.SignInVerification,
             v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId));
 
     private static int Dispatch(UserVerificationMode mode, Func<IUserVerifier, int> call)

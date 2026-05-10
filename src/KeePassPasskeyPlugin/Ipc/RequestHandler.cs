@@ -2,7 +2,7 @@ using KeePass.Plugins;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Passkey;
-using KeePassPasskey.Config;
+using KeePassPasskey.Settings;
 using KeePassPasskey.Passkey;
 using KeePassPasskey.Storage;
 using Newtonsoft.Json;
@@ -49,8 +49,8 @@ namespace KeePassPasskey.Ipc
                     MakeCredentialRequest r => HandleMakeCredential(r),
                     GetAssertionRequest r   => HandleGetAssertion(r),
                     CancelRequest r         => HandleCancel(r),
-                    GetConfigRequest r      => HandleGetConfig(r),
-                    SetConfigRequest r      => HandleSetConfig(r),
+                    GetSettingsRequest r    => HandleGetSettings(r),
+                    SaveSettingsRequest r   => HandleSaveSettings(r),
                     _ => new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Unknown request type: " + req.Type }
                 };
                 return JsonConvert.SerializeObject(response);
@@ -197,15 +197,15 @@ namespace KeePassPasskey.Ipc
             return new CancelResponse { Status = "acknowledged" };
         }
 
-        private GetConfigResponse HandleGetConfig(GetConfigRequest req)
+        private GetSettingsResponse HandleGetSettings(GetSettingsRequest req)
         {
-            return new GetConfigResponse { Config = _settings.Load() };
+            return new GetSettingsResponse { Settings = _settings.Load() };
         }
 
-        private SetConfigResponse HandleSetConfig(SetConfigRequest req)
+        private SaveSettingsResponse HandleSaveSettings(SaveSettingsRequest req)
         {
-            _settings.Save(req.Config);
-            return new SetConfigResponse();
+            _settings.Save(req.Settings);
+            return new SaveSettingsResponse();
         }
 
         private bool IsDatabaseOpen()

@@ -1,11 +1,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace KeePassPasskeyShared.Config
+namespace KeePassPasskeyShared.Settings
 {
-    public class KeePassPasskeyConfig
+    public class KeePassPasskeySettings
     {
-        public static KeePassPasskeyConfig Current { get; set; } = new KeePassPasskeyConfig();
+        public static KeePassPasskeySettings Current { get; set; } = new KeePassPasskeySettings();
 
         [JsonProperty("registrationVerification")]
         public UserVerificationMode RegistrationVerification { get; set; } = UserVerificationMode.Notification;
@@ -44,7 +44,7 @@ namespace KeePassPasskeyShared.Config
         // a concern, replace with explicit field-by-field comparison.
         public override bool Equals(object obj)
         {
-            if (obj is not KeePassPasskeyConfig other) return false;
+            if (obj is not KeePassPasskeySettings other) return false;
             return JsonConvert.SerializeObject(this) == JsonConvert.SerializeObject(other);
         }
 

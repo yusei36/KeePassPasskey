@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -81,17 +81,17 @@ namespace KeePassPasskeyShared.Ipc
         public override string Type => "cancel";
     }
 
-    public sealed class GetConfigRequest : PipeRequestBase
+    public sealed class GetSettingsRequest : PipeRequestBase
     {
-        public override string Type => "get_config";
+        public override string Type => "get_settings";
     }
 
-    public sealed class SetConfigRequest : PipeRequestBase
+    public sealed class SaveSettingsRequest : PipeRequestBase
     {
-        public override string Type => "set_config";
+        public override string Type => "save_settings";
 
-        [JsonProperty("config")]
-        public KeePassPasskeyConfig Config { get; set; }
+        [JsonProperty("settings")]
+        public KeePassPasskeySettings Settings { get; set; }
     }
 
     [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
@@ -187,17 +187,17 @@ namespace KeePassPasskeyShared.Ipc
         public string Status { get; set; }
     }
 
-    public sealed class GetConfigResponse : PipeResponseBase
+    public sealed class GetSettingsResponse : PipeResponseBase
     {
-        public GetConfigResponse() { Type = "get_config"; }
+        public GetSettingsResponse() { Type = "get_settings"; }
 
-        [JsonProperty("config")]
-        public KeePassPasskeyConfig Config { get; set; }
+        [JsonProperty("settings")]
+        public KeePassPasskeySettings Settings { get; set; }
     }
 
-    public sealed class SetConfigResponse : PipeResponseBase
+    public sealed class SaveSettingsResponse : PipeResponseBase
     {
-        public SetConfigResponse() { Type = "set_config"; }
+        public SaveSettingsResponse() { Type = "save_settings"; }
     }
 
     public sealed class CredentialInfo
@@ -234,8 +234,8 @@ namespace KeePassPasskeyShared.Ipc
                 "make_credential"  => new MakeCredentialRequest(),
                 "get_assertion"    => new GetAssertionRequest(),
                 "cancel"           => new CancelRequest(),
-                "get_config"       => new GetConfigRequest(),
-                "set_config"       => new SetConfigRequest(),
+                "get_settings"     => new GetSettingsRequest(),
+                "save_settings"    => new SaveSettingsRequest(),
                 _ => throw new JsonSerializationException($"Unknown request type: {type}")
             };
             serializer.Populate(jobj.CreateReader(), result);
@@ -262,8 +262,8 @@ namespace KeePassPasskeyShared.Ipc
                 "make_credential"  => new MakeCredentialResponse(),
                 "get_assertion"    => new GetAssertionResponse(),
                 "cancel"           => new CancelResponse(),
-                "get_config"       => new GetConfigResponse(),
-                "set_config"       => new SetConfigResponse(),
+                "get_settings"     => new GetSettingsResponse(),
+                "save_settings"    => new SaveSettingsResponse(),
                 _                  => new PipeResponseBase()
             };
             serializer.Populate(jobj.CreateReader(), result);

@@ -2,7 +2,7 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace KeePassPasskeyShared.Config
+namespace KeePassPasskeyShared.Settings
 {
     [Flags]
     [JsonConverter(typeof(StringEnumConverter))]

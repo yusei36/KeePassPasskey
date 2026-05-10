@@ -2,7 +2,7 @@ using Avalonia;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using KeePassPasskeyShared;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
@@ -19,11 +19,11 @@ internal static class Program
     [MTAThread]
     static int Main(string[] args)
     {
-        KeePassPasskeyConfig.Current = ConfigPersistence.TryLoad() ?? new KeePassPasskeyConfig();
+        KeePassPasskeySettings.Current = SettingsPersistence.TryLoad() ?? new KeePassPasskeySettings();
 
         Log.Configure(
-            Path.Combine(ConfigPersistence.ConfigDir, "Provider.log"),
-            KeePassPasskeyConfig.Current.LogLevel);
+            Path.Combine(SettingsPersistence.SettingsDir, "Provider.log"),
+            KeePassPasskeySettings.Current.LogLevel);
 
         if (IsToastActivation())
             return 0;

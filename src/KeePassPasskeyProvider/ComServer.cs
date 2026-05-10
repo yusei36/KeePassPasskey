@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
@@ -27,27 +27,27 @@ internal static class ComServer
 
         PluginRegistration.EnsureRegistered();
 
-        Log.Info("initial SyncConfig");
-        bool keepassReachable = SyncConfig();
+        Log.Info("initial SyncSettings");
+        bool keepassReachable = SyncSettings();
         Log.Info("initial SyncToWindowsCache");
         CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
         // Capture main thread ID so the sync task can post WM_QUIT here to wake GetMessage.
         uint mainThreadId = Win32Native.GetCurrentThreadId();
 
-        // Watch cached config file — reloads KeePassPasskeyConfig.Current whenever the file is written.
-        Directory.CreateDirectory(ConfigPersistence.ConfigDir);
-        using var configWatcher = new FileSystemWatcher(ConfigPersistence.ConfigDir)
+        // Watch cached settings file — reloads KeePassPasskeySettings.Current whenever the file is written.
+        Directory.CreateDirectory(SettingsPersistence.SettingsDir);
+        using var settingsFileWatcher = new FileSystemWatcher(SettingsPersistence.SettingsDir)
         {
-            Filter              = ConfigPersistence.ConfigFileName,
+            Filter              = SettingsPersistence.SettingsFileName,
             NotifyFilter        = NotifyFilters.LastWrite,
             EnableRaisingEvents = true,
         };
-        configWatcher.Changed += (_, _) =>
+        settingsFileWatcher.Changed += (_, _) =>
         {
-            var updated = ConfigPersistence.TryLoad();
-            if (updated != null)
-                KeePassPasskeyConfig.Current = updated;
+            var updatedSettings = SettingsPersistence.TryLoad();
+            if (updatedSettings != null)
+                KeePassPasskeySettings.Current = updatedSettings;
         };
 
         // Background sync thread
@@ -72,24 +72,24 @@ internal static class ComServer
         return 0;
     }
 
-    private static bool SyncConfig()
+    private static bool SyncSettings()
     {
-        var configResponse = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient))).GetConfig();
-        if (configResponse == null)
+        var settingsResponse = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient))).GetSettings();
+        if (settingsResponse == null)
         {
-            Log.Info("KeePass unavailable or error, skipping config sync");
+            Log.Info("KeePass unavailable or error, skipping settings sync");
             return false;
         }
-        if (configResponse.ErrorCode != null)
+        if (settingsResponse.ErrorCode != null)
         {
-            Log.Warn($"GetConfig returned error={configResponse.ErrorCode} errorMessage={configResponse.ErrorMessage}, skipping config sync");
+            Log.Warn($"GetSettings returned error={settingsResponse.ErrorCode} errorMessage={settingsResponse.ErrorMessage}, skipping settings sync");
             return false;
         }
 
-        if (!configResponse.Config.Equals(KeePassPasskeyConfig.Current))
+        if (!settingsResponse.Settings.Equals(KeePassPasskeySettings.Current))
         {
-            KeePassPasskeyConfig.Current = configResponse.Config;
-            ConfigPersistence.Save(configResponse.Config);
+            KeePassPasskeySettings.Current = settingsResponse.Settings;
+            SettingsPersistence.Save(settingsResponse.Settings);
         }
 
         return true;
@@ -104,7 +104,7 @@ internal static class ComServer
         {
             try
             {
-                var cfg = KeePassPasskeyConfig.Current;
+                var cfg = KeePassPasskeySettings.Current;
                 if (cfg.CredentialSyncIntervalMilliseconds <= 0)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(5), token);
@@ -126,7 +126,7 @@ internal static class ComServer
                     if (!wasReachable)
                     {
                         wasReachable = true;
-                        SyncConfig();
+                        SyncSettings();
                     }
                 }
                 else

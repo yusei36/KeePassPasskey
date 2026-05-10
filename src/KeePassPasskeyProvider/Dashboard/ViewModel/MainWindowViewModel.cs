@@ -8,7 +8,7 @@ using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Dashboard.Utils;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 
 namespace KeePassPasskeyProvider.Dashboard.ViewModel;
 
@@ -44,7 +44,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
         DoRefresh();
 
-        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(KeePassPasskeyConfig.Current.StatusRefreshIntervalMilliseconds) };
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(KeePassPasskeySettings.Current.StatusRefreshIntervalMilliseconds) };
         timer.Tick += (_, _) => DoRefresh();
         timer.Start();
     }

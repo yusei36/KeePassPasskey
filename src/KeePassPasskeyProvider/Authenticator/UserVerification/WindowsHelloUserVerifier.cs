@@ -1,7 +1,7 @@
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
 using KeePassPasskeyShared;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 

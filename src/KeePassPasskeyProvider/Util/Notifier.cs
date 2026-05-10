@@ -1,13 +1,13 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using KeePassPasskeyShared;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.Util;
 
 internal static class Notifier
 {
-    private static bool _enabled => KeePassPasskeyConfig.Current.ShowErrorNotifications;
+    private static bool _enabled => KeePassPasskeySettings.Current.ShowErrorNotifications;
 
     public static void ShowMakeCredentialError(string rpId, PipeErrorCode? code, string? errorMessage = null) =>
         ShowError("Passkey creation failed", ErrorBody(code, rpId, errorMessage));

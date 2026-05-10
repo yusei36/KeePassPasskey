@@ -7,7 +7,7 @@ using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Dashboard.Utils;
 using KeePassPasskeyProvider.Util;
@@ -64,7 +64,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     private void LoadFromCurrent()
     {
-        var c = KeePassPasskeyConfig.Current;
+        var c = KeePassPasskeySettings.Current;
         RegistrationVerification       = c.RegistrationVerification;
         SignInVerification              = c.SignInVerification;
         ShowErrorNotifications         = c.ShowErrorNotifications;
@@ -82,7 +82,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         IsSaving = true;
         try
         {
-            var config = new KeePassPasskeyConfig
+            var settings = new KeePassPasskeySettings
             {
                 RegistrationVerification               = RegistrationVerification,
                 SignInVerification                     = SignInVerification,
@@ -97,7 +97,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
             var response = await Task.Run(() =>
                 new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)))
-                    .SetConfig(new SetConfigRequest { Config = config }));
+                    .SaveSettings(new SaveSettingsRequest { Settings = settings }));
 
             if (response == null || response.ErrorCode != null)
             {
@@ -106,8 +106,8 @@ public sealed partial class SettingsViewModel : ObservableObject
                 return;
             }
 
-            KeePassPasskeyConfig.Current = config;
-            ConfigPersistence.Save(config);
+            KeePassPasskeySettings.Current = settings;
+            SettingsPersistence.Save(settings);
         }
         finally
         {

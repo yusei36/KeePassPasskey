@@ -1,5 +1,5 @@
 using KeePass.Plugins;
-using KeePassPasskey.Config;
+using KeePassPasskey.Settings;
 using KeePassPasskey.Ipc;
 using KeePassPasskeyShared;
 using KeePassPasskey.Storage;

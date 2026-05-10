@@ -1,7 +1,7 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
 using KeePassPasskeyProvider.Authenticator.Native;
-using KeePassPasskeyShared.Config;
+using KeePassPasskeyShared.Settings;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
@@ -34,7 +34,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
     private static bool ShowToast(string title, string body, string confirmText, string tag, string hint = "")
     {
-        int timeoutMilliseconds = KeePassPasskeyConfig.Current.NotificationVerificationTimeoutMilliseconds;
+        int timeoutMilliseconds = KeePassPasskeySettings.Current.NotificationVerificationTimeoutMilliseconds;
         int timeoutSeconds      = timeoutMilliseconds / 1000;
         var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cts = new CancellationTokenSource();
