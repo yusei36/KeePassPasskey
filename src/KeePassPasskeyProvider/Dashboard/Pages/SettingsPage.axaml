@@ -7,19 +7,20 @@
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
 
-    <ScrollViewer>
-        <StackPanel Spacing="8" Margin="16">
-            <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 4">
-                <TextBlock Text="Settings"
-                           Theme="{StaticResource TitleTextBlockStyle}" />
-                <Button Grid.Column="1"
-                        Command="{Binding SaveCommand}"
-                        IsEnabled="{Binding !IsSaving}"
-                        ToolTip.Tip="Save settings"
-                        VerticalAlignment="Center">
-                    <ui:SymbolIcon Symbol="Save" FontSize="18" />
-                </Button>
-            </Grid>
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="16 16 16 4">
+            <TextBlock Text="Settings"
+                       Theme="{StaticResource TitleTextBlockStyle}" />
+            <Button Grid.Column="1"
+                    Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding !IsSaving}"
+                    ToolTip.Tip="Save settings"
+                    VerticalAlignment="Center">
+                <ui:SymbolIcon Symbol="Save" FontSize="18" />
+            </Button>
+        </Grid>
+        <ScrollViewer Grid.Row="1">
+        <StackPanel Spacing="8" Margin="16 8 16 16">
 
             <ui:SettingsExpander Header="Appearance"
                                  IconSource="DarkTheme"
@@ -219,5 +220,6 @@
 
         </StackPanel>
     </ScrollViewer>
+    </Grid>
 
 </UserControl>
