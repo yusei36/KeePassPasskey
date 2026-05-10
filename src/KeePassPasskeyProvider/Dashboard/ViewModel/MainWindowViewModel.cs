@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,6 +8,7 @@ using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Dashboard.Utils;
 using KeePassPasskeyShared.Settings;
+using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.Dashboard.ViewModel;
 
@@ -17,6 +17,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public StatusHeroViewModel  StatusHero  { get; }
     public SetupGuideViewModel  SetupGuide  { get; }
     public DiagnosticsViewModel Diagnostics { get; }
+    public SettingsViewModel    Settings    { get; }
 
     [ObservableProperty] private bool _isRefreshing;
 
@@ -41,6 +42,22 @@ public sealed partial class MainWindowViewModel : ObservableObject
         StatusHero  = new StatusHeroViewModel(registerCmd, unregisterCmd, refreshCmd);
         SetupGuide  = new SetupGuideViewModel();
         Diagnostics = new DiagnosticsViewModel(registerCmd, unregisterCmd);
+        Settings    = new SettingsViewModel();
+
+        Directory.CreateDirectory(SettingsCache.SettingsDir);
+        var settingsWatcher = new FileSystemWatcher(SettingsCache.SettingsDir)
+        {
+            Filter              = SettingsCache.SettingsFileName,
+            NotifyFilter        = NotifyFilters.LastWrite,
+            EnableRaisingEvents = true,
+        };
+        settingsWatcher.Changed += (_, _) =>
+        {
+            var updated = SettingsCache.TryLoad();
+            if (updated == null) return;
+            KeePassPasskeySettings.Current = updated;
+            Dispatcher.UIThread.Post(Settings.ReloadFromCurrent);
+        };
 
         DoRefresh();
 
@@ -102,8 +119,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void ApplyPingResponse(PingResponse? pingResponse)
     {
+        bool wasRunning = _pluginRunning;
         _pingStatus    = pingResponse?.Status ?? PingStatus.NotConnected;
         _pluginRunning = _pingStatus == PingStatus.Ready;
+
+        if (_pluginRunning && !wasRunning)
+            _ = Settings.SyncFromKeePassAsync();
 
         Diagnostics.ServerVersion = pingResponse?.Version;
         Diagnostics.PingStatus    = _pingStatus;

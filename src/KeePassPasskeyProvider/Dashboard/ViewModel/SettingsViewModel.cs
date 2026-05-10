@@ -88,6 +88,23 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void Reset() => LoadFromCurrent();
 
+    internal void ReloadFromCurrent() => LoadFromCurrent();
+
+    internal async Task SyncFromKeePassAsync()
+    {
+        var response = await Task.Run(() =>
+            new PipeClient(msg => Log.Debug(msg, nameof(PipeClient))).GetSettings());
+
+        if (response == null || response.ErrorCode != null) return;
+
+        if (!response.Settings.Equals(KeePassPasskeySettings.Current))
+        {
+            KeePassPasskeySettings.Current = response.Settings;
+            SettingsCache.Save(response.Settings);
+        }
+        LoadFromCurrent();
+    }
+
     public SettingsViewModel() => LoadFromCurrent();
 
     private void LoadFromCurrent()

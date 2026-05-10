@@ -69,7 +69,8 @@ public partial class MainWindow : AppWindow
                 NavView.Content = _diagnosticsPage;
                 break;
             case "settings":
-                _settingsPage ??= new SettingsPage(new SettingsViewModel());
+                _settingsPage ??= new SettingsPage(vm.Settings);
+                _ = vm.Settings.SyncFromKeePassAsync();
                 NavView.Content = _settingsPage;
                 break;
         }

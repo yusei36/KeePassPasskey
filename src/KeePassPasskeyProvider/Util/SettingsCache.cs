@@ -34,7 +34,9 @@ internal static class SettingsCache
         try
         {
             Directory.CreateDirectory(SettingsDir);
-            File.WriteAllText(CachePath, JsonConvert.SerializeObject(settings, Formatting.Indented));
+            string tmp = CachePath + $".{Environment.ProcessId}.tmp";
+            File.WriteAllText(tmp, JsonConvert.SerializeObject(settings, Formatting.Indented));
+            File.Move(tmp, CachePath, overwrite: true);
         }
         catch (Exception ex)
         {
