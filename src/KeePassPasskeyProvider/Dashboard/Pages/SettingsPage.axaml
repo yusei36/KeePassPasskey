@@ -15,7 +15,8 @@
                     Command="{Binding SaveCommand}"
                     IsEnabled="{Binding !IsSaving}"
                     ToolTip.Tip="Save settings"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    Classes="accent">
                 <ui:SymbolIcon Symbol="Save" FontSize="18" />
             </Button>
         </Grid>
