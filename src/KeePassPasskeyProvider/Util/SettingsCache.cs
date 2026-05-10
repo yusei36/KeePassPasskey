@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace KeePassPasskeyProvider.Util;
 
-internal static class SettingsPersistence
+internal static class SettingsCache
 {
     internal static readonly string SettingsDir = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -38,7 +38,7 @@ internal static class SettingsPersistence
         }
         catch (Exception ex)
         {
-            Log.Warn($"SettingsPersistence.Save failed: {ex.Message}");
+            Log.Warn($"SettingsCache.Save failed: {ex.Message}");
         }
     }
 }

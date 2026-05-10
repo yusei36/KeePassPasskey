@@ -36,18 +36,21 @@ internal static class ComServer
         uint mainThreadId = Win32Native.GetCurrentThreadId();
 
         // Watch cached settings file — reloads KeePassPasskeySettings.Current whenever the file is written.
-        Directory.CreateDirectory(SettingsPersistence.SettingsDir);
-        using var settingsFileWatcher = new FileSystemWatcher(SettingsPersistence.SettingsDir)
+        Directory.CreateDirectory(SettingsCache.SettingsDir);
+        using var settingsFileWatcher = new FileSystemWatcher(SettingsCache.SettingsDir)
         {
-            Filter              = SettingsPersistence.SettingsFileName,
+            Filter              = SettingsCache.SettingsFileName,
             NotifyFilter        = NotifyFilters.LastWrite,
             EnableRaisingEvents = true,
         };
         settingsFileWatcher.Changed += (_, _) =>
         {
-            var updatedSettings = SettingsPersistence.TryLoad();
+            var updatedSettings = SettingsCache.TryLoad();
             if (updatedSettings != null)
+            {
                 KeePassPasskeySettings.Current = updatedSettings;
+                Log.Configure(Log.LogFilePath, updatedSettings.LogLevel);
+            }
         };
 
         // Background sync thread
@@ -89,7 +92,7 @@ internal static class ComServer
         if (!settingsResponse.Settings.Equals(KeePassPasskeySettings.Current))
         {
             KeePassPasskeySettings.Current = settingsResponse.Settings;
-            SettingsPersistence.Save(settingsResponse.Settings);
+            SettingsCache.Save(settingsResponse.Settings);
         }
 
         return true;

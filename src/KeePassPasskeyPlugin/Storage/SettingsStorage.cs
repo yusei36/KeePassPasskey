@@ -2,14 +2,14 @@ using KeePass.Plugins;
 using KeePassPasskeyShared.Settings;
 using Newtonsoft.Json;
 
-namespace KeePassPasskey.Settings
+namespace KeePassPasskey.Storage
 {
-    internal sealed class PluginSettings
+    internal sealed class SettingsStorage
     {
         private const string ConfigKey = "KeePassPasskey.Settings";
         private readonly KeePass.App.Configuration.AceCustomConfig _customConfig;
 
-        internal PluginSettings(IPluginHost host)
+        internal SettingsStorage(IPluginHost host)
         {
             _customConfig = host.CustomConfig;
         }

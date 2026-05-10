@@ -2,7 +2,7 @@ using KeePass.Plugins;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Passkey;
-using KeePassPasskey.Settings;
+using KeePassPasskey.Storage;
 using KeePassPasskey.Passkey;
 using KeePassPasskey.Storage;
 using Newtonsoft.Json;
@@ -18,14 +18,14 @@ namespace KeePassPasskey.Ipc
             { PasskeyAlgorithm.ES256, PasskeyAlgorithm.EdDSA, PasskeyAlgorithm.RS256 };
 
         private readonly IPluginHost _host;
-        private readonly PasskeyEntryStorage _storage;
-        private readonly PluginSettings _settings;
+        private readonly PasskeyEntryStorage _passkeyStorage;
+        private readonly SettingsStorage _settingsStorage;
 
-        internal RequestHandler(IPluginHost host, PasskeyEntryStorage storage, PluginSettings settings)
+        internal RequestHandler(IPluginHost host, PasskeyEntryStorage passkeyStorage, SettingsStorage settingsStorage)
         {
             _host = host;
-            _storage = storage;
-            _settings = settings;
+            _passkeyStorage = passkeyStorage;
+            _settingsStorage = settingsStorage;
         }
 
         internal string Handle(string json)
@@ -74,7 +74,7 @@ namespace KeePassPasskey.Ipc
             if (!IsDatabaseOpen())
                 return new GetCredentialsResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage = "No database open" };
 
-            var all = _storage.GetAllCredentials();
+            var all = _passkeyStorage.GetAllCredentials();
             var infos = new List<CredentialInfo>(all.Count);
             foreach (var c in all)
             {
@@ -108,7 +108,7 @@ namespace KeePassPasskey.Ipc
             // KeePassXC-style excludeCredentials: reject if any excluded credential exists for this RP
             if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
             {
-                if (_storage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials))
+                if (_passkeyStorage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials))
                     return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
             }
 
@@ -138,7 +138,7 @@ namespace KeePassPasskey.Ipc
                 Origin = string.IsNullOrEmpty(req.RpId) ? "" : "https://" + req.RpId
             };
 
-            if (!_storage.CreatePasskeyEntry(credential))
+            if (!_passkeyStorage.CreatePasskeyEntry(credential))
                 return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to create KeePass entry" };
 
             return new MakeCredentialResponse
@@ -162,9 +162,9 @@ namespace KeePassPasskey.Ipc
             // Find matching credential
             List<PasskeyCredential> candidates;
             if (req.AllowCredentials != null && req.AllowCredentials.Count > 0)
-                candidates = _storage.FindByRpIdAndCredentialIds(req.RpId, req.AllowCredentials);
+                candidates = _passkeyStorage.FindByRpIdAndCredentialIds(req.RpId, req.AllowCredentials);
             else
-                candidates = _storage.FindByRpId(req.RpId);
+                candidates = _passkeyStorage.FindByRpId(req.RpId);
 
             if (candidates.Count == 0)
                 return new GetAssertionResponse { ErrorCode = PipeErrorCode.NotFound, ErrorMessage = "No matching credential found for rpId: " + req.RpId };
@@ -199,12 +199,13 @@ namespace KeePassPasskey.Ipc
 
         private GetSettingsResponse HandleGetSettings(GetSettingsRequest req)
         {
-            return new GetSettingsResponse { Settings = _settings.Load() };
+            return new GetSettingsResponse { Settings = _settingsStorage.Load() };
         }
 
         private SaveSettingsResponse HandleSaveSettings(SaveSettingsRequest req)
         {
-            _settings.Save(req.Settings);
+            _settingsStorage.Save(req.Settings);
+            Log.Configure(Log.LogFilePath, req.Settings.LogLevel);
             return new SaveSettingsResponse();
         }
 

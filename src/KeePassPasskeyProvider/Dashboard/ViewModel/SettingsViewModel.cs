@@ -107,7 +107,7 @@ public sealed partial class SettingsViewModel : ObservableObject
             }
 
             KeePassPasskeySettings.Current = settings;
-            SettingsPersistence.Save(settings);
+            SettingsCache.Save(settings);
         }
         finally
         {

@@ -19,10 +19,10 @@ internal static class Program
     [MTAThread]
     static int Main(string[] args)
     {
-        KeePassPasskeySettings.Current = SettingsPersistence.TryLoad() ?? new KeePassPasskeySettings();
+        KeePassPasskeySettings.Current = SettingsCache.TryLoad() ?? new KeePassPasskeySettings();
 
         Log.Configure(
-            Path.Combine(SettingsPersistence.SettingsDir, "Provider.log"),
+            Path.Combine(SettingsCache.SettingsDir, "Provider.log"),
             KeePassPasskeySettings.Current.LogLevel);
 
         if (IsToastActivation())

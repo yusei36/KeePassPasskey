@@ -1,5 +1,5 @@
 using KeePass.Plugins;
-using KeePassPasskey.Settings;
+using KeePassPasskey.Storage;
 using KeePassPasskey.Ipc;
 using KeePassPasskeyShared;
 using KeePassPasskey.Storage;
@@ -45,9 +45,12 @@ namespace KeePassPasskey
         {
             if (host == null) return false;
 
+            var settingsStorage = new SettingsStorage(host);
+            var initialSettings = settingsStorage.Load();
             Log.Configure(Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "KeePassPasskeyProvider", "Plugin.log"));
+                "KeePassPasskeyProvider", "Plugin.log"),
+                initialSettings.LogLevel);
 
             // Windows 11 24H2 required (build 26100+) for the passkey provider API.
             var buildVersion = GetRealWindowsBuildNumber();
@@ -61,9 +64,8 @@ namespace KeePassPasskey
 
             try
             {
-                var storage = new PasskeyEntryStorage(_host);
-                var settings = new PluginSettings(_host);
-                var handler = new RequestHandler(_host, storage, settings);
+                var passkeyStorage = new PasskeyEntryStorage(_host);
+                var handler = new RequestHandler(_host, passkeyStorage, settingsStorage);
                 _pipeServer = new PipeServer(handler);
                 _pipeServer.Start();
             }
