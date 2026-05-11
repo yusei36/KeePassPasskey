@@ -102,17 +102,27 @@ internal static class ComServer
     {
         int consecutiveFailures = 0;
         var lastCredentialSync  = DateTime.UtcNow;
+        bool syncWasEnabled     = KeePassPasskeySettings.Current.IsCredentialSyncEnabled;
 
         while (!token.IsCancellationRequested)
         {
             try
             {
-                var cfg = KeePassPasskeySettings.Current;
-                if (cfg.CredentialSyncIntervalMilliseconds <= 0)
+                var cfg         = KeePassPasskeySettings.Current;
+                bool syncEnabled = cfg.IsCredentialSyncEnabled;
+
+                if (!syncEnabled)
                 {
+                    if (syncWasEnabled)
+                    {
+                        CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+                        syncWasEnabled = false;
+                    }
                     await Task.Delay(TimeSpan.FromSeconds(5), token);
                     continue;
                 }
+
+                syncWasEnabled = true;
 
                 var delay = lastCredentialSync
                     + TimeSpan.FromMilliseconds(cfg.CredentialSyncIntervalMilliseconds)

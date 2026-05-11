@@ -3,6 +3,7 @@ using System.Text;
 using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.Util;
 using KeePassPasskeyProvider.Authenticator.UserVerification;
 
@@ -125,7 +126,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 pResponse->pbEncodedResponse = pbEncoded; // ownership transferred to caller (platform frees)
 
                 // 6. Sync Windows autofill cache
-                CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+                if (KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
+                    CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
 
                 Log.Info("success");
                 return HResults.S_OK;

@@ -30,6 +30,9 @@ namespace KeePassPasskeyShared.Settings
         [JsonProperty("credentialSyncIntervalMilliseconds")]
         public int CredentialSyncIntervalMilliseconds { get; set; } = 30_000;
 
+        [JsonIgnore]
+        public bool IsCredentialSyncEnabled => CredentialSyncIntervalMilliseconds > 0;
+
         [JsonProperty("statusRefreshIntervalMilliseconds")]
         public int StatusRefreshIntervalMilliseconds { get; set; } = 30_000;
 
