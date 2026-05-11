@@ -98,7 +98,7 @@
 
             <ui:SettingsExpander Header="Notifications"
                                  IconSource="Mail"
-                                 Description="Show a system notification when a passkey error occurs">
+                                 Description="Show a detailed notification when a passkey error occurs (Windows always displays a generic error)">
                 <ui:SettingsExpander.Footer>
                     <ToggleSwitch IsChecked="{Binding ShowErrorNotifications}"
                                   OnContent="On"
