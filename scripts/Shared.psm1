@@ -85,6 +85,8 @@ function Invoke-BuildPlugin {
         [string]$MSBuild
     )
     $csproj = "$RepoRoot\src\KeePassPasskeyPlugin\KeePassPasskeyPlugin.csproj"
+    & dotnet restore $csproj --nologo -v quiet
+    if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
     & $MSBuild $csproj `
         /p:Configuration=$Configuration `
         /p:SolutionDir="$RepoRoot\" `
