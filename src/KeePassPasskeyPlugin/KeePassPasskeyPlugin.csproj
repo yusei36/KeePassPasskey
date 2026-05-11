@@ -19,11 +19,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- KeePass.exe must be placed in build\KeePass\ (not shipped) -->
-    <Reference Include="KeePass">
-      <HintPath>..\..\build\KeePass.exe</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <PackageReference Include="KeePass" Version="2.54.0.23169">
+      <IncludeAssets>compile</IncludeAssets>
+      <ExcludeAssets>runtime;build;native;contentfiles;analyzers;buildtransitive</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
