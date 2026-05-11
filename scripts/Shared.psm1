@@ -271,10 +271,7 @@ function Invoke-ILRepack {
     }
 
     $mergedDll  = Join-Path $BuildDir 'KeePassPasskey_merged.dll'
-    $repackArgs = @("/out:$mergedDll")
-    if ($Configuration -eq 'Debug') { $repackArgs += '/debug' }
-    $repackArgs += $primaryDll
-    $repackArgs += $secondaryDlls
+    $repackArgs = @("/out:$mergedDll") + $primaryDll + $secondaryDlls
 
     & ilrepack @repackArgs
     if ($LASTEXITCODE -ne 0) { throw "ILRepack failed with exit code $LASTEXITCODE" }

@@ -28,16 +28,22 @@
 .PARAMETER SkipCert
     Skip cert creation; use if the cert already exists in CurrentUser\My.
 
+.PARAMETER SkipSign
+    Skip signing and cert export. The zip will contain an unsigned MSIX and no .cer or Install.bat.
+    Intended for CI/unsigned builds.
+
 .EXAMPLE
-    .\publish.ps1
-    .\publish.ps1 -Configuration Debug
-    .\publish.ps1 -SkipBuild
+    .\Publish-Package.ps1
+    .\Publish-Package.ps1 -Configuration Debug
+    .\Publish-Package.ps1 -SkipBuild
+    .\Publish-Package.ps1 -Configuration Debug -SkipSign
 #>
 param(
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Release',
     [switch]$SkipBuild,
-    [switch]$SkipCert
+    [switch]$SkipCert,
+    [switch]$SkipSign
 )
 
 Set-StrictMode -Version Latest
@@ -51,41 +57,48 @@ $AppPackagesDir = "$RepoRoot\build\AppPackages"
 $versions = Get-BuildVersions $RepoRoot
 Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
 
-# â”€â”€ 0. Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 0. Build -------------------------------------------------------------------
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
 
-    Write-Step "Building MSIX package (msbuild, Release)"
+    Write-Step "Building MSIX package"
     Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
 
-    Write-Step "Building KeePassPasskey plugin DLL (msbuild, Release)"
+    Write-Step "Building KeePassPasskey plugin DLL"
     Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
 }
 
-# â”€â”€ 1. Locate build artifacts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 1. Locate build artifacts --------------------------------------------------
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
 $buildDir = "$RepoRoot\build\$Configuration"
 
-# â”€â”€ 2. Merge plugin DLLs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 2. Merge plugin DLLs -------------------------------------------------------
 Write-Step "Merging plugin DLLs with ILRepack"
 Invoke-ILRepack -BuildDir $buildDir -Configuration $Configuration
 
-# â”€â”€ 3. Sign MSIX â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-Write-Step "Checking for signing certificate"
-$cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
-$thumb = $cert.Thumbprint
+# -- 3. Sign MSIX ---------------------------------------------------------------
+$cert = $null
+if (-not $SkipSign) {
+    Write-Step "Checking for signing certificate"
+    $cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
+    $thumb = $cert.Thumbprint
 
-Write-Step "Signing MSIX"
-Invoke-SignMsix -MsixPath $MsixPath -Thumbprint $thumb
+    Write-Step "Signing MSIX"
+    Invoke-SignMsix -MsixPath $MsixPath -Thumbprint $thumb
 
-Write-Step "Signing plugin DLLs"
-Get-ChildItem $buildDir -Filter 'KeePassPasskey*.dll' | ForEach-Object {
-    Invoke-SignFile -FilePath $_.FullName -Thumbprint $thumb
+    Write-Step "Signing plugin DLLs"
+    Get-ChildItem $buildDir -Filter 'KeePassPasskey*.dll' | ForEach-Object {
+        Invoke-SignFile -FilePath $_.FullName -Thumbprint $thumb
+    }
 }
 
-# â”€â”€ 4. Assemble zip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 4. Assemble zip ------------------------------------------------------------
 $versions   = Get-BuildVersions $RepoRoot
-$zipName    = "KeePassPasskey-$($versions.Version).zip"
+$tags       = @()
+if ($Configuration -eq 'Debug') { $tags += 'debug' }
+if ($SkipSign)                  { $tags += 'unsigned' }
+$suffix     = if ($tags.Count -gt 0) { '-' + ($tags -join '-') } else { '' }
+$zipName    = "KeePassPasskey-$($versions.Version)$suffix.zip"
 $stagingDir = "$RepoRoot\build\publish-staging"
 $zipPath    = "$RepoRoot\build\$zipName"
 
@@ -105,10 +118,13 @@ Get-ChildItem $buildDir -File | Where-Object { $_.Extension -in $extensions } | 
 
 Copy-Item $MsixPath "$stagingDir\"
 
-Export-Certificate -Cert $cert -FilePath "$stagingDir\KeePassPasskey.cer" | Out-Null
-Copy-Item "$PSScriptRoot\Install.bat" "$stagingDir\Install.bat"
-Copy-Item "$RepoRoot\README.md"       "$stagingDir\README.md"
-Copy-Item "$RepoRoot\LICENSE"         "$stagingDir\LICENSE"
+if (-not $SkipSign) {
+    Export-Certificate -Cert $cert -FilePath "$stagingDir\KeePassPasskey.cer" | Out-Null
+    Copy-Item "$PSScriptRoot\Install.bat" "$stagingDir\Install.bat"
+}
+
+Copy-Item "$RepoRoot\README.md" "$stagingDir\README.md"
+Copy-Item "$RepoRoot\LICENSE"   "$stagingDir\LICENSE"
 
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path "$stagingDir\*" -DestinationPath $zipPath

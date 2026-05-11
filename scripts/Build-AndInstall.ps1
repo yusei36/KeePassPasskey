@@ -23,9 +23,9 @@
     Skip cert creation; use if the cert already exists in CurrentUser\My.
 
 .EXAMPLE
-    .\sign-and-install.ps1
-    .\sign-and-install.ps1 -Configuration Release
-    .\sign-and-install.ps1 -SkipBuild -SkipCert
+    .\Build-AndInstall.ps1
+    .\Build-AndInstall.ps1 -Configuration Release
+    .\Build-AndInstall.ps1 -SkipBuild -SkipCert
 #>
 param(
     [ValidateSet('Debug', 'Release')]
