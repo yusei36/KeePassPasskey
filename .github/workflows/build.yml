@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-2025-vs2026
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up .NET 10
         uses: actions/setup-dotnet@v4
@@ -26,5 +26,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: KeePassPasskey-debug
+          name: KeePassPasskey-debug-unsigned
           path: build\KeePassPasskey-*.zip
