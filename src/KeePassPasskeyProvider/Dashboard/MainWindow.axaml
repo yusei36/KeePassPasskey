@@ -1,4 +1,6 @@
-﻿<ui:AppWindow xmlns="https://github.com/avaloniaui"
+﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<ui:AppWindow xmlns="https://github.com/avaloniaui"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:ui="using:FluentAvalonia.UI.Windowing"
               xmlns:fa="using:FluentAvalonia.UI.Controls"

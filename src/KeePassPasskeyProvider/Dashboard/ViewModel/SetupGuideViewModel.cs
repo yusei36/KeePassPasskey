@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace KeePassPasskeyProvider.Dashboard.ViewModel;

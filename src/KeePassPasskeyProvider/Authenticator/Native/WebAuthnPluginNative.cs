@@ -1,3 +1,5 @@
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
 using System.Runtime.InteropServices;
 
 namespace KeePassPasskeyProvider.Authenticator.Native;
@@ -38,7 +40,7 @@ internal unsafe struct WebAuthnPluginOperationRequest
     public byte* pbRequestSignature;               // 8 bytes
     public WebAuthnPluginRequestType requestType;  // 4 bytes (enum = DWORD)
     public uint cbEncodedRequest;                  // 4 bytes  (no pad - two DWORDs in a row)
-    public byte* pbEncodedRequest;                 // 8 bytes  (48 is 8-byte aligned ✓)
+    public byte* pbEncodedRequest;                 // 8 bytes  (48 is 8-byte aligned âœ“)
 }
 
 /// <summary>

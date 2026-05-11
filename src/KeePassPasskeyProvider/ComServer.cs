@@ -1,3 +1,5 @@
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
 using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
@@ -35,7 +37,7 @@ internal static class ComServer
         // Capture main thread ID so the sync task can post WM_QUIT here to wake GetMessage.
         uint mainThreadId = Win32Native.GetCurrentThreadId();
 
-        // Watch cached settings file — reloads KeePassPasskeySettings.Current whenever the file is written.
+        // Watch cached settings file â€” reloads KeePassPasskeySettings.Current whenever the file is written.
         Directory.CreateDirectory(SettingsCache.SettingsDir);
         using var settingsFileWatcher = new FileSystemWatcher(SettingsCache.SettingsDir)
         {

@@ -1,3 +1,5 @@
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;

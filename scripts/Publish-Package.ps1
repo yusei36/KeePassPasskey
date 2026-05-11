@@ -1,3 +1,5 @@
+﻿# SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+# SPDX-License-Identifier: GPL-3.0-or-later
 #Requires -Version 5.1
 <#
 .SYNOPSIS
@@ -49,7 +51,7 @@ $AppPackagesDir = "$RepoRoot\build\AppPackages"
 $versions = Get-BuildVersions $RepoRoot
 Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
 
-# ── 0. Build ───────────────────────────────────────────────────────────────────
+# â”€â”€ 0. Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
 
@@ -60,15 +62,15 @@ if (-not $SkipBuild) {
     Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
 }
 
-# ── 1. Locate build artifacts ──────────────────────────────────────────────────
+# â”€â”€ 1. Locate build artifacts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
 $buildDir = "$RepoRoot\build\$Configuration"
 
-# ── 2. Merge plugin DLLs ───────────────────────────────────────────────────────
+# â”€â”€ 2. Merge plugin DLLs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Write-Step "Merging plugin DLLs with ILRepack"
 Invoke-ILRepack -BuildDir $buildDir -Configuration $Configuration
 
-# ── 3. Sign MSIX ───────────────────────────────────────────────────────────────
+# â”€â”€ 3. Sign MSIX â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Write-Step "Checking for signing certificate"
 $cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
 $thumb = $cert.Thumbprint
@@ -81,7 +83,7 @@ Get-ChildItem $buildDir -Filter 'KeePassPasskey*.dll' | ForEach-Object {
     Invoke-SignFile -FilePath $_.FullName -Thumbprint $thumb
 }
 
-# ── 4. Assemble zip ────────────────────────────────────────────────────────────
+# â”€â”€ 4. Assemble zip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 $versions   = Get-BuildVersions $RepoRoot
 $zipName    = "KeePassPasskey-$($versions.Version).zip"
 $stagingDir = "$RepoRoot\build\publish-staging"

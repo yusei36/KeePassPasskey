@@ -1,3 +1,5 @@
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
 using KeePassPasskeyProvider.Authenticator.Native;

@@ -1,3 +1,5 @@
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
 using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -58,7 +60,7 @@ public partial class SettingsPage : UserControl
         StripSecondsSuffix(tb);
 
         // Subscribe a one-shot LostFocus on the inner TextBox so it fires
-        // directly on the TextBox — BEFORE the bubbled event reaches NumberBox
+        // directly on the TextBox â€” BEFORE the bubbled event reaches NumberBox
         // and triggers ValidateInput.
         void OnLostFocus(object? s, RoutedEventArgs _)
         {

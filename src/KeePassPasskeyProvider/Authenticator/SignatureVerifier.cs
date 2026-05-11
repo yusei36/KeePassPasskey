@@ -1,3 +1,5 @@
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32;

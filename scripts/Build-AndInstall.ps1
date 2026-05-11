@@ -1,3 +1,5 @@
+﻿# SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+# SPDX-License-Identifier: GPL-3.0-or-later
 #Requires -Version 5.1
 <#
 .SYNOPSIS
@@ -45,7 +47,7 @@ Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundCol
 
 Assert-Elevation
 
-# ── 0. Build ───────────────────────────────────────────────────────────────────
+# â”€â”€ 0. Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
     Write-Step "Building MSIX package (msbuild)"
@@ -56,20 +58,20 @@ if (-not $SkipBuild) {
 
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
 
-# ── 1. Cert ────────────────────────────────────────────────────────────────────
+# â”€â”€ 1. Cert â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Write-Step "Checking for signing certificate"
 $cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
 $thumb = $cert.Thumbprint
 
-# ── 2. Trust ───────────────────────────────────────────────────────────────────
+# â”€â”€ 2. Trust â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Write-Step "Trusting certificate in LocalMachine\TrustedPeople"
 Add-TrustedCertificate -Cert $cert
 
-# ── 3. Sign ────────────────────────────────────────────────────────────────────
+# â”€â”€ 3. Sign â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Write-Step "Signing MSIX"
 Invoke-SignMsix -MsixPath $MsixPath -Thumbprint $thumb
 
-# ── 4. Install ─────────────────────────────────────────────────────────────────
+# â”€â”€ 4. Install â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Write-Step "Installing MSIX"
 
 $existing = Get-AppxPackage -Name '*KeePassPasskeyProvider*'

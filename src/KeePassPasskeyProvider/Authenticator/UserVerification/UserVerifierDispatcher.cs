@@ -1,3 +1,5 @@
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+// SPDX-License-Identifier: GPL-3.0-or-later
+using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;

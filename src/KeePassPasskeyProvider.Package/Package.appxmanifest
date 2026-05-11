@@ -1,3 +1,5 @@
+﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -17,7 +19,7 @@
 
   <Properties>
     <DisplayName>KeePassPasskey</DisplayName>
-    <PublisherDisplayName>Uwe Kögel</PublisherDisplayName>
+    <PublisherDisplayName>Uwe KÃ¶gel</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
     <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
   </Properties>
