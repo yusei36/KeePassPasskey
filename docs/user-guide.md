@@ -101,7 +101,7 @@ Each passkey entry contains these custom fields:
 | `KPEX_PASSKEY_USERNAME` | Username used during registration |
 | `KPEX_PASSKEY_USER_HANDLE` | User identifier from the website |
 
-To delete a passkey, delete its KeePass entry.
+To delete a passkey, delete its KeePass entry. Passkey entries and the **KeePass Passkeys** group can be freely renamed in KeePass without affecting functionality.
 
 If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **KeePass Passkeys** group before registering again on a site.
 
