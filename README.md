@@ -6,6 +6,8 @@
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically - no browser extension required.
 
+**[Installation](#installation)** | **[User Guide](docs/user-guide.md)**
+
 ## Requirements
 
 - Windows 11 24H2 or later
@@ -50,6 +52,8 @@ KeePassPasskeyProvider.exe
 5. Launch **KeePassPasskey** from the Start menu, click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 6. Both status indicators in the **KeePassPasskey** app should show green.
 7. (Optional) Remove the certificate: open **certlm.msc** → **Trusted People** → **Certificates**, find **KeePassPasskey**, and delete it. The certificate is only needed during installation.
+
+Once installed, see the [User Guide](docs/user-guide.md) to get started.
 
 ## Building
 
