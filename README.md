@@ -1,10 +1,6 @@
 # KeePassPasskey
 
-[![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github)](https://github.com/yusei36/KeePassPasskey)
-[![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases)](https://github.com/yusei36/KeePassPasskey/releases/latest)
-[![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey)](https://github.com/yusei36/KeePassPasskey/releases/latest)
-
-**[Download](https://github.com/yusei36/KeePassPasskey/releases/latest)** | **[Installation](#installation)** | **[User Guide](docs/user-guide.md)**
+**[Download](https://github.com/yusei36/KeePassPasskey/releases/latest)** | **[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | [![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github)](https://github.com/yusei36/KeePassPasskey) [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases)](https://github.com/yusei36/KeePassPasskey/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey)](https://github.com/yusei36/KeePassPasskey/releases/latest)
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically - no browser extension required.
 
@@ -65,9 +61,14 @@ Once installed, see the [User Guide](docs/user-guide.md) to get started.
 | Windows SDK 10.0.26100.7175+ | Required for wapproj build and code signing |
 | .NET 10 SDK | For KeePassPasskeyProvider |
 | .NET Framework 4.8 SDK | For KeePassPasskeyPlugin |
+| KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` - minimum supported version, used only for compilation |
 | KeePass.exe (current, for debugging) | Place at `build\KeePass\KeePass.exe` - your installed/current version, used to launch KeePass during development |
 
 ```powershell
+# Compile-time reference - KeePass 2.54 (minimum supported version)
+Copy-Item "path\to\KeePass-2.54\KeePass.exe" build\
+
+# Debug/run target - your current KeePass installation
 Copy-Item "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\
 ```
 

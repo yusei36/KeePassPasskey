@@ -1,4 +1,4 @@
-# KeePassPasskey User Guide
+# User Guide
 
 KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once installed, websites and apps that support passkeys will offer KeePassPasskey as a storage option, and passkeys are saved directly into your KeePass database.
 

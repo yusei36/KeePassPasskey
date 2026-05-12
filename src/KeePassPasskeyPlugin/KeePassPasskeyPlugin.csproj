@@ -18,7 +18,14 @@
     <Product>KeePass Plugin</Product>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- Local dev: build\KeePass.exe (strong-named official build). CI fallback: NuGet (unsigned). -->
+  <ItemGroup Condition="Exists('..\..\build\KeePass.exe')">
+    <Reference Include="KeePass">
+      <HintPath>..\..\build\KeePass.exe</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="!Exists('..\..\build\KeePass.exe')">
     <PackageReference Include="KeePass" Version="2.54.0.23169">
       <IncludeAssets>compile</IncludeAssets>
       <ExcludeAssets>runtime;build;native;contentfiles;analyzers;buildtransitive</ExcludeAssets>
