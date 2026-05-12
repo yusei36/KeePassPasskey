@@ -45,10 +45,21 @@ The passkey is now stored as an entry in your open KeePass database. You can fin
 
 Some sites let you sign in with a passkey directly, without entering a password. The site may ask for your username first, or offer a dedicated "Sign in with a passkey" button.
 
-1. Click on the username field. The browser may show a list of saved passkeys as autofill suggestions. Select your passkey from the list, or enter your username and click the passkey sign-in option. Or if you didn't use autofill nor eneterd a username but have multiple passkeys for this site, Windows may shows a list, then select the one you want to use.
+**Step 1: Select your passkey from autofill or enter your username**
+
+Click on the username field. The browser may show a list of saved passkeys as autofill suggestions. Select your passkey from the list, or enter your username and click the passkey sign-in option.
+
 ![Browser autofill dropdown showing saved passkeys for the site](images/passkey-signin-autofill.png)
+
+**Step 2: Select a passkey (only if multiple are saved for this site)**
+
+If you did not use autofill and have multiple passkeys for this site, Windows shows a list. Select the one you want to use.
+
 ![Windows passkey selection showing multiple saved passkeys for a site](images/passkey-signin-select.png)
-2. A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
+
+**Step 3: Approve in the KeePassPasskey notification**
+
+A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
 
 ![KeePassPasskey notification with "Authentication requested" and the Approve button](images/passkey-signin-approve.png)
 
@@ -56,11 +67,23 @@ Some sites let you sign in with a passkey directly, without entering a password.
 
 Some sites use a passkey as a second factor after you have entered your password.
 
-1. Enter your username and password as usual.
-2. When prompted for a second factor, select the passkey option.
-3. If you have multiple passkeys for this site, Windows shows a list. Select the one you want to use.
+**Step 1: Enter your username and password**
+
+Enter your username and password as usual and submit the login form.
+
+**Step 2: Select the passkey option as second factor**
+
+When prompted for a second factor, select the passkey option.
+
+**Step 3: Select a passkey (only if multiple are saved for this site)**
+
+If you have multiple passkeys for this site, Windows shows a list. Select the one you want to use.
+
 ![Windows passkey selection showing multiple saved passkeys for a site](images/passkey-signin-select.png)
-4. A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
+
+**Step 4: Approve in the KeePassPasskey notification**
+
+A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
 
 ![KeePassPasskey notification with "Authentication requested" and the Approve button](images/passkey-signin-approve.png)
 
