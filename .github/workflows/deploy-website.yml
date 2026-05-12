@@ -21,7 +21,9 @@ jobs:
           cp version.txt pages-repo/version.txt
           cp README.md pages-repo/README.md
 
+          cp -r docs/. pages-repo/docs/
+
           cd pages-repo
-          git add version.txt README.md
+          git add version.txt README.md docs/
           git diff --cached --quiet || git commit -m "Update website files (yusei36/KeePassPasskey@${{ github.sha }})"
           git push
