@@ -3,6 +3,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github)](https://github.com/yusei36/KeePassPasskey)
 [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases)](https://github.com/yusei36/KeePassPasskey/releases/latest)
 [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey)](https://github.com/yusei36/KeePassPasskey/releases/latest)
+
 **[Download](https://github.com/yusei36/KeePassPasskey/releases/latest)** | **[Installation](#installation)** | **[User Guide](docs/user-guide.md)**
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically - no browser extension required.
