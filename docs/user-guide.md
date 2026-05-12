@@ -100,6 +100,8 @@ Each passkey entry contains these custom fields:
 | `KPEX_PASSKEY_RELYING_PARTY` | Website domain (e.g. `github.com`) |
 | `KPEX_PASSKEY_USERNAME` | Username used during registration |
 | `KPEX_PASSKEY_USER_HANDLE` | User identifier from the website |
+| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag, always `1` |
+| `KPEX_PASSKEY_FLAG_BS` | Backup State flag, always `1` |
 
 To delete a passkey, delete its KeePass entry. Passkey entries and the **KeePass Passkeys** group can be freely renamed in KeePass without affecting functionality.
 
