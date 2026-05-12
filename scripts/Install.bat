@@ -1,4 +1,4 @@
-﻿REM SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Kögel
+﻿REM SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 REM SPDX-License-Identifier: GPL-3.0-or-later
 @echo off
 net session >nul 2>&1
