@@ -49,10 +49,7 @@ internal static class ComServer
         {
             var updatedSettings = SettingsCache.TryLoad();
             if (updatedSettings != null)
-            {
                 KeePassPasskeySettings.Current = updatedSettings;
-                Log.Configure(Log.LogFilePath, updatedSettings.LogLevel);
-            }
         };
 
         // Background sync thread

@@ -22,8 +22,10 @@ internal static class SettingsCache
         {
             if (!File.Exists(CachePath))
                 return null;
-            string json = File.ReadAllText(CachePath);
-            return JsonConvert.DeserializeObject<KeePassPasskeySettings>(json);
+            var settings = JsonConvert.DeserializeObject<KeePassPasskeySettings>(File.ReadAllText(CachePath));
+            if (settings != null && Log.LogFilePath != null)
+                Log.Configure(Log.LogFilePath, settings.LogLevel);
+            return settings;
         }
         catch
         {
@@ -39,6 +41,8 @@ internal static class SettingsCache
             string tmp = CachePath + $".{Environment.ProcessId}.tmp";
             File.WriteAllText(tmp, JsonConvert.SerializeObject(settings, Formatting.Indented));
             File.Move(tmp, CachePath, overwrite: true);
+            if (Log.LogFilePath != null)
+                Log.Configure(Log.LogFilePath, settings.LogLevel);
         }
         catch (Exception ex)
         {

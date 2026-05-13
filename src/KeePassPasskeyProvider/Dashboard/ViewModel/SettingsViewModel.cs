@@ -110,6 +110,18 @@ public sealed partial class SettingsViewModel : ObservableObject
             await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
     }
 
+    // Log level takes effect immediately without a full KeePass save.
+    // Current is cloned rather than mutated so Current.LogLevel stays at the last
+    // KeePass-synced value, keeping the Save button enabled and allowing Reset to revert.
+    // Until saved or reset, Log.MinLevel intentionally differs from Current.LogLevel.
+    partial void OnLogLevelChanged(LogLevel value)
+    {
+        if (_isLoading) return;
+        var toCache = KeePassPasskeySettings.Current.Clone();
+        toCache.LogLevel = value;
+        SettingsCache.Save(toCache);
+    }
+
     partial void OnThemeChanged(Theme value) => ApplyTheme(value);
 
     internal static void ApplyTheme(Theme theme) =>
@@ -121,7 +133,11 @@ public sealed partial class SettingsViewModel : ObservableObject
         };
 
     [RelayCommand]
-    private void Reset() => LoadFromCurrent();
+    private void Reset()
+    {
+        LoadFromCurrent();
+        SettingsCache.Save(KeePassPasskeySettings.Current);
+    }
 
     [RelayCommand]
     private void ResetToDefaults() => LoadFrom(new KeePassPasskeySettings());

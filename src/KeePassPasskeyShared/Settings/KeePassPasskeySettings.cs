@@ -54,5 +54,8 @@ namespace KeePassPasskeyShared.Settings
         }
 
         public override int GetHashCode() => JsonConvert.SerializeObject(this).GetHashCode();
+
+        public KeePassPasskeySettings Clone() =>
+            JsonConvert.DeserializeObject<KeePassPasskeySettings>(JsonConvert.SerializeObject(this))!;
     }
 }
