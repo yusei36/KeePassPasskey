@@ -69,11 +69,35 @@ public sealed partial class SettingsViewModel : ObservableObject
     public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
     public string AppVersionFull => DiagnosticsViewModel.ClientVersion;
 
+    private static readonly string LicensePath =
+        Path.Combine(AppContext.BaseDirectory, "Resources", "LICENSE.txt");
+    private static readonly string ThirdPartyNoticesPath =
+        Path.Combine(AppContext.BaseDirectory, "Resources", "THIRD_PARTY_NOTICES.txt");
+
+    public bool HasLicense           { get; } = File.Exists(LicensePath);
+    public bool HasThirdPartyNotices { get; } = File.Exists(ThirdPartyNoticesPath);
+
     [RelayCommand]
     private void OpenUrl(string url) =>
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
         {
             FileName        = url,
+            UseShellExecute = true,
+        });
+
+    [RelayCommand]
+    private void OpenLicense() =>
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName        = LicensePath,
+            UseShellExecute = true,
+        });
+
+    [RelayCommand]
+    private void OpenThirdPartyNotices() =>
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName        = ThirdPartyNoticesPath,
             UseShellExecute = true,
         });
 

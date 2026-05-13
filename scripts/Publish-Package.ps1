@@ -51,13 +51,20 @@ $ErrorActionPreference = 'Stop'
 
 Import-Module "$PSScriptRoot\Shared.psm1" -Force
 
-$RepoRoot       = Split-Path $PSScriptRoot -Parent
-$AppPackagesDir = "$RepoRoot\build\AppPackages"
+$RepoRoot              = Split-Path $PSScriptRoot -Parent
+$AppPackagesDir        = "$RepoRoot\build\AppPackages"
+$ThirdPartyNoticesName = 'THIRD_PARTY_NOTICES.txt'
 
 $versions = Get-BuildVersions $RepoRoot
 Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
 
-# -- 0. Build -------------------------------------------------------------------
+# -- 1. Generate notices (must precede MSIX build so the file is included) ----
+$noticesPath = "$RepoRoot\build\$ThirdPartyNoticesName"
+New-Item (Split-Path $noticesPath) -ItemType Directory -Force | Out-Null
+Write-Step "Generating third-party license notices"
+Invoke-GenerateLicenseNotices -RepoRoot $RepoRoot -OutputFile $noticesPath
+
+# -- 2. Build -------------------------------------------------------------------
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
 
@@ -68,15 +75,15 @@ if (-not $SkipBuild) {
     Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
 }
 
-# -- 1. Locate build artifacts --------------------------------------------------
+# -- 3. Locate build artifacts --------------------------------------------------
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
 $buildDir = "$RepoRoot\build\$Configuration"
 
-# -- 2. Merge plugin DLLs -------------------------------------------------------
+# -- 4. Merge plugin DLLs -------------------------------------------------------
 Write-Step "Merging plugin DLLs with ILRepack"
 Invoke-ILRepack -BuildDir $buildDir -Configuration $Configuration
 
-# -- 3. Sign MSIX ---------------------------------------------------------------
+# -- 5. Sign MSIX ---------------------------------------------------------------
 $cert = $null
 if (-not $SkipSign) {
     Write-Step "Checking for signing certificate"
@@ -92,7 +99,7 @@ if (-not $SkipSign) {
     }
 }
 
-# -- 4. Assemble zip ------------------------------------------------------------
+# -- 6. Assemble zip ------------------------------------------------------------
 $versions   = Get-BuildVersions $RepoRoot
 $tags       = @()
 if ($Configuration -eq 'Debug') { $tags += 'debug' }
@@ -104,9 +111,6 @@ $zipPath    = "$RepoRoot\build\$zipName"
 
 if (Test-Path $stagingDir) { Remove-Item $stagingDir -Recurse -Force }
 New-Item $stagingDir -ItemType Directory | Out-Null
-
-Write-Step "Generating third-party license notices"
-Invoke-GenerateLicenseNotices -RepoRoot $RepoRoot -OutputFile "$stagingDir\THIRD_PARTY_NOTICES.txt"
 
 Write-Step "Assembling release archive: $zipName"
 
@@ -125,6 +129,7 @@ if (-not $SkipSign) {
 
 Copy-Item "$RepoRoot\README.md" "$stagingDir\README.md"
 Copy-Item "$RepoRoot\LICENSE"   "$stagingDir\LICENSE"
+Copy-Item $noticesPath          "$stagingDir\$ThirdPartyNoticesName"
 
 if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 Compress-Archive -Path "$stagingDir\*" -DestinationPath $zipPath

@@ -219,12 +219,23 @@
                 </ui:SettingsExpanderItem>
 
                 <ui:SettingsExpanderItem Content="License"
-                                         Description="GNU General Public License v3.0">
+                                         Description="GNU General Public License v3.0"
+                                         IsVisible="{Binding HasLicense}">
                     <ui:SettingsExpanderItem.Footer>
-                        <Button Command="{Binding OpenUrlCommand}"
-                                CommandParameter="https://www.gnu.org/licenses/gpl-3.0.html"
+                        <Button Command="{Binding OpenLicenseCommand}"
                                 ToolTip.Tip="Open license text">
-                            <ui:SymbolIcon Symbol="Globe" FontSize="14" />
+                            <ui:SymbolIcon Symbol="Document" FontSize="14" />
+                        </Button>
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="Third-party notices"
+                                         Description="Open source licenses for bundled libraries"
+                                         IsVisible="{Binding HasThirdPartyNotices}">
+                    <ui:SettingsExpanderItem.Footer>
+                        <Button Command="{Binding OpenThirdPartyNoticesCommand}"
+                                ToolTip.Tip="Open third-party notices">
+                            <ui:SymbolIcon Symbol="Document" FontSize="14" />
                         </Button>
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
