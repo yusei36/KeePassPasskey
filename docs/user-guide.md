@@ -179,7 +179,7 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 **KeePassPasskey does not appear in the provider list**
 
 - Open the KeePassPasskey app, go to **Advanced Passkey Options** (links to Windows Settings), and make sure **KeePassPasskey** is enabled.
-- If it is not listed there at all, open the KeePassPasskey app and check the status indicators for any error details. Try clicking **Unregister** followed by **Register** in the app, then check the log files for error messages if it still fails.
+- If it is not listed there at all, open the KeePassPasskey app and check the status indicators and the **Diagnostics** section for any error details. Try clicking **Unregister** followed by **Register** in the app, then check the log files for error messages if it still fails.
 - Make sure Windows Hello PIN is configured. Sometimes removing and re-adding the PIN resolves the issue.
 
 **I tried creating a passkey but it failed saying one already exists**
