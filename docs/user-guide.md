@@ -9,7 +9,11 @@ KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once ins
 
 ## Installation
 
-See the [installation instructions in the README](../README.md#installation) for the full setup steps. After installation, both status indicators in the KeePassPasskey app should show green.
+See the [installation instructions in the README](../README.md#installation) for the full setup steps. After installation, both status indicators in the KeePassPasskey app should show green. You can open the app at any time from the Start menu by searching for "KeePassPasskey" to check or adjust the configuration, or for debugging purposes. You do not need to keep it open: the passkey provider runs as a Windows integration in the background and is activated by Windows whenever a passkey operation is requested.
+
+## Updates
+
+Updates are installed the same way as a fresh installation: replace the KeePassPasskey plugin file in your KeePass plugins folder with the new version, then either run the installation script as an administrator or install the MSIX package. The KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
 
 ## Creating a passkey
 
@@ -35,7 +39,7 @@ A notification from KeePassPasskey appears in the taskbar. Click **Create passke
 
 **Step 4: Passkey saved in KeePass**
 
-The passkey is now stored as an entry in your open KeePass database. You can find it by searching for the website's domain name in KeePass.
+The passkey is now stored as an entry in the **KeePass Passkeys** group in your open KeePass database.
 
 ![KeePass database showing the newly created passkey entry in the KeePass Passkeys group](images/passkey-creation-step4.png)
 
@@ -89,7 +93,19 @@ A KeePassPasskey notification appears in the taskbar. Click **Approve** to confi
 
 ## Managing passkeys in KeePass
 
-Passkeys are stored as standard KeePass entries. You can find them by searching for the website's domain name (e.g. `github.com`) in KeePass.
+Passkeys are stored as standard KeePass entries in the **KeePass Passkeys** group.
+
+When creating a passkey, it is saved to the currently selected KeePass database. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong database, you can move it via **Entry → Data Exchange → Copy/Paste Entry**.
+
+Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **KeePass Passkeys** group itself can also be renamed. Note that if a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey. The KeePass Recycle Bin has searching disabled by default, so restoring a deleted passkey entry from there requires moving it to another group first.
+
+To delete a passkey, delete its KeePass entry.
+
+If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **KeePass Passkeys** group before registering again on a site.
+
+Passkeys created by [KeePassXC](https://keepassxc.org/) are stored in the same format and are fully compatible.
+
+KeePassPasskey identifies an entry as a passkey by the presence of the `KPEX_PASSKEY_CREDENTIAL_ID` and `KPEX_PASSKEY_RELYING_PARTY` fields. An entry without these fields will not be recognised as a passkey, regardless of which group it is in.
 
 Each passkey entry contains these custom fields:
 
@@ -102,12 +118,6 @@ Each passkey entry contains these custom fields:
 | `KPEX_PASSKEY_USER_HANDLE` | User identifier from the website |
 | `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag, always `1` |
 | `KPEX_PASSKEY_FLAG_BS` | Backup State flag, always `1` |
-
-To delete a passkey, delete its KeePass entry. Passkey entries and the **KeePass Passkeys** group can be freely renamed in KeePass without affecting functionality.
-
-If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **KeePass Passkeys** group before registering again on a site.
-
-Passkeys created by [KeePassXC](https://keepassxc.org/) are stored in the same format and are fully compatible.
 
 ## Settings
 
@@ -170,5 +180,5 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 
 **The notification appears but clicking Create passkey does nothing**
 
-- Make sure a KeePass database is open. KeePassPasskey cannot save a passkey if no database is unlocked.
+- Make sure a KeePass database is open. KeePassPasskey cannot save a passkey if no database is unlocked. KeePass only needs to be open during the passkey operation itself.
 - If a database is open and the problem persists, check the log files for error messages.
