@@ -175,6 +175,11 @@ function Invoke-GenerateLicenseNotices {
         if ($LASTEXITCODE -ne 0) { throw "Failed to install nuget-license" }
     }
 
+    $slnPath  = Get-ChildItem -Path $RepoRoot -Filter '*.sln' | Select-Object -First 1 -ExpandProperty FullName
+    Write-Host "  Restoring NuGet packages..."
+    & dotnet restore $slnPath --verbosity quiet
+    if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed (exit $LASTEXITCODE)" }
+
     $projects = Get-ChildItem -Path "$RepoRoot\src" -Filter '*.csproj' -Recurse |
                        Select-Object -ExpandProperty FullName
 
