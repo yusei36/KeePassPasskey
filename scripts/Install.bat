@@ -3,9 +3,8 @@ REM SPDX-License-Identifier: GPL-3.0-or-later
 @echo off
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    echo This script must run as Administrator.
-    pause
-    exit /b 1
+    PowerShell -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+    exit /b
 )
 
 set "LOG=%~dp0install_user.log"
