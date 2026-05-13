@@ -25,11 +25,12 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private double _credentialSyncIntervalSeconds;
     [ObservableProperty] private double _statusRefreshIntervalSeconds;
     [ObservableProperty] private double _credentialSyncShutdownThreshold;
-    [ObservableProperty] private bool _isSaving;
     [ObservableProperty] private Theme _theme = Theme.System;
-    [ObservableProperty] private bool _hasUnsavedChanges;
     [ObservableProperty] private bool _hasNonDefaultSettings;
     [ObservableProperty] private bool _canResetToDefaults;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanSave))] private bool _isSaving;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanSave))] private bool _hasUnsavedChanges;
+    public bool CanSave => HasUnsavedChanges && !IsSaving;
 
     private static readonly KeePassPasskeySettings DefaultSettings = new();
     private bool _isLoading;
