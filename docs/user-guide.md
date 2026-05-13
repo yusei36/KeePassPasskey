@@ -2,6 +2,19 @@
 
 KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once installed, websites and apps that support passkeys will offer KeePassPasskey as a storage option, and passkeys are saved directly into your KeePass database.
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Updates](#updates)
+- [Creating a passkey](#creating-a-passkey)
+- [Signing in with a passkey](#signing-in-with-a-passkey)
+  - [Login with a passkey instead of a password](#login-with-a-passkey-instead-of-a-password)
+  - [Login with a password and passkey as a second factor](#login-with-a-password-and-passkey-as-a-second-factor)
+- [Managing passkeys in KeePass](#managing-passkeys-in-keepass)
+- [Settings](#settings)
+- [Troubleshooting](#troubleshooting)
+
 ## Prerequisites
 
 - Windows 11 24H2 or later
@@ -23,13 +36,13 @@ When a website or app asks you to create a passkey, Windows will show a dialog t
 
 Windows shows a "Saving your passkey" dialog. If KeePassPasskey is not listed as the destination, click **Change**.
 
-![Windows "Save your passkey" dialog showing the destination with the Change button](images/passkey-creation-step1.png)
+<img src="images/passkey-creation-step1.png" width="450" alt="Windows Save your passkey dialog showing the destination with the Change button">
 
 **Step 2: Select KeePassPasskey**
 
 A list of available passkey providers appears. Select **KeePassPasskey**.
 
-![Windows passkey provider list with KeePassPasskey selected](images/passkey-creation-step2.png)
+<img src="images/passkey-creation-step2.png" width="450" alt="Windows passkey provider list with KeePassPasskey selected">
 
 **Step 3: Confirm in the KeePassPasskey notification**
 
@@ -41,7 +54,7 @@ A notification from KeePassPasskey appears in the taskbar. Click **Create passke
 
 The passkey is now stored as an entry in the **KeePass Passkeys** group in your open KeePass database.
 
-![KeePass database showing the newly created passkey entry in the KeePass Passkeys group](images/passkey-creation-step4.png)
+<img src="images/passkey-creation-step4.png" width="450" alt="KeePass database showing the newly created passkey entry in the KeePass Passkeys group">
 
 ## Signing in with a passkey
 
@@ -53,13 +66,13 @@ Some sites let you sign in with a passkey directly, without entering a password.
 
 Click on the username field. The browser may show a list of saved passkeys as autofill suggestions. Select your passkey from the list, or enter your username and click the passkey sign-in option.
 
-![Browser autofill dropdown showing saved passkeys for the site](images/passkey-signin-autofill.png)
+<img src="images/passkey-signin-autofill.png" width="450" alt="Browser autofill dropdown showing saved passkeys for the site">
 
 **Step 2: Select a passkey (only if multiple are saved for this site)**
 
 If you did not use autofill and have multiple passkeys for this site, Windows shows a list. Select the one you want to use.
 
-![Windows passkey selection showing multiple saved passkeys for a site](images/passkey-signin-select.png)
+<img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
 **Step 3: Approve in the KeePassPasskey notification**
 
@@ -83,7 +96,7 @@ When prompted for a second factor, select the passkey option.
 
 If you have multiple passkeys for this site, Windows shows a list. Select the one you want to use.
 
-![Windows passkey selection showing multiple saved passkeys for a site](images/passkey-signin-select.png)
+<img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
 **Step 4: Approve in the KeePassPasskey notification**
 
