@@ -2,8 +2,8 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ctrl="using:KeePassPasskeyProvider.Dashboard.Controls"
-             x:Class="KeePassPasskeyProvider.Dashboard.Pages.HomePage">
+             xmlns:ctrl="using:KeePassPasskeyProvider.App.Controls"
+             x:Class="KeePassPasskeyProvider.App.Pages.HomePage">
     <StackPanel Spacing="12" Margin="16 16 16 16">
         <ctrl:StatusHero DataContext="{Binding StatusHero}" />
         <ctrl:SetupGuide DataContext="{Binding SetupGuide}" />

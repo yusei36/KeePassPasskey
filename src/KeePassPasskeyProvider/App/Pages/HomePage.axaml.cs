@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using Avalonia.Controls;
 
-namespace KeePassPasskeyProvider.Dashboard.Pages;
+namespace KeePassPasskeyProvider.App.Pages;
 
 public partial class HomePage : UserControl
 {

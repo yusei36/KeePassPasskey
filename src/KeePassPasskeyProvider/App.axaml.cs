@@ -3,8 +3,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using KeePassPasskeyProvider.Dashboard;
-using KeePassPasskeyProvider.Dashboard.ViewModel;
+using KeePassPasskeyProvider.App;
+using KeePassPasskeyProvider.App.ViewModel;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyShared.Settings;
 

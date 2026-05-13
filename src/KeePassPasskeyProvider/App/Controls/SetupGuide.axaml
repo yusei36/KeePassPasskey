@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="KeePassPasskeyProvider.Dashboard.Controls.SetupGuide">
+             x:Class="KeePassPasskeyProvider.App.Controls.SetupGuide">
     <Expander IsExpanded="{Binding IsSetupExpanded, Mode=TwoWay}">
         <Expander.Header>
             <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">

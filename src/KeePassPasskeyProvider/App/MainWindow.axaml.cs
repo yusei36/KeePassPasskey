@@ -8,10 +8,10 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Windowing;
-using KeePassPasskeyProvider.Dashboard.Pages;
-using KeePassPasskeyProvider.Dashboard.ViewModel;
+using KeePassPasskeyProvider.App.Pages;
+using KeePassPasskeyProvider.App.ViewModel;
 
-namespace KeePassPasskeyProvider.Dashboard;
+namespace KeePassPasskeyProvider.App;
 
 public partial class MainWindow : AppWindow
 {

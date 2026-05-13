@@ -3,9 +3,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
-             xmlns:vm="using:KeePassPasskeyProvider.Dashboard.ViewModel"
-			 xmlns:utils="using:KeePassPasskeyProvider.Dashboard.Utils"
-             x:Class="KeePassPasskeyProvider.Dashboard.Pages.SettingsPage"
+             xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+			 xmlns:utils="using:KeePassPasskeyProvider.App.Utils"
+             x:Class="KeePassPasskeyProvider.App.Pages.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
 

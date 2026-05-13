@@ -6,9 +6,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
-using KeePassPasskeyProvider.Dashboard.ViewModel;
+using KeePassPasskeyProvider.App.ViewModel;
 
-namespace KeePassPasskeyProvider.Dashboard.Pages;
+namespace KeePassPasskeyProvider.App.Pages;
 
 public partial class SettingsPage : UserControl
 {

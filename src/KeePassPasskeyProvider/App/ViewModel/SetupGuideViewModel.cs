@@ -3,7 +3,7 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace KeePassPasskeyProvider.Dashboard.ViewModel;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class SetupGuideViewModel : ObservableObject
 {

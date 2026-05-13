@@ -10,10 +10,10 @@ using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using KeePassPasskeyShared.Ipc;
-using KeePassPasskeyProvider.Dashboard.Utils;
+using KeePassPasskeyProvider.App.Utils;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Dashboard.ViewModel;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class SettingsViewModel : ObservableObject
 {

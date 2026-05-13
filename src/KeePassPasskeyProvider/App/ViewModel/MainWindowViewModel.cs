@@ -8,11 +8,11 @@ using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
-using KeePassPasskeyProvider.Dashboard.Utils;
+using KeePassPasskeyProvider.App.Utils;
 using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.Util;
 
-namespace KeePassPasskeyProvider.Dashboard.ViewModel;
+namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class MainWindowViewModel : ObservableObject
 {
