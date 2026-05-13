@@ -1,6 +1,5 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
-using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using KeePassPasskeyProvider.App;
@@ -10,7 +9,7 @@ using KeePassPasskeyShared.Settings;
 
 namespace KeePassPasskeyProvider;
 
-public class App : Application
+public class Application : Avalonia.Application
 {
     public override void Initialize()
     {
