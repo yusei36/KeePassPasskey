@@ -1,4 +1,4 @@
-﻿REM SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+REM SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 REM SPDX-License-Identifier: GPL-3.0-or-later
 @echo off
 net session >nul 2>&1
@@ -33,11 +33,19 @@ set "PS1=%~dp0install_user.ps1"
 
 (
     echo $log = '%~dp0install_user.log'
-    echo "Installing MSIX package..." ^| Tee-Object -FilePath $log -Append
-    echo Add-AppxPackage -Path '%MSIX%' 2^>^&1 ^| Tee-Object -FilePath $log -Append
-    echo "Starting KeePassPasskeyProvider..." ^| Tee-Object -FilePath $log -Append
+    echo function Log { process { Write-Host $_; $_ ^| Out-File -FilePath $log -Append -Encoding ASCII } }
+    echo function LogError { process { Write-Host $_ -ForegroundColor Red; $_ ^| Out-File -FilePath $log -Append -Encoding ASCII } }
+    echo "Installing MSIX package..." ^| Log
+    echo try {
+    echo     Add-AppxPackage -Path '%MSIX%' -ErrorAction Stop 2^>^&1 ^| Log
+    echo } catch {
+    echo     "ERROR: Install failed: $_" ^| LogError
+    echo     Read-Host "Press Enter to exit"
+    echo     exit 1
+    echo }
+    echo "Starting KeePassPasskeyProvider..." ^| Log
     echo Start-Process KeePassPasskeyProvider.exe
-    echo "Done." ^| Tee-Object -FilePath $log -Append
+    echo "Done." ^| Log
     echo Remove-Item $PSCommandPath
     echo Start-Sleep -Seconds 10
 ) > "%PS1%"
