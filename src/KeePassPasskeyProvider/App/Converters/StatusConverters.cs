@@ -3,6 +3,7 @@
 using System.Globalization;
 using Avalonia.Data.Converters;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.App.ViewModel;
 
 namespace KeePassPasskeyProvider.App.Converters;
@@ -50,6 +51,19 @@ internal static class PingStatusConverters
         PingStatus.NoDatabase          => "No database open",
         PingStatus.IncompatibleVersion => "Incompatible version",
         _                              => "Not connected",
+    });
+
+    private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);
+}
+
+internal static class UserVerificationModeConverters
+{
+    public static readonly IValueConverter Text = Make(v => (v as UserVerificationMode?) switch
+    {
+        UserVerificationMode.WindowsHello => "Windows Hello",
+        UserVerificationMode.Notification => "Notification",
+        UserVerificationMode.Both         => "Both",
+        _                                  => "None",
     });
 
     private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);

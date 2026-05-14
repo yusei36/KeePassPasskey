@@ -5,6 +5,7 @@
              xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 			 xmlns:utils="using:KeePassPasskeyProvider.App.Utils"
+             xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
              x:Class="KeePassPasskeyProvider.App.Pages.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
@@ -59,31 +60,53 @@
                 </ui:SettingsExpander.Footer>
             </ui:SettingsExpander>
 
-            <ui:SettingsExpander Header="User Verification"
+            <ui:SettingsExpander Header="Notifications &amp; User Verification"
                                  IconSource="OtherUser"
-                                 Description="Require proof of identity before passkey operations"
+                                 Description="Notification behavior and user verification for passkey operations"
                                  IsExpanded="True">
 
+                <ui:SettingsExpanderItem Content="Error notifications"
+                                         Description="Show a detailed notification when a passkey error occurs (Windows always displays a generic error)">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ToggleSwitch IsChecked="{Binding ShowErrorNotifications}"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      Margin="0 0 4 0" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
                 <ui:SettingsExpanderItem Content="Registration"
-                                         Description="How users confirm identity when registering a new passkey">
+                                         Description="Behaviour when creating a passkey">
                     <ui:SettingsExpanderItem.Footer>
                         <ComboBox SelectedItem="{Binding RegistrationVerification}"
                                   ItemsSource="{Binding VerificationModes}"
-                                  MinWidth="160" />
+                                  MinWidth="160">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={x:Static conv:UserVerificationModeConverters.Text}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
                 <ui:SettingsExpanderItem Content="Sign-in"
-                                         Description="How users confirm identity when signing in with a passkey">
+                                         Description="Behaviour when using a passkey">
                     <ui:SettingsExpanderItem.Footer>
                         <ComboBox SelectedItem="{Binding SignInVerification}"
                                   ItemsSource="{Binding VerificationModes}"
-                                  MinWidth="160" />
+                                  MinWidth="160">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={x:Static conv:UserVerificationModeConverters.Text}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
-                <ui:SettingsExpanderItem Content="Notification timeout"
-                                         Description="How long to wait for the user to approve a notification">
+                <ui:SettingsExpanderItem Content="Approval timeout"
+                                         Description="How long the approval notification stays open">
                     <ui:SettingsExpanderItem.Footer>
                         <ui:NumberBox Value="{Binding NotificationTimeoutSeconds}"
                                       Minimum="5"
@@ -98,18 +121,7 @@
 
             </ui:SettingsExpander>
 
-            <ui:SettingsExpander Header="Notifications"
-                                 IconSource="Mail"
-                                 Description="Show a detailed notification when a passkey error occurs (Windows always displays a generic error)">
-                <ui:SettingsExpander.Footer>
-                    <ToggleSwitch IsChecked="{Binding ShowErrorNotifications}"
-                                  OnContent="On"
-                                  OffContent="Off"
-                                  Margin="0 0 4 0" />
-                </ui:SettingsExpander.Footer>
-            </ui:SettingsExpander>
-
-            <ui:SettingsExpander Header="Advanced"
+<ui:SettingsExpander Header="Advanced"
                                  IconSource="Setting"
                                  Description="Timing, resilience and logging settings"
                                  IsExpanded="False">

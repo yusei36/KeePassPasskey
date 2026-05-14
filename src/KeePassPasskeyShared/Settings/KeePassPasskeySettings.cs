@@ -10,10 +10,10 @@ namespace KeePassPasskeyShared.Settings
         public static KeePassPasskeySettings Current { get; set; } = new KeePassPasskeySettings();
 
         [JsonProperty("registrationVerification")]
-        public UserVerificationMode RegistrationVerification { get; set; } = UserVerificationMode.Notification;
+        public UserVerificationMode RegistrationVerification { get; set; } = UserVerificationMode.Both;
 
         [JsonProperty("signInVerification")]
-        public UserVerificationMode SignInVerification { get; set; } = UserVerificationMode.Notification;
+        public UserVerificationMode SignInVerification { get; set; } = UserVerificationMode.Both;
 
         [JsonProperty("showErrorNotifications")]
         public bool ShowErrorNotifications { get; set; } = true;
