@@ -57,17 +57,6 @@ KeePassPasskeyProvider.exe
 
 Once installed, see the [User Guide](docs/user-guide.md) to get started.
 
-### Manual registration (CLI alternative)
-
-If auto-registration fails, you can register manually:
-
-```powershell
-KeePassPasskeyProvider.exe /register
-KeePassPasskeyProvider.exe /status   # verify
-```
-
-Then open Settings manually: **Settings → Accounts → Passkeys → Advanced Options** → enable **KeePassPasskey**.
-
 ## Credential storage
 
 Passkeys are stored as standard KeePass entries using [KeePassXC's passkey field format](https://github.com/keepassxreboot/keepassxc):
@@ -140,6 +129,17 @@ Then run the build script as Administrator - builds the MSIX, signs it, and inst
 ```
 
 Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass. Then click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+
+### Manual registration (CLI alternative)
+
+If auto-registration fails, you can register manually:
+
+```powershell
+KeePassPasskeyProvider.exe /register
+KeePassPasskeyProvider.exe /status   # verify
+```
+
+Then open Settings manually: **Settings → Accounts → Passkeys → Advanced Options** → enable **KeePassPasskey**.
 
 ## License
 
