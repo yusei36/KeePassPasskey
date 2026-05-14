@@ -16,6 +16,7 @@ namespace KeePassPasskeyShared.Ipc
     {
         public const string Ping           = "ping";
         public const string GetCredentials = "get_credentials";
+        public const string GetDatabases   = "get_databases";
         public const string MakeCredential = "make_credential";
         public const string GetAssertion   = "get_assertion";
         public const string Cancel         = "cancel";
@@ -49,6 +50,11 @@ namespace KeePassPasskeyShared.Ipc
         public List<string> AllowCredentials { get; set; }
     }
 
+    public sealed class GetDatabasesRequest : PipeRequestBase
+    {
+        public override string Type => PipeMessageTypes.GetDatabases;
+    }
+
     public sealed class MakeCredentialRequest : PipeRequestBase
     {
         public override string Type => PipeMessageTypes.MakeCredential;
@@ -73,6 +79,9 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("pubKeyCredParams", NullValueHandling = NullValueHandling.Ignore)]
         public List<int> PubKeyCredParams { get; set; }
+
+        [JsonProperty("targetDatabaseId", NullValueHandling = NullValueHandling.Ignore)]
+        public string TargetDatabaseId { get; set; }
     }
 
     public sealed class GetAssertionRequest : PipeRequestBase
@@ -158,6 +167,14 @@ namespace KeePassPasskeyShared.Ipc
         public List<CredentialInfo> Credentials { get; set; }
     }
 
+    public sealed class GetDatabasesResponse : PipeResponseBase
+    {
+        public GetDatabasesResponse() { Type = PipeMessageTypes.GetDatabases; }
+
+        [JsonProperty("databases")]
+        public List<DatabaseInfo> Databases { get; set; }
+    }
+
     public sealed class MakeCredentialResponse : PipeResponseBase
     {
         public MakeCredentialResponse() { Type = PipeMessageTypes.MakeCredential; }
@@ -231,6 +248,15 @@ namespace KeePassPasskeyShared.Ipc
         public string Title { get; set; }
     }
 
+    public sealed class DatabaseInfo
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+    }
+
     internal sealed class PipeRequestConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType) => objectType == typeof(PipeRequestBase);
@@ -244,6 +270,7 @@ namespace KeePassPasskeyShared.Ipc
             {
                 PipeMessageTypes.Ping           => new PingRequest(),
                 PipeMessageTypes.GetCredentials => new GetCredentialsRequest(),
+                PipeMessageTypes.GetDatabases   => new GetDatabasesRequest(),
                 PipeMessageTypes.MakeCredential => new MakeCredentialRequest(),
                 PipeMessageTypes.GetAssertion   => new GetAssertionRequest(),
                 PipeMessageTypes.Cancel         => new CancelRequest(),
@@ -272,6 +299,7 @@ namespace KeePassPasskeyShared.Ipc
             {
                 PipeMessageTypes.Ping           => new PingResponse(),
                 PipeMessageTypes.GetCredentials => new GetCredentialsResponse(),
+                PipeMessageTypes.GetDatabases   => new GetDatabasesResponse(),
                 PipeMessageTypes.MakeCredential => new MakeCredentialResponse(),
                 PipeMessageTypes.GetAssertion   => new GetAssertionResponse(),
                 PipeMessageTypes.Cancel         => new CancelResponse(),

@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
+using System.Collections.Generic;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
@@ -16,11 +18,12 @@ internal static class UserVerifierDispatcher
         new WindowsHelloUserVerifier(),
     ];
 
-    public static int VerifyForRegistration(
+    public static (int hr, string? selectedDatabaseId) VerifyForRegistration(
         nint pRequest, Guid transactionId,
-        string rpId, string rpName, string uvUsername, string uvDisplayHint)
-        => Dispatch(KeePassPasskeySettings.Current.RegistrationVerification,
-            v => v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId));
+        string rpId, string rpName, string uvUsername, string uvDisplayHint,
+        IReadOnlyList<DatabaseInfo> databases)
+        => DispatchRegistration(KeePassPasskeySettings.Current.RegistrationVerification,
+            (IUserVerifier v, out string? sel) => v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, out sel));
 
     public static int VerifyForSignIn(
         nint pRequest, Guid transactionId,
@@ -28,7 +31,9 @@ internal static class UserVerifierDispatcher
         => Dispatch(KeePassPasskeySettings.Current.SignInVerification,
             v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId));
 
-    private static int Dispatch(UserVerificationMode mode, Func<IUserVerifier, int> call)
+    private delegate int VerifyRegistrationFunc(IUserVerifier v, out string? selectedDatabaseId);
+
+    private static UserVerificationMode AdjustModeIfNotificationsDisabled(UserVerificationMode mode)
     {
         if (mode.HasFlag(UserVerificationMode.Notification))
         {
@@ -40,6 +45,28 @@ internal static class UserVerifierDispatcher
                 mode |= UserVerificationMode.WindowsHello;
             }
         }
+        return mode;
+    }
+
+    private static (int hr, string? selectedDatabaseId) DispatchRegistration(
+        UserVerificationMode mode, VerifyRegistrationFunc call)
+    {
+        mode = AdjustModeIfNotificationsDisabled(mode);
+
+        string? selected = null;
+        foreach (var verifier in _verifiers)
+        {
+            if (!mode.HasFlag(verifier.Mode)) continue;
+            int hr = call(verifier, out string? sel);
+            if (sel != null) selected = sel;
+            if (hr < HResults.S_OK) return (hr, null);
+        }
+        return (HResults.S_OK, selected);
+    }
+
+    private static int Dispatch(UserVerificationMode mode, Func<IUserVerifier, int> call)
+    {
+        mode = AdjustModeIfNotificationsDisabled(mode);
 
         foreach (var verifier in _verifiers)
         {

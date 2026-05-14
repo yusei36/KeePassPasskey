@@ -80,9 +80,27 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (pDecoded->pRpInformation != null && pDecoded->pRpInformation->pwszName != null)
                     rpNameStr = new string(pDecoded->pRpInformation->pwszName);
 
+                // 3b. Fetch open databases before showing toast
+                var dbResponse = _pipeClient.GetDatabases();
+                if (dbResponse == null)
+                {
+                    Log.Warn("get_databases pipe failed");
+                    Notifier.ShowPipeError("Passkey creation");
+                    return HResults.E_FAIL;
+                }
+                var databases = dbResponse.Databases ?? new List<DatabaseInfo>();
+
+                if (databases.Count == 0)
+                {
+                    Log.Warn("no database open");
+                    Notifier.ShowMakeCredentialError(rpIdUtf8, PipeErrorCode.DbLocked, "No database is open");
+                    return HResults.E_FAIL;
+                }
+
                 // 4. User verification
-                int hrUv = UserVerifierDispatcher.VerifyForRegistration((nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr);
-                Log.Info($"UserVerification hr=0x{hrUv:X8}");
+                var (hrUv, selectedDatabaseId) = UserVerifierDispatcher.VerifyForRegistration(
+                    (nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases);
+                Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={selectedDatabaseId ?? "(none)"}");
                 if (hrUv < 0) return hrUv;
 
                 var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
@@ -97,6 +115,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     UserDisplayName = userDisplayStr,
                     ExcludeCredentials = excludeList,
                     PubKeyCredParams = pubKeyCredParams.Count > 0 ? pubKeyCredParams : null,
+                    TargetDatabaseId = selectedDatabaseId,
                 };
 
                 // 5. Send to KeePass plugin

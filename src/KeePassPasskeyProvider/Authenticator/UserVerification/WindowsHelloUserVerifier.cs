@@ -3,7 +3,9 @@
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
 using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
+using System.Collections.Generic;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
@@ -11,8 +13,12 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
 {
     public UserVerificationMode Mode => UserVerificationMode.WindowsHello;
 
-    public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint, Guid transactionId)
-        => Verify(pRequest, username, displayHint, transactionId);
+    public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
+        Guid transactionId, IReadOnlyList<DatabaseInfo> databases, out string? selectedDatabaseId)
+    {
+        selectedDatabaseId = null;
+        return Verify(pRequest, username, displayHint, transactionId);
+    }
 
     public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId)
         => Verify(pRequest, username, displayHint, transactionId);

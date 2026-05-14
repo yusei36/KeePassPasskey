@@ -34,7 +34,7 @@ namespace KeePassPasskey.Storage
             _host = host;
         }
 
-        internal bool CreatePasskeyEntry(PasskeyCredential credential)
+        internal bool CreatePasskeyEntry(PasskeyCredential credential, string targetDatabaseId = null)
         {
             var entry = new PwEntry(true, true);
             entry.IconId = PwIcon.MultiKeys;
@@ -54,7 +54,7 @@ namespace KeePassPasskey.Storage
 
             entry.AddTag("Passkey");
 
-            var db = _host.Database;
+            var db = ResolveDatabaseOrFallback(targetDatabaseId, nameof(CreatePasskeyEntry));
             if (db == null || !db.IsOpen) return false;
 
             var targetGroup = GetOrCreatePasskeyGroup(db);
@@ -113,22 +113,22 @@ namespace KeePassPasskey.Storage
             return results;
         }
 
-        internal bool HasAnyExcludeCredentialForRpId(string rpId, List<string> credentialIds)
+        internal bool HasAnyExcludeCredentialForRpId(string rpId, List<string> credentialIds, string targetDatabaseId = null)
         {
             var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
-            foreach (var db in GetSearchDatabases())
+            var db = ResolveDatabaseOrFallback(targetDatabaseId, nameof(HasAnyExcludeCredentialForRpId));
+            if (db == null || !db.IsOpen) return false;
+
+            foreach (var entry in db.RootGroup.GetEntries(true))
             {
-                foreach (var entry in db.RootGroup.GetEntries(true))
-                {
-                    if (!IsSearchable(entry)) continue;
-                    if (!entry.Strings.Exists(FieldCredentialId)) continue;
-                    var entryCredId = entry.Strings.ReadSafe(FieldCredentialId);
-                    if (!credIdSet.Contains(entryCredId)) continue;
-                    if (!entry.Strings.Exists(FieldRelyingParty)) continue;
-                    var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
-                    if (string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
-                        return true;
-                }
+                if (!IsSearchable(entry)) continue;
+                if (!entry.Strings.Exists(FieldCredentialId)) continue;
+                var entryCredId = entry.Strings.ReadSafe(FieldCredentialId);
+                if (!credIdSet.Contains(entryCredId)) continue;
+                if (!entry.Strings.Exists(FieldRelyingParty)) continue;
+                var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
+                if (string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
+                    return true;
             }
             return false;
         }
@@ -260,6 +260,24 @@ namespace KeePassPasskey.Storage
             if (databases.Count == 0 && _host.Database != null && _host.Database.IsOpen)
                 databases.Add(_host.Database);
             return databases;
+        }
+
+        private PwDatabase ResolveDatabaseOrFallback(string targetDatabaseId, string callerName)
+        {
+            if (string.IsNullOrEmpty(targetDatabaseId))
+                return _host.Database;
+
+            foreach (var doc in _host.MainWindow.DocumentManager.Documents)
+            {
+                if (doc.Database?.IsOpen == true &&
+                    string.Equals(doc.Database.RootGroup.Uuid.ToHexString(), targetDatabaseId, StringComparison.Ordinal))
+                {
+                    return doc.Database;
+                }
+            }
+
+            Log.Warn($"Target database {targetDatabaseId} not found, falling back to active database", callerName);
+            return _host.Database;
         }
     }
 }

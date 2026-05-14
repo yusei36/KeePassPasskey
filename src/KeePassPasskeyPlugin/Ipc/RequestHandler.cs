@@ -47,6 +47,7 @@ namespace KeePassPasskey.Ipc
                 {
                     PingRequest r           => HandlePing(r),
                     GetCredentialsRequest r => HandleGetCredentials(r),
+                    GetDatabasesRequest r   => HandleGetDatabases(r),
                     MakeCredentialRequest r => HandleMakeCredential(r),
                     GetAssertionRequest r   => HandleGetAssertion(r),
                     CancelRequest r         => HandleCancel(r),
@@ -98,6 +99,33 @@ namespace KeePassPasskey.Ipc
             return new GetCredentialsResponse { Credentials = infos };
         }
 
+        private GetDatabasesResponse HandleGetDatabases(GetDatabasesRequest req)
+        {
+            var databases = new List<DatabaseInfo>();
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var doc in _host.MainWindow.DocumentManager.Documents)
+            {
+                if (doc.Database == null || !doc.Database.IsOpen) continue;
+                var info = MakeDatabaseInfo(doc.Database);
+                if (!seen.Add(info.Id))
+                {
+                    Log.Warn($"Two open databases share the same root group UUID ({info.Id}); only the first will be shown in the picker");
+                    continue;
+                }
+                databases.Add(info);
+            }
+            if (databases.Count == 0 && _host.Database?.IsOpen == true)
+                databases.Add(MakeDatabaseInfo(_host.Database));
+            return new GetDatabasesResponse { Databases = databases };
+        }
+
+        private static DatabaseInfo MakeDatabaseInfo(KeePassLib.PwDatabase db)
+        {
+            string id = db.RootGroup.Uuid.ToHexString();
+            string name = db.Name;
+            return new DatabaseInfo { Id = id, Name = string.IsNullOrEmpty(name) ? "(unnamed)" : name };
+        }
+
         private MakeCredentialResponse HandleMakeCredential(MakeCredentialRequest req)
         {
             if (!IsDatabaseOpen())
@@ -107,9 +135,10 @@ namespace KeePassPasskey.Ipc
                 return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "rpId is required" };
 
             // KeePassXC-style excludeCredentials: reject if any excluded credential exists for this RP
+            // Only check the target database to allow users to create credentials in different DBs
             if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
             {
-                if (_passkeyStorage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials))
+                if (_passkeyStorage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials, req.TargetDatabaseId))
                     return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
             }
 
@@ -139,7 +168,7 @@ namespace KeePassPasskey.Ipc
                 Origin = string.IsNullOrEmpty(req.RpId) ? "" : "https://" + req.RpId
             };
 
-            if (!_passkeyStorage.CreatePasskeyEntry(credential))
+            if (!_passkeyStorage.CreatePasskeyEntry(credential, req.TargetDatabaseId))
                 return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to create KeePass entry" };
 
             return new MakeCredentialResponse
