@@ -65,7 +65,7 @@ namespace KeePassPasskeyShared.Ipc
                     byte[] responseBytes = ReadMessage(pipe);
                     string responseJson = Encoding.UTF8.GetString(responseBytes);
                     _logger?.Invoke($"<< {responseJson}");
-                    return JsonConvert.DeserializeObject<PipeResponseBase>(responseJson) as TResponse;
+                    return JsonConvert.DeserializeObject<TResponse>(responseJson);
                 }
             }
             catch (Exception ex) when (ex is TimeoutException || ex is IOException || ex is UnauthorizedAccessException)

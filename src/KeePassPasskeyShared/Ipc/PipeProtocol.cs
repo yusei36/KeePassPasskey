@@ -135,7 +135,6 @@ namespace KeePassPasskeyShared.Ipc
         UnsupportedAlgorithm,
     }
 
-    [JsonConverter(typeof(PipeResponseConverter))]
     public class PipeResponseBase
     {
         [JsonProperty("type")]
@@ -286,32 +285,4 @@ namespace KeePassPasskeyShared.Ipc
             => throw new NotSupportedException();
     }
 
-    internal sealed class PipeResponseConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType) => objectType == typeof(PipeResponseBase);
-        public override bool CanWrite => false;
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var jobj = JObject.Load(reader);
-            string type = (string)jobj["type"];
-            PipeResponseBase result = type switch
-            {
-                PipeMessageTypes.Ping           => new PingResponse(),
-                PipeMessageTypes.GetCredentials => new GetCredentialsResponse(),
-                PipeMessageTypes.GetDatabases   => new GetDatabasesResponse(),
-                PipeMessageTypes.MakeCredential => new MakeCredentialResponse(),
-                PipeMessageTypes.GetAssertion   => new GetAssertionResponse(),
-                PipeMessageTypes.Cancel         => new CancelResponse(),
-                PipeMessageTypes.GetSettings    => new GetSettingsResponse(),
-                PipeMessageTypes.SaveSettings   => new SaveSettingsResponse(),
-                _                               => new PipeResponseBase()
-            };
-            serializer.Populate(jobj.CreateReader(), result);
-            return result;
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            => throw new NotSupportedException();
-    }
 }
