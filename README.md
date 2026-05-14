@@ -57,35 +57,6 @@ KeePassPasskeyProvider.exe
 
 Once installed, see the [User Guide](docs/user-guide.md) to get started.
 
-## Building
-
-### Prerequisites
-
-| Requirement | Notes |
-|---|---|
-| Visual Studio 2026 | With .NET desktop development workload |
-| Windows SDK 10.0.26100.7175+ | Required for wapproj build and code signing |
-| .NET 10 SDK | For KeePassPasskeyProvider |
-| .NET Framework 4.8 SDK | For KeePassPasskeyPlugin |
-| KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` - minimum supported version, used only for compilation |
-| KeePass.exe (current, for debugging) | Place at `build\KeePass\KeePass.exe` - your installed/current version, used to launch KeePass during development |
-
-```powershell
-# Compile-time reference - KeePass 2.54 (minimum supported version)
-Copy-Item "path\to\KeePass-2.54\KeePass.exe" build\
-
-# Debug/run target - your current KeePass installation
-Copy-Item "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\
-```
-
-Then run the build script as Administrator - builds the MSIX, signs it, and installs:
-
-```powershell
-.\scripts\Build-AndInstall.ps1 -Configuration Release
-```
-
-Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass. Then click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
-
 ### Manual registration (CLI alternative)
 
 If auto-registration fails, you can register manually:
@@ -140,6 +111,35 @@ scripts/
   Publish-Package.ps1           Build Release, sign, and produce distributable zip
   Install.bat                   End-user installer (shipped inside the release zip)
 ```
+
+## Building
+
+### Prerequisites
+
+| Requirement | Notes |
+|---|---|
+| Visual Studio 2026 | With .NET desktop development workload |
+| Windows SDK 10.0.26100.7175+ | Required for wapproj build and code signing |
+| .NET 10 SDK | For KeePassPasskeyProvider |
+| .NET Framework 4.8 SDK | For KeePassPasskeyPlugin |
+| KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` - minimum supported version, used only for compilation |
+| KeePass.exe (current, for debugging) | Place at `build\KeePass\KeePass.exe` - your installed/current version, used to launch KeePass during development |
+
+```powershell
+# Compile-time reference - KeePass 2.54 (minimum supported version)
+Copy-Item "path\to\KeePass-2.54\KeePass.exe" build\
+
+# Debug/run target - your current KeePass installation
+Copy-Item "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\
+```
+
+Then run the build script as Administrator - builds the MSIX, signs it, and installs:
+
+```powershell
+.\scripts\Build-AndInstall.ps1 -Configuration Release
+```
+
+Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass. Then click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 
 ## License
 
