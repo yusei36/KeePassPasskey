@@ -1,16 +1,12 @@
-﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
+<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
-             x:Class="KeePassPasskeyProvider.App.Pages.DiagnosticsPage">
-    <UserControl.Styles>
-        <Style Selector="TabControl#LogTabControl > TabItem">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="Padding" Value="4 3 10 3" />
-            <Setter Property="MinHeight" Value="0" />
-        </Style>
-    </UserControl.Styles>
+             xmlns:controls="using:KeePassPasskeyProvider.App.Controls"
+             xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+             x:Class="KeePassPasskeyProvider.App.Pages.DiagnosticsPage"
+             x:DataType="vm:DiagnosticsViewModel">
     <Grid RowDefinitions="Auto,*" Margin="16">
         <TextBlock Grid.Row="0"
                    Text="Diagnostics"
@@ -138,44 +134,7 @@
                     </Border>
 
                     <!-- Log -->
-                    <TabControl Grid.Row="2" x:Name="LogTabControl" Padding="4">
-                        <TabItem Header="Provider.log">
-                            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="4">
-                                <ScrollViewer x:Name="LogScrollViewer"
-                                              Padding="8 6"
-                                              HorizontalScrollBarVisibility="Visible"
-                                              VerticalScrollBarVisibility="Auto">
-                                    <SelectableTextBlock x:Name="LogTextBlock"
-                                                         Text="{Binding LogText}"
-                                                         FontFamily="Consolas,Courier New,monospace"
-                                                         FontSize="11"
-                                                         TextWrapping="NoWrap"
-                                                         GotFocus="LogTextBlock_GotFocus" />
-                                </ScrollViewer>
-                            </Border>
-                        </TabItem>
-                        <TabItem Header="Plugin.log">
-                            <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="4">
-                                <ScrollViewer x:Name="PluginLogScrollViewer"
-                                              Padding="8 6"
-                                              HorizontalScrollBarVisibility="Visible"
-                                              VerticalScrollBarVisibility="Auto">
-                                    <SelectableTextBlock x:Name="PluginLogTextBlock"
-                                                         Text="{Binding PluginLogText}"
-                                                         FontFamily="Consolas,Courier New,monospace"
-                                                         FontSize="11"
-                                                         TextWrapping="NoWrap"
-                                                         GotFocus="PluginLogTextBlock_GotFocus" />
-                                </ScrollViewer>
-                            </Border>
-                        </TabItem>
-                    </TabControl>
+                    <controls:LogView Grid.Row="2" DataContext="{Binding LogPanel}" />
 
                 </Grid>
             </Border>

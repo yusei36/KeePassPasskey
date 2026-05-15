@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -6,7 +6,6 @@ using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
@@ -14,23 +13,22 @@ using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
-public sealed partial class DiagnosticsViewModel : ObservableObject
+public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 {
     [ObservableProperty] private string? _serverVersion;
     [ObservableProperty] private PingStatus _pingStatus;
-    [ObservableProperty] private bool _isLogVisible;
-    [ObservableProperty] private string _logText = "";
-    [ObservableProperty] private string _pluginLogText = "";
     public ICommand RegisterCommand   { get; }
     public ICommand UnregisterCommand { get; }
+    public LogViewModel LogPanel { get; } = new LogViewModel();
 
     public string ServerVersionShort => ServerVersion != null ? ShortenVersion(ServerVersion) : "";
     public bool IsServerVersionAvailable => ServerVersion != null;
     public bool IsServerVersionNotAvailable => ServerVersion is null;
     public bool IsVersionMismatch => PingStatus == KeePassPasskeyShared.Ipc.PingStatus.IncompatibleVersion;
 
-    public static string ClientVersion     => _appVersion;
+    public static string ClientVersion      => _appVersion;
     public static string ClientVersionShort => ShortenVersion(_appVersion);
+    public static string LogDirPath         => Log.LogDir;
 
     partial void OnServerVersionChanged(string? value)
     {
@@ -44,16 +42,13 @@ public sealed partial class DiagnosticsViewModel : ObservableObject
         OnPropertyChanged(nameof(IsVersionMismatch));
     }
 
-    partial void OnIsLogVisibleChanged(bool value)
+    internal DiagnosticsViewModel(ICommand register, ICommand unregister)
     {
-        if (value)
-        {
-            ReloadLog();
-            ReloadPluginLog();
-        }
+        RegisterCommand   = register;
+        UnregisterCommand = unregister;
     }
 
-    public static string LogDirPath => Log.LogDir;
+    public void Dispose() => LogPanel.Dispose();
 
     [RelayCommand]
     private async Task CopyToClipboard(string? text)
@@ -71,62 +66,6 @@ public sealed partial class DiagnosticsViewModel : ObservableObject
             FileName        = LogDirPath,
             UseShellExecute = true,
         });
-    }
-
-    private readonly FileSystemWatcher? _logWatcher;
-    private readonly FileSystemWatcher? _pluginLogWatcher;
-
-    private static readonly string _pluginLogFilePath = Path.Combine(Log.LogDir, "Plugin.log");
-
-    internal DiagnosticsViewModel(ICommand register, ICommand unregister)
-    {
-        RegisterCommand   = register;
-        UnregisterCommand = unregister;
-
-        string logDir = Path.GetDirectoryName(Log.LogFilePath)!;
-        if (Directory.Exists(logDir))
-        {
-            _logWatcher = CreateWatcher(logDir, Path.GetFileName(Log.LogFilePath), ReloadLog);
-            _pluginLogWatcher = CreateWatcher(logDir, Path.GetFileName(_pluginLogFilePath), ReloadPluginLog);
-        }
-    }
-
-    private static FileSystemWatcher CreateWatcher(string dir, string file, Action reload)
-    {
-        var watcher = new FileSystemWatcher(dir, file)
-        {
-            NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.Size,
-            EnableRaisingEvents = true,
-        };
-        watcher.Changed += (_, _) => Dispatcher.UIThread.Post(reload);
-        watcher.Created += (_, _) => Dispatcher.UIThread.Post(reload);
-        return watcher;
-    }
-
-    private void ReloadLog() => ReloadLogFile(Log.LogFilePath, text => LogText = text);
-
-    private void ReloadPluginLog() => ReloadLogFile(_pluginLogFilePath, text => PluginLogText = text);
-
-    private void ReloadLogFile(string filePath, Action<string> setText)
-    {
-        if (!IsLogVisible) return;
-        try
-        {
-            if (!File.Exists(filePath))
-            {
-                setText("(no log file yet)");
-                return;
-            }
-            using var fs     = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using var reader = new StreamReader(fs);
-            string all       = reader.ReadToEnd();
-            string[] lines   = all.Split('\n');
-            setText(lines.Length > 100 ? string.Join('\n', lines[^100..]) : all);
-        }
-        catch (Exception ex)
-        {
-            setText($"(could not read log: {ex.Message})");
-        }
     }
 
     private static string ShortenVersion(string v)

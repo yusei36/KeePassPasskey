@@ -5,7 +5,8 @@
              xmlns:fa="using:FluentAvalonia.UI.Controls"
              xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
              xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
-             x:Class="KeePassPasskeyProvider.App.Controls.StatusHero">
+             x:Class="KeePassPasskeyProvider.App.Controls.StatusHero"
+             x:DataType="vm:StatusHeroViewModel">
     <UserControl.Styles>
         <!-- Status ring border + background -->
         <Style Selector="Border.ringSuccess">

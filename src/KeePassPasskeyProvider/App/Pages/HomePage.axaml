@@ -3,7 +3,9 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ctrl="using:KeePassPasskeyProvider.App.Controls"
-             x:Class="KeePassPasskeyProvider.App.Pages.HomePage">
+             xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+             x:Class="KeePassPasskeyProvider.App.Pages.HomePage"
+             x:DataType="vm:MainWindowViewModel">
     <StackPanel Spacing="12" Margin="16 16 16 16">
         <ctrl:StatusHero DataContext="{Binding StatusHero}" />
         <ctrl:SetupGuide DataContext="{Binding SetupGuide}" />

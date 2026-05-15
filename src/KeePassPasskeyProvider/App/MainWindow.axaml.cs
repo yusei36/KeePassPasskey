@@ -66,7 +66,7 @@ public partial class MainWindow : AppWindow
                 NavView.Content = _homePage;
                 break;
             case "diagnostics":
-                vm.Diagnostics.IsLogVisible = true;
+                vm.Diagnostics.LogPanel.IsLogVisible = true;
                 _diagnosticsPage ??= new DiagnosticsPage { DataContext = vm.Diagnostics };
                 NavView.Content = _diagnosticsPage;
                 break;
