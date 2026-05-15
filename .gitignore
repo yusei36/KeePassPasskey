@@ -13,10 +13,5 @@ build/Debug/
 # NuGet
 packages/
 
-# MSIX packaging output
-src/KeePassPasskeyProvider.Package/AppPackages/
-src/KeePassPasskeyProvider.Package/bin/
-src/KeePassPasskeyProvider.Package/obj/
-
 # Documentation output
 /docs/
