@@ -6,13 +6,12 @@
     Builds, signs, and installs the KeePassPasskey MSIX package.
 
 .DESCRIPTION
-    1. Builds the provider app (dotnet publish).
-    2. Builds the MSIX package (msbuild wapproj).
-    3. Builds the KeePassPasskey plugin DLL (dotnet build).
-    4. Creates a self-signed cert (CN=KeePassPasskey) if one doesn't exist.
-    5. Signs the MSIX with that cert.
-    6. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
-    7. Installs the MSIX package.
+    1. Builds the MSIX package (msbuild wapproj).
+    2. Builds the KeePassPasskey plugin DLL (dotnet build).
+    3. Creates a self-signed cert (CN=KeePassPasskey) if one doesn't exist.
+    4. Signs the MSIX with that cert.
+    5. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
+    6. Installs the MSIX package.
 
 .PARAMETER Configuration
     Build configuration: Debug or Release. Defaults to Debug.
@@ -49,8 +48,6 @@ Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundCol
 # -- 0. Build ------------------------------------------------------------------
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
-    Write-Step "Building provider app"
-    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration
     Write-Step "Building MSIX package"
     Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
     Write-Step "Building KeePassPasskey plugin DLL"
