@@ -48,9 +48,10 @@ function Invoke-PublishProvider {
     )
     $csproj = "$RepoRoot\src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj"
     $outDir = "$RepoRoot\build\$Configuration\KeePassPasskeyProvider"
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
     & dotnet publish $csproj -c $Configuration -r win-x64 -o $outDir --nologo
     if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
-    Write-Host "  Publish OK."
+    Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
 }
 
 # Builds the MSIX wapproj, patching the manifest version beforehand and restoring it after.
@@ -67,6 +68,7 @@ function Invoke-BuildWapproj {
     [IO.File]::WriteAllText($manifest, $patchedContent)
 
     $wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
     try {
         & $MSBuild $wapproj `
             /p:Configuration=$Configuration `
@@ -79,7 +81,7 @@ function Invoke-BuildWapproj {
             /p:AppxPackageSigningEnabled=false `
             /m /v:minimal
         if ($LASTEXITCODE -ne 0) { throw "msbuild failed with exit code $LASTEXITCODE" }
-        Write-Host "  Build OK."
+        Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
     } finally {
         [IO.File]::WriteAllText($manifest, $originalContent)
     }
@@ -92,9 +94,10 @@ function Invoke-BuildPlugin {
         [string]$Configuration
     )
     $csproj = "$RepoRoot\src\KeePassPasskeyPlugin\KeePassPasskeyPlugin.csproj"
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
     & dotnet build $csproj -c $Configuration /p:SolutionDir="$RepoRoot\" --nologo
     if ($LASTEXITCODE -ne 0) { throw "dotnet build failed with exit code $LASTEXITCODE" }
-    Write-Host "  Build OK."
+    Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
 }
 
 # Returns the path to the .msix file for the given configuration.
