@@ -40,7 +40,21 @@ function Get-BuildVersions([string]$RepoRoot) {
     return @{ FileVersion = $fileVersion; Version = $version }
 }
 
+# Publishes the provider exe via dotnet publish (handles restore, single-file bundling in Release).
+function Invoke-PublishProvider {
+    param(
+        [string]$RepoRoot,
+        [string]$Configuration
+    )
+    $csproj = "$RepoRoot\src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj"
+    $outDir = "$RepoRoot\build\$Configuration\KeePassPasskeyProvider"
+    & dotnet publish $csproj -c $Configuration -r win-x64 -o $outDir --nologo
+    if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
+    Write-Host "  Publish OK."
+}
+
 # Builds the MSIX wapproj, patching the manifest version beforehand and restoring it after.
+# Assumes the provider exe has already been published (BuildProjectReferences=false).
 function Invoke-BuildWapproj {
     param(
         [string]$RepoRoot,
@@ -53,11 +67,6 @@ function Invoke-BuildWapproj {
     $patchedContent   = $originalContent -replace '\bVersion="(\d+\.){3}\d+"', "Version=`"$($versions.FileVersion)`""
     [IO.File]::WriteAllText($manifest, $patchedContent)
 
-    # Restore with PublishReadyToRun=true so the runtime pack is in the NuGet cache before msbuild publish.
-    $csproj = "$RepoRoot\src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj"
-    & dotnet restore $csproj -r win-x64 /p:PublishReadyToRun=true --nologo -v quiet
-    if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
-
     $wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
     try {
         & $MSBuild $wapproj `
@@ -69,6 +78,7 @@ function Invoke-BuildWapproj {
             /p:AppxBundle=Never `
             /p:UapAppxPackageBuildMode=SideLoadOnly `
             /p:AppxPackageSigningEnabled=false `
+            /p:BuildProjectReferences=false `
             /m /v:minimal
         if ($LASTEXITCODE -ne 0) { throw "msbuild failed with exit code $LASTEXITCODE" }
         Write-Host "  Build OK."
@@ -81,17 +91,11 @@ function Invoke-BuildWapproj {
 function Invoke-BuildPlugin {
     param(
         [string]$RepoRoot,
-        [string]$Configuration,
-        [string]$MSBuild
+        [string]$Configuration
     )
     $csproj = "$RepoRoot\src\KeePassPasskeyPlugin\KeePassPasskeyPlugin.csproj"
-    & dotnet restore $csproj --nologo -v quiet
-    if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
-    & $MSBuild $csproj `
-        /p:Configuration=$Configuration `
-        /p:SolutionDir="$RepoRoot\" `
-        /m /v:minimal
-    if ($LASTEXITCODE -ne 0) { throw "msbuild failed with exit code $LASTEXITCODE" }
+    & dotnet build $csproj -c $Configuration /p:SolutionDir="$RepoRoot\" --nologo
+    if ($LASTEXITCODE -ne 0) { throw "dotnet build failed with exit code $LASTEXITCODE" }
     Write-Host "  Build OK."
 }
 
@@ -133,6 +137,15 @@ function Get-OrCreateCertificate([switch]$SkipCreate) {
         -TextExtension @('2.5.29.37={text}1.3.6.1.5.5.7.3.3', '2.5.29.19={text}')
     Write-Host "  Created  Thumbprint=$($cert.Thumbprint)"
     return $cert
+}
+
+# Returns true if the certificate is already in LocalMachine\TrustedPeople (read-only, no elevation needed).
+function Test-CertificateTrusted([string]$Thumbprint) {
+    $store = New-Object System.Security.Cryptography.X509Certificates.X509Store('TrustedPeople', 'LocalMachine')
+    $store.Open('ReadOnly')
+    $found = $store.Certificates | Where-Object { $_.Thumbprint -eq $Thumbprint }
+    $store.Close()
+    return [bool]$found
 }
 
 # Trusts the certificate in LocalMachine\TrustedPeople (requires elevation).
@@ -300,6 +313,7 @@ function Invoke-ILRepack {
 }
 
 Export-ModuleMember -Function Write-Step, Assert-Elevation, Find-MSBuild, Get-BuildVersions,
-                               Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
-                               Get-OrCreateCertificate, Add-TrustedCertificate, Invoke-SignFile, Invoke-SignMsix,
+                               Invoke-PublishProvider, Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
+                               Get-OrCreateCertificate, Test-CertificateTrusted, Add-TrustedCertificate,
+                               Invoke-SignFile, Invoke-SignMsix,
                                Invoke-GenerateLicenseNotices, Get-PluginVersion, Invoke-ILRepack

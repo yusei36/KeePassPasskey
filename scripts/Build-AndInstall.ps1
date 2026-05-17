@@ -3,21 +3,22 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Signs and installs the KeePassPasskey MSIX package.
+    Builds, signs, and installs the KeePassPasskey MSIX package.
 
 .DESCRIPTION
-    1. Builds the MSIX via msbuild (wapproj).
-    2. Builds the KeePassPasskey plugin DLL.
-    3. Creates a self-signed cert (CN=KeePassPasskey) if one doesn't exist.
-    4. Signs the MSIX with that cert.
-    5. Trusts the cert in LocalMachine\TrustedPeople (requires elevation).
-    6. Installs the MSIX package.
+    1. Builds the provider app (dotnet publish).
+    2. Builds the MSIX package (msbuild wapproj).
+    3. Builds the KeePassPasskey plugin DLL (dotnet build).
+    4. Creates a self-signed cert (CN=KeePassPasskey) if one doesn't exist.
+    5. Signs the MSIX with that cert.
+    6. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
+    7. Installs the MSIX package.
 
 .PARAMETER Configuration
     Build configuration: Debug or Release. Defaults to Debug.
 
 .PARAMETER SkipBuild
-    Skip the msbuild step; use if you already have a built MSIX.
+    Skip build steps; use if you already have a built MSIX.
 
 .PARAMETER SkipCert
     Skip cert creation; use if the cert already exists in CurrentUser\My.
@@ -45,33 +46,38 @@ $AppPackagesDir = "$RepoRoot\build\AppPackages"
 $versions = Get-BuildVersions $RepoRoot
 Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
 
-Assert-Elevation
-
-# â”€â”€ 0. Build â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 0. Build ------------------------------------------------------------------
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
-    Write-Step "Building MSIX package (msbuild)"
+    Write-Step "Building provider app"
+    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration
+    Write-Step "Building MSIX package"
     Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
-    Write-Step "Building KeePassPasskey plugin DLL (msbuild)"
-    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
+    Write-Step "Building KeePassPasskey plugin DLL"
+    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
 }
 
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
 
-# â”€â”€ 1. Cert â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 1. Cert -------------------------------------------------------------------
 Write-Step "Checking for signing certificate"
 $cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
 $thumb = $cert.Thumbprint
 
-# â”€â”€ 2. Trust â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-Write-Step "Trusting certificate in LocalMachine\TrustedPeople"
-Add-TrustedCertificate -Cert $cert
+# -- 2. Trust -----------------------------------------------------------------
+Write-Step "Checking certificate trust"
+if (Test-CertificateTrusted -Thumbprint $thumb) {
+    Write-Host "  Already trusted in LocalMachine\TrustedPeople."
+} else {
+    Assert-Elevation
+    Add-TrustedCertificate -Cert $cert
+}
 
-# â”€â”€ 3. Sign â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 3. Sign ------------------------------------------------------------------
 Write-Step "Signing MSIX"
 Invoke-SignMsix -MsixPath $MsixPath -Thumbprint $thumb
 
-# â”€â”€ 4. Install â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# -- 4. Install ---------------------------------------------------------------
 Write-Step "Installing MSIX"
 
 $existing = Get-AppxPackage -Name '*KeePassPasskeyProvider*'

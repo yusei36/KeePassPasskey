@@ -6,11 +6,12 @@
     Builds, signs, and packages KeePassPasskey for distribution.
 
 .DESCRIPTION
-    1. Builds the MSIX (COM server + passkey provider).
-    2. Builds the KeePassPasskey.dll KeePass plugin.
-    3. Creates / finds a self-signed signing certificate.
-    4. Signs the MSIX.
-    5. Produces a zip archive ready for distribution:
+    1. Builds the provider app (dotnet publish).
+    2. Builds the MSIX package (msbuild wapproj).
+    3. Builds the KeePassPasskey.dll KeePass plugin (dotnet build).
+    4. Creates / finds a self-signed signing certificate.
+    5. Signs the MSIX.
+    6. Produces a zip archive ready for distribution:
          KeePassPasskey-<version>.zip
            KeePassPasskeyPlugin/        All plugin DLLs (Release) or DLLs + PDBs (Debug)
            KeePassPasskeyProvider.Package_<version>_x64.msix
@@ -23,7 +24,7 @@
     Build configuration: Debug or Release. Defaults to Release.
 
 .PARAMETER SkipBuild
-    Skip msbuild steps; use if you already have build output.
+    Skip build and publish steps; use if you already have build output.
 
 .PARAMETER SkipCert
     Skip cert creation; use if the cert already exists in CurrentUser\My.
@@ -68,11 +69,14 @@ Invoke-GenerateLicenseNotices -RepoRoot $RepoRoot -OutputFile $noticesPath
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
 
+    Write-Step "Building provider app"
+    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration
+
     Write-Step "Building MSIX package"
     Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
 
     Write-Step "Building KeePassPasskey plugin DLL"
-    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
+    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
 }
 
 # -- 3. Locate build artifacts --------------------------------------------------
