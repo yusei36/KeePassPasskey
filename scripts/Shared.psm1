@@ -54,7 +54,6 @@ function Invoke-PublishProvider {
 }
 
 # Builds the MSIX wapproj, patching the manifest version beforehand and restoring it after.
-# Assumes the provider exe has already been published (BuildProjectReferences=false).
 function Invoke-BuildWapproj {
     param(
         [string]$RepoRoot,
@@ -78,7 +77,6 @@ function Invoke-BuildWapproj {
             /p:AppxBundle=Never `
             /p:UapAppxPackageBuildMode=SideLoadOnly `
             /p:AppxPackageSigningEnabled=false `
-            /p:BuildProjectReferences=false `
             /m /v:minimal
         if ($LASTEXITCODE -ne 0) { throw "msbuild failed with exit code $LASTEXITCODE" }
         Write-Host "  Build OK."
