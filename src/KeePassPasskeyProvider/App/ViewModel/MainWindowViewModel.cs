@@ -29,7 +29,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     internal void RaiseTrayStateChanged()
     {
-        if (LocalProviderSettings.Current.EnableTrayIcon)
+        if (AppSettings.Current.EnableTrayIcon)
             SetupGuide.ShowTrayOffer = false;
         Settings.ReloadTrayIconState();
         TrayStateChanged?.Invoke(this, EventArgs.Empty);

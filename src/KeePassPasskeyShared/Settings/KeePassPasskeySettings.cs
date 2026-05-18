@@ -41,9 +41,6 @@ namespace KeePassPasskeyShared.Settings
         [JsonProperty("credentialSyncShutdownThreshold")]
         public int CredentialSyncShutdownThreshold { get; set; } = 10;
 
-        [JsonProperty("theme")]
-        public Theme Theme { get; set; } = Theme.System;
-
         // JSON-based comparison keeps Equals auto-maintaining: new fields are included
         // automatically without needing to update this method. If performance ever becomes
         // a concern, replace with explicit field-by-field comparison.

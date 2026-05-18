@@ -20,17 +20,17 @@ public sealed partial class SetupGuideViewModel : ObservableObject
     partial void OnIsReadyChanged(bool value)
     {
         IsSetupExpanded = !value;
-        if (value && !LocalProviderSettings.Current.EnableTrayIcon
-                  && !LocalProviderSettings.Current.TrayIconPromptShown)
+        if (value && !AppSettings.Current.EnableTrayIcon
+                  && !AppSettings.Current.TrayIconPromptShown)
             ShowTrayOffer = true;
     }
 
     [RelayCommand]
     private void EnableTrayFromOffer()
     {
-        LocalProviderSettings.Current.EnableTrayIcon     = true;
-        LocalProviderSettings.Current.TrayIconPromptShown = true;
-        LocalProviderSettings.Save(LocalProviderSettings.Current);
+        AppSettings.Current.EnableTrayIcon     = true;
+        AppSettings.Current.TrayIconPromptShown = true;
+        AppSettings.Save(AppSettings.Current);
         ShowTrayOffer = false;
         TrayStateChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -38,8 +38,8 @@ public sealed partial class SetupGuideViewModel : ObservableObject
     [RelayCommand]
     private void DismissTrayOffer()
     {
-        LocalProviderSettings.Current.TrayIconPromptShown = true;
-        LocalProviderSettings.Save(LocalProviderSettings.Current);
+        AppSettings.Current.TrayIconPromptShown = true;
+        AppSettings.Save(AppSettings.Current);
         ShowTrayOffer = false;
     }
 }

@@ -1,19 +1,17 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using KeePassPasskeyShared;
+using KeePassPasskeyShared.Settings;
 using Newtonsoft.Json;
 
 namespace KeePassPasskeyProvider.Util;
 
-/// <summary>
-/// Provider-UI-only settings that are not synced to or from KeePass.
-/// </summary>
-internal sealed class LocalProviderSettings
+internal sealed class AppSettings
 {
-    internal static LocalProviderSettings Current { get; set; } = new();
+    internal static AppSettings Current { get; set; } = new();
 
     private static readonly string FilePath = Path.Combine(
-        SettingsCache.SettingsDir, "LocalSettings.json");
+        SettingsCache.SettingsDir, "AppSettings.json");
 
     [JsonProperty("enableTrayIcon")]
     internal bool EnableTrayIcon { get; set; }
@@ -21,13 +19,16 @@ internal sealed class LocalProviderSettings
     [JsonProperty("trayIconPromptShown")]
     internal bool TrayIconPromptShown { get; set; }
 
-    internal static LocalProviderSettings? TryLoad()
+    [JsonProperty("theme")]
+    internal Theme Theme { get; set; } = Theme.System;
+
+    internal static AppSettings? TryLoad()
     {
         try
         {
             if (!File.Exists(FilePath))
                 return null;
-            return JsonConvert.DeserializeObject<LocalProviderSettings>(File.ReadAllText(FilePath));
+            return JsonConvert.DeserializeObject<AppSettings>(File.ReadAllText(FilePath));
         }
         catch
         {
@@ -35,7 +36,7 @@ internal sealed class LocalProviderSettings
         }
     }
 
-    internal static void Save(LocalProviderSettings settings)
+    internal static void Save(AppSettings settings)
     {
         try
         {
@@ -46,7 +47,7 @@ internal sealed class LocalProviderSettings
         }
         catch (Exception ex)
         {
-            Log.Warn($"LocalProviderSettings.Save failed: {ex.Message}");
+            Log.Warn($"AppSettings.Save failed: {ex.Message}");
         }
     }
 }

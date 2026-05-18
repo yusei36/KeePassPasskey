@@ -60,14 +60,14 @@ public partial class MainWindow : AppWindow
     {
         base.OnClosing(e);
 
-        if (LocalProviderSettings.Current.EnableTrayIcon)
+        if (AppSettings.Current.EnableTrayIcon)
         {
             e.Cancel = true;
             Hide();
             return;
         }
 
-        if (!LocalProviderSettings.Current.TrayIconPromptShown)
+        if (!AppSettings.Current.TrayIconPromptShown)
         {
             e.Cancel = true;
             await ShowFirstCloseTrayPromptAsync();
@@ -86,18 +86,18 @@ public partial class MainWindow : AppWindow
 
         var result = await dialog.ShowAsync(this);
 
-        LocalProviderSettings.Current.TrayIconPromptShown = true;
+        AppSettings.Current.TrayIconPromptShown = true;
 
         if (result == ContentDialogResult.Primary)
         {
-            LocalProviderSettings.Current.EnableTrayIcon = true;
-            LocalProviderSettings.Save(LocalProviderSettings.Current);
+            AppSettings.Current.EnableTrayIcon = true;
+            AppSettings.Save(AppSettings.Current);
             ((MainWindowViewModel)DataContext!).RaiseTrayStateChanged();
             Hide();
         }
         else
         {
-            LocalProviderSettings.Save(LocalProviderSettings.Current);
+            AppSettings.Save(AppSettings.Current);
             Close();
         }
     }

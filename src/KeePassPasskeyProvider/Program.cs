@@ -23,7 +23,7 @@ internal static class Program
     static int Main(string[] args)
     {
         KeePassPasskeySettings.Current = SettingsCache.TryLoad() ?? new KeePassPasskeySettings();
-        LocalProviderSettings.Current  = LocalProviderSettings.TryLoad() ?? new LocalProviderSettings();
+        AppSettings.Current  = AppSettings.TryLoad() ?? new AppSettings();
 
         Log.Configure(
             Path.Combine(SettingsCache.SettingsDir, "Provider.log"),

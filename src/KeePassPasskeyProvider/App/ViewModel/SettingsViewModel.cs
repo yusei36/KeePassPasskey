@@ -25,17 +25,28 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private double _credentialSyncIntervalSeconds;
     [ObservableProperty] private double _statusRefreshIntervalSeconds;
     [ObservableProperty] private double _credentialSyncShutdownThreshold;
-    [ObservableProperty] private Theme _theme = Theme.System;
+    private Theme _theme = AppSettings.Current.Theme;
+    public Theme Theme
+    {
+        get => _theme;
+        set
+        {
+            if (!SetProperty(ref _theme, value)) return;
+            AppSettings.Current.Theme = value;
+            AppSettings.Save(AppSettings.Current);
+            ApplyTheme(value);
+        }
+    }
 
-    private bool _enableTrayIcon = LocalProviderSettings.Current.EnableTrayIcon;
+    private bool _enableTrayIcon = AppSettings.Current.EnableTrayIcon;
     public bool EnableTrayIcon
     {
         get => _enableTrayIcon;
         set
         {
             if (!SetProperty(ref _enableTrayIcon, value)) return;
-            LocalProviderSettings.Current.EnableTrayIcon = value;
-            LocalProviderSettings.Save(LocalProviderSettings.Current);
+            AppSettings.Current.EnableTrayIcon = value;
+            AppSettings.Save(AppSettings.Current);
             TrayStateChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -43,7 +54,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     internal event EventHandler? TrayStateChanged;
 
     internal void ReloadTrayIconState() =>
-        SetProperty(ref _enableTrayIcon, LocalProviderSettings.Current.EnableTrayIcon, nameof(EnableTrayIcon));
+        SetProperty(ref _enableTrayIcon, AppSettings.Current.EnableTrayIcon, nameof(EnableTrayIcon));
 
     [ObservableProperty] private bool _hasNonDefaultSettings;
     [ObservableProperty] private bool _canResetToDefaults;
@@ -57,7 +68,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon)))
+        if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme)))
             CheckForUnsavedChanges();
     }
 
@@ -79,7 +90,6 @@ public sealed partial class SettingsViewModel : ObservableObject
         CredentialSyncIntervalMilliseconds     = (int)CredentialSyncIntervalSeconds * 1000,
         StatusRefreshIntervalMilliseconds      = (int)StatusRefreshIntervalSeconds * 1000,
         CredentialSyncShutdownThreshold        = (int)CredentialSyncShutdownThreshold,
-        Theme                                  = Theme,
     };
 
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
@@ -141,8 +151,6 @@ public sealed partial class SettingsViewModel : ObservableObject
         SettingsCache.Save(toCache);
     }
 
-    partial void OnThemeChanged(Theme value) => ApplyTheme(value);
-
     internal static void ApplyTheme(Theme theme) =>
         Application.Current!.RequestedThemeVariant = theme switch
         {
@@ -193,7 +201,6 @@ public sealed partial class SettingsViewModel : ObservableObject
         CredentialSyncIntervalSeconds   = c.CredentialSyncIntervalMilliseconds / 1000;
         StatusRefreshIntervalSeconds    = c.StatusRefreshIntervalMilliseconds / 1000;
         CredentialSyncShutdownThreshold = c.CredentialSyncShutdownThreshold;
-        Theme                           = c.Theme;
         _isLoading = false;
         CheckForUnsavedChanges();
     }

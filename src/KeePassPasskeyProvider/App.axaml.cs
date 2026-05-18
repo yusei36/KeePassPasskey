@@ -7,7 +7,6 @@ using KeePassPasskeyProvider.App;
 using KeePassPasskeyProvider.App.ViewModel;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Util;
-using KeePassPasskeyShared.Settings;
 
 namespace KeePassPasskeyProvider;
 
@@ -24,7 +23,7 @@ public class Application : Avalonia.Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            SettingsViewModel.ApplyTheme(KeePassPasskeySettings.Current.Theme);
+            SettingsViewModel.ApplyTheme(AppSettings.Current.Theme);
             bool autoRegisterSucceeded = PluginRegistration.EnsureRegistered();
             var vm = new MainWindowViewModel(autoRegisterSucceeded);
             desktop.MainWindow = new MainWindow(vm);
@@ -37,7 +36,7 @@ public class Application : Avalonia.Application
 
     private void ApplyTrayState(IClassicDesktopStyleApplicationLifetime desktop, MainWindowViewModel vm)
     {
-        if (LocalProviderSettings.Current.EnableTrayIcon)
+        if (AppSettings.Current.EnableTrayIcon)
         {
             // Keep the process alive when the window is hidden to tray.
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
