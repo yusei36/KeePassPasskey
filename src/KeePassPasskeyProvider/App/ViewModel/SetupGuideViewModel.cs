@@ -36,6 +36,14 @@ public sealed partial class SetupGuideViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void OpenUserGuide() =>
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName        = "https://keepasspasskey.github.io/docs/user-guide.html",
+            UseShellExecute = true,
+        });
+
+    [RelayCommand]
     private void DismissTrayOffer()
     {
         AppSettings.Current.TrayIconPromptShown = true;
