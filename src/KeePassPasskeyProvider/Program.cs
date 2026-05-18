@@ -7,6 +7,7 @@ using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
+using KeePassPasskeyProvider.App;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
@@ -18,8 +19,6 @@ namespace KeePassPasskeyProvider;
 /// </summary>
 internal static class Program
 {
-    private const string ShowEventName = "Local\\KeePassPasskeyProvider_Show";
-
     [MTAThread]
     static int Main(string[] args)
     {
@@ -123,7 +122,7 @@ internal static class Program
         }
 
         // Window is hidden to tray — signal the running instance to show itself
-        nint ev = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE, false, ShowEventName);
+        nint ev = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE, false, TrayIconService.ShowEventName);
         if (ev != 0)
         {
             Win32Native.SetEvent(ev);
