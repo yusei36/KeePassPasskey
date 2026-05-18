@@ -25,6 +25,16 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
 
+    internal event EventHandler? TrayStateChanged;
+
+    internal void RaiseTrayStateChanged()
+    {
+        if (LocalProviderSettings.Current.EnableTrayIcon)
+            SetupGuide.ShowTrayOffer = false;
+        Settings.ReloadTrayIconState();
+        TrayStateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     // Internal provider state
     private bool _pluginRunning;
     private bool _providerEnabled;
@@ -45,6 +55,9 @@ public sealed partial class MainWindowViewModel : ObservableObject
         SetupGuide  = new SetupGuideViewModel();
         Diagnostics = new DiagnosticsViewModel(registerCmd, unregisterCmd);
         Settings    = new SettingsViewModel();
+
+        Settings.TrayStateChanged   += (_, _) => RaiseTrayStateChanged();
+        SetupGuide.TrayStateChanged += (_, _) => RaiseTrayStateChanged();
 
         Directory.CreateDirectory(SettingsCache.SettingsDir);
         var settingsWatcher = new FileSystemWatcher(SettingsCache.SettingsDir)

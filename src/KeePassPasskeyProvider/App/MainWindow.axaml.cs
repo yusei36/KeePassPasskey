@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +10,7 @@ using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Windowing;
 using KeePassPasskeyProvider.App.Pages;
 using KeePassPasskeyProvider.App.ViewModel;
+using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.App;
 
@@ -53,6 +54,52 @@ public partial class MainWindow : AppWindow
     {
         base.OnLoaded(e);
         NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
+    }
+
+    protected override async void OnClosing(WindowClosingEventArgs e)
+    {
+        base.OnClosing(e);
+
+        if (LocalProviderSettings.Current.EnableTrayIcon)
+        {
+            e.Cancel = true;
+            Hide();
+            return;
+        }
+
+        if (!LocalProviderSettings.Current.TrayIconPromptShown)
+        {
+            e.Cancel = true;
+            await ShowFirstCloseTrayPromptAsync();
+        }
+    }
+
+    private async Task ShowFirstCloseTrayPromptAsync()
+    {
+        var dialog = new ContentDialog
+        {
+            Title             = "Keep KeePassPasskey in the tray?",
+            Content           = "KeePassPasskey can stay running in the system tray so you can check its status at a glance. You can change this in Settings at any time.",
+            PrimaryButtonText = "Keep in tray",
+            CloseButtonText   = "Close",
+        };
+
+        var result = await dialog.ShowAsync(this);
+
+        LocalProviderSettings.Current.TrayIconPromptShown = true;
+
+        if (result == ContentDialogResult.Primary)
+        {
+            LocalProviderSettings.Current.EnableTrayIcon = true;
+            LocalProviderSettings.Save(LocalProviderSettings.Current);
+            ((MainWindowViewModel)DataContext!).RaiseTrayStateChanged();
+            Hide();
+        }
+        else
+        {
+            LocalProviderSettings.Save(LocalProviderSettings.Current);
+            Close();
+        }
     }
 
     private void NavView_SelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs args)

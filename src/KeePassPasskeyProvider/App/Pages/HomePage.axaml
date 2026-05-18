@@ -1,4 +1,4 @@
-﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
+<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,5 +9,29 @@
     <StackPanel Spacing="12" Margin="16 16 16 16">
         <ctrl:StatusHero DataContext="{Binding StatusHero}" />
         <ctrl:SetupGuide DataContext="{Binding SetupGuide}" />
+
+        <!-- Offered once after setup completes, when the tray icon is not yet enabled -->
+        <Border IsVisible="{Binding SetupGuide.ShowTrayOffer}"
+                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1" CornerRadius="8" Padding="16 12">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="Keep KeePassPasskey in the system tray?"
+                               FontWeight="SemiBold" FontSize="13" />
+                    <TextBlock Text="A status icon in the notification area lets you check health at a glance."
+                               FontSize="12" Opacity="0.6" TextWrapping="Wrap" />
+                </StackPanel>
+                <Button Grid.Column="1"
+                        Content="Enable"
+                        Command="{Binding SetupGuide.EnableTrayFromOfferCommand}"
+                        Classes="accent"
+                        VerticalAlignment="Center" />
+                <Button Grid.Column="2"
+                        Content="No thanks"
+                        Command="{Binding SetupGuide.DismissTrayOfferCommand}"
+                        VerticalAlignment="Center" />
+            </Grid>
+        </Border>
     </StackPanel>
 </UserControl>

@@ -45,7 +45,7 @@ public sealed partial class StatusHeroViewModel : ObservableObject
             (_,     _,     false, _,     _)                          => ProviderStatus.WaitingToBeEnabled,
             (_,     _,     _,     _,     PingStatus.IncompatibleVersion) => ProviderStatus.VersionMismatch,
             (_,     _,     _,     _,     PingStatus.NoDatabase)      => ProviderStatus.NoDatabase,
-            (_,     _,     _,     false, _)                          => ProviderStatus.PluginNotRunning,
+            (_,     _,     _,     false, _)                          => ProviderStatus.KeePassNotConnected,
             _                                                         => ProviderStatus.Ready,
         };
     }

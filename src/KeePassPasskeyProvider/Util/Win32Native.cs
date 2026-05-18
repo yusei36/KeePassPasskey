@@ -69,5 +69,26 @@ internal static class Win32Native
     [DllImport("user32.dll")]
     internal static extern bool ShowWindow(nint hWnd, int nCmdShow);
 
+    internal const int SW_HIDE    = 0;
+    internal const int SW_SHOW    = 5;
     internal const int SW_RESTORE = 9;
+
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    internal static extern nint CreateEvent(nint lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
+
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    internal static extern nint OpenEvent(uint dwDesiredAccess, bool bInheritHandle, string lpName);
+
+    [DllImport("kernel32.dll")]
+    internal static extern bool SetEvent(nint hEvent);
+
+    [DllImport("kernel32.dll")]
+    internal static extern uint WaitForSingleObject(nint hHandle, uint dwMilliseconds);
+
+    [DllImport("kernel32.dll")]
+    internal static extern bool CloseHandle(nint hObject);
+
+    internal const uint EVENT_MODIFY_STATE = 0x0002;
+    internal const uint WAIT_OBJECT_0 = 0;
+    internal const uint INFINITE = unchecked((uint)-1);
 }

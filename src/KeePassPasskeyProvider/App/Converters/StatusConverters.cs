@@ -17,7 +17,7 @@ internal static class ProviderStatusConverters
         ProviderStatus.WaitingToBeEnabled => "Waiting to be enabled",
         ProviderStatus.VersionMismatch    => "Version mismatch",
         ProviderStatus.NoDatabase         => "No database open",
-        ProviderStatus.PluginNotRunning   => "Plugin not running",
+        ProviderStatus.KeePassNotConnected   => "KeePass not connected",
         _                                  => "All systems ready",
     });
 
@@ -28,13 +28,13 @@ internal static class ProviderStatusConverters
         ProviderStatus.WaitingToBeEnabled => "Click Advanced Passkey Options below to enable KeePassPasskey.",
         ProviderStatus.VersionMismatch    => "Update the plugin or the provider so both are on the same version.",
         ProviderStatus.NoDatabase         => "Open a KeePass database to use passkeys.",
-        ProviderStatus.PluginNotRunning   => "Start KeePass with the KeePassPasskey plugin installed.",
+        ProviderStatus.KeePassNotConnected   => "Start KeePass with the KeePassPasskey plugin installed.",
         _                                  => "Provider is enabled and the KeePass plugin is running.",
     });
 
     public static readonly IValueConverter ProviderPillText = Make(v => (v as ProviderStatus? ?? ProviderStatus.NotRegistered) switch
     {
-        ProviderStatus.Ready or ProviderStatus.PluginNotRunning or
+        ProviderStatus.Ready or ProviderStatus.KeePassNotConnected or
         ProviderStatus.NoDatabase or ProviderStatus.VersionMismatch => "Enabled",
         ProviderStatus.WaitingToBeEnabled                            => "Registered",
         _                                                             => "Not registered",

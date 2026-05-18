@@ -26,6 +26,25 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private double _statusRefreshIntervalSeconds;
     [ObservableProperty] private double _credentialSyncShutdownThreshold;
     [ObservableProperty] private Theme _theme = Theme.System;
+
+    private bool _enableTrayIcon = LocalProviderSettings.Current.EnableTrayIcon;
+    public bool EnableTrayIcon
+    {
+        get => _enableTrayIcon;
+        set
+        {
+            if (!SetProperty(ref _enableTrayIcon, value)) return;
+            LocalProviderSettings.Current.EnableTrayIcon = value;
+            LocalProviderSettings.Save(LocalProviderSettings.Current);
+            TrayStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    internal event EventHandler? TrayStateChanged;
+
+    internal void ReloadTrayIconState() =>
+        SetProperty(ref _enableTrayIcon, LocalProviderSettings.Current.EnableTrayIcon, nameof(EnableTrayIcon));
+
     [ObservableProperty] private bool _hasNonDefaultSettings;
     [ObservableProperty] private bool _canResetToDefaults;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanSave))] private bool _isSaving;
@@ -38,7 +57,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges)))
+        if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon)))
             CheckForUnsavedChanges();
     }
 

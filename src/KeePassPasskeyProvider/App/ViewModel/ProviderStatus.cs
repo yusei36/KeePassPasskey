@@ -7,7 +7,7 @@ public enum ProviderStatus
     NotRegistered,
     AutoregisterFailed,
     WaitingToBeEnabled,
-    PluginNotRunning,
+    KeePassNotConnected,
     NoDatabase,
     VersionMismatch,
     Ready,

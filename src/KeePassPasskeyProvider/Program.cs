@@ -18,10 +18,13 @@ namespace KeePassPasskeyProvider;
 /// </summary>
 internal static class Program
 {
+    private const string ShowEventName = "Local\\KeePassPasskeyProvider_Show";
+
     [MTAThread]
     static int Main(string[] args)
     {
         KeePassPasskeySettings.Current = SettingsCache.TryLoad() ?? new KeePassPasskeySettings();
+        LocalProviderSettings.Current  = LocalProviderSettings.TryLoad() ?? new LocalProviderSettings();
 
         Log.Configure(
             Path.Combine(SettingsCache.SettingsDir, "Provider.log"),
@@ -102,18 +105,34 @@ internal static class Program
     private static void ActivateExistingWindow()
     {
         var existing = System.Diagnostics.Process.GetProcessesByName("KeePassPasskeyProvider")
-            .FirstOrDefault(p => p.Id != Environment.ProcessId && p.MainWindowHandle != 0);
+            .FirstOrDefault(p => p.Id != Environment.ProcessId);
 
-        nint hwnd = existing?.MainWindowHandle ?? 0;
+        if (existing == null)
+        {
+            Log.Warn("Could not find existing process");
+            return;
+        }
+
+        nint hwnd = existing.MainWindowHandle;
         if (hwnd != 0)
         {
             Win32Native.ShowWindow(hwnd, Win32Native.SW_RESTORE);
             Win32Native.SetForegroundWindow(hwnd);
             Log.Info($"Activated window 0x{hwnd:X}");
+            return;
+        }
+
+        // Window is hidden to tray — signal the running instance to show itself
+        nint ev = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE, false, ShowEventName);
+        if (ev != 0)
+        {
+            Win32Native.SetEvent(ev);
+            Win32Native.CloseHandle(ev);
+            Log.Info("Signalled running instance to show window");
         }
         else
         {
-            Log.Warn("Could not find existing window");
+            Log.Warn("Could not find existing window or show-window event");
         }
     }
 
