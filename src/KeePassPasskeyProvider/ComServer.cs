@@ -14,6 +14,14 @@ internal static class ComServer
 {
     internal static int RunComServer()
     {
+        const string MutexName = "Local\\KeePassPasskeyProvider_COM";
+        using var mutex = new Mutex(false, MutexName);
+        if (!mutex.WaitOne(0))
+        {
+            Log.Warn("COM server already running, exiting");
+            return 0;
+        }
+
         var factory = new ClassFactory();
         uint cookie;
         try

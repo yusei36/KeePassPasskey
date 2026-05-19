@@ -29,6 +29,9 @@ public class Application : Avalonia.Application
             desktop.MainWindow = new MainWindow(vm);
 
             ApplyTrayState(desktop, vm);
+
+            if (Program.StartHidden)
+                desktop.MainWindow.Opened += static (s, _) => ((Avalonia.Controls.Window)s!).Hide();
             vm.TrayStateChanged += (_, _) => ApplyTrayState(desktop, vm);
         }
         base.OnFrameworkInitializationCompleted();

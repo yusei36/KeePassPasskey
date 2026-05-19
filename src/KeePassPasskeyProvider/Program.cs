@@ -19,6 +19,9 @@ namespace KeePassPasskeyProvider;
 /// </summary>
 internal static class Program
 {
+    /// <summary>Set before starting the Avalonia app; tells the main window to hide itself on first open.</summary>
+    internal static bool StartHidden { get; private set; }
+
     [MTAThread]
     static int Main(string[] args)
     {
@@ -31,6 +34,26 @@ internal static class Program
 
         if (IsToastActivation())
             return 0;
+
+        if (IsStartupActivation(out string taskId))
+        {
+            if (taskId == PluginConstants.StartupTaskComServer)
+            {
+                Log.Info("Startup task: launching COM server");
+                return ComServer.RunComServer();
+            }
+            if (taskId == PluginConstants.StartupTaskTrayApp)
+            {
+                if (!AppSettings.Current.EnableTrayIcon)
+                {
+                    Log.Info("Startup task: tray icon disabled, exiting");
+                    return 0;
+                }
+                Log.Info("Startup task: launching as tray icon");
+                return RunManagementUI(startHidden: true);
+            }
+            return 0;
+        }
 
         bool activateAuthenticator = args.Any(a =>
             string.Equals(a, "-ActivateAuthenticator", StringComparison.OrdinalIgnoreCase));
@@ -63,12 +86,29 @@ internal static class Program
         }
     }
 
+    private static bool IsStartupActivation(out string taskId)
+    {
+        taskId = string.Empty;
+        try
+        {
+            var activation = AppInstance.GetActivatedEventArgs();
+            if (activation?.Kind == ActivationKind.StartupTask)
+            {
+                taskId = ((Windows.ApplicationModel.Activation.StartupTaskActivatedEventArgs)activation).TaskId;
+                return true;
+            }
+        }
+        catch { }
+        return false;
+    }
+
     /// <summary>
     /// Management UI mode (no args). Shows an Avalonia window on a dedicated STA thread.
     /// Uses a mutex to ensure only one UI instance runs.
     /// </summary>
-    private static int RunManagementUI()
+    private static int RunManagementUI(bool startHidden = false)
     {
+        StartHidden = startHidden;
         const string MutexName = "Local\\KeePassPasskeyProvider_UI";
         var mutex = new Mutex(false, MutexName);
 
@@ -76,9 +116,10 @@ internal static class Program
         {
             if (!mutex.WaitOne(0))
             {
-                // Another instance is running; activate its window and exit
+                // Another instance is running; activate its window if this is a normal launch
                 Log.Info("Another instance is already running; activating existing window");
-                ActivateExistingWindow();
+                if (!startHidden)
+                    ActivateExistingWindow();
                 return 0;
             }
 

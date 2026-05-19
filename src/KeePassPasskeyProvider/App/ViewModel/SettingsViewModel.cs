@@ -48,6 +48,24 @@ public sealed partial class SettingsViewModel : ObservableObject
             AppSettings.Current.EnableTrayIcon = value;
             AppSettings.Save(AppSettings.Current);
             TrayStateChanged?.Invoke(this, EventArgs.Empty);
+            _ = SetTrayStartupTaskAsync(value);
+        }
+    }
+
+    private static async Task SetTrayStartupTaskAsync(bool enable)
+    {
+        try
+        {
+            var task = await Windows.ApplicationModel.StartupTask.GetAsync(
+                KeePassPasskeyProvider.Authenticator.PluginConstants.StartupTaskTrayApp);
+            if (enable)
+                await task.RequestEnableAsync();
+            else
+                task.Disable();
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"Could not update tray startup task: {ex.Message}");
         }
     }
 
