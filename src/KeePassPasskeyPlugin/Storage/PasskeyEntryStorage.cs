@@ -17,7 +17,7 @@ namespace KeePassPasskey.Storage
     internal sealed class PasskeyEntryStorage
     {
         private static readonly Guid PasskeyGroupUuid = new Guid("c3eeec14-998f-458c-924d-79bb98732a18");
-        private const string PasskeyGroupName = "KeePass Passkeys";
+        private const string PasskeyGroupName = "Passkeys";
         private const string KeePassXcPasskeyGroupName = "KeePassXC-Browser Passkeys";
         private const string FieldCredentialId = "KPEX_PASSKEY_CREDENTIAL_ID";
         private const string FieldPrivateKey = "KPEX_PASSKEY_PRIVATE_KEY_PEM";

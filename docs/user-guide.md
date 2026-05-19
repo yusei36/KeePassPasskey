@@ -52,9 +52,9 @@ A notification from KeePassPasskey appears in the taskbar. Click **Create passke
 
 **Step 4: Passkey saved in KeePass**
 
-The passkey is now stored as an entry in the **KeePass Passkeys** group in your open KeePass database.
+The passkey is now stored as an entry in the **Passkeys** group in your open KeePass database.
 
-<img src="images/passkey-creation-step4.png" width="450" alt="KeePass database showing the newly created passkey entry in the KeePass Passkeys group">
+<img src="images/passkey-creation-step4.png" width="450" alt="KeePass database showing the newly created passkey entry in the Passkeys group">
 
 ## Signing in with a passkey
 
@@ -106,15 +106,15 @@ A KeePassPasskey notification appears in the taskbar. Click **Approve** to confi
 
 ## Managing passkeys in KeePass
 
-Passkeys are stored as standard KeePass entries in the **KeePass Passkeys** group.
+Passkeys are stored as standard KeePass entries in the **Passkeys** group.
 
 When creating a passkey, it is saved to the currently selected KeePass database. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong database, you can move it via **Entry → Data Exchange → Copy/Paste Entry**.
 
-Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **KeePass Passkeys** group itself can also be renamed. Note that if a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey. The KeePass Recycle Bin has searching disabled by default, so restoring a deleted passkey entry from there requires moving it to another group first.
+Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **Passkeys** group itself can also be renamed. Note that if a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey. The KeePass Recycle Bin has searching disabled by default, so restoring a deleted passkey entry from there requires moving it to another group first.
 
 To delete a passkey, delete its KeePass entry.
 
-If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **KeePass Passkeys** group before registering again on a site.
+If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **Passkeys** group before registering again on a site.
 
 Passkeys created by [KeePassXC](https://keepassxc.org/) are stored in the same format and are fully compatible.
 
@@ -184,7 +184,7 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 
 **I tried creating a passkey but it failed saying one already exists**
 
-- KeePass already has a passkey for that site with a credential ID the website recognises. Open the **KeePass Passkeys** group, delete the existing entry for that site, and try registering again.
+- KeePass already has a passkey for that site with a credential ID the website recognises. Open the **Passkeys** group, delete the existing entry for that site, and try registering again.
 
 **Passkey prompts never show the Windows provider selection or KeePassPasskey**
 
