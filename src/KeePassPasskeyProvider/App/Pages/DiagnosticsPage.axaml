@@ -38,7 +38,7 @@
                             <!-- Provider version row -->
                             <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
                                 <TextBlock Grid.Column="0"
-                                           Text="KeePassPasskeyProvider"
+                                           Text="Passkey provider"
                                            FontFamily="Consolas,Courier New,monospace"
                                            FontSize="12.5" FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
@@ -62,7 +62,7 @@
                             <!-- Plugin version row -->
                             <Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
                                 <TextBlock Grid.Column="0"
-                                           Text="KeePassPasskeyPlugin"
+                                           Text="KeePass plugin"
                                            FontFamily="Consolas,Courier New,monospace"
                                            FontSize="12.5" FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
@@ -75,7 +75,7 @@
                                                              FontFamily="Consolas,Courier New,monospace"
                                                              FontSize="11.5" Opacity="0.7"
                                                              IsVisible="{Binding IsServerVersionAvailable}" />
-                                        <TextBlock Text="not running"
+                                        <TextBlock Text="not connected"
                                                    FontFamily="Consolas,Courier New,monospace"
                                                    FontSize="11.5" Opacity="0.35"
                                                    IsVisible="{Binding IsServerVersionNotAvailable}" />
@@ -117,7 +117,7 @@
                             <!-- COM Server actions -->
                             <Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
                                 <TextBlock Grid.Column="0"
-                                           Text="Provider Registration"
+                                           Text="Provider registration"
                                            FontFamily="Consolas,Courier New,monospace"
                                            FontSize="12.5" FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
