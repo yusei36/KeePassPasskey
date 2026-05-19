@@ -13,6 +13,7 @@ namespace KeePassPasskeyProvider;
 public class Application : Avalonia.Application
 {
     private TrayIconService? _trayIconService;
+    private MainWindow? _window;
 
     public override void Initialize()
     {
@@ -26,12 +27,20 @@ public class Application : Avalonia.Application
             SettingsViewModel.ApplyTheme(AppSettings.Current.Theme);
             bool autoRegisterSucceeded = PluginRegistration.EnsureRegistered();
             var vm = new MainWindowViewModel(autoRegisterSucceeded);
-            desktop.MainWindow = new MainWindow(vm);
-
-            ApplyTrayState(desktop, vm);
+            _window = new MainWindow(vm);
 
             if (Program.StartHidden)
-                desktop.MainWindow.Opened += static (s, _) => ((Avalonia.Controls.Window)s!).Hide();
+            {
+                // Don't assign desktop.MainWindow so Avalonia never auto-shows it.
+                // The tray icon will show it on demand.
+                desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            }
+            else
+            {
+                desktop.MainWindow = _window;
+            }
+
+            ApplyTrayState(desktop, vm);
             vm.TrayStateChanged += (_, _) => ApplyTrayState(desktop, vm);
         }
         base.OnFrameworkInitializationCompleted();
@@ -43,12 +52,16 @@ public class Application : Avalonia.Application
         {
             // Keep the process alive when the window is hidden to tray.
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-            _trayIconService ??= new TrayIconService(desktop.MainWindow!, vm.StatusHero);
+            _trayIconService ??= new TrayIconService(_window!, vm.StatusHero);
         }
         else
         {
             _trayIconService?.Dispose();
             _trayIconService = null;
+            // Ensure the window is reachable as the main window before restoring
+            // normal close-to-exit behaviour (relevant if we started hidden).
+            if (desktop.MainWindow == null)
+                desktop.MainWindow = _window;
             // Restore normal behaviour: closing the last window exits the process.
             desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
         }
