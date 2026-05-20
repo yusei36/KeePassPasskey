@@ -14,12 +14,15 @@ namespace KeePassPasskeyProvider.Authenticator;
 /// </summary>
 internal static unsafe class CredentialCache
 {
+    private static readonly SemaphoreSlim _syncGate = new SemaphoreSlim(1, 1);
+
     /// <summary>
     /// Query KeePass for all passkeys and push changes to the Windows cache.
     /// Returns true if KeePass was reached (sync applied), false otherwise.
     /// </summary>
     public static bool SyncToWindowsCache(Guid pluginClsid)
     {
+        _syncGate.Wait();
         try
         {
             return SyncToCredentialCache(pluginClsid);
@@ -29,6 +32,10 @@ internal static unsafe class CredentialCache
             Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
             return false;
         }
+        finally
+        {
+            _syncGate.Release();
+        }
     }
 
     /// <summary>
@@ -36,6 +43,7 @@ internal static unsafe class CredentialCache
     /// </summary>
     public static void ClearWindowsCache(Guid pluginClsid)
     {
+        _syncGate.Wait();
         try
         {
             uint cExisting = 0;
@@ -62,6 +70,10 @@ internal static unsafe class CredentialCache
         catch (Exception ex)
         {
             Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+        }
+        finally
+        {
+            _syncGate.Release();
         }
     }
 
