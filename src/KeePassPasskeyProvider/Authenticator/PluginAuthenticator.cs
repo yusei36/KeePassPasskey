@@ -299,25 +299,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             bool ready = response?.Status == PingStatus.Ready;
             Log.Info($"pipeOk={response != null} status={response?.Status} ready={ready} clientVersion={PipeConstants.Version} serverVersion={response?.Version}");
 
-            if (ready)
-            {
-                *pLockStatus = PluginLockStatus.PluginUnlocked;
-                if (_lastPingReady != true)
-                {
-                    Log.Info("reconnected - syncing cache");
-                    CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
-                }
-            }
-            else
-            {
-                *pLockStatus = PluginLockStatus.PluginLocked;
-                if (_lastPingReady != false)
-                {
-                    Log.Info("disconnected - clearing cache");
-                    CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
-                }
-            }
-
             _lastPingReady = ready;
             return HResults.S_OK;
         }
