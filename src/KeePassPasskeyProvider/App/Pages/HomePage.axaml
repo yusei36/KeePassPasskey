@@ -17,13 +17,13 @@
                 BorderThickness="1" CornerRadius="8" Padding="16 12">
             <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                 <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                    <TextBlock Text="Keep KeePassPasskey in the system tray?"
+                    <TextBlock Text="Add KeePassPasskey to the system tray?"
                                FontWeight="SemiBold" FontSize="13" />
-                    <TextBlock Text="A status icon in the notification area lets you check health at a glance."
+                    <TextBlock Text="A quick way to see if everything is working without opening the app."
                                FontSize="12" Opacity="0.6" TextWrapping="Wrap" />
                 </StackPanel>
                 <Button Grid.Column="1"
-                        Content="Enable"
+                        Content="Add"
                         Command="{Binding SetupGuide.EnableTrayFromOfferCommand}"
                         Classes="accent"
                         VerticalAlignment="Center" />

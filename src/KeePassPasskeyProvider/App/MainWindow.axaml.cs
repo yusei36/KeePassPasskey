@@ -82,10 +82,10 @@ public partial class MainWindow : AppWindow
     {
         var dialog = new ContentDialog
         {
-            Title             = "Keep KeePassPasskey in the tray?",
-            Content           = "KeePassPasskey can stay running in the system tray so you can check its status at a glance. You can change this in Settings at any time.",
-            PrimaryButtonText = "Keep in tray",
-            CloseButtonText   = "Close",
+            Title             = "Add KeePassPasskey to the system tray?",
+            Content           = "A quick way to see if everything is working without opening the app. You can change this in Settings at any time.",
+            PrimaryButtonText = "Add",
+            CloseButtonText   = "No thanks",
         };
 
         var result = await dialog.ShowAsync(this);

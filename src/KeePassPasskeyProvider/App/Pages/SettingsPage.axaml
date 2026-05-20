@@ -60,7 +60,7 @@
                 </ui:SettingsExpander.Footer>
 
                 <ui:SettingsExpanderItem Content="System tray icon"
-                                         Description="Show a status icon in the notification area. Closing the window keeps the app running in the tray.">
+                                         Description="Show a status icon in the system tray. Closing the window keeps the app running in the tray.">
                     <ui:SettingsExpanderItem.Footer>
                         <ToggleSwitch IsChecked="{Binding EnableTrayIcon}"
                                       OnContent="On"
