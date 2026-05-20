@@ -13,8 +13,8 @@ internal static class UserVerifierDispatcher
 {
     private static readonly IUserVerifier[] _verifiers =
     [
-        new NotificationUserVerifier(),
         new WindowsHelloUserVerifier(),
+        new NotificationUserVerifier(),
     ];
 
     public static (int hr, DatabaseInfo? selectedDatabase) VerifyForRegistration(
