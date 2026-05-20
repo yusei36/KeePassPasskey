@@ -9,6 +9,7 @@ using KeePassPasskey.Passkey;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace KeePassPasskey.Ipc
@@ -102,16 +103,17 @@ namespace KeePassPasskey.Ipc
         private GetDatabasesResponse HandleGetDatabases(GetDatabasesRequest req)
         {
             var databases = new List<DatabaseInfo>();
-            var seen = new HashSet<string>(StringComparer.Ordinal);
             foreach (var doc in _host.MainWindow.DocumentManager.Documents)
             {
                 if (doc.Database == null || !doc.Database.IsOpen) continue;
                 var info = MakeDatabaseInfo(doc.Database);
-                if (!seen.Add(info.Id))
+                if (databases.Any(d => d.Id == info.Id && d.Name == info.Name))
                 {
-                    Log.Warn($"Two open databases share the same root group UUID ({info.Id}); only the first will be shown in the picker");
+                    Log.Warn($"Database '{info.Name}' (UUID {info.Id}) is open more than once");
                     continue;
                 }
+                if (databases.Any(d => d.Id == info.Id))
+                    Log.Warn($"Two open databases share root group UUID {info.Id}; disambiguating by name");
                 databases.Add(info);
             }
             if (databases.Count == 0 && _host.Database?.IsOpen == true)
@@ -138,7 +140,7 @@ namespace KeePassPasskey.Ipc
             // Only check the target database to allow users to create credentials in different DBs
             if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
             {
-                if (_passkeyStorage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials, req.TargetDatabaseId))
+                if (_passkeyStorage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials, req.TargetDatabase))
                     return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
             }
 
@@ -168,7 +170,7 @@ namespace KeePassPasskey.Ipc
                 Origin = string.IsNullOrEmpty(req.RpId) ? "" : "https://" + req.RpId
             };
 
-            if (!_passkeyStorage.CreatePasskeyEntry(credential, req.TargetDatabaseId))
+            if (!_passkeyStorage.CreatePasskeyEntry(credential, req.TargetDatabase))
                 return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to create KeePass entry" };
 
             return new MakeCredentialResponse

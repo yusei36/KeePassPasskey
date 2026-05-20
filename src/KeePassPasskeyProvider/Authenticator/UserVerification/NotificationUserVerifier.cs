@@ -13,9 +13,9 @@ internal sealed class NotificationUserVerifier : IUserVerifier
     public UserVerificationMode Mode => UserVerificationMode.Notification;
 
     public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
-        Guid transactionId, IReadOnlyList<DatabaseInfo> databases, out string? selectedDatabaseId)
+        Guid transactionId, IReadOnlyList<DatabaseInfo> databases, out DatabaseInfo? selectedDatabase)
     {
-        selectedDatabaseId = null;
+        selectedDatabase = null;
         string site = rpName.Length > 0 ? rpName : rpId;
         string user = username.Length > 0 ? $" for {username}" : "";
 
@@ -27,7 +27,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
             databases: databases);
 
         if (!approved) return HResults.NTE_USER_CANCELLED;
-        selectedDatabaseId = sel;
+        selectedDatabase = sel;
         return HResults.S_OK;
     }
 
@@ -117,13 +117,13 @@ internal sealed class NotificationUserVerifier : IUserVerifier
         return tcs.Task.GetAwaiter().GetResult();
     }
 
-    private static (bool Approved, string? SelectedId) ShowRegistrationToast(
+    private static (bool Approved, DatabaseInfo? Selected) ShowRegistrationToast(
         string title, string body, string confirmText, string tag,
         IReadOnlyList<DatabaseInfo> databases)
     {
         int timeoutMilliseconds = KeePassPasskeySettings.Current.NotificationVerificationTimeoutMilliseconds;
         int timeoutSeconds = timeoutMilliseconds / 1000;
-        var tcs = new TaskCompletionSource<(bool, string?)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var tcs = new TaskCompletionSource<(bool, DatabaseInfo?)>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cts = new CancellationTokenSource();
 
         var initialData = new NotificationData();
@@ -140,11 +140,11 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
         var selectionBox = new ToastSelectionBox(selectionBoxId)
         {
-            DefaultSelectionBoxItemId = databases[0].Id,
+            DefaultSelectionBoxItemId = "0",
             Title = "Save to database"
         };
-        foreach (var db in databases)
-            selectionBox.Items.Add(new ToastSelectionBoxItem(db.Id, db.Name));
+        for (int i = 0; i < databases.Count; i++)
+            selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(), databases[i].Name));
         builder.AddToastInput(selectionBox);
 
         builder.AddVisualChild(new AdaptiveProgressBar
@@ -172,14 +172,17 @@ internal sealed class NotificationUserVerifier : IUserVerifier
             cts.Cancel();
             var args = ((ToastActivatedEventArgs)a).Arguments;
             var inputs = ((ToastActivatedEventArgs)a).UserInput;
-            string? selected = inputs.ContainsKey(selectionBoxId) ? inputs[selectionBoxId]?.ToString() : databases[0].Id;
+            string? indexStr = inputs.ContainsKey(selectionBoxId) ? inputs[selectionBoxId]?.ToString() : "0";
+            int idx = int.TryParse(indexStr, out int idxParsed) && idxParsed >= 0 && idxParsed < databases.Count ? idxParsed : 0;
+            DatabaseInfo selectedDb = databases[idx];
+            var selected = new DatabaseInfo { Id = selectedDb.Id, Name = selectedDb.Name };
             if (string.IsNullOrEmpty(args)) { tcs.TrySetResult((true, selected)); return; }
             var parsed = ToastArguments.Parse(args);
             bool allowed = parsed.TryGetValue("action", out var action) && action == "allow";
             tcs.TrySetResult((allowed, selected));
         };
         toast.Dismissed += (s, a) => { cts.Cancel(); tcs.TrySetResult((false, null)); };
-        toast.Failed += (s, a) => { cts.Cancel(); tcs.TrySetResult((false, null)); };
+        toast.Failed    += (s, a) => { cts.Cancel(); tcs.TrySetResult((false, null)); };
 
         var notifier = ToastNotificationManagerCompat.CreateToastNotifier();
         notifier.Show(toast);

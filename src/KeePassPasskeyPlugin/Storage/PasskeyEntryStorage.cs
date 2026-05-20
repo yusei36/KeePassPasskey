@@ -5,6 +5,7 @@ using KeePassLib;
 using KeePassLib.Security;
 using KeePassPasskey.Passkey;
 using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Passkey;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ namespace KeePassPasskey.Storage
             _host = host;
         }
 
-        internal bool CreatePasskeyEntry(PasskeyCredential credential, string targetDatabaseId = null)
+        internal bool CreatePasskeyEntry(PasskeyCredential credential, DatabaseInfo target = null)
         {
             var entry = new PwEntry(true, true);
             entry.IconId = PwIcon.MultiKeys;
@@ -54,7 +55,7 @@ namespace KeePassPasskey.Storage
 
             entry.AddTag("Passkey");
 
-            var db = ResolveDatabaseOrFallback(targetDatabaseId, nameof(CreatePasskeyEntry));
+            var db = ResolveDatabaseOrFallback(target, nameof(CreatePasskeyEntry));
             if (db == null || !db.IsOpen) return false;
 
             var targetGroup = GetOrCreatePasskeyGroup(db);
@@ -113,10 +114,10 @@ namespace KeePassPasskey.Storage
             return results;
         }
 
-        internal bool HasAnyExcludeCredentialForRpId(string rpId, List<string> credentialIds, string targetDatabaseId = null)
+        internal bool HasAnyExcludeCredentialForRpId(string rpId, List<string> credentialIds, DatabaseInfo target = null)
         {
             var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
-            var db = ResolveDatabaseOrFallback(targetDatabaseId, nameof(HasAnyExcludeCredentialForRpId));
+            var db = ResolveDatabaseOrFallback(target, nameof(HasAnyExcludeCredentialForRpId));
             if (db == null || !db.IsOpen) return false;
 
             foreach (var entry in db.RootGroup.GetEntries(true))
@@ -262,21 +263,28 @@ namespace KeePassPasskey.Storage
             return databases;
         }
 
-        private PwDatabase ResolveDatabaseOrFallback(string targetDatabaseId, string callerName)
+        private PwDatabase ResolveDatabaseOrFallback(DatabaseInfo target, string callerName)
         {
-            if (string.IsNullOrEmpty(targetDatabaseId))
+            if (target == null || string.IsNullOrEmpty(target.Id))
                 return _host.Database;
 
+            PwDatabase firstMatch = null;
             foreach (var doc in _host.MainWindow.DocumentManager.Documents)
             {
-                if (doc.Database?.IsOpen == true &&
-                    string.Equals(doc.Database.RootGroup.Uuid.ToHexString(), targetDatabaseId, StringComparison.Ordinal))
-                {
+                if (doc.Database?.IsOpen != true) continue;
+                if (!string.Equals(doc.Database.RootGroup.Uuid.ToHexString(), target.Id, StringComparison.Ordinal)) continue;
+
+                if (!string.IsNullOrEmpty(target.Name) &&
+                    string.Equals(doc.Database.Name, target.Name, StringComparison.Ordinal))
                     return doc.Database;
-                }
+
+                if (firstMatch == null)
+                    firstMatch = doc.Database;
             }
 
-            Log.Warn($"Target database {targetDatabaseId} not found, falling back to active database", callerName);
+            if (firstMatch != null) return firstMatch;
+
+            Log.Warn($"Target database {target.Id} not found, falling back to active database", callerName);
             return _host.Database;
         }
     }

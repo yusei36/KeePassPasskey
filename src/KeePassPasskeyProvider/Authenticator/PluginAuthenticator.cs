@@ -98,9 +98,9 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 }
 
                 // 4. User verification
-                var (hrUv, selectedDatabaseId) = UserVerifierDispatcher.VerifyForRegistration(
+                var (hrUv, targetDatabase) = UserVerifierDispatcher.VerifyForRegistration(
                     (nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases);
-                Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={selectedDatabaseId ?? "(none)"}");
+                Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"}");
                 if (hrUv < 0) return hrUv;
 
                 var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
@@ -115,7 +115,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     UserDisplayName = userDisplayStr,
                     ExcludeCredentials = excludeList,
                     PubKeyCredParams = pubKeyCredParams.Count > 0 ? pubKeyCredParams : null,
-                    TargetDatabaseId = selectedDatabaseId,
+                    TargetDatabase = targetDatabase,
                 };
 
                 // 5. Send to KeePass plugin

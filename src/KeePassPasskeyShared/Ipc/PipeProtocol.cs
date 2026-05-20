@@ -80,8 +80,8 @@ namespace KeePassPasskeyShared.Ipc
         [JsonProperty("pubKeyCredParams", NullValueHandling = NullValueHandling.Ignore)]
         public List<int> PubKeyCredParams { get; set; }
 
-        [JsonProperty("targetDatabaseId", NullValueHandling = NullValueHandling.Ignore)]
-        public string TargetDatabaseId { get; set; }
+        [JsonProperty("targetDatabase", NullValueHandling = NullValueHandling.Ignore)]
+        public DatabaseInfo TargetDatabase { get; set; }
     }
 
     public sealed class GetAssertionRequest : PipeRequestBase
@@ -255,6 +255,7 @@ namespace KeePassPasskeyShared.Ipc
         [JsonProperty("name")]
         public string Name { get; set; }
     }
+
 
     internal sealed class PipeRequestConverter : JsonConverter
     {

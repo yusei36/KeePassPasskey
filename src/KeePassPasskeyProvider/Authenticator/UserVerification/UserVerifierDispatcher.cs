@@ -17,12 +17,12 @@ internal static class UserVerifierDispatcher
         new WindowsHelloUserVerifier(),
     ];
 
-    public static (int hr, string? selectedDatabaseId) VerifyForRegistration(
+    public static (int hr, DatabaseInfo? selectedDatabase) VerifyForRegistration(
         nint pRequest, Guid transactionId,
         string rpId, string rpName, string uvUsername, string uvDisplayHint,
         IReadOnlyList<DatabaseInfo> databases)
         => DispatchRegistration(KeePassPasskeySettings.Current.RegistrationVerification,
-            (IUserVerifier v, out string? sel) => v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, out sel));
+            (IUserVerifier v, out DatabaseInfo? sel) => v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, out sel));
 
     public static int VerifyForSignIn(
         nint pRequest, Guid transactionId,
@@ -30,7 +30,7 @@ internal static class UserVerifierDispatcher
         => DispatchSignIn(KeePassPasskeySettings.Current.SignInVerification,
             v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId));
 
-    private delegate int VerifyRegistrationFunc(IUserVerifier v, out string? selectedDatabaseId);
+    private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase);
 
     private static UserVerificationMode AdjustModeIfNotificationsDisabled(UserVerificationMode mode)
     {
@@ -47,16 +47,16 @@ internal static class UserVerifierDispatcher
         return mode;
     }
 
-    private static (int hr, string? selectedDatabaseId) DispatchRegistration(
+    private static (int hr, DatabaseInfo? selectedDatabase) DispatchRegistration(
         UserVerificationMode mode, VerifyRegistrationFunc call)
     {
         mode = AdjustModeIfNotificationsDisabled(mode);
 
-        string? selected = null;
+        DatabaseInfo? selected = null;
         foreach (var verifier in _verifiers)
         {
             if (!mode.HasFlag(verifier.Mode)) continue;
-            int hr = call(verifier, out string? sel);
+            int hr = call(verifier, out DatabaseInfo? sel);
             Log.Info($"verifier={verifier.Mode} hr=0x{hr:X8}");
             if (sel != null) selected = sel;
             if (hr < HResults.S_OK) return (hr, null);
