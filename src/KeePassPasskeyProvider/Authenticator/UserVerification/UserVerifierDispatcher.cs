@@ -28,7 +28,7 @@ internal static class UserVerifierDispatcher
     public static int VerifyForSignIn(
         nint pRequest, Guid transactionId,
         string rpId, string uvUsername, string uvDisplayHint)
-        => Dispatch(KeePassPasskeySettings.Current.SignInVerification,
+        => DispatchSignIn(KeePassPasskeySettings.Current.SignInVerification,
             v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId));
 
     private delegate int VerifyRegistrationFunc(IUserVerifier v, out string? selectedDatabaseId);
@@ -58,13 +58,14 @@ internal static class UserVerifierDispatcher
         {
             if (!mode.HasFlag(verifier.Mode)) continue;
             int hr = call(verifier, out string? sel);
+            Log.Info($"verifier={verifier.Mode} hr=0x{hr:X8}");
             if (sel != null) selected = sel;
             if (hr < HResults.S_OK) return (hr, null);
         }
         return (HResults.S_OK, selected);
     }
 
-    private static int Dispatch(UserVerificationMode mode, Func<IUserVerifier, int> call)
+    private static int DispatchSignIn(UserVerificationMode mode, Func<IUserVerifier, int> call)
     {
         mode = AdjustModeIfNotificationsDisabled(mode);
 
@@ -72,6 +73,7 @@ internal static class UserVerifierDispatcher
         {
             if (!mode.HasFlag(verifier.Mode)) continue;
             int hr = call(verifier);
+            Log.Info($"verifier={verifier.Mode} hr=0x{hr:X8}");
             if (hr < HResults.S_OK) return hr;
         }
         return HResults.S_OK;
