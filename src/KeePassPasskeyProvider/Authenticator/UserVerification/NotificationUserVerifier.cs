@@ -5,7 +5,6 @@ using Windows.UI.Notifications;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
-using System.Collections.Generic;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
@@ -151,7 +150,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
         builder.AddVisualChild(new AdaptiveProgressBar
             {
                 Value = new BindableProgressBarValue("progress"),
-                ValueStringOverride = char.ConvertFromUtf32(0x2003),
+                ValueStringOverride = char.ConvertFromUtf32(0x2003),  // U+2003 EM SPACE (hides % value)
                 Status = new BindableString("statusText"),
             })
             .AddButton(new ToastButton()

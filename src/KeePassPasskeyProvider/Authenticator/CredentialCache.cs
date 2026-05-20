@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared.Ipc;
-using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.Authenticator;
 

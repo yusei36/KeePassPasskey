@@ -6,7 +6,6 @@ using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
-using System.Collections.Generic;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 

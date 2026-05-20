@@ -3,7 +3,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;

@@ -1,9 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
-using System;
-using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace KeePassPasskeyProvider.Authenticator;
 

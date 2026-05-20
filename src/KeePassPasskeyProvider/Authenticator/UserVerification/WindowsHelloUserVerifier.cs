@@ -5,7 +5,6 @@ using KeePassPasskeyProvider.Util;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
-using System.Collections.Generic;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
