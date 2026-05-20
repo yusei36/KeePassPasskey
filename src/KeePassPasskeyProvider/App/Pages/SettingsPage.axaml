@@ -161,7 +161,7 @@
                 </ui:SettingsExpanderItem>
 
 				<ui:SettingsExpanderItem Content="Credential sync interval"
-                                         Description="How often passkey metadata are synced from KeePass to the Windows credential cache.&#10;Set to 0 to disable.">
+                                         Description="How often passkey metadata are synced from KeePass to the Windows credential cache.&#10;Disabling (0) may break passkey sign-in on some sites.">
 					<ui:SettingsExpanderItem.Footer>
 						<ui:NumberBox Value="{Binding CredentialSyncIntervalSeconds}"
                                       Minimum="0"
