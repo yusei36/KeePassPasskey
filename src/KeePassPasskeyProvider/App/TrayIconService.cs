@@ -61,6 +61,7 @@ internal sealed class TrayIconService : IDisposable
         _window.Show();
         _window.WindowState = WindowState.Normal;
         _window.Activate();
+        (_window as MainWindow)?.NavigateToHome();
     }
 
     private void OnStatusChanged(object? sender, PropertyChangedEventArgs e)

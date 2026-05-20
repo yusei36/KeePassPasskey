@@ -55,6 +55,11 @@ public partial class MainWindow : AppWindow
         NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
     }
 
+    internal void NavigateToHome()
+    {
+        NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
+    }
+
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
