@@ -17,9 +17,9 @@
                 BorderThickness="1" CornerRadius="8" Padding="16 12">
             <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                 <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                    <TextBlock Text="Add KeePassPasskey to the system tray?"
+                    <TextBlock Text="Want to keep an eye on the status?"
                                FontWeight="SemiBold" FontSize="13" />
-                    <TextBlock Text="A quick way to see if everything is working without opening the app."
+                    <TextBlock Text="Add KeePassPasskey to the system tray."
                                FontSize="12" Opacity="0.6" TextWrapping="Wrap" />
                 </StackPanel>
                 <Button Grid.Column="1"

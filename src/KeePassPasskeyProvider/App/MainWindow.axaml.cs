@@ -60,7 +60,7 @@ public partial class MainWindow : AppWindow
         NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
     }
 
-    protected override async void OnClosing(WindowClosingEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);
 
@@ -68,41 +68,6 @@ public partial class MainWindow : AppWindow
         {
             e.Cancel = true;
             Hide();
-            return;
-        }
-
-        if (!AppSettings.Current.TrayIconPromptShown)
-        {
-            e.Cancel = true;
-            await ShowFirstCloseTrayPromptAsync();
-        }
-    }
-
-    private async Task ShowFirstCloseTrayPromptAsync()
-    {
-        var dialog = new ContentDialog
-        {
-            Title             = "Add KeePassPasskey to the system tray?",
-            Content           = "A quick way to see if everything is working without opening the app. You can change this in Settings at any time.",
-            PrimaryButtonText = "Add",
-            CloseButtonText   = "No thanks",
-        };
-
-        var result = await dialog.ShowAsync(this);
-
-        AppSettings.Current.TrayIconPromptShown = true;
-
-        if (result == ContentDialogResult.Primary)
-        {
-            AppSettings.Current.EnableTrayIcon = true;
-            AppSettings.Save(AppSettings.Current);
-            ((MainWindowViewModel)DataContext!).RaiseTrayStateChanged();
-            Hide();
-        }
-        else
-        {
-            AppSettings.Save(AppSettings.Current);
-            Close();
         }
     }
 
