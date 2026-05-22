@@ -47,11 +47,10 @@ public sealed partial class SettingsViewModel : ObservableObject
             AppSettings.Current.EnableTrayIcon = value;
             AppSettings.Save(AppSettings.Current);
             TrayStateChanged?.Invoke(this, EventArgs.Empty);
-            _ = SetTrayStartupTaskAsync(value);
         }
     }
 
-    private static async Task SetTrayStartupTaskAsync(bool enable)
+    internal static async Task SetTrayStartupTaskAsync(bool enable)
     {
         try
         {

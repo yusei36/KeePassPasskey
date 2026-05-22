@@ -29,10 +29,12 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     internal void RaiseTrayStateChanged()
     {
-        if (AppSettings.Current.EnableTrayIcon)
+        bool enabled = AppSettings.Current.EnableTrayIcon;
+        if (enabled)
             SetupGuide.ShowTrayOffer = false;
         Settings.ReloadTrayIconState();
         TrayStateChanged?.Invoke(this, EventArgs.Empty);
+        _ = SettingsViewModel.SetTrayStartupTaskAsync(enabled);
     }
 
     // Internal provider state
