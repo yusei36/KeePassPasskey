@@ -29,7 +29,7 @@ internal static class Program
         AppSettings.Current  = AppSettings.TryLoad() ?? new AppSettings();
 
         Log.Configure(
-            Path.Combine(SettingsCache.SettingsDir, "Provider.log"),
+            Path.Combine(AppPaths.LogDir, "Provider.log"),
             KeePassPasskeySettings.Current.LogLevel);
 
         if (IsToastActivation())

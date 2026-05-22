@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
@@ -8,13 +8,9 @@ namespace KeePassPasskeyProvider.Util;
 
 internal static class SettingsCache
 {
-    internal static readonly string SettingsDir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        "KeePassPasskeyProvider");
-
     internal const string SettingsFileName = "Settings.cached.json";
 
-    private static readonly string CachePath = Path.Combine(SettingsDir, SettingsFileName);
+    private static readonly string CachePath = Path.Combine(AppPaths.SettingsDir, SettingsFileName);
 
     internal static KeePassPasskeySettings? TryLoad()
     {
@@ -37,7 +33,7 @@ internal static class SettingsCache
     {
         try
         {
-            Directory.CreateDirectory(SettingsDir);
+            Directory.CreateDirectory(AppPaths.SettingsDir);
             string tmp = CachePath + $".{Environment.ProcessId}.tmp";
             File.WriteAllText(tmp, JsonConvert.SerializeObject(settings, Formatting.Indented));
             File.Move(tmp, CachePath, overwrite: true);

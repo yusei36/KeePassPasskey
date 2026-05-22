@@ -11,7 +11,7 @@ internal sealed class AppSettings
     internal static AppSettings Current { get; set; } = new();
 
     private static readonly string FilePath = Path.Combine(
-        SettingsCache.SettingsDir, "AppSettings.json");
+        AppPaths.SettingsDir, "AppSettings.json");
 
     [JsonProperty("enableTrayIcon")]
     internal bool EnableTrayIcon { get; set; }
@@ -40,7 +40,7 @@ internal sealed class AppSettings
     {
         try
         {
-            Directory.CreateDirectory(SettingsCache.SettingsDir);
+            Directory.CreateDirectory(AppPaths.SettingsDir);
             string tmp = FilePath + $".{Environment.ProcessId}.tmp";
             File.WriteAllText(tmp, JsonConvert.SerializeObject(settings, Formatting.Indented));
             File.Move(tmp, FilePath, overwrite: true);

@@ -46,8 +46,8 @@ internal static class ComServer
         uint mainThreadId = Win32Native.GetCurrentThreadId();
 
         // Watch cached settings file â€” reloads KeePassPasskeySettings.Current whenever the file is written.
-        Directory.CreateDirectory(SettingsCache.SettingsDir);
-        using var settingsFileWatcher = new FileSystemWatcher(SettingsCache.SettingsDir)
+        Directory.CreateDirectory(AppPaths.SettingsDir);
+        using var settingsFileWatcher = new FileSystemWatcher(AppPaths.SettingsDir)
         {
             Filter              = SettingsCache.SettingsFileName,
             NotifyFilter        = NotifyFilters.LastWrite,

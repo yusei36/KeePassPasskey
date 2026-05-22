@@ -59,8 +59,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         Settings.TrayStateChanged   += (_, _) => RaiseTrayStateChanged();
         SetupGuide.TrayStateChanged += (_, _) => RaiseTrayStateChanged();
 
-        Directory.CreateDirectory(SettingsCache.SettingsDir);
-        var settingsWatcher = new FileSystemWatcher(SettingsCache.SettingsDir)
+        Directory.CreateDirectory(AppPaths.SettingsDir);
+        var settingsWatcher = new FileSystemWatcher(AppPaths.SettingsDir)
         {
             Filter              = SettingsCache.SettingsFileName,
             NotifyFilter        = NotifyFilters.LastWrite,
