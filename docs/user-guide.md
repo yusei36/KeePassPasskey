@@ -2,19 +2,6 @@
 
 KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once installed, websites and apps that support passkeys will offer KeePassPasskey as a storage option, and passkeys are saved directly into your KeePass database.
 
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Updates](#updates)
-- [Creating a passkey](#creating-a-passkey)
-- [Signing in with a passkey](#signing-in-with-a-passkey)
-  - [Login with a passkey instead of a password](#login-with-a-passkey-instead-of-a-password)
-  - [Login with a password and passkey as a second factor](#login-with-a-password-and-passkey-as-a-second-factor)
-- [Managing passkeys in KeePass](#managing-passkeys-in-keepass)
-- [Settings](#settings)
-- [Troubleshooting](#troubleshooting)
-
 ## Prerequisites
 
 - Windows 11 24H2 or later
@@ -108,7 +95,7 @@ A KeePassPasskey notification appears in the taskbar. Click **Approve** to confi
 
 Passkeys are stored as standard KeePass entries in the **Passkeys** group.
 
-When creating a passkey, it is saved to the currently selected KeePass database. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong database, you can move it via **Entry → Data Exchange → Copy/Paste Entry**.
+When creating a passkey and multiple databases are open, KeePassPasskey will ask you to choose which database to save it to. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong database, you can move it via **Entry → Data Exchange → Copy/Paste Entry**.
 
 Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **Passkeys** group itself can also be renamed. Note that if a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey. The KeePass Recycle Bin has searching disabled by default, so restoring a deleted passkey entry from there requires moving it to another group first.
 
@@ -136,20 +123,18 @@ Each passkey entry contains these custom fields:
 
 Open the KeePassPasskey app from the Start menu and navigate to **Settings**.
 
-### User Verification
+### Notifications & User Verification
 
 Controls how KeePassPasskey confirms your identity before completing a passkey operation.
 
 | Option | Behavior |
 |---|---|
-| Notification | Shows a notification you must approve (default) |
+| Notification | Shows a notification you must approve |
 | Windows Hello | Requires Windows Hello (PIN, fingerprint, or face) |
-| Both | Requires both a notification approval and Windows Hello |
+| Both | Requires both a notification approval and Windows Hello (default) |
 | None | No confirmation required: passkey operations complete silently |
 
-Separate settings exist for **Registration** (creating a passkey) and **Sign-in** (using a passkey). The **Notification timeout** controls how long the notification stays open before the operation is cancelled (default: 30 seconds). This timeout only applies when the verification mode includes **Notification**.
-
-### Notifications
+Separate settings exist for **Registration** (creating a passkey) and **Sign-in** (using a passkey). The **Approval timeout** controls how long the notification stays open before the operation is cancelled (default: 30 seconds). This timeout only applies when the approval mode includes **Notification**.
 
 **Show error notifications**: when enabled, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
 
