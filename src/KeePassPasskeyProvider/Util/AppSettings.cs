@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
+using System.Diagnostics.CodeAnalysis;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using Newtonsoft.Json;
@@ -22,6 +23,7 @@ internal sealed class AppSettings
     [JsonProperty("theme")]
     internal Theme Theme { get; set; } = Theme.System;
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
     internal static AppSettings? TryLoad()
     {
         try
@@ -36,6 +38,7 @@ internal sealed class AppSettings
         }
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
     internal static void Save(AppSettings settings)
     {
         try

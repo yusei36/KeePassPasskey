@@ -64,23 +64,23 @@
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.*">
       <IsTrimmable>false</IsTrimmable>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4">
       <IsTrimmable>false</IsTrimmable>
     </PackageReference>
     <!-- Avalonia UI for management window -->
-    <PackageReference Include="Avalonia" Version="11.3.14">
+    <PackageReference Include="Avalonia" Version="11.3.16">
       <IsTrimmable>false</IsTrimmable>
     </PackageReference>
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.14">
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.16">
       <IsTrimmable>false</IsTrimmable>
     </PackageReference>
     <PackageReference Include="FluentAvaloniaUI" Version="2.5.1">
       <IsTrimmable>false</IsTrimmable>
     </PackageReference>
     <!-- Override vulnerable transitive dep from Avalonia.Desktop (Linux D-Bus, unused on Windows) -->
-    <PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.93.0" />
     <!-- Override vulnerable transitive dep from Microsoft.Toolkit.Uwp.Notifications (CVE GHSA-rxg9-xrhp-64gj) -->
-    <PackageReference Include="System.Drawing.Common" Version="9.*" />
+    <PackageReference Include="System.Drawing.Common" Version="10.*" />
   </ItemGroup>
 
 </Project>

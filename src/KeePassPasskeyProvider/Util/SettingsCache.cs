@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
+using System.Diagnostics.CodeAnalysis;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ internal static class SettingsCache
 
     private static readonly string CachePath = Path.Combine(AppPaths.SettingsDir, SettingsFileName);
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
     internal static KeePassPasskeySettings? TryLoad()
     {
         try
@@ -29,6 +31,7 @@ internal static class SettingsCache
         }
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
     internal static void Save(KeePassPasskeySettings settings)
     {
         try

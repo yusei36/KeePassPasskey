@@ -49,6 +49,9 @@ namespace KeePassPasskeyShared.Ipc
         public SaveSettingsResponse SaveSettings(SaveSettingsRequest request)
             => Send<SaveSettingsResponse>(request);
 
+#if NET5_0_OR_GREATER
+        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
+#endif
         private TResponse Send<TResponse>(PipeRequestBase request) where TResponse : PipeResponseBase
         {
             try

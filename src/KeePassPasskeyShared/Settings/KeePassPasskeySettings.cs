@@ -44,14 +44,23 @@ namespace KeePassPasskeyShared.Settings
         // JSON-based comparison keeps Equals auto-maintaining: new fields are included
         // automatically without needing to update this method. If performance ever becomes
         // a concern, replace with explicit field-by-field comparison.
+#if NET5_0_OR_GREATER
+        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
+#endif
         public override bool Equals(object obj)
         {
             if (obj is not KeePassPasskeySettings other) return false;
             return JsonConvert.SerializeObject(this) == JsonConvert.SerializeObject(other);
         }
 
+#if NET5_0_OR_GREATER
+        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
+#endif
         public override int GetHashCode() => JsonConvert.SerializeObject(this).GetHashCode();
 
+#if NET5_0_OR_GREATER
+        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
+#endif
         public KeePassPasskeySettings Clone() =>
             JsonConvert.DeserializeObject<KeePassPasskeySettings>(JsonConvert.SerializeObject(this))!;
     }
