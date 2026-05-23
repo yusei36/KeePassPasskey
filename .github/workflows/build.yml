@@ -7,6 +7,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      build_release:
+        description: 'Also build Release (unsigned)'
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -24,8 +29,22 @@ jobs:
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Debug -SkipSign
 
-      - name: Upload artifact
+      - name: Build (Release, unsigned)
+        if: github.ref == 'refs/heads/master' || inputs.build_release
+        shell: pwsh
+        run: .\scripts\Publish-Package.ps1 -Configuration Release -SkipSign
+
+      - name: Upload artifact (Debug)
         uses: actions/upload-artifact@v7
         with:
           name: KeePassPasskey-debug-unsigned
-          path: build\KeePassPasskey-*.zip
+          path: build\KeePassPasskey-*-debug-unsigned.zip
+
+      - name: Upload artifact (Release)
+        if: github.ref == 'refs/heads/master' || inputs.build_release
+        uses: actions/upload-artifact@v7
+        with:
+          name: KeePassPasskey-release-unsigned
+          path: |
+            build\KeePassPasskey-*.zip
+            !build\KeePassPasskey-*-debug-*.zip
