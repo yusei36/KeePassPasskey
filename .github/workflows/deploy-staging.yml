@@ -57,11 +57,7 @@ jobs:
             BookToC = true
           EOF
 
-          cat > build/content/_index.md << 'EOF'
-          ---
-          title: KeePassPasskey
-          ---
-          EOF
+          sed 's/\.md)/.html)/g' README.md > build/content/_index.md
 
           hugo --source build --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
 
