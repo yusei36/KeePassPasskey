@@ -68,6 +68,10 @@ jobs:
           [markup.goldmark.renderer]
             unsafe = true
 
+          [[menu.before]]
+            name = "Home"
+            url  = "/"
+
           [params]
             BookTheme = "auto"
             BookSearch = true
@@ -100,8 +104,11 @@ jobs:
             --body-font-color: #e6edf3;
             --color-link:      #58a6ff;
           }
-          [data-theme="dark"] code { background-color: #161b22; color: #e6edf3; }
-          [data-theme="dark"] pre  { background-color: #161b22; }
+          [data-theme="dark"] code                        { background-color: #161b22; color: #e6edf3; }
+          [data-theme="dark"] pre                         { background-color: #161b22; }
+          [data-theme="dark"] table tr:nth-child(2n)      { background-color: #111820; }
+          :root table tr:nth-child(2n),
+          [data-theme="light"] table tr:nth-child(2n)     { background-color: #f6f8fa; }
           </style>
           EOF
 
