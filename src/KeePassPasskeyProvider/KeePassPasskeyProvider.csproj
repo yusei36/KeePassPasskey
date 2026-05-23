@@ -26,7 +26,8 @@
     <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
-    <NoWarn>$(NoWarn);IL2104</NoWarn>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <NoWarn>$(NoWarn);IL2026;IL2104</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
