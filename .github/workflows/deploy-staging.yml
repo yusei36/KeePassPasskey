@@ -75,7 +75,7 @@ jobs:
 
           [params]
             BookLogo  = "favicon.ico"
-            BookTheme = "auto"
+            BookTheme = "dark"
             BookSearch = false
             BookRepo = "https://github.com/keepasspasskey/KeePassPasskey"
             BookEditPath = "edit/develop/docs"
@@ -88,9 +88,8 @@ jobs:
           <link rel="icon" href="{{ "favicon.ico" | absURL }}">
           <script>
           (function () {
-            var saved     = localStorage.getItem("book-theme");
-            var preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", saved || preferred);
+            var saved = localStorage.getItem("book-theme");
+            document.documentElement.setAttribute("data-theme", saved || "dark");
           })();
           </script>
           <style>
@@ -107,8 +106,8 @@ jobs:
             --body-font-color: #e6edf3;
             --color-link:      #58a6ff;
           }
-          :root .book-header label,
-          [data-theme="light"] .book-header label { color: #1f2328; }
+          :root .book-icon,
+          [data-theme="light"] .book-icon { filter: invert(1); }
           :root table tr:nth-child(2n),
           [data-theme="light"] table tr:nth-child(2n)     { background-color: #f6f8fa; }
           [data-theme="dark"] table tr:nth-child(2n)      { background-color: #111820; }
