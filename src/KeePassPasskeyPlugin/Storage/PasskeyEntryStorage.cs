@@ -258,8 +258,19 @@ namespace KeePassPasskey.Storage
                 if (doc.Database != null && doc.Database.IsOpen)
                     databases.Add(doc.Database);
             }
-            if (databases.Count == 0 && _host.Database != null && _host.Database.IsOpen)
-                databases.Add(_host.Database);
+
+            // Put the active database first
+            var active = _host.Database;
+            if (active != null && databases.Count > 1)
+            {
+                int idx = databases.IndexOf(active);
+                if (idx > 0)
+                {
+                    databases.RemoveAt(idx);
+                    databases.Insert(0, active);
+                }
+            }
+
             return databases;
         }
 

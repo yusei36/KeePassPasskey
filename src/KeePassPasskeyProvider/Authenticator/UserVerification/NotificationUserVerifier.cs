@@ -138,14 +138,17 @@ internal sealed class NotificationUserVerifier : IUserVerifier
             .AddText(title)
             .AddText(body);
 
-        var selectionBox = new ToastSelectionBox(selectionBoxId)
+        if (databases.Count > 1)
         {
-            DefaultSelectionBoxItemId = "0",
-            Title = "Save to database"
-        };
-        for (int i = 0; i < databases.Count; i++)
-            selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(), databases[i].Name));
-        builder.AddToastInput(selectionBox);
+            var selectionBox = new ToastSelectionBox(selectionBoxId)
+            {
+                DefaultSelectionBoxItemId = "0",
+                Title = "Save to database"
+            };
+            for (int i = 0; i < databases.Count; i++)
+                selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(), databases[i].Name));
+            builder.AddToastInput(selectionBox);
+        }
 
         builder.AddVisualChild(new AdaptiveProgressBar
             {

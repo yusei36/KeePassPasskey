@@ -88,6 +88,9 @@ internal static class Win32Native
     [DllImport("kernel32.dll")]
     internal static extern bool CloseHandle(nint hObject);
 
+    [DllImport("user32.dll")]
+    internal static extern uint GetDoubleClickTime();
+
     internal const uint EVENT_MODIFY_STATE = 0x0002;
     internal const uint WAIT_OBJECT_0 = 0;
     internal const uint INFINITE = unchecked((uint)-1);

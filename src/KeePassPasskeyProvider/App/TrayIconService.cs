@@ -29,6 +29,7 @@ internal sealed class TrayIconService : IDisposable
     private TrayIcon? _trayIcon;
     private volatile bool _disposed;
     private static Bitmap? _baseIcon;
+    private DateTime _lastClickTime;
 
     // The event handle is owned by WatchShowEvent after Dispose() is called.
     private nint _showEvent;
@@ -53,7 +54,14 @@ internal sealed class TrayIconService : IDisposable
             Icon        = BuildIcon(_statusHero.Status),
             Menu        = BuildContextMenu(),
         };
-        _trayIcon.Clicked += (_, _) => Dispatcher.UIThread.Post(ShowWindow);
+        _trayIcon.Clicked += (_, _) =>
+        {
+            var now = DateTime.UtcNow;
+            bool isDoubleClick = (now - _lastClickTime).TotalMilliseconds <= Win32Native.GetDoubleClickTime();
+            _lastClickTime = now;
+            if (isDoubleClick)
+                Dispatcher.UIThread.Post(ShowWindow);
+        };
     }
 
     internal void ShowWindow()
