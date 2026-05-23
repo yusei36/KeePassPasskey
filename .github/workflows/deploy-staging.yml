@@ -59,6 +59,7 @@ jobs:
             fix_links < "$f" > "build/content/docs/$(basename "$f")"
           done
           cp -r docs/images build/static/docs/images
+          cp docs/images/favicon.ico build/static/favicon.ico
 
           cat > build/hugo.toml << 'EOF'
           baseURL = "/"
@@ -73,6 +74,7 @@ jobs:
             url  = "/"
 
           [params]
+            BookLogo  = "favicon.ico"
             BookTheme = "auto"
             BookSearch = false
             BookRepo = "https://github.com/keepasspasskey/KeePassPasskey"
@@ -83,6 +85,7 @@ jobs:
           mkdir -p build/layouts/partials/docs/inject
 
           cat > build/layouts/partials/docs/inject/head.html << 'EOF'
+          <link rel="icon" href="{{ "favicon.ico" | absURL }}">
           <script>
           (function () {
             var saved     = localStorage.getItem("book-theme");
