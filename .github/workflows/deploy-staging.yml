@@ -76,6 +76,57 @@ jobs:
             BookToC = true
           EOF
 
+          mkdir -p build/layouts/partials/docs/inject
+
+          cat > build/layouts/partials/docs/inject/head.html << 'EOF'
+          <script>
+          (function () {
+            var saved     = localStorage.getItem("book-theme");
+            var preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", saved || preferred);
+          })();
+          </script>
+          <style>
+          [data-theme="dark"] {
+            --body-background: #0d1117;
+            --body-font-color: #e6edf3;
+            --color-link:      #58a6ff;
+            --gray-100:        #30363d;
+            --gray-200:        #21262d;
+            --gray-500:        #8b949e;
+          }
+          [data-theme="dark"] .book-menu,
+          [data-theme="dark"] .book-header  { background-color: #161b22; border-color: #30363d; }
+          [data-theme="dark"] code          { background-color: #161b22; color: #e6edf3; }
+          [data-theme="dark"] pre           { background-color: #161b22; border-color: #30363d; }
+          </style>
+          EOF
+
+          cat > build/layouts/partials/docs/inject/menu.html << 'EOF'
+          <div style="padding: 0.5rem 1rem; border-top: 1px solid var(--gray-100, #ddd);">
+            <button id="book-theme-toggle"
+                    style="background:none; border:none; cursor:pointer; color:inherit; font-size:0.875rem; padding:0.25rem 0;">
+            </button>
+          </div>
+          <script>
+          (function () {
+            var btn = document.getElementById("book-theme-toggle");
+
+            function getTheme()       { return document.documentElement.getAttribute("data-theme") || "light"; }
+            function updateButton(t)  { btn.textContent = t === "dark" ? "☀ Light mode" : "🌙 Dark mode"; }
+
+            btn.addEventListener("click", function () {
+              var next = getTheme() === "dark" ? "light" : "dark";
+              document.documentElement.setAttribute("data-theme", next);
+              localStorage.setItem("book-theme", next);
+              updateButton(next);
+            });
+
+            updateButton(getTheme());
+          })();
+          </script>
+          EOF
+
           printf -- '---\nurl: /\n---\n\n' > build/content/_index.md
           fix_links < README.md >> build/content/_index.md
 
