@@ -102,7 +102,7 @@ jobs:
           </style>
           EOF
 
-          cat > build/layouts/partials/docs/inject/menu.html << 'EOF'
+          cat > build/layouts/partials/docs/inject/menu-after.html << 'EOF'
           <div style="padding: 0.5rem 1rem; border-top: 1px solid var(--gray-100, #ddd);">
             <button id="book-theme-toggle"
                     style="background:none; border:none; cursor:pointer; color:inherit; font-size:0.875rem; padding:0.25rem 0;">
