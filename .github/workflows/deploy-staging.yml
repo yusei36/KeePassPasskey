@@ -107,6 +107,8 @@ jobs:
             --body-font-color: #e6edf3;
             --color-link:      #58a6ff;
           }
+          :root .book-header label,
+          [data-theme="light"] .book-header label { color: #1f2328; }
           :root table tr:nth-child(2n),
           [data-theme="light"] table tr:nth-child(2n)     { background-color: #f6f8fa; }
           [data-theme="dark"] table tr:nth-child(2n)      { background-color: #111820; }
