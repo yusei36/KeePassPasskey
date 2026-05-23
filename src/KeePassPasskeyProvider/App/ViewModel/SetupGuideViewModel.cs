@@ -39,7 +39,7 @@ public sealed partial class SetupGuideViewModel : ObservableObject
     private void OpenUserGuide() =>
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
         {
-            FileName        = "https://keepasspasskey.github.io/docs/user-guide.html",
+            FileName        = "https://keepasspasskey.github.io/docs/user-guide/",
             UseShellExecute = true,
         });
 

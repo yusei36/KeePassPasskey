@@ -41,14 +41,18 @@ jobs:
 
           git clone --depth 1 https://github.com/alex-shpak/hugo-book build/themes/hugo-book
 
-          cp docs/user-guide.md build/content/docs/user-guide.md
+          for f in docs/*.md; do
+            sed 's/\.md)/\//g' "$f" > "build/content/docs/$(basename "$f")"
+          done
           cp -r docs/images build/static/docs/images
 
           cat > build/hugo.toml << 'EOF'
           baseURL = "/"
           title = "KeePassPasskey"
           theme = "hugo-book"
-          uglyURLs = true
+
+          [markup.goldmark.renderer]
+            unsafe = true
 
           [params]
             BookSearch = true
@@ -57,7 +61,8 @@ jobs:
             BookToC = true
           EOF
 
-          sed 's/\.md)/.html)/g' README.md > build/content/_index.md
+          printf -- '---\nurl: /\n---\n\n' > build/content/_index.md
+          sed 's/\.md)/\//g' README.md >> build/content/_index.md
 
           hugo --source build --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
 
