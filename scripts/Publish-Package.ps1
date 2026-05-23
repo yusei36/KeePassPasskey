@@ -69,12 +69,8 @@ Invoke-GenerateLicenseNotices -RepoRoot $RepoRoot -OutputFile $noticesPath
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
 
-    # Only run when called with explicit args (e.g. CI). Skipped on plain .\Publish-Package.ps1
-    # because the wapproj rebuilds the provider anyway and would overwrite the publish output.
-    if ($PSBoundParameters.Count -gt 0) {
-        Write-Step "Building provider app"
-        Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration
-    }
+    Write-Step "Building provider app"
+    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration
 
     Write-Step "Building MSIX package"
     Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
