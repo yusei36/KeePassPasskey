@@ -25,13 +25,49 @@ jobs:
       - uses: actions/checkout@v6
 
       - uses: actions/configure-pages@v6
+        id: pages
 
-      - uses: actions/jekyll-build-pages@v1
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
         with:
-          source: ./
-          destination: ./_site
+          hugo-version: latest
+          extended: true
+
+      - name: Build
+        run: |
+          mkdir -p build/themes
+          mkdir -p build/content/docs
+          mkdir -p build/static/docs
+
+          git clone --depth 1 https://github.com/alex-shpak/hugo-book build/themes/hugo-book
+
+          cp docs/user-guide.md build/content/docs/user-guide.md
+          cp -r docs/images build/static/docs/images
+
+          cat > build/hugo.toml << 'EOF'
+          baseURL = "/"
+          title = "KeePassPasskey"
+          theme = "hugo-book"
+          uglyURLs = true
+
+          [params]
+            BookSearch = true
+            BookRepo = "https://github.com/keepasspasskey/KeePassPasskey"
+            BookEditPath = "edit/develop/docs"
+            BookToC = true
+          EOF
+
+          cat > build/content/_index.md << 'EOF'
+          ---
+          title: KeePassPasskey
+          ---
+          EOF
+
+          hugo --source build --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
 
       - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/public
 
   deploy:
     runs-on: ubuntu-latest
