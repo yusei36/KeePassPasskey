@@ -74,7 +74,7 @@ jobs:
 
           [params]
             BookTheme = "auto"
-            BookSearch = true
+            BookSearch = false
             BookRepo = "https://github.com/keepasspasskey/KeePassPasskey"
             BookEditPath = "edit/develop/docs"
             BookToC = true
@@ -104,11 +104,11 @@ jobs:
             --body-font-color: #e6edf3;
             --color-link:      #58a6ff;
           }
-          [data-theme="dark"] code                        { background-color: #161b22; color: #e6edf3; }
-          [data-theme="dark"] pre                         { background-color: #161b22; }
-          [data-theme="dark"] table tr:nth-child(2n)      { background-color: #111820; }
           :root table tr:nth-child(2n),
           [data-theme="light"] table tr:nth-child(2n)     { background-color: #f6f8fa; }
+          [data-theme="dark"] table tr:nth-child(2n)      { background-color: #111820; }
+          [data-theme="dark"] code                        { background-color: #161b22; color: #e6edf3; }
+          [data-theme="dark"] pre                         { background-color: #161b22; }
           </style>
           EOF
 
