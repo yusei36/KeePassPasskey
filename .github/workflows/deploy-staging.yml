@@ -60,6 +60,7 @@ jobs:
           done
           cp -r docs/images build/static/docs/images
           cp docs/images/favicon.ico build/static/favicon.ico
+          cp version.txt build/static/version.txt
 
           cat > build/hugo.toml << 'EOF'
           baseURL = "/"
