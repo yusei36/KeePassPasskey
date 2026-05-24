@@ -197,8 +197,39 @@
                 <ui:SettingsExpanderItem Content="Copyright"
                                          Description="&#169; 2026 Uwe K&#246;gel" />
 
-                <ui:SettingsExpanderItem Content="Version"
-                                         Description="{Binding AppVersion}">
+                <ui:SettingsExpanderItem>
+                    <ui:SettingsExpanderItem.Content>
+                        <StackPanel>
+                            <TextBlock Text="Version" />
+                            <StackPanel Orientation="Horizontal" Spacing="6" Margin="0 1 0 0">
+                                <TextBlock Text="{Binding AppVersion}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           VerticalAlignment="Center" />
+                                <Button x:Name="VerifyReleaseButton"
+                                        Command="{Binding VerifyReleaseCommand}"
+                                        IsVisible="{Binding IsOfficialRelease}"
+                                        VerticalAlignment="Center"
+                                        Padding="0"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        BorderThickness="0"
+                                        ToolTip.Tip="{Binding VerifyReleaseMessage}"
+                                        ToolTip.ShowDelay="0">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                        <Style Selector="Button:pressed /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                    </Button.Styles>
+                                    <ui:SymbolIcon Symbol="Checkmark" FontSize="10"
+                                                   Foreground="{DynamicResource SystemFillColorSuccessBrush}" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </ui:SettingsExpanderItem.Content>
                     <ui:SettingsExpanderItem.Footer>
                         <Button Command="{Binding CopyToClipboardCommand}"
                                 CommandParameter="{Binding AppVersionFull}"

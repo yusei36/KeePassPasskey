@@ -111,9 +111,55 @@ public sealed partial class SettingsViewModel : ObservableObject
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
     public static LogLevel[] LogLevels { get; } = (LogLevel[])Enum.GetValues(typeof(LogLevel));
     public static Theme[] Themes { get; } = (Theme[])Enum.GetValues(typeof(Theme));
-
     public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
     public string AppVersionFull => DiagnosticsViewModel.ClientVersion;
+    public static bool IsOfficialRelease { get; } = CheckIsOfficialRelease();
+
+    [ObservableProperty] private string _verifyReleaseMessage = "Release build";
+    private static readonly string[] VerifyPolicy = ["Its'y ywzxy. Ajwnkd.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjd, sty dtzw fhhtzsy.", "Sty dtzw pjdx, sty dtzw htnsx.", "Gnyhtns."];
+    private int _verifyReleaseIndex = -1;
+
+    [RelayCommand]
+    private void VerifyRelease()
+    {
+        _verifyReleaseIndex = (_verifyReleaseIndex + 1) % VerifyPolicy.Length;
+        VerifyReleaseMessage = VerifyRelease(VerifyPolicy[_verifyReleaseIndex]);
+    }
+
+    private static string VerifyRelease(string text)
+    {
+        char[] result = new char[text.Length];
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            if (char.IsLetter(c))
+            {
+                char base_ = char.IsUpper(c) ? 'A' : 'a';
+                result[i] = (char)((c - base_ + 21) % 26 + base_);
+            }
+            else
+            {
+                result[i] = c;
+            }
+        }
+        return new string(result);
+    }
+
+    private static bool CheckIsOfficialRelease()
+    {
+        var version = DiagnosticsViewModel.ClientVersion;
+        if (version.Contains('-'))
+            return false;
+        try
+        {
+            return Windows.ApplicationModel.Package.Current.Id.FamilyName
+                == Authenticator.PluginConstants.OfficialPackageFamilyName;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     private static readonly string LicensePath =
         Path.Combine(AppContext.BaseDirectory, "Resources", "LICENSE.txt");

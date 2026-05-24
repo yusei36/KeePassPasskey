@@ -27,4 +27,6 @@ internal static class PluginConstants
 
     public const string StartupTaskComServer = "KeePassPasskeyComServer";
     public const string StartupTaskTrayApp   = "KeePassPasskeyTrayApp";
+
+    public const string OfficialPackageFamilyName = "KeePassPasskeyProvider_rcm79ea08mqe4";
 }

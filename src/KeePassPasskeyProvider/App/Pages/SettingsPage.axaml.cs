@@ -3,6 +3,7 @@
 using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
@@ -25,6 +26,8 @@ public partial class SettingsPage : UserControl
     {
         if (e.PropertyName == nameof(SettingsViewModel.IsSaving) && sender is SettingsViewModel vm)
             Cursor = vm.IsSaving ? new Cursor(StandardCursorType.Wait) : Cursor.Default;
+        if (e.PropertyName == nameof(SettingsViewModel.VerifyReleaseMessage))
+            Dispatcher.UIThread.Post(() => ToolTip.SetIsOpen(VerifyReleaseButton, true));
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
