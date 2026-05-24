@@ -27,128 +27,17 @@ jobs:
       - uses: actions/configure-pages@v6
         id: pages
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3
+      - uses: ./.github/actions/build-website
         with:
-          hugo-version: latest
-          extended: true
-
-      - name: Build
-        run: |
-          mkdir -p build/themes
-          mkdir -p build/content/docs
-          mkdir -p build/static/docs
-
-          git clone --depth 1 https://github.com/alex-shpak/hugo-book build/themes/hugo-book
-
-          # Rewrites applied to every Markdown file before Hugo processes it:
-          #   ../README.md#anchor → ../../#anchor  Hugo adds a directory level per page,
-          #                                        so one extra ../ is needed to reach the root
-          #   page.md)            → page/)         Hugo uses directory-style URLs by default
-          #   ](images/           → ](../images/   images live at /docs/images/,
-          #   src="images/        → src="../images/ not at /docs/<page>/images/
-          fix_links() {
-            sed \
-              -e 's|\.\./README\.md#\([^)]*\))|../../#\1)|g' \
-              -e 's/\.md)/\/)/g' \
-              -e 's|](images/|](../images/|g' \
-              -e 's|src="images/|src="../images/|g'
-          }
-
-          for f in docs/*.md; do
-            fix_links < "$f" > "build/content/docs/$(basename "$f")"
-          done
-          cp -r docs/images build/static/docs/images
-          cp docs/images/favicon.ico build/static/favicon.ico
-          cp version.txt build/static/version.txt
-
-          cat > build/hugo.toml << 'EOF'
-          baseURL = "/"
-          title = "KeePassPasskey"
-          theme = "hugo-book"
-
-          [markup.goldmark.renderer]
-            unsafe = true
-
-          [[menu.before]]
-            name = "Home"
-            url  = "/"
-
-          [params]
-            BookLogo  = "favicon.ico"
-            BookTheme = "dark"
-            BookSearch = false
-            BookRepo = "https://github.com/keepasspasskey/KeePassPasskey"
-            BookEditPath = "edit/develop/docs"
-            BookToC = true
-          EOF
-
-          mkdir -p build/layouts/partials/docs/inject
-
-          cat > build/layouts/partials/docs/inject/head.html << 'EOF'
-          <link rel="icon" href="{{ "favicon.ico" | absURL }}">
-          <script>
-          (function () {
-            var saved = localStorage.getItem("book-theme");
-            document.documentElement.setAttribute("data-theme", saved || "dark");
-          })();
-          </script>
-          <style>
-          :root, [data-theme="light"] {
-            --body-background: #ffffff;
-            --body-font-color: #1f2328;
-            --color-link:      #0969da;
-            --gray-100:        #d0d7de;
-            --gray-200:        #f6f8fa;
-            --gray-500:        #57606a;
-          }
-          [data-theme="dark"] {
-            --body-background: #0d1117;
-            --body-font-color: #e6edf3;
-            --color-link:      #58a6ff;
-          }
-          :root .book-icon,
-          [data-theme="light"] .book-icon { filter: invert(1); }
-          :root table tr:nth-child(2n),
-          [data-theme="light"] table tr:nth-child(2n)     { background-color: #f6f8fa; }
-          [data-theme="dark"] table tr:nth-child(2n)      { background-color: #111820; }
-          [data-theme="dark"] code                        { background-color: #161b22; color: #e6edf3; }
-          [data-theme="dark"] pre                         { background-color: #161b22; }
-          </style>
-          EOF
-
-          cat > build/layouts/partials/docs/inject/menu-after.html << 'EOF'
-          <div style="padding: 0.5rem 1rem; border-top: 1px solid var(--gray-100, #ddd);">
-            <button id="book-theme-toggle"
-                    style="background:none; border:none; cursor:pointer; color:inherit; font-size:0.875rem; padding:0.25rem 0;">
-            </button>
-          </div>
-          <script>
-          (function () {
-            var btn = document.getElementById("book-theme-toggle");
-
-            function getTheme()       { return document.documentElement.getAttribute("data-theme") || "light"; }
-            function updateButton(t)  { btn.textContent = t === "dark" ? "☀ Enable light mode" : "🌙 Enable dark mode"; }
-
-            btn.addEventListener("click", function () {
-              var next = getTheme() === "dark" ? "light" : "dark";
-              document.documentElement.setAttribute("data-theme", next);
-              localStorage.setItem("book-theme", next);
-              updateButton(next);
-            });
-
-            updateButton(getTheme());
-          })();
-          </script>
-          EOF
-
-          printf -- '---\nurl: /\n---\n\n' > build/content/_index.md
-          fix_links < README.md >> build/content/_index.md
-
-          hugo --source build --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+          edit_path: edit/develop/docs
 
       - uses: actions/upload-pages-artifact@v5
         with:
+          path: build/public
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: website
           path: build/public
 
   deploy:
