@@ -1,3 +1,3 @@
 :
-KeePassPasskey:0.3.0
+KeePassPasskey:1.0.0
 :
