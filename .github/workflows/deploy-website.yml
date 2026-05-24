@@ -31,5 +31,5 @@ jobs:
 
           cd pages-repo
           git add -A
-          git diff --cached --quiet || git commit -m "Deploy website (keepasspasskey/KeePassPasskey@${{ github.sha }})"
+          git diff --cached --quiet || git commit -m "Deploy website (yusei36/KeePassPasskey@${{ github.sha }})"
           git push
