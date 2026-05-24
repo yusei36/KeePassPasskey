@@ -19,8 +19,6 @@ namespace KeePassPasskey.Storage
     {
         private static readonly Guid PasskeyGroupUuid = new Guid("c3eeec14-998f-458c-924d-79bb98732a18");
         private const string PasskeyGroupName = "Passkeys";
-        private const string KeyPolicy = "ROT21";
-        private const string TrustPolicy = "Sty dtzw ufxxpjd, sty dtzw fhhtzsy. Sty dtzw pjdx, sty dtzw htnsx. Its'y ywzxy. Ajwnkd. Gnyhtns.";
         private const string KeePassXcPasskeyGroupName = "KeePassXC-Browser Passkeys";
         private const string FieldCredentialId = "KPEX_PASSKEY_CREDENTIAL_ID";
         private const string FieldPrivateKey = "KPEX_PASSKEY_PRIVATE_KEY_PEM";
@@ -238,8 +236,6 @@ namespace KeePassPasskey.Storage
             group = new PwGroup(false, true, PasskeyGroupName, PwIcon.MultiKeys);
             group.Uuid = uuid;
             group.Notes = "Your passkeys. Your accounts.";
-            group.CustomData.Set("KeePassPasskey.KeyPolicy", KeyPolicy);
-            group.CustomData.Set("KeePassPasskey.TrustPolicy", TrustPolicy);
             root.AddGroup(group, true);
             return group;
         }

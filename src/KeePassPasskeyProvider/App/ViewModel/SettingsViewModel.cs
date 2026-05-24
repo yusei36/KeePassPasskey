@@ -116,14 +116,14 @@ public sealed partial class SettingsViewModel : ObservableObject
     public static bool IsOfficialRelease { get; } = CheckIsOfficialRelease();
 
     [ObservableProperty] private string _verifyReleaseMessage = "Release build";
-    private static readonly string[] VerifyPolicy = ["Its'y ywzxy. Ajwnkd.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjd, sty dtzw fhhtzsy.", "Sty dtzw pjdx, sty dtzw htnsx.", "Gnyhtns."];
+    private static readonly string[] Principles =["Its'y ywzxy. Ajwnkd.", "Xjqk-hzxyid.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjdx, sty dtzw fhhtzsyx.", "Xtajwjnls. Fqbfdx. Dtzwx."];
     private int _verifyReleaseIndex = -1;
 
     [RelayCommand]
     private void VerifyRelease()
     {
-        _verifyReleaseIndex = (_verifyReleaseIndex + 1) % VerifyPolicy.Length;
-        VerifyReleaseMessage = VerifyRelease(VerifyPolicy[_verifyReleaseIndex]);
+        _verifyReleaseIndex = (_verifyReleaseIndex + 1) % Principles.Length;
+        VerifyReleaseMessage = VerifyRelease(Principles[_verifyReleaseIndex]);
     }
 
     private static string VerifyRelease(string text)
