@@ -28,14 +28,16 @@ function Find-MSBuild {
     return $msbuild
 }
 
-# Returns hashtable: FileVersion, Version (e.g. "0.1.0-beta.1")
-function Get-BuildVersions([string]$RepoRoot) {
-    $props = [xml](Get-Content "$RepoRoot\Directory.Build.props")
+# Returns hashtable: FileVersion, Version (e.g. "1.0.0-dev")
+# Mirrors the MSBuild rule in Directory.Build.targets: Debug builds get 'dev' unless VersionSuffix is explicitly set.
+function Get-BuildVersions([string]$RepoRoot, [string]$Configuration = '') {
+    $props = [xml](Get-Content "$RepoRoot\src\Directory.Build.props")
     $pg = $props.Project.PropertyGroup
     $fileVersion = $pg.FileVersion
-    if (-not $fileVersion) { throw "FileVersion not found in Directory.Build.props" }
-    $prefix  = $pg.VersionPrefix
-    $suffix  = $pg.VersionSuffix
+    if (-not $fileVersion) { throw "FileVersion not found in src/Directory.Build.props" }
+    $prefix = $pg.VersionPrefix
+    $suffix = $pg.VersionSuffix
+    if ($Configuration -eq 'Debug' -and -not $suffix) { $suffix = 'dev' }
     $version = if ($suffix) { "$prefix-$suffix" } else { $prefix }
     return @{ FileVersion = $fileVersion; Version = $version }
 }

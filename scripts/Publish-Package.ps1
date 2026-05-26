@@ -33,8 +33,12 @@
     Skip signing and cert export. The zip will contain an unsigned MSIX and no .cer or Install.bat.
     Intended for CI/unsigned builds.
 
+.PARAMETER Dev
+    Release build stamped with the 'dev' version suffix.
+
 .EXAMPLE
     .\Publish-Package.ps1
+    .\Publish-Package.ps1 -Dev
     .\Publish-Package.ps1 -Configuration Debug
     .\Publish-Package.ps1 -SkipBuild
     .\Publish-Package.ps1 -Configuration Debug -SkipSign
@@ -44,8 +48,11 @@ param(
     [string]$Configuration = 'Release',
     [switch]$SkipBuild,
     [switch]$SkipCert,
-    [switch]$SkipSign
+    [switch]$SkipSign,
+    [switch]$Dev
 )
+
+if ($Dev) { $Configuration = 'Release' }
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -55,8 +62,19 @@ Import-Module "$PSScriptRoot\Shared.psm1" -Force
 $RepoRoot              = Split-Path $PSScriptRoot -Parent
 $AppPackagesDir        = "$RepoRoot\build\AppPackages"
 $ThirdPartyNoticesName = 'THIRD_PARTY_NOTICES.txt'
+$propsPath             = "$RepoRoot\src\Directory.Build.props"
 
-$versions = Get-BuildVersions $RepoRoot
+# Temporarily stamp VersionSuffix=dev in Directory.Build.props for -Dev builds.
+$originalProps = $null
+if ($Dev) {
+    $originalProps = [IO.File]::ReadAllText($propsPath)
+    $patched = $originalProps -replace '(<VersionSuffix>)[^<]*(</VersionSuffix>)', '${1}dev${2}'
+    [IO.File]::WriteAllText($propsPath, $patched)
+}
+
+try {
+
+$versions = Get-BuildVersions $RepoRoot -Configuration $Configuration
 Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
 
 # -- 1. Generate notices (must precede MSIX build so the file is included) ----
@@ -104,7 +122,7 @@ if (-not $SkipSign) {
 }
 
 # -- 6. Assemble zip ------------------------------------------------------------
-$versions   = Get-BuildVersions $RepoRoot
+$versions   = Get-BuildVersions $RepoRoot -Configuration $Configuration
 $tags       = @()
 if ($Configuration -eq 'Debug') { $tags += 'debug' }
 if ($SkipSign)                  { $tags += 'unsigned' }
@@ -158,3 +176,7 @@ Write-Step "Done"
 Write-Host "  Version:   $productVersion ($Configuration)" -ForegroundColor Green
 Write-Host "  Archive:   $zipPath ($zipSize MB)" -ForegroundColor Green
 Write-Host "  SHA256:    $hash" -ForegroundColor Green
+
+} finally {
+    if ($originalProps) { [IO.File]::WriteAllText($propsPath, $originalProps) }
+}
