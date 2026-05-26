@@ -8,6 +8,10 @@ inputs:
   edit_path:
     description: Value for BookEditPath (e.g. edit/master/docs)
     required: true
+  base_url:
+    description: Base URL for Hugo (e.g. https://yusei36.github.io/KeePassPasskey/)
+    required: false
+    default: "/"
 
 runs:
   using: composite
@@ -60,19 +64,19 @@ runs:
         {
           "name": "KeePassPasskey",
           "short_name": "KeePassPasskey",
-          "start_url": "/",
-          "scope": "/",
+          "start_url": "./",
+          "scope": "./",
           "display": "standalone",
           "background_color": "#1a0848",
           "theme_color": "#1a0848",
           "icons": [
             {
-              "src": "/favicon.png",
+              "src": "favicon.png",
               "sizes": "256x256",
               "type": "image/png"
             },
             {
-              "src": "/favicon.svg",
+              "src": "favicon.svg",
               "sizes": "any",
               "type": "image/svg+xml"
             }
@@ -163,4 +167,4 @@ runs:
         printf -- '---\nurl: /\n---\n\n' > build/content/_index.md
         fix_links < README.md >> build/content/_index.md
 
-        hugo --source build --minify --baseURL "/"
+        hugo --source build --minify --baseURL "${{ inputs.base_url }}"

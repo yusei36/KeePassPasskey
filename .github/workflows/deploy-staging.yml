@@ -30,6 +30,7 @@ jobs:
       - uses: ./.github/actions/build-website
         with:
           edit_path: edit/develop/docs
+          base_url: ${{ steps.pages.outputs.base_url }}
 
       - uses: actions/upload-pages-artifact@v5
         with:
