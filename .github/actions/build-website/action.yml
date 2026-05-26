@@ -41,19 +41,19 @@ runs:
         cp -r docs/images build/static/docs/images
         cp docs/images/favicon.ico build/static/favicon.ico
         cp src/KeePassPasskeyProvider/Resources/logo-dark.svg build/static/favicon.svg
-        python3 -c "
-import struct
-with open('docs/images/favicon.ico', 'rb') as f:
-    data = f.read()
-_, _, count = struct.unpack_from('<HHH', data, 0)
-for i in range(count):
-    off = 6 + i * 16
-    w, h, _, _, _, _, size, img_off = struct.unpack_from('<BBBBHHII', data, off)
-    if (w or 256) == 256:
-        with open('build/static/favicon.png', 'wb') as out:
-            out.write(data[img_off:img_off+size])
-        break
-"
+        python3 << 'PYEOF'
+        import struct
+        with open('docs/images/favicon.ico', 'rb') as f:
+            data = f.read()
+        _, _, count = struct.unpack_from('<HHH', data, 0)
+        for i in range(count):
+            off = 6 + i * 16
+            w, h, _, _, _, _, size, img_off = struct.unpack_from('<BBBBHHII', data, off)
+            if (w or 256) == 256:
+                with open('build/static/favicon.png', 'wb') as out:
+                    out.write(data[img_off:img_off+size])
+                break
+        PYEOF
         cp version.txt build/static/version.txt
 
         cat > build/static/manifest.json << 'EOF'
