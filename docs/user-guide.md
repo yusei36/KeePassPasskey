@@ -4,9 +4,9 @@ KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once ins
 
 ## Requirements
 
+- [KeePass](https://keepass.info/) 2.54 or later
 - Windows 11 24H2 or later
 - TPM 2.0 (limitation of the Windows WebAuthn API for third-party passkey providers)
-- [KeePass](https://keepass.info/) 2.54 or later
 
 ## Installation
 
