@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.ComponentModel;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -197,8 +196,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private async Task CopyToClipboard(string? text)
     {
         if (text is null) return;
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } win })
-            await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+        await Application.CopyToClipboardAsync(text);
     }
 
     // Log level takes effect immediately without a full KeePass save.

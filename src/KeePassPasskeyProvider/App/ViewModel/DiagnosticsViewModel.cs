@@ -3,8 +3,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
@@ -53,8 +51,7 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
     private async Task CopyToClipboard(string? text)
     {
         if (text is null) return;
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } win })
-            await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+        await Application.CopyToClipboardAsync(text);
     }
 
     [RelayCommand]

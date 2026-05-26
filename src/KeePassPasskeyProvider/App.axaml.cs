@@ -15,6 +15,14 @@ public class Application : Avalonia.Application
     private TrayIconService? _trayIconService;
     private MainWindow? _window;
 
+    internal static Window? AppWindow => (Avalonia.Application.Current as Application)?._window;
+
+    internal static async Task CopyToClipboardAsync(string text)
+    {
+        if (AppWindow is { } win)
+            await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+    }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);

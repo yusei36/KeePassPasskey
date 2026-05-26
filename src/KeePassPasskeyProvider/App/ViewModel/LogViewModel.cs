@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -46,8 +45,7 @@ public sealed partial class LogViewModel : ObservableObject, IDisposable
     {
         var lines = SelectedLogTabIndex == 0 ? ProviderLogLines : PluginLogLines;
         string text = string.Join(Environment.NewLine, lines.Select(l => l.Text));
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: { } win })
-            await (TopLevel.GetTopLevel(win)?.Clipboard?.SetTextAsync(text) ?? Task.CompletedTask);
+        await Application.CopyToClipboardAsync(text);
     }
 
     [RelayCommand]
