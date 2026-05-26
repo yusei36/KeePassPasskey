@@ -3,6 +3,8 @@
 
 name: Build Website
 description: Build the KeePassPasskey Hugo website into build/public
+# Used by both deploy-website.yml (production) and deploy-staging.yml (staging).
+# When changing inputs or build behaviour here, update both callers accordingly.
 
 inputs:
   edit_path:

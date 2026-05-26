@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 name: Deploy Website
+# Deploys the production site to keepasspasskey.github.io (served at /).
+# Shares the build step with deploy-staging.yml via .github/actions/build-website.
+# When changing build behaviour, keep both workflows and the action in sync.
 
 on:
   push:
