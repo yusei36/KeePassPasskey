@@ -1,12 +1,12 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using KeePass.Plugins;
+using KeePass.Util.Spr;
 using KeePassLib;
 using KeePassLib.Security;
 using KeePassPasskey.Passkey;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
-using KeePassPasskeyShared.Passkey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,7 +82,7 @@ namespace KeePassPasskey.Storage
                     if (!entry.Strings.Exists(FieldRelyingParty)) continue;
                     var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
                     if (string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
-                        results.Add(ExtractCredential(entry));
+                        results.Add(ExtractCredential(entry, db));
                 }
             }
             return results;
@@ -108,7 +108,7 @@ namespace KeePassPasskey.Storage
                     if (!string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase)) continue;
                     var entryCredId = entry.Strings.ReadSafe(FieldCredentialId);
                     if (credIdSet.Contains(entryCredId))
-                        results.Add(ExtractCredential(entry));
+                        results.Add(ExtractCredential(entry, db));
                 }
             }
             return results;
@@ -162,14 +162,14 @@ namespace KeePassPasskey.Storage
                 {
                     if (!IsSearchable(entry)) continue;
                     if (entry.Strings.Exists(FieldCredentialId) && entry.Strings.Exists(FieldRelyingParty))
-                        results.Add(ExtractCredentialMetadata(entry));
+                        results.Add(ExtractCredentialMetadata(entry, db));
                 }
             }
             return results;
         }
 
         // Returns only public metadata - no private key material. Used for listing credentials.
-        private static PasskeyCredential ExtractCredentialMetadata(PwEntry entry)
+        private static PasskeyCredential ExtractCredentialMetadata(PwEntry entry, PwDatabase db)
         {
             return new PasskeyCredential
             {
@@ -177,34 +177,34 @@ namespace KeePassPasskey.Storage
                 RelyingParty = entry.Strings.ReadSafe(FieldRelyingParty),
                 UserHandle = entry.Strings.ReadSafe(FieldUserHandle),
                 Username = entry.Strings.ReadSafe(FieldUsername),
-                Title = entry.Strings.ReadSafe(PwDefs.TitleField),
+                Title = ResolveTitle(entry, db),
             };
         }
 
-        internal PasskeyCredential ExtractCredential(PwEntry entry)
+        internal PasskeyCredential ExtractCredential(PwEntry entry, PwDatabase db)
         {
-            var pem = entry.Strings.ReadSafe(FieldPrivateKey);
+            var credential = ExtractCredentialMetadata(entry, db);
 
-            PasskeyAlgorithm algorithm = PasskeyAlgorithm.ES256;
+            var pem = entry.Strings.ReadSafe(FieldPrivateKey);
+            credential.PrivateKeyPem = pem;
+
             if (!string.IsNullOrEmpty(pem))
             {
-                try { algorithm = PasskeyKeyHelper.DetectAlgorithm(pem); }
+                try { credential.Algorithm = PasskeyKeyHelper.DetectAlgorithm(pem); }
                 catch (CryptographicException ex)
                 {
-                    Log.Warn($"Failed to detect passkey algorithm for entry '{entry.Strings.ReadSafe(PwDefs.TitleField)}': {ex.Message}");
+                    Log.Warn($"Failed to detect passkey algorithm for entry '{credential.Title}': {ex.Message}");
                 }
             }
 
-            return new PasskeyCredential
-            {
-                CredentialId = entry.Strings.ReadSafe(FieldCredentialId),
-                PrivateKeyPem = pem,
-                RelyingParty = entry.Strings.ReadSafe(FieldRelyingParty),
-                UserHandle = entry.Strings.ReadSafe(FieldUserHandle),
-                Username = entry.Strings.ReadSafe(FieldUsername),
-                Title = entry.Strings.ReadSafe(PwDefs.TitleField),
-                Algorithm = algorithm,
-            };
+            return credential;
+        }
+
+        private static string ResolveTitle(PwEntry entry, PwDatabase db)
+        {
+            var raw = entry.Strings.ReadSafe(PwDefs.TitleField);
+            if (string.IsNullOrEmpty(raw)) return raw;
+            return SprEngine.Compile(raw, new SprContext(entry, db, SprCompileFlags.Deref));
         }
 
         private static bool IsSearchable(PwEntry entry)
