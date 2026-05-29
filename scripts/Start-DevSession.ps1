@@ -100,6 +100,14 @@ function Connect-VisualStudioDebugger([int]$TargetProcessId) {
     return $false
 }
 
+# A running KeePass locks the plugin DLLs that Build-AndInstall replaces; close it first.
+$running = Get-Process -Name 'KeePass' -ErrorAction SilentlyContinue
+if ($running) {
+    Write-Host "Stopping running KeePass instance(s)..."
+    $running | Stop-Process -Force
+    $running | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
+}
+
 & "$PSScriptRoot\Build-AndInstall.ps1" -Configuration $Configuration
 
 # Start the just-installed provider
