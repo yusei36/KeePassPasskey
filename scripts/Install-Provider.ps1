@@ -6,12 +6,14 @@
     Builds, signs, and installs the KeePassPasskey MSIX package.
 
 .DESCRIPTION
-    1. Builds the MSIX package (msbuild wapproj).
-    2. Builds the KeePassPasskey plugin DLL (dotnet build).
-    3. Creates a self-signed cert if one doesn't exist (CN=KeePassPasskey Dev for Debug, CN=KeePassPasskey for Release).
-    4. Signs the MSIX with that cert.
-    5. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
-    6. Installs the MSIX package.
+    1. Builds the provider MSIX package (msbuild wapproj).
+    2. Creates a self-signed cert if one doesn't exist (CN=KeePassPasskey Dev for Debug, CN=KeePassPasskey for Release).
+    3. Signs the MSIX with that cert.
+    4. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
+    5. Installs the MSIX package.
+
+    Does not build the plugin DLL - that is built by the plugin project (e.g. on F5 in Visual Studio,
+    or by Publish-Package.ps1 for release).
 
 .PARAMETER Configuration
     Build configuration: Debug or Release. Defaults to Debug.
@@ -26,9 +28,9 @@
     Skip cert creation; use if the cert already exists in CurrentUser\My.
 
 .EXAMPLE
-    .\Build-AndInstall.ps1
-    .\Build-AndInstall.ps1 -Release
-    .\Build-AndInstall.ps1 -SkipBuild -SkipCert
+    .\Install-Provider.ps1
+    .\Install-Provider.ps1 -Release
+    .\Install-Provider.ps1 -SkipBuild -SkipCert
 #>
 param(
     [ValidateSet('Debug', 'Release')]
@@ -54,10 +56,8 @@ Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundCol
 # -- 0. Build ------------------------------------------------------------------
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
-    Write-Step "Building MSIX package"
+    Write-Step "Building provider MSIX package"
     Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
-    Write-Step "Building KeePassPasskey plugin DLL"
-    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
 }
 
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration

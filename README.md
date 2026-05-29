@@ -97,7 +97,7 @@ src/
   KeePassPasskeyPlugin/         KeePass plugin (.NET Framework 4.8)
   KeePassPasskeyProvider.Package/  MSIX packaging (wapproj)
 scripts/
-  Build-AndInstall.ps1          Build, sign, and install for local testing (requires elevation)
+  Install-Provider.ps1          Build, sign, and install the provider for local testing (requires elevation)
   Publish-Package.ps1           Build Release, sign, and produce distributable zip
   Install.bat                   End-user installer (shipped inside the release zip)
 ```
@@ -126,7 +126,7 @@ Copy-Item "C:\Program Files\KeePass Password Safe 2\KeePass.exe" build\KeePass\
 Then run the build script as Administrator - builds the MSIX, signs it, and installs:
 
 ```powershell
-.\scripts\Build-AndInstall.ps1 -Configuration Release
+.\scripts\Install-Provider.ps1 -Configuration Release
 ```
 
 Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass. Then click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.

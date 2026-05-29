@@ -7,7 +7,7 @@
     attaching the running Visual Studio for debugging.
 
 .DESCRIPTION
-    Used by the "KeePass + ..." launch profiles. Runs Build-AndInstall.ps1
+    Used by the "KeePass + ..." launch profiles. Runs Install-Provider.ps1
     (Debug = dev identity), starts the installed provider, then starts build\KeePass\KeePass.exe.
 
     Any process attached via -DebugProvider / -DebugPlugin keeps its own Visual Studio debug session,
@@ -100,15 +100,7 @@ function Connect-VisualStudioDebugger([int]$TargetProcessId) {
     return $false
 }
 
-# A running KeePass locks the plugin DLLs that Build-AndInstall replaces; close it first.
-$running = Get-Process -Name 'KeePass' -ErrorAction SilentlyContinue
-if ($running) {
-    Write-Host "Stopping running KeePass instance(s)..."
-    $running | Stop-Process -Force
-    $running | Wait-Process -Timeout 10 -ErrorAction SilentlyContinue
-}
-
-& "$PSScriptRoot\Build-AndInstall.ps1" -Configuration $Configuration
+& "$PSScriptRoot\Install-Provider.ps1" -Configuration $Configuration
 
 # Start the just-installed provider
 $subject = Get-CertSubject $Configuration

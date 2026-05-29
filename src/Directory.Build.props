@@ -18,7 +18,7 @@
   <!-- Optimized controls release-like output (IL optimization + the provider's single-file/trim
        block) independently of Configuration, which only selects identity (Debug = dev identity via
        #if DEBUG). Release defaults to optimized; Publish-Package passes /p:Optimized=true so even a
-       -Dev (Debug) build is packaged release-like. Build-AndInstall leaves it unset for true debug. -->
+       -Dev (Debug) build is packaged release-like. -->
   <PropertyGroup Condition="'$(Configuration)' == 'Release' And '$(Optimized)' == ''">
     <Optimized>true</Optimized>
   </PropertyGroup>
