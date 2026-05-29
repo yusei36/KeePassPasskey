@@ -106,9 +106,6 @@ $pkg = Get-AppxPackage -Name 'KeePassPasskeyProvider' |
        Where-Object { $_.Publisher -eq $certSubject } |
        Select-Object -First 1
 if ($pkg) {
-    $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
-    if (Test-Path $exe) { Start-Process $exe }
-
     $logDir         = "$env:LocalAppData\KeePassPasskeyProvider"
     $productVersion = Get-PluginVersion -BuildDir "$RepoRoot\build\$Configuration"
 

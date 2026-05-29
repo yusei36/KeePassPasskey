@@ -4,10 +4,16 @@
       "commandName": "Executable",
       "executablePath": "..\\..\\build\\KeePass\\KeePass.exe"
     },
-    "KeePass (build + install provider)": {
+    "KeePass + Install Provider": {
       "commandName": "Executable",
-      "executablePath": "powershell.exe",
-      "commandLineArgs": "-NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Launch-KeePass.ps1\"",
+      "executablePath": "conhost.exe",
+      "commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Start-DevSession.ps1\" -DebugPlugin",
+      "workingDirectory": "."
+    },
+    "KeePass + Debug Provider": {
+      "commandName": "Executable",
+      "executablePath": "conhost.exe",
+      "commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Start-DevSession.ps1\" -DebugProvider -DebugPlugin",
       "workingDirectory": "."
     }
   }
