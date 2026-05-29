@@ -1,6 +1,0 @@
-<Project>
-  <!-- Debug builds get a '-dev' pre-release suffix unless VersionSuffix is already set. -->
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug' and '$(VersionSuffix)' == ''">
-    <VersionSuffix>dev</VersionSuffix>
-  </PropertyGroup>
-</Project>

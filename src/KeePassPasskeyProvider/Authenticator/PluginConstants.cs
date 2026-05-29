@@ -4,11 +4,19 @@ namespace KeePassPasskeyProvider.Authenticator;
 
 internal static class PluginConstants
 {
+#if DEBUG
+    /// <summary>KeePassPasskey Provider COM server CLSID (dev).</summary>
+    public static readonly Guid KeePassPasskeyProviderClsid = new("f048763a-d151-4fb0-b96e-315c543b2431");
+
+    /// <summary>KeePassPasskey Provider AAGUID (dev).</summary>
+    public static readonly Guid KeePassPasskeyProviderAaguid = new("56fc5580-c119-4fb8-8964-a1241f2da8ed");
+#else
     /// <summary>KeePassPasskey Provider COM server CLSID.</summary>
     public static readonly Guid KeePassPasskeyProviderClsid = new("4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e");
 
     /// <summary>KeePassPasskey Provider AAGUID.</summary>
     public static readonly Guid KeePassPasskeyProviderAaguid = new("9addb28c-b46f-4402-808f-019651441ff3");
+#endif
 
     /// <summary>AAGUID as 16 bytes in RFC 4122 big-endian order, for use in authenticatorData and CBOR.</summary>
     public static readonly byte[] KeePassPasskeyProviderAaguidBytes = AaguidToRfc4122Bytes(KeePassPasskeyProviderAaguid);

@@ -8,7 +8,7 @@
 .DESCRIPTION
     1. Builds the MSIX package (msbuild wapproj).
     2. Builds the KeePassPasskey plugin DLL (dotnet build).
-    3. Creates a self-signed cert (CN=KeePassPasskey) if one doesn't exist.
+    3. Creates a self-signed cert if one doesn't exist (CN=KeePassPasskey Dev for Debug, CN=KeePassPasskey for Release).
     4. Signs the MSIX with that cert.
     5. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
     6. Installs the MSIX package.
@@ -57,8 +57,9 @@ if (-not $SkipBuild) {
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
 
 # -- 1. Cert -------------------------------------------------------------------
+$certSubject = Get-CertSubject $Configuration
 Write-Step "Checking for signing certificate"
-$cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
+$cert  = Get-OrCreateCertificate -Subject $certSubject -SkipCreate:$SkipCert
 $thumb = $cert.Thumbprint
 
 # -- 2. Trust -----------------------------------------------------------------
@@ -77,10 +78,17 @@ Invoke-SignMsix -MsixPath $MsixPath -Thumbprint $thumb
 # -- 4. Install ---------------------------------------------------------------
 Write-Step "Installing MSIX"
 
-$existing = Get-AppxPackage -Name '*KeePassPasskeyProvider*'
+# Only replace the package with the matching publisher, so a Debug install leaves a Release
+# install (and vice versa) untouched.
+$existing = Get-AppxPackage -Name 'KeePassPasskeyProvider' |
+            Where-Object { $_.Publisher -eq $certSubject } |
+            Select-Object -First 1
 if ($existing) {
     Write-Host "  Removing existing package: $($existing.PackageFullName)"
-    Stop-Process -Name KeePassPasskeyProvider -Force -ErrorAction SilentlyContinue
+    # Stop only the provider process running from this package, not the other build's.
+    Get-Process -Name KeePassPasskeyProvider -ErrorAction SilentlyContinue |
+        Where-Object { $_.Path -and $_.Path.StartsWith($existing.InstallLocation, [StringComparison]::OrdinalIgnoreCase) } |
+        Stop-Process -Force -ErrorAction SilentlyContinue
     Remove-AppxPackage -Package $existing.PackageFullName
     Write-Host "  Removed."
 }
@@ -88,7 +96,9 @@ if ($existing) {
 Add-AppxPackage -Path $MsixPath
 Write-Host "  Installed."
 
-$pkg = Get-AppxPackage -Name '*KeePassPasskeyProvider*'
+$pkg = Get-AppxPackage -Name 'KeePassPasskeyProvider' |
+       Where-Object { $_.Publisher -eq $certSubject } |
+       Select-Object -First 1
 if ($pkg) {
     $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
     if (Test-Path $exe) { Start-Process $exe }

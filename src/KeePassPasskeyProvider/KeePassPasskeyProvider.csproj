@@ -19,8 +19,9 @@
     <SelfContained>true</SelfContained>
   </PropertyGroup>
 
-  <!-- Single-file publish only for Release to keep Debug builds debuggable -->
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+  <!-- Single-file/trimmed publish is gated on Optimized (not Configuration) so a Debug-identity
+       build can still be packaged release-like. Optimized defaults true for Release; -->
+  <PropertyGroup Condition="'$(Optimized)' == 'true'">
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>

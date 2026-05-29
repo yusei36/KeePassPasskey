@@ -21,7 +21,9 @@
            THIRD_PARTY_NOTICES.txt
 
 .PARAMETER Configuration
-    Build configuration: Debug or Release. Defaults to Release.
+    Selects identity only: Release = product identity, Debug = dev identity (separate cert/publisher
+    + CLSID/AAGUID, installs beside a stable release). Output is release-like optimized by default
+    (see -NoOptimize). Defaults to Release.
 
 .PARAMETER SkipBuild
     Skip build and publish steps; use if you already have build output.
@@ -34,7 +36,13 @@
     Intended for CI/unsigned builds.
 
 .PARAMETER Dev
-    Release build stamped with the 'dev' version suffix.
+    Build the dev-identity package (maps to Configuration Debug): optimized like a release, signed with
+    the dev cert, stamped with the 'dev' version suffix, and installable beside a stable release.
+
+.PARAMETER NoOptimize
+    Skip release-like optimization (single-file, trimming, IL optimize), producing a plain debuggable
+    build. Only meaningful for the Debug configuration; Release stays optimized via the props default.
+    The zip is tagged 'unopt'.
 
 .EXAMPLE
     .\Publish-Package.ps1
@@ -42,6 +50,7 @@
     .\Publish-Package.ps1 -Configuration Debug
     .\Publish-Package.ps1 -SkipBuild
     .\Publish-Package.ps1 -Configuration Debug -SkipSign
+    .\Publish-Package.ps1 -Configuration Debug -SkipSign -NoOptimize
 #>
 param(
     [ValidateSet('Debug', 'Release')]
@@ -49,10 +58,13 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipCert,
     [switch]$SkipSign,
-    [switch]$Dev
+    [switch]$Dev,
+    [switch]$NoOptimize
 )
 
-if ($Dev) { $Configuration = 'Release' }
+# -Dev maps to the Debug identity. Output is release-like optimized by default (see -NoOptimize);
+# Configuration here only chooses product (Release) vs dev (Debug) identity. Debug auto-stamps 'dev'.
+if ($Dev) { $Configuration = 'Debug' }
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -62,17 +74,6 @@ Import-Module "$PSScriptRoot\Shared.psm1" -Force
 $RepoRoot              = Split-Path $PSScriptRoot -Parent
 $AppPackagesDir        = "$RepoRoot\build\AppPackages"
 $ThirdPartyNoticesName = 'THIRD_PARTY_NOTICES.txt'
-$propsPath             = "$RepoRoot\src\Directory.Build.props"
-
-# Temporarily stamp VersionSuffix=dev in Directory.Build.props for -Dev builds.
-$originalProps = $null
-if ($Dev) {
-    $originalProps = [IO.File]::ReadAllText($propsPath)
-    $patched = $originalProps -replace '(<VersionSuffix>)[^<]*(</VersionSuffix>)', '${1}dev${2}'
-    [IO.File]::WriteAllText($propsPath, $patched)
-}
-
-try {
 
 $versions = Get-BuildVersions $RepoRoot -Configuration $Configuration
 Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
@@ -87,14 +88,16 @@ Invoke-GenerateLicenseNotices -RepoRoot $RepoRoot -OutputFile $noticesPath
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild
 
+    # Release-like optimized by default; -NoOptimize produces a plain debuggable build (Debug only).
+    $optimized = -not $NoOptimize
     Write-Step "Building provider app"
-    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration
+    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration -Optimized:$optimized
 
     Write-Step "Building MSIX package"
-    Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
+    Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized
 
     Write-Step "Building KeePassPasskey plugin DLL"
-    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
+    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -Optimized:$optimized
 }
 
 # -- 3. Locate build artifacts --------------------------------------------------
@@ -109,7 +112,7 @@ Invoke-ILRepack -BuildDir $buildDir -Configuration $Configuration
 $cert = $null
 if (-not $SkipSign) {
     Write-Step "Checking for signing certificate"
-    $cert  = Get-OrCreateCertificate -SkipCreate:$SkipCert
+    $cert  = Get-OrCreateCertificate -Subject (Get-CertSubject $Configuration) -SkipCreate:$SkipCert
     $thumb = $cert.Thumbprint
 
     Write-Step "Signing MSIX"
@@ -125,6 +128,7 @@ if (-not $SkipSign) {
 $versions   = Get-BuildVersions $RepoRoot -Configuration $Configuration
 $tags       = @()
 if ($Configuration -eq 'Debug') { $tags += 'debug' }
+if ($NoOptimize)                { $tags += 'unopt' }
 if ($SkipSign)                  { $tags += 'unsigned' }
 $suffix     = if ($tags.Count -gt 0) { '-' + ($tags -join '-') } else { '' }
 $zipName    = "KeePassPasskey-$($versions.Version)$suffix.zip"
@@ -139,8 +143,10 @@ Write-Step "Assembling release archive: $zipName"
 $pluginDir  = "$stagingDir\KeePassPasskeyPlugin"
 New-Item $pluginDir -ItemType Directory | Out-Null
 
-$extensions = if ($Configuration -eq 'Debug') { '.dll', '.pdb' } else { '.dll' }
-Get-ChildItem $buildDir -File | Where-Object { $_.Extension -in $extensions } | Copy-Item -Destination $pluginDir
+# Dev-identity (Debug) builds ship plugin PDBs so testers' KeePass logs carry file/line numbers;
+# these stay useful after optimization for stack-trace symbolication. Stable Release ships .dll only.
+$pluginExtensions = if ($Configuration -eq 'Debug') { '.dll', '.pdb' } else { '.dll' }
+Get-ChildItem $buildDir -File | Where-Object { $_.Extension -in $pluginExtensions } | Copy-Item -Destination $pluginDir
 
 Copy-Item $MsixPath "$stagingDir\"
 
@@ -176,7 +182,3 @@ Write-Step "Done"
 Write-Host "  Version:   $productVersion ($Configuration)" -ForegroundColor Green
 Write-Host "  Archive:   $zipPath ($zipSize MB)" -ForegroundColor Green
 Write-Host "  SHA256:    $hash" -ForegroundColor Green
-
-} finally {
-    if ($originalProps) { [IO.File]::WriteAllText($propsPath, $originalProps) }
-}

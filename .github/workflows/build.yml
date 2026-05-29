@@ -25,7 +25,11 @@ jobs:
         with:
           dotnet-version: '10.x'
 
-      - name: Build (Debug, unsigned)
+      - name: Build (Debug, unoptimized, unsigned)
+        shell: pwsh
+        run: .\scripts\Publish-Package.ps1 -Configuration Debug -SkipSign -NoOptimize
+
+      - name: Build (Debug, optimized, unsigned)
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Debug -SkipSign
 
@@ -34,7 +38,13 @@ jobs:
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Release -SkipSign
 
-      - name: Upload artifact (Debug)
+      - name: Upload artifact (Debug, unoptimized)
+        uses: actions/upload-artifact@v7
+        with:
+          name: KeePassPasskey-debug-unopt-unsigned
+          path: build\KeePassPasskey-*-debug-unopt-unsigned.zip
+
+      - name: Upload artifact (Debug, optimized)
         uses: actions/upload-artifact@v7
         with:
           name: KeePassPasskey-debug-unsigned

@@ -7,4 +7,22 @@
     <Company>Uwe Kögel</Company>
     <Copyright>Copyright © 2026 Uwe Kögel</Copyright>
   </PropertyGroup>
+
+  <!-- Debug builds get the '-dev' pre-release suffix; Release uses the empty VersionSuffix above
+       (set a tag there before a release). Set in props (not targets) so it is applied before the
+       SDK computes Version, and therefore reaches the assembly InformationalVersion. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <VersionSuffix>dev</VersionSuffix>
+  </PropertyGroup>
+
+  <!-- Optimized controls release-like output (IL optimization + the provider's single-file/trim
+       block) independently of Configuration, which only selects identity (Debug = dev identity via
+       #if DEBUG). Release defaults to optimized; Publish-Package passes /p:Optimized=true so even a
+       -Dev (Debug) build is packaged release-like. Build-AndInstall leaves it unset for true debug. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' And '$(Optimized)' == ''">
+    <Optimized>true</Optimized>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Optimized)' == 'true'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
 </Project>
