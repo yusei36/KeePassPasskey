@@ -16,6 +16,9 @@
 .PARAMETER Configuration
     Build configuration: Debug or Release. Defaults to Debug.
 
+.PARAMETER Release
+    Shortcut for -Configuration Release (product identity).
+
 .PARAMETER SkipBuild
     Skip build steps; use if you already have a built MSIX.
 
@@ -24,15 +27,18 @@
 
 .EXAMPLE
     .\Build-AndInstall.ps1
-    .\Build-AndInstall.ps1 -Configuration Release
+    .\Build-AndInstall.ps1 -Release
     .\Build-AndInstall.ps1 -SkipBuild -SkipCert
 #>
 param(
     [ValidateSet('Debug', 'Release')]
     [string]$Configuration = 'Debug',
+    [switch]$Release,
     [switch]$SkipBuild,
     [switch]$SkipCert
 )
+
+if ($Release) { $Configuration = 'Release' }
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
