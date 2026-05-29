@@ -28,7 +28,11 @@ internal static class PluginConstants
         return bytes;
     }
 
+#if DEBUG
+    public const string PluginName      = "KeePassPasskey Dev ";
+#else
     public const string PluginName      = "KeePassPasskey "; // trailing space is to work around Windows quirk where in some contexts the name is not properly displayed
+#endif
     public const string PluginRpId      = "keepasspasskey.github.io";
     public const string PluginRegPath   = @"Software\KeePassPasskeyProvider";
     public const string RegKeySigningKey = "OpSigningPublicKey";

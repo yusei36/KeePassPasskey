@@ -92,10 +92,15 @@ function Invoke-BuildWapproj {
     $manifest         = "$RepoRoot\src\KeePassPasskeyProvider.Package\Package.appxmanifest"
     $originalContent  = [IO.File]::ReadAllText($manifest)
     $patchedContent   = $originalContent -replace '\bVersion="(\d+\.){3}\d+"', "Version=`"$($versions.FileVersion)`""
-    # Debug builds get the dev publisher + dev CLSID so they install and register beside a Release build.
+    # Debug builds get the dev publisher + dev CLSID so they install and register beside a Release
+    # build, plus a "Dev" display name so they are distinguishable in the Start menu / Settings.
     if ($Configuration -eq 'Debug') {
         $patchedContent = $patchedContent -replace 'Publisher="CN=KeePassPasskey"', "Publisher=`"$script:DevCertSubject`""
         $patchedContent = $patchedContent -replace [regex]::Escape($script:ReleaseClsid), $script:DevClsid
+        $patchedContent = $patchedContent -replace '<DisplayName>KeePassPasskey</DisplayName>', '<DisplayName>KeePassPasskey Dev</DisplayName>'
+        $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey"', 'DisplayName="KeePassPasskey Dev"'
+        $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey \(provider\)"', 'DisplayName="KeePassPasskey Dev (provider)"'
+        $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey \(tray\)"', 'DisplayName="KeePassPasskey Dev (tray)"'
     }
     [IO.File]::WriteAllText($manifest, $patchedContent)
 
