@@ -3,6 +3,12 @@
     "KeePass": {
       "commandName": "Executable",
       "executablePath": "..\\..\\build\\KeePass\\KeePass.exe"
+    },
+    "KeePass (build + install provider)": {
+      "commandName": "Executable",
+      "executablePath": "powershell.exe",
+      "commandLineArgs": "-NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Launch-KeePass.ps1\"",
+      "workingDirectory": "."
     }
   }
 }

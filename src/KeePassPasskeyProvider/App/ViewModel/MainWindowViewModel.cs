@@ -25,6 +25,14 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
 
+    // Dev builds use the separate dev identity (cert/CLSID/AAGUID) gated on #if DEBUG, so they can
+    // coexist with a stable install. Surface a banner so it is obvious which one is running.
+#if DEBUG
+    public bool IsDevBuild { get; } = true;
+#else
+    public bool IsDevBuild { get; } = false;
+#endif
+
     internal event EventHandler? TrayStateChanged;
 
     internal void RaiseTrayStateChanged()

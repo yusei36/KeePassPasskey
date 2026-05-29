@@ -26,6 +26,11 @@ function Assert-Elevation {
     if (-not $p.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
         Write-Warning "This script must run as Administrator."
         Write-Warning "Re-launch PowerShell as Admin and run the script again."
+        # Keep the window open so the message is readable when launched from a profile that closes
+        # its console on exit. Skip the wait when there is no interactive console (e.g. CI).
+        if ([Environment]::UserInteractive) {
+            Read-Host "Press Enter to close" | Out-Null
+        }
         exit 1
     }
 }
