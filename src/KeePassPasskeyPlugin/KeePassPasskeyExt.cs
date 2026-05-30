@@ -65,7 +65,7 @@ namespace KeePassPasskey
 
             try
             {
-                var passkeyStorage = new PasskeyEntryStorage(_host);
+                var passkeyStorage = new PasskeyEntryStorage(_host, settingsStorage);
                 var handler = new RequestHandler(_host, passkeyStorage, settingsStorage);
                 _pipeServer = new PipeServer(handler);
                 _pipeServer.Start();

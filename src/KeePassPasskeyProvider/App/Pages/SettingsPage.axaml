@@ -132,7 +132,26 @@
 
             </ui:SettingsExpander>
 
-<ui:SettingsExpander Header="Advanced"
+            <!-- "Passkey Entries" still fits once group/database storage settings land; 
+			update the description then, e.g. "Where new passkey entries are created and stored". -->
+            <ui:SettingsExpander Header="Passkey Entries"
+                                 IconSource="Save"
+                                 Description="How new passkey entries are created"
+                                 IsExpanded="True">
+
+                <ui:SettingsExpanderItem Content="Tag new passkeys"
+                                         Description="Add a &quot;Passkey&quot; tag to each entry created when a new passkey is registered">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ToggleSwitch IsChecked="{Binding AddPasskeyTag}"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      Margin="0 0 4 0" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+            </ui:SettingsExpander>
+
+            <ui:SettingsExpander Header="Advanced"
                                  IconSource="Setting"
                                  Description="Timing, resilience and logging settings"
                                  IsExpanded="False">

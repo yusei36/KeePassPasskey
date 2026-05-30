@@ -18,6 +18,9 @@ namespace KeePassPasskeyShared.Settings
         [JsonProperty("showErrorNotifications")]
         public bool ShowErrorNotifications { get; set; } = true;
 
+        [JsonProperty("addPasskeyTag")]
+        public bool AddPasskeyTag { get; set; } = true;
+
         [JsonProperty("notificationVerificationTimeoutMilliseconds")]
         public int NotificationVerificationTimeoutMilliseconds { get; set; } = 30_000;
 

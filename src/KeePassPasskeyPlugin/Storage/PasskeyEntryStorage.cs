@@ -19,6 +19,7 @@ namespace KeePassPasskey.Storage
     {
         private static readonly Guid PasskeyGroupUuid = new Guid("c3eeec14-998f-458c-924d-79bb98732a18");
         private const string PasskeyGroupName = "Passkeys";
+        private const string PasskeyTagName = "Passkey";
         private const string KeePassXcPasskeyGroupName = "KeePassXC-Browser Passkeys";
         private const string FieldCredentialId = "KPEX_PASSKEY_CREDENTIAL_ID";
         private const string FieldPrivateKey = "KPEX_PASSKEY_PRIVATE_KEY_PEM";
@@ -29,10 +30,12 @@ namespace KeePassPasskey.Storage
         private const string FieldFlagBs = "KPEX_PASSKEY_FLAG_BS";
 
         private readonly IPluginHost _host;
+        private readonly SettingsStorage _settingsStorage;
 
-        internal PasskeyEntryStorage(IPluginHost host)
+        internal PasskeyEntryStorage(IPluginHost host, SettingsStorage settingsStorage)
         {
             _host = host;
+            _settingsStorage = settingsStorage;
         }
 
         internal bool CreatePasskeyEntry(PasskeyCredential credential, DatabaseInfo target = null)
@@ -53,7 +56,8 @@ namespace KeePassPasskey.Storage
             entry.Strings.Set(FieldFlagBe, new ProtectedString(false, "1"));
             entry.Strings.Set(FieldFlagBs, new ProtectedString(false, "1"));
 
-            entry.AddTag("Passkey");
+            if (_settingsStorage.Load().AddPasskeyTag)
+                entry.AddTag(PasskeyTagName);
 
             var db = ResolveDatabaseOrFallback(target, nameof(CreatePasskeyEntry));
             if (db == null || !db.IsOpen) return false;

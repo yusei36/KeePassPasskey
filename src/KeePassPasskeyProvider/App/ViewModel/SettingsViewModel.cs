@@ -18,6 +18,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private UserVerificationMode _registrationVerification;
     [ObservableProperty] private UserVerificationMode _signInVerification;
     [ObservableProperty] private bool _showErrorNotifications;
+    [ObservableProperty] private bool _addPasskeyTag;
     [ObservableProperty] private double _notificationTimeoutSeconds;
     [ObservableProperty] private LogLevel _logLevel;
     [ObservableProperty] private double _credentialSyncIntervalSeconds;
@@ -100,6 +101,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         RegistrationVerification               = RegistrationVerification,
         SignInVerification                     = SignInVerification,
         ShowErrorNotifications                 = ShowErrorNotifications,
+        AddPasskeyTag                          = AddPasskeyTag,
         NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
         LogLevel                               = LogLevel,
         CredentialSyncIntervalMilliseconds     = (int)CredentialSyncIntervalSeconds * 1000,
@@ -256,6 +258,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         RegistrationVerification        = c.RegistrationVerification;
         SignInVerification               = c.SignInVerification;
         ShowErrorNotifications          = c.ShowErrorNotifications;
+        AddPasskeyTag                   = c.AddPasskeyTag;
         NotificationTimeoutSeconds      = c.NotificationVerificationTimeoutMilliseconds / 1000;
         LogLevel                        = c.LogLevel;
         CredentialSyncIntervalSeconds   = c.CredentialSyncIntervalMilliseconds / 1000;
