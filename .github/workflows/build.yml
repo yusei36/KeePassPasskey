@@ -26,32 +26,36 @@ jobs:
           dotnet-version: '10.x'
 
       - name: Build (Debug, unoptimized, unsigned)
+        if: github.ref != 'refs/heads/master'
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Debug -SkipSign -NoOptimize
 
       - name: Build (Debug, optimized, unsigned)
+        if: github.ref == 'refs/heads/master'
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Debug -SkipSign
 
       - name: Build (Release, unsigned)
-        if: github.ref == 'refs/heads/master' || inputs.build_release
+        if: inputs.build_release
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Release -SkipSign
 
       - name: Upload artifact (Debug, unoptimized)
+        if: github.ref != 'refs/heads/master'
         uses: actions/upload-artifact@v7
         with:
           name: KeePassPasskey-debug-unopt-unsigned
           path: build\KeePassPasskey-*-debug-unopt-unsigned.zip
 
       - name: Upload artifact (Debug, optimized)
+        if: github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v7
         with:
           name: KeePassPasskey-debug-unsigned
           path: build\KeePassPasskey-*-debug-unsigned.zip
 
       - name: Upload artifact (Release)
-        if: github.ref == 'refs/heads/master' || inputs.build_release
+        if: inputs.build_release
         uses: actions/upload-artifact@v7
         with:
           name: KeePassPasskey-release-unsigned
