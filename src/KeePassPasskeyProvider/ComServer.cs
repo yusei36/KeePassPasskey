@@ -14,8 +14,7 @@ internal static class ComServer
 {
     internal static int RunComServer()
     {
-        const string MutexName = "Local\\KeePassPasskeyProvider_COM";
-        using var mutex = new Mutex(false, MutexName);
+        using var mutex = new Mutex(false, PluginConstants.ComServerMutexName);
         if (!mutex.WaitOne(0))
         {
             Log.Warn("COM server already running, exiting");

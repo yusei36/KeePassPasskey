@@ -30,8 +30,12 @@ internal static class PluginConstants
 
 #if DEBUG
     public const string PluginName      = "KeePassPasskey Dev ";
+    public const string ComServerMutexName = @"Local\KeePassPasskeyProvider_COM_Dev";
+    public const string ManagementUiMutexName = @"Local\KeePassPasskeyProvider_UI_Dev";
 #else
     public const string PluginName      = "KeePassPasskey "; // trailing space is to work around Windows quirk where in some contexts the name is not properly displayed
+    public const string ComServerMutexName = @"Local\KeePassPasskeyProvider_COM";
+    public const string ManagementUiMutexName = @"Local\KeePassPasskeyProvider_UI";
 #endif
     public const string PluginRpId      = "keepasspasskey.github.io";
     public const string PluginRegPath   = @"Software\KeePassPasskeyProvider";

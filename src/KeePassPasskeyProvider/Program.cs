@@ -109,8 +109,7 @@ internal static class Program
     private static int RunManagementUI(bool startHidden = false)
     {
         StartHidden = startHidden;
-        const string MutexName = "Local\\KeePassPasskeyProvider_UI";
-        var mutex = new Mutex(false, MutexName);
+        var mutex = new Mutex(false, PluginConstants.ManagementUiMutexName);
 
         try
         {
