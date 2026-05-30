@@ -60,6 +60,14 @@ public partial class MainWindow : AppWindow
         NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
     }
 
+    internal void NavigateToSettings()
+    {
+        var settings = NavView.FooterMenuItems.OfType<NavigationViewItem>()
+            .FirstOrDefault(i => i.Tag?.ToString() == "settings");
+        if (settings != null)
+            NavView.SelectedItem = settings;
+    }
+
     protected override void OnClosing(WindowClosingEventArgs e)
     {
         base.OnClosing(e);

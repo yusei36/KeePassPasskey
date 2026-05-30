@@ -72,6 +72,14 @@ internal sealed class TrayIconService : IDisposable
         (_window as MainWindow)?.NavigateToHome();
     }
 
+    private void ShowSettings()
+    {
+        _window.Show();
+        _window.WindowState = WindowState.Normal;
+        _window.Activate();
+        (_window as MainWindow)?.NavigateToSettings();
+    }
+
     private void OnStatusChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(StatusHeroViewModel.Status) || _trayIcon == null) return;
@@ -162,6 +170,9 @@ internal sealed class TrayIconService : IDisposable
         var open = new NativeMenuItem("Open KeePassPasskey");
         open.Click += (_, _) => Dispatcher.UIThread.Post(ShowWindow);
 
+        var settings = new NativeMenuItem("Settings");
+        settings.Click += (_, _) => Dispatcher.UIThread.Post(ShowSettings);
+
         var exit = new NativeMenuItem("Exit");
         exit.Click += (_, _) =>
         {
@@ -169,6 +180,6 @@ internal sealed class TrayIconService : IDisposable
                 d.Shutdown();
         };
 
-        return new NativeMenu { open, new NativeMenuItemSeparator(), exit };
+        return new NativeMenu { open, settings, new NativeMenuItemSeparator(), exit };
     }
 }
