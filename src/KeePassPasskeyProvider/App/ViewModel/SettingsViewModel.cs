@@ -19,6 +19,8 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private UserVerificationMode _signInVerification;
     [ObservableProperty] private bool _showErrorNotifications;
     [ObservableProperty] private bool _addPasskeyTag;
+    [ObservableProperty] private string _entryTitleTemplate = "";
+    [ObservableProperty] private bool _resolveTitlePlaceholders;
     [ObservableProperty] private double _notificationTimeoutSeconds;
     [ObservableProperty] private LogLevel _logLevel;
     [ObservableProperty] private double _credentialSyncIntervalSeconds;
@@ -102,6 +104,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         SignInVerification                     = SignInVerification,
         ShowErrorNotifications                 = ShowErrorNotifications,
         AddPasskeyTag                          = AddPasskeyTag,
+        EntryTitleTemplate                     = EntryTitleTemplate,
+        ResolveTitlePlaceholders               = ResolveTitlePlaceholders,
         NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
         LogLevel                               = LogLevel,
         CredentialSyncIntervalMilliseconds     = (int)CredentialSyncIntervalSeconds * 1000,
@@ -259,6 +263,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         SignInVerification               = c.SignInVerification;
         ShowErrorNotifications          = c.ShowErrorNotifications;
         AddPasskeyTag                   = c.AddPasskeyTag;
+        EntryTitleTemplate              = c.EntryTitleTemplate;
+        ResolveTitlePlaceholders        = c.ResolveTitlePlaceholders;
         NotificationTimeoutSeconds      = c.NotificationVerificationTimeoutMilliseconds / 1000;
         LogLevel                        = c.LogLevel;
         CredentialSyncIntervalSeconds   = c.CredentialSyncIntervalMilliseconds / 1000;

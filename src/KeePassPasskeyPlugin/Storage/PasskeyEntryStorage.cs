@@ -7,6 +7,7 @@ using KeePassLib.Security;
 using KeePassPasskey.Passkey;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace KeePassPasskey.Storage
         private static readonly Guid PasskeyGroupUuid = new Guid("c3eeec14-998f-458c-924d-79bb98732a18");
         private const string PasskeyGroupName = "Passkeys";
         private const string PasskeyTagName = "Passkey";
+        private const string RpNameToken = "{RP_NAME}";
         private const string KeePassXcPasskeyGroupName = "KeePassXC-Browser Passkeys";
         private const string FieldCredentialId = "KPEX_PASSKEY_CREDENTIAL_ID";
         private const string FieldPrivateKey = "KPEX_PASSKEY_PRIVATE_KEY_PEM";
@@ -40,10 +42,10 @@ namespace KeePassPasskey.Storage
 
         internal bool CreatePasskeyEntry(PasskeyCredential credential, DatabaseInfo target = null)
         {
+            var settings = _settingsStorage.Load();
+
             var entry = new PwEntry(true, true);
             entry.IconId = PwIcon.MultiKeys;
-            entry.Strings.Set(PwDefs.TitleField, new ProtectedString(false,
-                string.Format("{0} (Passkey)", credential.RpName ?? credential.RelyingParty)));
             entry.Strings.Set(PwDefs.UserNameField, new ProtectedString(false, credential.Username ?? ""));
             entry.Strings.Set(PwDefs.UrlField, new ProtectedString(false, credential.Origin ?? ""));
             entry.Strings.Set(PwDefs.PasswordField, new ProtectedString(true, ""));
@@ -56,11 +58,15 @@ namespace KeePassPasskey.Storage
             entry.Strings.Set(FieldFlagBe, new ProtectedString(false, "1"));
             entry.Strings.Set(FieldFlagBs, new ProtectedString(false, "1"));
 
-            if (_settingsStorage.Load().AddPasskeyTag)
+            if (settings.AddPasskeyTag)
                 entry.AddTag(PasskeyTagName);
 
             var db = ResolveDatabaseOrFallback(target, nameof(CreatePasskeyEntry));
             if (db == null || !db.IsOpen) return false;
+
+            // Title is set after the other fields so placeholders like {USERNAME}/{S:...} can be
+            // resolved against the populated entry when ResolveTitlePlaceholders is enabled.
+            entry.Strings.Set(PwDefs.TitleField, new ProtectedString(false, BuildTitle(settings, credential, entry, db)));
 
             var targetGroup = GetOrCreatePasskeyGroup(db);
             targetGroup.AddEntry(entry, true);
@@ -73,6 +79,43 @@ namespace KeePassPasskey.Storage
             }));
 
             return true;
+        }
+
+        // Builds the entry title from the configured template. {RP_NAME} is passkey-specific data
+        // with no backing entry field, so it is always substituted inline (it cannot remain a live
+        // KeePass placeholder). Remaining KeePass placeholders are either resolved now or left in
+        // place for KeePass to resolve at display time, depending on ResolveTitlePlaceholders.
+        private static string BuildTitle(KeePassPasskeySettings settings, PasskeyCredential credential, PwEntry entry, PwDatabase db)
+        {
+            var template = settings.EntryTitleTemplate;
+            if (string.IsNullOrEmpty(template))
+                template = "{RP_NAME} (Passkey)";
+
+            var rpName = !string.IsNullOrEmpty(credential.RpName) ? credential.RpName : credential.RelyingParty;
+            template = ReplaceIgnoreCase(template, RpNameToken, rpName ?? "");
+
+            if (settings.ResolveTitlePlaceholders)
+                return SprEngine.Compile(template, new SprContext(entry, db, SprCompileFlags.Deref));
+
+            return template;
+        }
+
+        private static string ReplaceIgnoreCase(string input, string token, string value)
+        {
+            int idx = input.IndexOf(token, StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) return input;
+
+            var sb = new System.Text.StringBuilder();
+            int start = 0;
+            while (idx >= 0)
+            {
+                sb.Append(input, start, idx - start);
+                sb.Append(value);
+                start = idx + token.Length;
+                idx = input.IndexOf(token, start, StringComparison.OrdinalIgnoreCase);
+            }
+            sb.Append(input, start, input.Length - start);
+            return sb.ToString();
         }
 
         internal List<PasskeyCredential> FindByRpId(string rpId)

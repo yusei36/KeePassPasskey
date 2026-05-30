@@ -21,6 +21,12 @@ namespace KeePassPasskeyShared.Settings
         [JsonProperty("addPasskeyTag")]
         public bool AddPasskeyTag { get; set; } = true;
 
+        [JsonProperty("entryTitleTemplate")]
+        public string EntryTitleTemplate { get; set; } = "{RP_NAME} (Passkey)";
+
+        [JsonProperty("resolveTitlePlaceholders")]
+        public bool ResolveTitlePlaceholders { get; set; } = true;
+
         [JsonProperty("notificationVerificationTimeoutMilliseconds")]
         public int NotificationVerificationTimeoutMilliseconds { get; set; } = 30_000;
 

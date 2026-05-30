@@ -139,6 +139,25 @@
                                  Description="How new passkey entries are created"
                                  IsExpanded="True">
 
+                <ui:SettingsExpanderItem Content="Entry title"
+                                         Description="Title for new entries. Supports {RP_NAME} and KeePass placeholders like {USERNAME} or {URL}.">
+                    <ui:SettingsExpanderItem.Footer>
+                        <TextBox Text="{Binding EntryTitleTemplate}"
+                                 Watermark="{}{RP_NAME} (Passkey)"
+                                 Width="240" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
+                <ui:SettingsExpanderItem Content="Resolve title placeholders"
+                                         Description="Store the resolved text. When off, KeePass resolves the placeholders on display. {RP_NAME} is always resolved.">
+                    <ui:SettingsExpanderItem.Footer>
+                        <ToggleSwitch IsChecked="{Binding ResolveTitlePlaceholders}"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      Margin="0 0 4 0" />
+                    </ui:SettingsExpanderItem.Footer>
+                </ui:SettingsExpanderItem>
+
                 <ui:SettingsExpanderItem Content="Tag new passkeys"
                                          Description="Add a &quot;Passkey&quot; tag to each entry created when a new passkey is registered">
                     <ui:SettingsExpanderItem.Footer>
