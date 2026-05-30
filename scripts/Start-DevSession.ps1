@@ -103,12 +103,8 @@ function Connect-VisualStudioDebugger([int]$TargetProcessId) {
     return $false
 }
 
-# When run with no arguments (i.e. not via a VS launch profile, which builds the plugin as the
-# startup project first), build the plugin DLL so the launched KeePass loads the current build.
-if ($PSBoundParameters.Count -eq 0) {
-    Write-Step "Building KeePassPasskey plugin DLL"
-    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
-}
+Write-Step "Building KeePassPasskey plugin DLL"
+Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
 
 & "$PSScriptRoot\Install-Provider.ps1" -Configuration $Configuration
 
