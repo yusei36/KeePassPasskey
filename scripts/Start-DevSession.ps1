@@ -13,6 +13,9 @@
     Any process attached via -DebugProvider / -DebugPlugin keeps its own Visual Studio debug session,
     so this wrapper can return right after attaching without detaching them.
 
+    When run with no arguments (a plain terminal launch, not a VS launch profile), it also builds the
+    plugin DLL first, since no IDE build has produced it.
+
 .PARAMETER DebugProvider
     Attach the running Visual Studio to the provider (management/tray) process so its breakpoints hit.
 
@@ -98,6 +101,13 @@ function Connect-VisualStudioDebugger([int]$TargetProcessId) {
         Start-Sleep -Milliseconds 250
     }
     return $false
+}
+
+# When run with no arguments (i.e. not via a VS launch profile, which builds the plugin as the
+# startup project first), build the plugin DLL so the launched KeePass loads the current build.
+if ($PSBoundParameters.Count -eq 0) {
+    Write-Step "Building KeePassPasskey plugin DLL"
+    Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
 }
 
 & "$PSScriptRoot\Install-Provider.ps1" -Configuration $Configuration
