@@ -64,8 +64,7 @@ namespace KeePassPasskey.Storage
             var db = ResolveDatabaseOrFallback(target, nameof(CreatePasskeyEntry));
             if (db == null || !db.IsOpen) return false;
 
-            // Title is set after the other fields so placeholders like {USERNAME}/{S:...} can be
-            // resolved against the populated entry when ResolveTitlePlaceholders is enabled.
+            // Title is built last so its placeholders can resolve against the populated entry.
             entry.Strings.Set(PwDefs.TitleField, new ProtectedString(false, BuildTitle(settings, credential, entry, db)));
 
             var targetGroup = GetOrCreatePasskeyGroup(db);
@@ -81,23 +80,46 @@ namespace KeePassPasskey.Storage
             return true;
         }
 
-        // Builds the entry title from the configured template. {RP_NAME} is passkey-specific data
-        // with no backing entry field, so it is always substituted inline (it cannot remain a live
-        // KeePass placeholder). Remaining KeePass placeholders are either resolved now or left in
-        // place for KeePass to resolve at display time, depending on ResolveTitlePlaceholders.
+        // Builds the title from the template. Placeholders are compiled first (when enabled), then the
+        // untrusted {RP_NAME} is spliced in last with its braces stripped so it can never act as one.
         private static string BuildTitle(KeePassPasskeySettings settings, PasskeyCredential credential, PwEntry entry, PwDatabase db)
         {
             var template = settings.EntryTitleTemplate;
             if (string.IsNullOrEmpty(template))
                 template = "{RP_NAME} (Passkey)";
 
-            var rpName = !string.IsNullOrEmpty(credential.RpName) ? credential.RpName : credential.RelyingParty;
-            template = ReplaceIgnoreCase(template, RpNameToken, rpName ?? "");
-
             if (settings.ResolveTitlePlaceholders)
-                return SprEngine.Compile(template, new SprContext(entry, db, SprCompileFlags.Deref));
+                template = CompileTitle(template, entry, db);
 
-            return template;
+            var rpName = !string.IsNullOrEmpty(credential.RpName) ? credential.RpName : credential.RelyingParty;
+            return ReplaceIgnoreCase(template, RpNameToken, NeutralizePlaceholders(rpName ?? ""));
+        }
+
+        // Compiles a title's placeholders against a sanitized clone, so field values resolve as inert
+        // text and cannot inject further placeholders (e.g. a username of "{S:..PRIVATE_KEY..}").
+        // Titles without placeholders skip the clone, keeping metadata listing cheap.
+        private static string CompileTitle(string text, PwEntry entry, PwDatabase db)
+        {
+            if (string.IsNullOrEmpty(text) || text.IndexOf('{') < 0) return text;
+            return SprEngine.Compile(text, new SprContext(CloneWithoutProtectedFields(entry), db, SprCompileFlags.Deref));
+        }
+
+        // Removes placeholder braces so the text cannot be parsed as a KeePass placeholder.
+        private static string NeutralizePlaceholders(string value) =>
+            value.Replace("{", "").Replace("}", "");
+
+        // Lightweight copy used only for title compilation: just the string fields SprEngine reads
+        // under Deref ({USERNAME}, {URL}, {S:...}; {REF:...} resolves via the database). Protected
+        // fields are blanked (never decrypted or shown) and the rest are brace-stripped so they
+        // resolve as inert text.
+        private static PwEntry CloneWithoutProtectedFields(PwEntry entry)
+        {
+            var copy = new PwEntry(false, false);
+            foreach (var kvp in entry.Strings)
+                copy.Strings.Set(kvp.Key, kvp.Value.IsProtected
+                    ? new ProtectedString(true, "")
+                    : new ProtectedString(false, NeutralizePlaceholders(kvp.Value.ReadString())));
+            return copy;
         }
 
         private static string ReplaceIgnoreCase(string input, string token, string value)
@@ -251,7 +273,7 @@ namespace KeePassPasskey.Storage
         {
             var raw = entry.Strings.ReadSafe(PwDefs.TitleField);
             if (string.IsNullOrEmpty(raw)) return raw;
-            return SprEngine.Compile(raw, new SprContext(entry, db, SprCompileFlags.Deref));
+            return CompileTitle(raw, entry, db);
         }
 
         private static bool IsSearchable(PwEntry entry)

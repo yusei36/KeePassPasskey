@@ -147,6 +147,16 @@ Separate settings exist for **Registration** (creating a passkey) and **Sign-in*
 
 **Show error notifications**: when enabled, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
 
+### Passkey Entries
+
+Controls how new passkey entries are created in your database.
+
+**Entry title**: the title given to each new passkey entry. The default is `{RP_NAME} (Passkey)`. You can use `{RP_NAME}` for the website's display name, plus any KeePass placeholder such as `{USERNAME}`, `{URL}`, or `{S:KPEX_PASSKEY_RELYING_PARTY}`. Only unprotected fields are resolved in the title. Protected fields such as the password or private key are never exposed.
+
+**Resolve title placeholders**: when enabled (default), placeholders are resolved when the passkey is created and the resulting text is stored as the title. When disabled, the placeholders are stored as-is so KeePass resolves them each time the entry is shown (useful if you later edit a referenced field). `{RP_NAME}` is always resolved, because it has no underlying entry field.
+
+**Tag new passkeys**: when enabled (default), a `Passkey` tag is added to each entry created when a new passkey is registered.
+
 ### Advanced
 
 These settings are rarely needed. Leave them at their defaults unless you are troubleshooting.
