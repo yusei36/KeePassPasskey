@@ -153,7 +153,7 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 
 | Setting | Description |
 |---|---|
-| Log level | Verbosity of log files. Increase to Debug when reporting a bug. |
+| Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
 | Status refresh interval | How often the app polls for connection status. |
 | Credential sync interval | How often passkey metadata is synced to the Windows autofill cache. Set to 0 to disable. **Be aware:** when disabled, passkeys will not appear in autofill suggestions or in the selection list when multiple passkeys exist for a site. |
 | Max credential cache sync retries | After this many sync failures the background sync pauses and resumes on the next passkey request. |
