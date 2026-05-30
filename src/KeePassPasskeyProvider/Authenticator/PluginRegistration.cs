@@ -44,9 +44,13 @@ internal static unsafe class PluginRegistration
 
         Guid clsid = PluginConstants.KeePassPasskeyProviderClsid;
 
+#if DEBUG
+        string lightSvg = LogoResources.DarkThemeSvg;
+        string darkSvg = LogoResources.LightThemeSvg;
+#else
         string lightSvg = LogoResources.LightThemeSvg;
         string darkSvg  = LogoResources.DarkThemeSvg;
-
+#endif
         fixed (char* namePtr     = PluginConstants.PluginName)
         fixed (char* rpIdPtr     = PluginConstants.PluginRpId)
         fixed (byte* infoPtr     = authenticatorInfo)
