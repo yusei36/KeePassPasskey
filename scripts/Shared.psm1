@@ -341,7 +341,8 @@ function Invoke-ILRepack {
     }
 
     $mergedDll  = Join-Path $BuildDir 'KeePassPasskey_merged.dll'
-    $repackArgs = @("/out:$mergedDll") + $primaryDll + $secondaryDlls
+    # /internalize makes the bundled deps internal so they don't leak into KeePass's shared process.
+    $repackArgs = @("/internalize", "/out:$mergedDll") + $primaryDll + $secondaryDlls
 
     & ilrepack @repackArgs
     if ($LASTEXITCODE -ne 0) { throw "ILRepack failed with exit code $LASTEXITCODE" }
