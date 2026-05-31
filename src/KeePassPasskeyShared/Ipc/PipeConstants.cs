@@ -6,7 +6,11 @@ namespace KeePassPasskeyShared.Ipc
 {
     public static class PipeConstants
     {
+#if DEBUG
+        public const string PipeName = "keepass-passkey-provider-dev";
+#else
         public const string PipeName = "keepass-passkey-provider";
+#endif
 
         public static readonly string Version =
             Assembly.GetExecutingAssembly()

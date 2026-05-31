@@ -11,7 +11,7 @@ using KeePassPasskeyShared.Ipc;
 namespace KeePassPasskey.Ipc
 {
     /// <summary>
-    /// Named pipe server that listens on \\.\pipe\keepass-passkey-provider.
+    /// Named pipe server that listens on \\.\pipe\ + <see cref="PipeConstants.PipeName"/>.
     /// Each connection is handled on a thread pool thread.
     /// Messages are length-prefixed: [4-byte LE uint32 length][UTF-8 JSON body].
     /// </summary>
