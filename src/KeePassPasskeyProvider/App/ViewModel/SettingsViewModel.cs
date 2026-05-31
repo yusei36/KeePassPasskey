@@ -23,9 +23,8 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private bool _resolveTitlePlaceholders;
     [ObservableProperty] private double _notificationTimeoutSeconds;
     [ObservableProperty] private LogLevel _logLevel;
-    [ObservableProperty] private double _credentialSyncIntervalSeconds;
+    [ObservableProperty] private bool _syncCredentialsToWindows;
     [ObservableProperty] private double _statusRefreshIntervalSeconds;
-    [ObservableProperty] private double _credentialSyncShutdownThreshold;
     private Theme _theme = AppSettings.Current.Theme;
     public Theme Theme
     {
@@ -108,9 +107,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         ResolveTitlePlaceholders               = ResolveTitlePlaceholders,
         NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
         LogLevel                               = LogLevel,
-        CredentialSyncIntervalMilliseconds     = (int)CredentialSyncIntervalSeconds * 1000,
+        IsCredentialSyncEnabled                = SyncCredentialsToWindows,
         StatusRefreshIntervalMilliseconds      = (int)StatusRefreshIntervalSeconds * 1000,
-        CredentialSyncShutdownThreshold        = (int)CredentialSyncShutdownThreshold,
     };
 
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
@@ -267,9 +265,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         ResolveTitlePlaceholders        = c.ResolveTitlePlaceholders;
         NotificationTimeoutSeconds      = c.NotificationVerificationTimeoutMilliseconds / 1000;
         LogLevel                        = c.LogLevel;
-        CredentialSyncIntervalSeconds   = c.CredentialSyncIntervalMilliseconds / 1000;
+        SyncCredentialsToWindows        = c.IsCredentialSyncEnabled;
         StatusRefreshIntervalSeconds    = c.StatusRefreshIntervalMilliseconds / 1000;
-        CredentialSyncShutdownThreshold = c.CredentialSyncShutdownThreshold;
         _isLoading = false;
         CheckForUnsavedChanges();
     }
@@ -296,6 +293,18 @@ public sealed partial class SettingsViewModel : ObservableObject
             KeePassPasskeySettings.Current = settings;
             SettingsCache.Save(settings);
             HasUnsavedChanges = false;
+
+            // Reflect the sync toggle in the Windows cache immediately: enabling reconciles it
+            // against the open databases, disabling clears it. The app is the packaged process, so
+            // it can call the WebAuthn cache APIs directly.
+            var clsid = Authenticator.PluginConstants.KeePassPasskeyProviderClsid;
+            await Task.Run(() =>
+            {
+                if (settings.IsCredentialSyncEnabled)
+                    Authenticator.CredentialCache.SyncToWindowsCache(clsid);
+                else
+                    Authenticator.CredentialCache.ClearWindowsCache(clsid);
+            });
         }
         finally
         {

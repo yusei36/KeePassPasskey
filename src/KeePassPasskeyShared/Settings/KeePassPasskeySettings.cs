@@ -38,17 +38,14 @@ namespace KeePassPasskeyShared.Settings
         public LogLevel LogLevel { get; set; } = LogLevel.Info;
 #endif
 
-        [JsonProperty("credentialSyncIntervalMilliseconds")]
-        public int CredentialSyncIntervalMilliseconds { get; set; } = 30_000;
-
-        [JsonIgnore]
-        public bool IsCredentialSyncEnabled => CredentialSyncIntervalMilliseconds > 0;
+        // Whether passkey metadata is synced to the Windows credential cache so passkeys appear in
+        // the Windows sign-in UI. Population is driven by the KeePass plugin on database events; this
+        // is the on/off gate. Disabling it clears the cache.
+        [JsonProperty("syncCredentialsToWindows")]
+        public bool IsCredentialSyncEnabled { get; set; } = true;
 
         [JsonProperty("statusRefreshIntervalMilliseconds")]
         public int StatusRefreshIntervalMilliseconds { get; set; } = 30_000;
-
-        [JsonProperty("credentialSyncShutdownThreshold")]
-        public int CredentialSyncShutdownThreshold { get; set; } = 10;
 
         // JSON-based comparison keeps Equals auto-maintaining: new fields are included
         // automatically without needing to update this method. If performance ever becomes

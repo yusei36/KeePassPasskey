@@ -237,6 +237,39 @@ namespace KeePassPasskey.Storage
             return results;
         }
 
+        // Order-independent signature of the passkey set across open databases, over the fields that
+        // reach the Windows cache. The plugin compares it to detect real passkey changes before
+        // syncing; reordering doesn't change it (per-entry hashes are XORed). Uses the raw
+        // (uncompiled) title to stay cheap.
+        internal string ComputePasskeySignature()
+        {
+            var acc = new byte[32];
+            int count = 0;
+            using (var sha = SHA256.Create())
+            {
+                foreach (var db in GetSearchDatabases())
+                {
+                    foreach (var entry in db.RootGroup.GetEntries(true))
+                    {
+                        if (!IsSearchable(entry)) continue;
+                        if (!entry.Strings.Exists(FieldCredentialId) || !entry.Strings.Exists(FieldRelyingParty)) continue;
+
+                        string material = string.Join("",
+                            entry.Strings.ReadSafe(FieldCredentialId),
+                            entry.Strings.ReadSafe(FieldRelyingParty),
+                            entry.Strings.ReadSafe(FieldUsername),
+                            entry.Strings.ReadSafe(FieldUserHandle),
+                            entry.Strings.ReadSafe(PwDefs.TitleField));
+
+                        byte[] h = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(material));
+                        for (int i = 0; i < acc.Length; i++) acc[i] ^= h[i];
+                        count++;
+                    }
+                }
+            }
+            return count + ":" + Convert.ToBase64String(acc);
+        }
+
         // Returns only public metadata - no private key material. Used for listing credentials.
         private static PasskeyCredential ExtractCredentialMetadata(PwEntry entry, PwDatabase db)
         {

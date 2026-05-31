@@ -57,9 +57,6 @@
           </uap3:AppExecutionAlias>
         </uap3:Extension>
         <desktop:Extension Category="windows.startupTask" Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" EntryPoint="Windows.FullTrustApplication">
-          <desktop:StartupTask TaskId="KeePassPasskeyComServer" Enabled="true" DisplayName="KeePassPasskey (provider)" />
-        </desktop:Extension>
-        <desktop:Extension Category="windows.startupTask" Executable="KeePassPasskeyProvider\KeePassPasskeyProvider.exe" EntryPoint="Windows.FullTrustApplication">
           <desktop:StartupTask TaskId="KeePassPasskeyTrayApp" Enabled="false" DisplayName="KeePassPasskey (tray)" />
         </desktop:Extension>
       </Extensions>

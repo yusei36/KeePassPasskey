@@ -32,16 +32,17 @@ internal static class PluginConstants
     public const string PluginName      = "KeePassPasskey Dev ";
     public const string ComServerMutexName = @"Local\KeePassPasskeyProvider_COM_Dev";
     public const string ManagementUiMutexName = @"Local\KeePassPasskeyProvider_UI_Dev";
+    public const string CacheSyncMutexName = @"Local\KeePassPasskeyProvider_CacheSync_Dev";
 #else
     public const string PluginName      = "KeePassPasskey "; // trailing space is to work around Windows quirk where in some contexts the name is not properly displayed
     public const string ComServerMutexName = @"Local\KeePassPasskeyProvider_COM";
     public const string ManagementUiMutexName = @"Local\KeePassPasskeyProvider_UI";
+    public const string CacheSyncMutexName = @"Local\KeePassPasskeyProvider_CacheSync";
 #endif
     public const string PluginRpId      = "keepasspasskey.github.io";
     public const string PluginRegPath   = @"Software\KeePassPasskeyProvider";
     public const string RegKeySigningKey = "OpSigningPublicKey";
 
-    public const string StartupTaskComServer = "KeePassPasskeyComServer";
     public const string StartupTaskTrayApp   = "KeePassPasskeyTrayApp";
 
     public const string OfficialPackageFamilyName = "KeePassPasskeyProvider_rcm79ea08mqe4";

@@ -99,8 +99,8 @@ function Invoke-BuildWapproj {
         $patchedContent = $patchedContent -replace [regex]::Escape($script:ReleaseClsid), $script:DevClsid
         $patchedContent = $patchedContent -replace '<DisplayName>KeePassPasskey</DisplayName>', '<DisplayName>KeePassPasskey Dev</DisplayName>'
         $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey"', 'DisplayName="KeePassPasskey Dev"'
-        $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey \(provider\)"', 'DisplayName="KeePassPasskey Dev (provider)"'
         $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey \(tray\)"', 'DisplayName="KeePassPasskey Dev (tray)"'
+        $patchedContent = $patchedContent -replace 'Alias="KeePassPasskeyProvider.exe"', 'Alias="KeePassPasskeyProviderDev.exe"'
     }
     [IO.File]::WriteAllText($manifest, $patchedContent)
 

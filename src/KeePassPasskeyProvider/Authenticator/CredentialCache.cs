@@ -15,6 +15,34 @@ internal static unsafe class CredentialCache
 {
     private static readonly SemaphoreSlim _syncGate = new SemaphoreSlim(1, 1);
 
+    // Cross-process gate: /synccredential one-shots and the management app's save-time sync/clear
+    // can run in separate processes, so serialize all cache writes via a named mutex.
+    private static Mutex? AcquireCrossProcessLock()
+    {
+        var m = new Mutex(false, PluginConstants.CacheSyncMutexName);
+        try
+        {
+            if (!m.WaitOne(TimeSpan.FromSeconds(15)))
+            {
+                m.Dispose();
+                return null;
+            }
+        }
+        catch (AbandonedMutexException)
+        {
+            // A process died holding the mutex; we now own it. Any partial write is corrected by
+            // the next full sync/clear.
+        }
+        return m;
+    }
+
+    private static void ReleaseCrossProcessLock(Mutex? m)
+    {
+        if (m == null) return;
+        try { m.ReleaseMutex(); } catch { /* not held */ }
+        m.Dispose();
+    }
+
     /// <summary>
     /// Query KeePass for all passkeys and push changes to the Windows cache.
     /// Returns true if KeePass was reached (sync applied), false otherwise.
@@ -22,6 +50,13 @@ internal static unsafe class CredentialCache
     public static bool SyncToWindowsCache(Guid pluginClsid)
     {
         _syncGate.Wait();
+        Mutex? crossProcess = AcquireCrossProcessLock();
+        if (crossProcess == null)
+        {
+            _syncGate.Release();
+            Log.Warn("could not acquire cross-process cache lock, skipping sync");
+            return false;
+        }
         try
         {
             return SyncToCredentialCache(pluginClsid);
@@ -33,6 +68,7 @@ internal static unsafe class CredentialCache
         }
         finally
         {
+            ReleaseCrossProcessLock(crossProcess);
             _syncGate.Release();
         }
     }
@@ -43,6 +79,13 @@ internal static unsafe class CredentialCache
     public static void ClearWindowsCache(Guid pluginClsid)
     {
         _syncGate.Wait();
+        Mutex? crossProcess = AcquireCrossProcessLock();
+        if (crossProcess == null)
+        {
+            _syncGate.Release();
+            Log.Warn("could not acquire cross-process cache lock, skipping clear");
+            return;
+        }
         try
         {
             uint cExisting = 0;
@@ -72,6 +115,7 @@ internal static unsafe class CredentialCache
         }
         finally
         {
+            ReleaseCrossProcessLock(crossProcess);
             _syncGate.Release();
         }
     }

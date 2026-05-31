@@ -198,32 +198,15 @@
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
-				<ui:SettingsExpanderItem Content="Credential sync interval"
-                                         Description="How often passkey metadata are synced from KeePass to the Windows credential cache.&#10;Disabling (0) may break passkey sign-in on some sites.">
+				<ui:SettingsExpanderItem Content="Windows credential cache"
+                                         Description="Add passkey metadata to the Windows credential cache so your passkeys appear in the sign-in prompt and autofill.&#10;Turning this off removes them, which prevents passkey sign-in on most sites.">
 					<ui:SettingsExpanderItem.Footer>
-						<ui:NumberBox Value="{Binding CredentialSyncIntervalSeconds}"
-                                      Minimum="0"
-                                      Maximum="3600"
-                                      SmallChange="5"
-                                      ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Inline"
-                                      MinWidth="120"
-									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+						<ToggleSwitch IsChecked="{Binding SyncCredentialsToWindows}"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      Margin="0 0 4 0" />
 					</ui:SettingsExpanderItem.Footer>
 				</ui:SettingsExpanderItem>
-				
-                <ui:SettingsExpanderItem Content="Max credential cache sync retries"
-                                         Description="Background sync pauses after this many failures and resumes on the next passkey request">
-                    <ui:SettingsExpanderItem.Footer>
-                        <ui:NumberBox Value="{Binding CredentialSyncShutdownThreshold}"
-                                      Minimum="1"
-                                      Maximum="100"
-                                      SmallChange="1"
-                                      ValidationMode="InvalidInputOverwritten"
-                                      SpinButtonPlacementMode="Inline"
-                                      MinWidth="120" />
-                    </ui:SettingsExpanderItem.Footer>
-                </ui:SettingsExpanderItem>
 
             </ui:SettingsExpander>
 

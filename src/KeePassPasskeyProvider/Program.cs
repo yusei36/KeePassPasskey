@@ -37,11 +37,6 @@ internal static class Program
 
         if (IsStartupActivation(out string taskId))
         {
-            if (taskId == PluginConstants.StartupTaskComServer)
-            {
-                Log.Info("Startup task: launching COM server");
-                return ComServer.RunComServer();
-            }
             if (taskId == PluginConstants.StartupTaskTrayApp)
             {
                 if (!AppSettings.Current.EnableTrayIcon)
@@ -64,6 +59,12 @@ internal static class Program
             return ComServer.RunComServer();
         }
 
+        bool syncCredential = args.Any(a =>
+            string.Equals(a, "/synccredential", StringComparison.OrdinalIgnoreCase));
+
+        if (syncCredential)
+            return RunSyncCredential();
+
         // No args: show management UI
         if (args.Length == 0)
             return RunManagementUI();
@@ -72,6 +73,29 @@ internal static class Program
         Win32Native.AttachConsole(Win32Native.ATTACH_PARENT_PROCESS);
 
         return RunManagementCommand(args);
+    }
+
+    /// <summary>
+    /// One-shot credential-cache sync, invoked by the KeePass plugin on database events.
+    /// Reconciles the Windows credential cache with the open databases and exits; no COM server,
+    /// no message loop. When sync is disabled, clears the cache instead.
+    /// </summary>
+    private static int RunSyncCredential()
+    {
+        Log.Info($"/synccredential received (log level: {Log.MinLevel})");
+
+        if (!KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
+        {
+            Log.Info("credential sync disabled, clearing Windows cache");
+            CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+            return 0;
+        }
+
+        // EnsureRegistered is a cheap no-op when already registered; the cache APIs require the
+        // authenticator to be known to the platform.
+        PluginRegistration.EnsureRegistered();
+        CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+        return 0;
     }
 
     private static bool IsToastActivation()

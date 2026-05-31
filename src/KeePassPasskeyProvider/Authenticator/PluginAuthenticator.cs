@@ -40,6 +40,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
         *pResponse = default;
 
+        ComActivity.EnterOperation();
         try
         {
             _cancelled = false;
@@ -146,10 +147,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 pResponse->cbEncodedResponse = cbEncoded;
                 pResponse->pbEncodedResponse = pbEncoded; // ownership transferred to caller (platform frees)
 
-                // 6. Sync Windows autofill cache
-                if (KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
-                    CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
-
                 Log.Info("success");
                 return HResults.S_OK;
             }
@@ -162,6 +159,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         {
             Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
             return Marshal.GetHRForException(ex);
+        }
+        finally
+        {
+            ComActivity.ExitOperation();
         }
     }
 
@@ -179,6 +180,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
         var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
         *pResponse = default;
 
+        ComActivity.EnterOperation();
         try
         {
             _cancelled = false;
@@ -263,11 +265,16 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
             return Marshal.GetHRForException(ex);
         }
+        finally
+        {
+            ComActivity.ExitOperation();
+        }
     }
 
     /// <summary>IPluginAuthenticator.CancelOperation implementation. Verifies the cancel signature and sets the cancellation flag.</summary>
     public unsafe int CancelOperation(nint pCancelRequest)
     {
+        ComActivity.MarkActivity();
         if (pCancelRequest == 0) return HResults.E_INVALIDARG;
 
         var pCancel = (WebAuthnPluginCancelOperationRequest*)pCancelRequest;
@@ -290,6 +297,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     /// </summary>
     public unsafe int GetLockStatus(nint pLockStatusRaw)
     {
+        ComActivity.MarkActivity();
         if (pLockStatusRaw == 0) return HResults.E_INVALIDARG;
         var pLockStatus = (PluginLockStatus*)pLockStatusRaw;
 
@@ -467,6 +475,7 @@ public sealed class ClassFactory : IClassFactory
 {
     public int CreateInstance(nint pUnkOuter, in Guid riid, out nint ppvObject)
     {
+        ComActivity.MarkActivity();
         ppvObject = 0;
         if (pUnkOuter != 0) return HResults.CLASS_E_NOAGGREGATION;
 

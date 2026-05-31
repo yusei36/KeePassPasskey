@@ -21,6 +21,7 @@ namespace KeePassPasskey
     {
         private IPluginHost _host;
         private PipeServer _pipeServer;
+        private PasskeySyncTrigger _syncTrigger;
 
         // Loaded once; MemoryStream kept open for GDI+ lifetime requirement.
         private static readonly Image _smallIcon = LoadSmallIcon();
@@ -69,6 +70,9 @@ namespace KeePassPasskey
                 var handler = new RequestHandler(_host, passkeyStorage, settingsStorage);
                 _pipeServer = new PipeServer(handler);
                 _pipeServer.Start();
+
+                // Drive Windows credential-cache sync from KeePass database/passkey events.
+                _syncTrigger = new PasskeySyncTrigger(_host, passkeyStorage, settingsStorage);
             }
             catch (Exception ex)
             {
@@ -81,6 +85,8 @@ namespace KeePassPasskey
 
         public override void Terminate()
         {
+            _syncTrigger?.Dispose();
+            _syncTrigger = null;
             _pipeServer?.Stop();
             _pipeServer = null;
         }

@@ -165,8 +165,7 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 |---|---|
 | Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
 | Status refresh interval | How often the app polls for connection status. |
-| Credential sync interval | How often passkey metadata is synced to the Windows autofill cache. Set to 0 to disable. **Be aware:** when disabled, passkeys will not appear in autofill suggestions or in the selection list when multiple passkeys exist for a site. |
-| Max credential cache sync retries | After this many sync failures the background sync pauses and resumes on the next passkey request. |
+| Sync passkeys to Windows | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
 
 ## Troubleshooting
 
