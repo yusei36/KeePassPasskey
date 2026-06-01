@@ -73,16 +73,19 @@ public sealed partial class MainWindowViewModel : ObservableObject
         var settingsWatcher = new FileSystemWatcher(AppPaths.SettingsDir)
         {
             Filter              = SettingsCache.SettingsFileName,
-            NotifyFilter        = NotifyFilters.LastWrite,
+            NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.FileName,
             EnableRaisingEvents = true,
         };
-        settingsWatcher.Changed += (_, _) =>
+        void ReloadSettings(object? _, FileSystemEventArgs __)
         {
             var updated = SettingsCache.TryLoad();
             if (updated == null) return;
             KeePassPasskeySettings.Current = updated;
             Dispatcher.UIThread.Post(Settings.ReloadFromCurrent);
-        };
+        }
+        settingsWatcher.Changed += ReloadSettings;
+        settingsWatcher.Created += ReloadSettings;
+        settingsWatcher.Renamed += (s, e) => ReloadSettings(s, e);
 
         DoRefresh();
 

@@ -48,15 +48,18 @@ internal static class ComServer
         using var settingsFileWatcher = new FileSystemWatcher(AppPaths.SettingsDir)
         {
             Filter              = SettingsCache.SettingsFileName,
-            NotifyFilter        = NotifyFilters.LastWrite,
+            NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.FileName,
             EnableRaisingEvents = true,
         };
-        settingsFileWatcher.Changed += (_, _) =>
+        void ReloadSettings(object? _, FileSystemEventArgs __)
         {
             var updatedSettings = SettingsCache.TryLoad();
             if (updatedSettings != null)
                 KeePassPasskeySettings.Current = updatedSettings;
-        };
+        }
+        settingsFileWatcher.Changed += ReloadSettings;
+        settingsFileWatcher.Created += ReloadSettings;
+        settingsFileWatcher.Renamed += (s, e) => ReloadSettings(s, e);
 
         // Quit once idle (see ComActivity), waking the message loop via WM_QUIT.
         using var idleTimer = new System.Threading.Timer(_ =>
