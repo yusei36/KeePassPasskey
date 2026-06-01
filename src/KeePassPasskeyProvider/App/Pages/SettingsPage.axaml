@@ -148,8 +148,8 @@
                     </ui:SettingsExpanderItem.Footer>
                 </ui:SettingsExpanderItem>
 
-                <ui:SettingsExpanderItem Content="Resolve title placeholders"
-                                         Description="Store the resolved text. When off, KeePass resolves the placeholders on display. {RP_NAME} is always resolved.">
+                <ui:SettingsExpanderItem Content="Store resolved title placeholders"
+                                         Description="On: placeholders are resolved and the final text is saved in the title. Off: KeePass resolves them each time the entry is shown. {RP_NAME} is always resolved on save.">
                     <ui:SettingsExpanderItem.Footer>
                         <ToggleSwitch IsChecked="{Binding ResolveTitlePlaceholders}"
                                       OnContent="On"
@@ -199,7 +199,7 @@
                 </ui:SettingsExpanderItem>
 
 				<ui:SettingsExpanderItem Content="Windows credential cache"
-                                         Description="Add passkey metadata to the Windows credential cache so your passkeys appear in the sign-in prompt and autofill.&#10;Turning this off removes them, which prevents passkey sign-in on most sites.">
+                                         Description="Lets your passkeys appear in the Windows sign-in prompt and autofill. Turning this off prevents passkey sign-in on most sites.">
 					<ui:SettingsExpanderItem.Footer>
 						<ToggleSwitch IsChecked="{Binding SyncCredentialsToWindows}"
                                       OnContent="On"
