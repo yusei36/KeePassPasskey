@@ -5,8 +5,7 @@ KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once ins
 ## Requirements
 
 - [KeePass](https://keepass.info/) 2.54 or later
-- Windows 11 24H2 or later
-- TPM 2.0 (constrained by Windows for third-party passkey providers)
+- Windows 11 24H2 or later, with TPM enabled ([why?](#why-is-a-tpm-required))
 
 ## Installation
 
@@ -167,30 +166,38 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 | Status refresh interval | How often the app polls for connection status. |
 | Sync passkeys to Windows | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
 
-## Troubleshooting
+## FAQ & Troubleshooting
 
-**The KeePass plugin status indicator is not green**
+### The KeePass plugin status indicator is not green
 
 - Make sure KeePass is running with a database open.
 - Check that the KeePassPasskey plugin is installed: in KeePass, go to **Tools → Plugins** and verify `KeePassPasskey` appears in the list.
 - If the plugin is listed but the indicator is still red, restart KeePass.
 
-**KeePassPasskey does not appear in the provider list**
+### KeePassPasskey does not appear in the provider list
 
 - Open the KeePassPasskey app, go to **Advanced Passkey Options** (links to Windows Settings), and make sure **KeePassPasskey** is enabled.
 - If it is not listed there at all, open the KeePassPasskey app and check the status indicators and the **Diagnostics** section for any error details. Try clicking **Unregister** followed by **Register** in the app, then check the log files for error messages if it still fails.
 - Make sure Windows Hello PIN is configured. Sometimes removing and re-adding the PIN resolves the issue.
 
-**I tried creating a passkey but it failed saying one already exists**
+### I tried creating a passkey but it failed saying one already exists
 
 - KeePass already has a passkey for that site with a credential ID the website recognises. Open the **Passkeys** group, delete the existing entry for that site, and try registering again.
 
-**Passkey prompts never show the Windows provider selection or KeePassPasskey**
+### Passkey prompts never show the Windows provider selection or KeePassPasskey
 
 - A browser extension from another password manager (such as KeePassXC-Browser or any extension with passkey support) may be intercepting passkey requests before they reach Windows. When such an extension is active, the browser hands the passkey operation directly to that extension and Windows never gets involved, so KeePassPasskey is never called.
 - Disable or remove any passkey-capable browser extensions and try again. If the Windows provider selection appears afterwards, the extension was the cause.
 
-**The notification appears but clicking Create passkey does nothing**
+### The notification appears but clicking Create passkey does nothing
 
 - Make sure a KeePass database is open. KeePassPasskey cannot save a passkey if no database is unlocked. KeePass only needs to be open during the passkey operation itself.
 - If a database is open and the problem persists, check the log files for error messages.
+
+### Why is a TPM required?
+
+The requirement comes from Windows, not from KeePassPasskey. When any third-party passkey provider is registered, Windows creates a hardware-backed signing key in the TPM and uses it to sign every passkey request it hands to the provider. This lets the provider confirm a request genuinely came from Windows and was approved by you, rather than being forged by other software on the PC. KeePassPasskey cannot opt out of this.
+
+Creating that key needs a TPM that is present and enabled. When the TPM is unavailable, Windows cannot create the signing key, so KeePassPasskey fails to register as a passkey provider and individual passkey operations fail after you enter your PIN with a generic "Something went wrong". In these cases Windows often reports the error code `0x80090029`, but note that this is a generic "not supported" code that Windows also returns for unrelated reasons, so it is not by itself proof that the TPM is the problem.
+
+Based on current knowledge, the most common cause is simply a TPM that is switched off in firmware. Windows 11 24H2 already requires a TPM 2.0 as a baseline, so almost all supported PCs have suitable hardware. Whether much older TPMs (such as TPM 1.2) can ever satisfy this path is not fully confirmed: the Windows component tries several key algorithms before giving up, so an older TPM is not automatically ruled out by that check alone.

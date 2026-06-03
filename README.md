@@ -11,8 +11,7 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 ## Requirements
 
 - [KeePass](https://keepass.info/) 2.54 or later
-- Windows 11 24H2 or later
-- TPM 2.0 (constrained by Windows for third-party passkey providers)
+- Windows 11 24H2 or later, with TPM enabled ([why?](docs/user-guide.md#why-is-a-tpm-required))
 
 ## How it works
 
