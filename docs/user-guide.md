@@ -168,6 +168,14 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 
 ## FAQ & Troubleshooting
 
+### Why is a TPM required?
+
+The requirement comes from Windows, not from KeePassPasskey. When any third-party passkey provider is registered, Windows creates a hardware-backed signing key in the TPM and uses it to sign every passkey request it hands to the provider. This lets the provider confirm a request genuinely came from Windows and was approved by you, rather than being forged by other software on the PC. KeePassPasskey cannot opt out of this.
+
+Creating that key needs a TPM that is present and enabled. When the TPM is unavailable, Windows cannot create the signing key, so KeePassPasskey fails to register as a passkey provider and individual passkey operations fail after you enter your PIN with a generic "Something went wrong". In these cases Windows often reports the error code `0x80090029`, but note that this is a generic "not supported" code that Windows also returns for unrelated reasons, so it is not by itself proof that the TPM is the problem.
+
+Based on current knowledge, the most common cause is simply a TPM that is switched off in firmware. Windows 11 24H2 already requires a TPM 2.0 as a baseline, so almost all supported PCs have suitable hardware. Whether much older TPMs (such as TPM 1.2) can ever satisfy this path is not fully confirmed: the Windows component tries several key algorithms before giving up, so an older TPM is not automatically ruled out by that check alone.
+
 ### The KeePass plugin status indicator is not green
 
 - Make sure KeePass is running with a database open.
@@ -193,11 +201,3 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 
 - Make sure a KeePass database is open. KeePassPasskey cannot save a passkey if no database is unlocked. KeePass only needs to be open during the passkey operation itself.
 - If a database is open and the problem persists, check the log files for error messages.
-
-### Why is a TPM required?
-
-The requirement comes from Windows, not from KeePassPasskey. When any third-party passkey provider is registered, Windows creates a hardware-backed signing key in the TPM and uses it to sign every passkey request it hands to the provider. This lets the provider confirm a request genuinely came from Windows and was approved by you, rather than being forged by other software on the PC. KeePassPasskey cannot opt out of this.
-
-Creating that key needs a TPM that is present and enabled. When the TPM is unavailable, Windows cannot create the signing key, so KeePassPasskey fails to register as a passkey provider and individual passkey operations fail after you enter your PIN with a generic "Something went wrong". In these cases Windows often reports the error code `0x80090029`, but note that this is a generic "not supported" code that Windows also returns for unrelated reasons, so it is not by itself proof that the TPM is the problem.
-
-Based on current knowledge, the most common cause is simply a TPM that is switched off in firmware. Windows 11 24H2 already requires a TPM 2.0 as a baseline, so almost all supported PCs have suitable hardware. Whether much older TPMs (such as TPM 1.2) can ever satisfy this path is not fully confirmed: the Windows component tries several key algorithms before giving up, so an older TPM is not automatically ruled out by that check alone.
