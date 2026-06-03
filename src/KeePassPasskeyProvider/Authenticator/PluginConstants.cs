@@ -40,8 +40,6 @@ internal static class PluginConstants
     public const string CacheSyncMutexName = @"Local\KeePassPasskeyProvider_CacheSync";
 #endif
     public const string PluginRpId      = "keepasspasskey.github.io";
-    public const string PluginRegPath   = @"Software\KeePassPasskeyProvider";
-    public const string RegKeySigningKey = "OpSigningPublicKey";
 
     public const string StartupTaskTrayApp   = "KeePassPasskeyTrayApp";
 

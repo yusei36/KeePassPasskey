@@ -1,6 +1,5 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
-using Microsoft.Win32;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
 using PeterO.Cbor;
@@ -13,24 +12,13 @@ namespace KeePassPasskeyProvider.Authenticator;
 internal static unsafe class PluginRegistration
 {
     /// <summary>
-    /// Ensures the plugin is registered and the signing key is present.
-    /// Re-registers if the key is missing. Returns false if registration failed.
+    /// Ensures the plugin is registered with the Windows passkey platform.
+    /// Returns false if registration failed.
     /// </summary>
     public static bool EnsureRegistered()
     {
         int stateHr = GetState(out _);
-        if (stateHr >= HResults.S_OK)
-        {
-            if (SignatureVerifier.LoadSigningPublicKey() != null) return true;
-
-#if DEBUG
-            Log.Warn("registered but signing key missing, allowing operations for development");
-            return true;
-#else
-            Log.Warn("registered but signing key missing, re-registering");
-            Unregister();
-#endif
-        }
+        if (stateHr >= HResults.S_OK) return true;
 
         int hr = Register();
         if (hr < HResults.S_OK) Log.Error($"auto-registration failed hr=0x{hr:X8}");
@@ -78,24 +66,10 @@ internal static unsafe class PluginRegistration
                 return hr;
             }
 
-            try
-            {
-                // Persist the operation signing public key in the registry
-                if (pResponse != null && pResponse->cbOpSignPubKey > 0)
-                {
-                    byte[] keyBlob = new ReadOnlySpan<byte>(
-                        pResponse->pbOpSignPubKey, (int)pResponse->cbOpSignPubKey).ToArray();
-
-                    using RegistryKey? hkcu = Registry.CurrentUser;
-                    using RegistryKey? key = hkcu?.CreateSubKey(PluginConstants.PluginRegPath, writable: true);
-                    key?.SetValue(PluginConstants.RegKeySigningKey, keyBlob, RegistryValueKind.Binary);
-                    Log.Info($"stored signing key {keyBlob.Length} bytes");
-                }
-            }
-            finally
-            {
-                WebAuthnPluginApi.WebAuthNPluginFreeAddAuthenticatorResponse(pResponse);
-            }
+            // The signing public key is fetched live per operation from the platform
+            // (see SignatureVerifier.GetOperationSigningPublicKey), so the response is
+            // only freed here.
+            WebAuthnPluginApi.WebAuthNPluginFreeAddAuthenticatorResponse(pResponse);
         }
 
         Log.Info("succeeded");

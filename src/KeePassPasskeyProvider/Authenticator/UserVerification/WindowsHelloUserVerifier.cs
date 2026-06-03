@@ -28,6 +28,17 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
         nint hwnd = ptr->hWnd != 0 ? ptr->hWnd : Win32Native.GetForegroundWindow();
         Log.Info($"hWnd=0x{hwnd:X} username={username} displayHint={displayHint}");
 
+        byte[]? uvKey = SignatureVerifier.GetUserVerificationPublicKey();
+        if (uvKey == null)
+        {
+#if DEBUG
+            Log.Warn("UV public key unavailable, skipping UV signature verification");
+#else
+            Log.Error("UV public key unavailable, rejecting operation");
+            return HResults.NTE_BAD_SIGNATURE;
+#endif
+        }
+
         fixed (char* usernamePin = username.Length > 0 ? username : "\0")
         fixed (char* hintPin = displayHint.Length > 0 ? displayHint : "\0")
         {
@@ -43,9 +54,28 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
             byte* pbResp = null;
             int hr = WebAuthnPluginApi.WebAuthNPluginPerformUserVerification(&uvReq, &cbResp, &pbResp);
             Log.Info($"WebAuthNPluginPerformUserVerification hr=0x{hr:X8}");
-            if (pbResp != null)
-                WebAuthnPluginApi.WebAuthNPluginFreeUserVerificationResponse(pbResp);
-            return hr;
+
+            try
+            {
+                if (hr < HResults.S_OK) return hr;
+
+#if DEBUG
+                // uvKey is only null here in Debug (Release rejected above); skip the check.
+                if (uvKey == null) return HResults.S_OK;
+#endif
+
+                int verifyHr = SignatureVerifier.VerifySignature(
+                    new ReadOnlySpan<byte>(ptr->pbEncodedRequest, (int)ptr->cbEncodedRequest),
+                    uvKey,
+                    new ReadOnlySpan<byte>(pbResp, (int)cbResp));
+                Log.Info($"UV signature hr=0x{verifyHr:X8}");
+                return verifyHr;
+            }
+            finally
+            {
+                if (pbResp != null)
+                    WebAuthnPluginApi.WebAuthNPluginFreeUserVerificationResponse(pbResp);
+            }
         }
     }
 }
