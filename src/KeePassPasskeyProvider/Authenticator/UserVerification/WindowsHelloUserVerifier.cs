@@ -33,7 +33,7 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
         {
             var uvReq = new WebAuthnPluginUserVerificationRequest
             {
-                hWnd               = hwnd,
+                hwnd               = hwnd,
                 rguidTransactionId = &transactionId,
                 pwszUsername       = username.Length > 0    ? usernamePin : null,
                 pwszDisplayHint    = displayHint.Length > 0 ? hintPin     : null,

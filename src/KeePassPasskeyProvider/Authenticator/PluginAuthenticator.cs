@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Runtime.InteropServices;
 using System.Text;
@@ -49,7 +49,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
             // 1. Decode CBOR request
             WebAuthnCtapCborMakeCredentialRequest* pDecoded = null;
-            int hr1 = WebAuthnApi.WebAuthNDecodeMakeCredentialRequest(
+            int hr1 = WebAuthnPluginApi.WebAuthNDecodeMakeCredentialRequest(
                 pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded);
             Log.Info($"WebAuthNDecodeMakeCredentialRequest hr=0x{hr1:X8}");
             if (hr1 < 0) return hr1;
@@ -152,7 +152,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             }
             finally
             {
-                WebAuthnApi.WebAuthNFreeDecodedMakeCredentialRequest(pDecoded);
+                WebAuthnPluginApi.WebAuthNFreeDecodedMakeCredentialRequest(pDecoded);
             }
         }
         catch (Exception ex)
@@ -189,7 +189,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
             // 1. Decode CBOR request
             WebAuthnCtapCborGetAssertionRequest* pDecoded = null;
-            int hr1 = WebAuthnApi.WebAuthNDecodeGetAssertionRequest(
+            int hr1 = WebAuthnPluginApi.WebAuthNDecodeGetAssertionRequest(
                 pRequest->cbEncodedRequest, pRequest->pbEncodedRequest, &pDecoded);
             Log.Info($"WebAuthNDecodeGetAssertionRequest hr=0x{hr1:X8}");
             if (hr1 < 0) return hr1;
@@ -257,7 +257,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             }
             finally
             {
-                WebAuthnApi.WebAuthNFreeDecodedGetAssertionRequest(pDecoded);
+                WebAuthnPluginApi.WebAuthNFreeDecodedGetAssertionRequest(pDecoded);
             }
         }
         catch (Exception ex)
@@ -386,7 +386,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
             uint cb = 0;
             byte* pb = null;
-            int hr = WebAuthnApi.WebAuthNEncodeMakeCredentialResponse(&attestation, &cb, &pb);
+            int hr = WebAuthnPluginApi.WebAuthNEncodeMakeCredentialResponse(&attestation, &cb, &pb);
             cbEncoded = cb;
             pbEncoded = pb;
             return hr;
@@ -458,7 +458,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
             uint cb = 0;
             byte* pb = null;
-            int hr = WebAuthnApi.WebAuthNEncodeGetAssertionResponse(&assertionResp, &cb, &pb);
+            int hr = WebAuthnPluginApi.WebAuthNEncodeGetAssertionResponse(&assertionResp, &cb, &pb);
             cbEncoded = cb;
             pbEncoded = pb;
             return hr;

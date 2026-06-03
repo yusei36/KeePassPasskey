@@ -301,6 +301,22 @@ function Invoke-GenerateLicenseNotices {
         }
     }
 
+    # Bundled source that is NOT delivered as a NuGet package, so nuget-license can't see it
+    # (e.g. headers hand-transcribed into P/Invoke bindings). Each *.notice.txt under src/
+    # is a ready-formatted notice block, co-located with the code it covers; drop one in
+    # next to the relevant source to add an entry.
+    $srcDir = Join-Path $RepoRoot 'src'
+    $noticeFiles = @(Get-ChildItem -Path $srcDir -Filter '*.notice.txt' -Recurse -ErrorAction SilentlyContinue | Sort-Object FullName)
+    if ($noticeFiles.Count -gt 0) {
+        $result.Add('')
+        $result.Add('---')
+        $result.Add('# Bundled Source (non-package)')
+        foreach ($file in $noticeFiles) {
+            $result.Add('')
+            foreach ($line in (Get-Content -LiteralPath $file.FullName)) { $result.Add([string]$line) }
+        }
+    }
+
     $result | Set-Content -Path $OutputFile -Encoding utf8
     Write-Host "  Generated: $(Split-Path $OutputFile -Leaf)"
 }
