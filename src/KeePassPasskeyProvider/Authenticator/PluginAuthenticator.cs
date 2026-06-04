@@ -294,7 +294,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
     /// <summary>
     /// IPluginAuthenticator.GetLockStatus implementation.
-    /// Pings the KeePass plugin to determine lock status and syncs the Windows credential cache.
+    /// Pings the KeePass plugin and reports PluginUnlocked when it responds Ready, otherwise PluginLocked.
     /// </summary>
     public unsafe int GetLockStatus(nint pLockStatusRaw)
     {
@@ -309,6 +309,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             Log.Info($"pipeOk={response != null} status={response?.Status} ready={ready} clientVersion={PipeConstants.Version} serverVersion={response?.Version}");
 
             _lastPingReady = ready;
+            *pLockStatus = ready ? PluginLockStatus.PluginUnlocked : PluginLockStatus.PluginLocked;
             return HResults.S_OK;
         }
         catch (Exception ex)
