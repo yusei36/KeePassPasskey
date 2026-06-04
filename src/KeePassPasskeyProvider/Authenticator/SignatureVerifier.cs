@@ -24,13 +24,8 @@ internal static unsafe class SignatureVerifier
         byte[]? keyBlob = GetOperationSigningPublicKey();
         if (keyBlob == null)
         {
-#if DEBUG
-            Log.Warn("no key available, skipping verification");
-            return HResults.S_OK;
-#else
             Log.Error("no key available, rejecting operation");
             return HResults.NTE_BAD_SIGNATURE;
-#endif
         }
 
         return VerifySignature(
