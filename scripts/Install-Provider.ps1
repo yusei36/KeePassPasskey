@@ -50,9 +50,6 @@ Import-Module "$PSScriptRoot\Shared.psm1" -Force
 $RepoRoot       = Split-Path $PSScriptRoot -Parent
 $AppPackagesDir = "$RepoRoot\build\AppPackages"
 
-$versions = Get-BuildVersions $RepoRoot -Configuration $Configuration
-Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
-
 # -- 0. Build ------------------------------------------------------------------
 if (-not $SkipBuild) {
     $msbuild = Find-MSBuild

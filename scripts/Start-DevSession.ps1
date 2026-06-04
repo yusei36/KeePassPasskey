@@ -29,14 +29,15 @@ param(
     [switch]$DebugPlugin
 )
 
-# The launch profiles run this through conhost.exe so it gets its own console window; no relaunch here.
-
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 Import-Module "$PSScriptRoot\Shared.psm1" -Force
 
 $RepoRoot = Split-Path $PSScriptRoot -Parent
+
+$versions = Get-BuildVersions $RepoRoot -Configuration $Configuration
+Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundColor White
 
 # Enumerates running Visual Studio (DTE) instances from the COM Running Object Table. Version-agnostic:
 # matches any "!VisualStudio.DTE..." moniker rather than probing a fixed list of version progIds.
