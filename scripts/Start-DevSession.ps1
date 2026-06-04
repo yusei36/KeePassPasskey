@@ -10,8 +10,8 @@
     Used by the "KeePass + ..." launch profiles. Runs Install-Provider.ps1
     (Debug = dev identity), starts the installed provider, then starts build\KeePass\KeePass.exe.
 
-    Any process attached via -DebugProvider / -DebugPlugin keeps its own Visual Studio debug session,
-    so this wrapper can return right after attaching without detaching them.
+    This is the process Visual Studio launches for the F5 session, so it stays alive until KeePass
+    closes; exiting earlier would end the debug session and detach the processes it attached.
 
     When run with no arguments (a plain terminal launch, not a VS launch profile), it also builds the
     plugin DLL first, since no IDE build has produced it.
@@ -147,5 +147,7 @@ if ($DebugPlugin) {
     }
 }
 
-# Brief pause so the attach status above stays readable before this console window closes.
-Start-Sleep -Seconds 5
+# VS ends the F5 session (detaching the attached processes) when this launched script exits, so
+# stay alive until KeePass closes.
+Write-Host "Debug session active. Close KeePass to end debugging." -ForegroundColor White
+Wait-Process -Id $keepassProc.Id
