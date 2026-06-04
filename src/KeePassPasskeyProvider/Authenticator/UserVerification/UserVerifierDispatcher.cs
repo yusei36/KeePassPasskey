@@ -32,25 +32,21 @@ internal static class UserVerifierDispatcher
 
     private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase);
 
-    private static UserVerificationMode AdjustModeIfNotificationsDisabled(UserVerificationMode mode)
+    private static bool AreNotificationsDisabled(UserVerificationMode mode)
     {
-        if (mode.HasFlag(UserVerificationMode.Notification))
-        {
-            var setting = ToastNotificationManagerCompat.CreateToastNotifier().Setting;
-            if (setting != NotificationSetting.Enabled)
-            {
-                Log.Warn($"Notifications disabled ({setting}), falling back to Windows Hello", nameof(UserVerifierDispatcher));
-                mode &= ~UserVerificationMode.Notification;
-                mode |= UserVerificationMode.WindowsHello;
-            }
-        }
-        return mode;
+        if (!mode.HasFlag(UserVerificationMode.Notification)) return false;
+
+        var setting = ToastNotificationManagerCompat.CreateToastNotifier().Setting;
+        if (setting == NotificationSetting.Enabled) return false;
+
+        Log.Warn($"Notifications disabled ({setting}); verification failed", nameof(UserVerifierDispatcher));
+        return true;
     }
 
     private static (int hr, DatabaseInfo? selectedDatabase) DispatchRegistration(
         UserVerificationMode mode, VerifyRegistrationFunc call)
     {
-        mode = AdjustModeIfNotificationsDisabled(mode);
+        if (AreNotificationsDisabled(mode)) return (HResults.E_FAIL, null);
 
         DatabaseInfo? selected = null;
         foreach (var verifier in _verifiers)
@@ -66,7 +62,7 @@ internal static class UserVerifierDispatcher
 
     private static int DispatchSignIn(UserVerificationMode mode, Func<IUserVerifier, int> call)
     {
-        mode = AdjustModeIfNotificationsDisabled(mode);
+        if (AreNotificationsDisabled(mode)) return HResults.E_FAIL;
 
         foreach (var verifier in _verifiers)
         {
