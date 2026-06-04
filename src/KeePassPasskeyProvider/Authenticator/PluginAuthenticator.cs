@@ -81,20 +81,17 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 if (pDecoded->pRpInformation != null && pDecoded->pRpInformation->pwszName != null)
                     rpNameStr = new string(pDecoded->pRpInformation->pwszName);
 
-                // 3b. Fetch open databases before showing toast
-                var dbResponse = _pipeClient.GetDatabases();
-                if (dbResponse == null)
-                {
-                    Log.Warn("get_databases pipe failed");
-                    Notifier.ShowPipeError("Passkey creation");
-                    return HResults.E_FAIL;
-                }
-                var databases = dbResponse.Databases ?? new List<DatabaseInfo>();
+                // 3b. Check KeePass reachability before prompting for verification.
+                int hrReady = CheckKeePassReady("Passkey creation");
+                if (hrReady < HResults.S_OK) return hrReady;
 
+                // 3c. Fetch the open databases for the registration toast's database picker.
+                var dbResponse = _pipeClient.GetDatabases();
+                var databases = dbResponse?.Databases ?? new List<DatabaseInfo>();
                 if (databases.Count == 0)
                 {
                     Log.Warn("no database open");
-                    Notifier.ShowMakeCredentialError(rpIdUtf8, PipeErrorCode.DbLocked, "No database is open");
+                    Notifier.ShowPipeError("Passkey creation");
                     return HResults.E_FAIL;
                 }
 
@@ -210,6 +207,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 var allowList = ExtractCredentialIds(pDecoded->CredentialList);
 
+                // 3b. Check KeePass reachability before prompting for verification.
+                int hrReady = CheckKeePassReady("Sign-in");
+                if (hrReady < HResults.S_OK) return hrReady;
+
                 // 4. User verification
                 CredentialCache.LookupWindowsCache(rpIdUtf8, allowList, out string uvUsername, out string uvDisplayHint);
                 Log.Info($"UV cache lookup userName={uvUsername} displayHint={uvDisplayHint}");
@@ -232,7 +233,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 {
                     Log.Warn("pipe failed");
                     Notifier.ShowPipeError("Sign-in");
-                    return HResults.NTE_NOT_FOUND;
+                    return HResults.E_FAIL;
                 }
 
                 if (response.ErrorCode != null)
@@ -319,6 +320,33 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     }
 
     /// <summary>
+    /// Pings KeePass to confirm it is reachable with an open database before the user is prompted
+    /// for verification, so both MakeCredential and GetAssertion fail fast (with a notification
+    /// already shown) instead of verifying first and only then discovering KeePass cannot proceed.
+    /// Returns S_OK when ready, otherwise the appropriate failure HRESULT.
+    /// </summary>
+    /// <param name="operation">Operation name used in the failure notification.</param>
+    private int CheckKeePassReady(string operation)
+    {
+        var ping = _pipeClient.Ping();
+        if (ping == null)
+        {
+            Log.Warn("ping pipe failed");
+            Notifier.ShowPipeError(operation);
+            return HResults.E_FAIL;
+        }
+
+        if (ping.Status != PingStatus.Ready)
+        {
+            Log.Warn($"KeePass not ready status={ping.Status}");
+            Notifier.ShowPipeError(operation);
+            return HResults.E_FAIL;
+        }
+
+        return HResults.S_OK;
+    }
+
+    /// <summary>
     /// Verifies the request signature by extracting fields from the request pointer.
     /// </summary>
     private static unsafe int VerifyRequestSignature(WebAuthnPluginOperationRequest* pRequest)
@@ -358,7 +386,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
     private static int MapErrorCode(PipeErrorCode? code) => code switch
     {
         PipeErrorCode.DbLocked => HResults.E_FAIL,
-        PipeErrorCode.Duplicate => HResults.HRESULT_FROM_WIN32_ERROR_ALREADY_EXISTS,
+        PipeErrorCode.Duplicate => HResults.ERROR_ALREADY_EXISTS,
         PipeErrorCode.NotFound => HResults.NTE_NOT_FOUND,
         PipeErrorCode.UnsupportedAlgorithm => HResults.E_FAIL,
         _ => HResults.E_FAIL,
