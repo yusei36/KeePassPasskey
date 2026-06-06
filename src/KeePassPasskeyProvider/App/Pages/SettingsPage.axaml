@@ -294,7 +294,7 @@
                 </ui:SettingsExpanderItem>
 
                 <ui:SettingsExpanderItem Content="License"
-                                         Description="GNU General Public License v3.0"
+                                         Description="GNU GPL v3.0 or later"
                                          IsVisible="{Binding HasLicense}">
                     <ui:SettingsExpanderItem.Footer>
                         <Button Command="{Binding OpenLicenseCommand}"
