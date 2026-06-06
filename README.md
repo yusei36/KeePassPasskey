@@ -19,13 +19,13 @@ Windows 11 routes passkey operations through a COM server registered as a plugin
 
 ```
           Browser
-             ↓  (Windows WebAuthn API)
+             ↕  (Windows WebAuthn API)
           Windows
-             ↓  (COM)
+             ↕  (COM)
 KeePassPasskeyProvider.exe
-             ↓  (Named pipe JSON)
+             ↕  (Named pipe)
     KeePassPasskey.dll
-             ↓  (KeePass entry)
+             ↕  (KeePass entry)
      KeePass Database
 ```
 
