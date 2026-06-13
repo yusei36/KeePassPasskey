@@ -39,7 +39,7 @@ KeePassPasskeyProvider.exe
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
-3. Run `Install.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
+3. Run `InstallMsix.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
 4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 5. Both status indicators in the **KeePassPasskey** app should show green.
 
@@ -98,7 +98,7 @@ src/
 scripts/
   Install-Provider.ps1          Build, sign, and install the provider for local testing (requires elevation)
   Publish-Package.ps1           Build Release, sign, and produce distributable zip
-  Install.bat                   End-user installer (shipped inside the release zip)
+  InstallMsix.bat               End-user MSIX installer (shipped inside the release zip)
 ```
 
 ## Building

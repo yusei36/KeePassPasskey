@@ -16,7 +16,7 @@
            KeePassPasskeyPlugin/        All plugin DLLs (Release) or DLLs + PDBs (Debug)
            KeePassPasskeyProvider.Package_<version>_x64.msix
            KeePassPasskey.cer
-           Install.bat
+           InstallMsix.bat
            README.md
            THIRD_PARTY_NOTICES.txt
 
@@ -32,7 +32,7 @@
     Skip cert creation; use if the cert already exists in CurrentUser\My.
 
 .PARAMETER SkipSign
-    Skip signing and cert export. The zip will contain an unsigned MSIX and no .cer or Install.bat.
+    Skip signing and cert export. The zip will contain an unsigned MSIX and no .cer or InstallMsix.bat.
     Intended for CI/unsigned builds.
 
 .PARAMETER Dev
@@ -152,7 +152,7 @@ Copy-Item $MsixPath "$stagingDir\"
 
 if (-not $SkipSign) {
     Export-Certificate -Cert $cert -FilePath "$stagingDir\KeePassPasskey.cer" | Out-Null
-    Copy-Item "$PSScriptRoot\Install.bat" "$stagingDir\Install.bat"
+    Copy-Item "$PSScriptRoot\InstallMsix.bat" "$stagingDir\InstallMsix.bat"
 }
 
 Copy-Item "$RepoRoot\README.md" "$stagingDir\README.md"
