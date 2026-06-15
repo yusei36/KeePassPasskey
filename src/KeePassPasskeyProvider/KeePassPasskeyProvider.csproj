@@ -17,6 +17,7 @@
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <OutputPath>..\..\build\$(Configuration)\KeePassPasskeyProvider\</OutputPath>
     <SelfContained>true</SelfContained>
+    <ApplicationIcon>Resources\app-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <!-- Single-file/trimmed publish is gated on Optimized (not Configuration) so a Debug-identity
