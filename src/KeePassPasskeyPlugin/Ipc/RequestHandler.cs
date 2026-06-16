@@ -205,6 +205,20 @@ namespace KeePassPasskey.Ipc
 
             var authData = AuthenticatorData.BuildForAuthentication(req.RpId, 0);
 
+            // TEMP PRF PROBE (remove): embed {"hmac-secret":<output>} in the SIGNED authData
+            // extensions (ED flag set) so the signature covers it. See docs/prf-implementation-plan.md.
+            if (!string.IsNullOrEmpty(req.HmacSecretOutput))
+            {
+                var payload = Base64Url.Decode(req.HmacSecretOutput);
+                var ext = PeterO.Cbor.CBORObject.NewMap().Add("hmac-secret", payload).EncodeToBytes();
+                var extended = new byte[authData.Length + ext.Length];
+                Array.Copy(authData, extended, authData.Length);
+                Array.Copy(ext, 0, extended, authData.Length, ext.Length);
+                extended[32] |= 0x80; // ED flag
+                authData = extended;
+                Log.Info($"PRF: assertion authData+hmac-secret ext, authDataLen={authData.Length}");
+            }
+
             var clientDataHashBytes = Convert.FromBase64String(req.ClientDataHash);
             var dataToSign = new byte[authData.Length + clientDataHashBytes.Length];
             Array.Copy(authData, 0, dataToSign, 0, authData.Length);

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--
+  Local PRF / hmac-secret test harness for KeePassPasskey.
+  Serve over http://localhost (WebAuthn treats localhost as a secure context).
+  This page is a temporary dev tool for confirming how Windows delivers PRF salts;
+  see docs/prf-implementation-plan.md.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>KeePassPasskey PRF test</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+  button { font-size: 15px; padding: .5rem 1rem; margin: .25rem .25rem .25rem 0; cursor: pointer; }
+  pre { background: #111; color: #0f0; padding: 1rem; border-radius: 6px; white-space: pre-wrap; word-break: break-all; }
+  h1 { font-size: 1.3rem; }
+  .hint { color: #555; }
+</style>
+</head>
+<body>
+<h1>KeePassPasskey PRF / hmac-secret test</h1>
+<p class="hint">
+  rpId = <code>localhost</code>. Register first, then authenticate. The PRF eval input is a
+  fixed 32-byte salt so the derived output is stable across runs. Watch the provider log for the
+  <code>PRF:</code> lines during the authenticate step.
+</p>
+
+<button id="register">1. Register passkey (prf requested)</button>
+<button id="authenticate">2. Authenticate (prf eval.first)</button>
+<button id="clear">Clear stored credential</button>
+
+<pre id="log">ready.</pre>
+
+<script>
+const logEl = document.getElementById('log');
+function log(...args) {
+  const line = args.map(a => typeof a === 'string' ? a : JSON.stringify(a, null, 2)).join(' ');
+  logEl.textContent += '\n' + line;
+  console.log(...args);
+}
+function b64urlToBytes(s) {
+  s = s.replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  return Uint8Array.from(atob(s), c => c.charCodeAt(0));
+}
+function bytesToB64url(buf) {
+  const bytes = new Uint8Array(buf);
+  let s = '';
+  for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Fixed 32-byte PRF salt (the browser hashes this with "WebAuthn PRF" before it reaches the authenticator).
+const PRF_FIRST = new Uint8Array(32).map((_, i) => i + 1);
+
+document.getElementById('register').onclick = async () => {
+  try {
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+    const options = {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      rp: { name: 'KeePassPasskey PRF test', id: 'localhost' },
+      user: { id: userId, name: 'prf-test@localhost', displayName: 'PRF Test' },
+      pubKeyCredParams: [
+        { type: 'public-key', alg: -7 },   // ES256
+        { type: 'public-key', alg: -257 }, // RS256
+      ],
+      authenticatorSelection: { userVerification: 'required', residentKey: 'required' },
+      timeout: 120000,
+      attestation: 'none',
+      extensions: { prf: {} }, // request PRF without eval at registration
+    };
+    log('\n--- register: calling navigator.credentials.create ---');
+    const cred = await navigator.credentials.create({ publicKey: options });
+    const ext = cred.getClientExtensionResults();
+    log('credentialId =', bytesToB64url(cred.rawId));
+    log('clientExtensionResults =', ext);
+    log('prf.enabled =', ext?.prf?.enabled);
+    localStorage.setItem('prf-test-credId', bytesToB64url(cred.rawId));
+    log('stored credential id. now click Authenticate.');
+  } catch (e) {
+    log('register ERROR:', e.name, e.message);
+  }
+};
+
+document.getElementById('authenticate').onclick = async () => {
+  try {
+    const credId = localStorage.getItem('prf-test-credId');
+    const allow = credId
+      ? [{ type: 'public-key', id: b64urlToBytes(credId) }]
+      : [];
+    const options = {
+      challenge: crypto.getRandomValues(new Uint8Array(32)),
+      rpId: 'localhost',
+      allowCredentials: allow,
+      userVerification: 'required',
+      timeout: 120000,
+      extensions: { prf: { eval: { first: PRF_FIRST } } },
+    };
+    log('\n--- authenticate: calling navigator.credentials.get (prf eval.first) ---');
+    const assertion = await navigator.credentials.get({ publicKey: options });
+    const ext = assertion.getClientExtensionResults();
+    log('clientExtensionResults =', ext);
+    if (ext?.prf?.results?.first) {
+      log('PRF OUTPUT first =', bytesToB64url(ext.prf.results.first));
+      log('=> PRF works end to end.');
+    } else {
+      log('=> no prf.results.first returned (extension not satisfied).');
+    }
+  } catch (e) {
+    log('authenticate ERROR:', e.name, e.message);
+  }
+};
+
+document.getElementById('clear').onclick = () => {
+  localStorage.removeItem('prf-test-credId');
+  log('cleared stored credential id.');
+};
+</script>
+</body>
+</html>
