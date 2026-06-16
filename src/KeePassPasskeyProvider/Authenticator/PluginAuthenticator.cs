@@ -55,6 +55,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 			Log.Info($"WebAuthNDecodeMakeCredentialRequest hr=0x{hr1:X8}");
 			if (hr1 < 0) return hr1;
 
+			// TEMP PRF INSTRUMENTATION (remove): logs whether Windows tells us PRF/hmac-secret was
+			// requested at registration, and the raw extensions map, to understand the enable
+			// handshake. See docs/prf-implementation-plan.md.
+			LogPrfMakeShape(pDecoded);
+
 			try
 			{
 				// 2. Verify request signature
@@ -158,7 +163,21 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var credentialIdBytes = Base64Url.Decode(response.CredentialId!);
 				var coseKeyBytes = Base64Url.Decode(response.CoseKey!);
 				var authData = AuthenticatorData.BuildForRegistration(rpIdUtf8, AuthenticatorIdentity.EffectiveAaguidBytes, credentialIdBytes, coseKeyBytes, response.BackupEligible, response.BackupState);
-				int hrEnc = EncodeAttestation(authData, out uint cbEncoded, out byte* pbEncoded);
+
+				// TEMP PRF PROBE: if the request asked for prf, signal hmac-secret enabled in the
+				// authData extensions (CTAP-canonical) and also try the unsigned extension output,
+				// to learn which one flips prf.enabled.
+				byte[] makeExtMap = ExtractCborExtensionsMap(pDecoded->cbCborExtensionsMap, pDecoded->pbCborExtensionsMap);
+				bool prfRequested = PrfProbe.ExtensionsMapRequestsPrf(makeExtMap);
+				byte[]? prfRegOutput = prfRequested ? PrfProbe.BuildRegistrationEnabledOutput() : null;
+				if (prfRequested)
+				{
+					authData = PrfProbe.WithHmacSecretRegistrationExtension(authData);
+					Log.Info($"PRF: registration authData+hmac-secret ext, authDataHex={Convert.ToHexString(authData)}");
+				}
+				Log.Info($"PRF: registration unsignedExtOutput={(prfRegOutput != null ? Convert.ToHexString(prfRegOutput) : "(none)")}");
+
+				int hrEnc = EncodeAttestation(authData, prfRegOutput, out uint cbEncoded, out byte* pbEncoded);
 				Log.Info($"WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
 				if (hrEnc < 0) return hrEnc;
 
@@ -212,6 +231,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 			Log.Info($"WebAuthNDecodeGetAssertionRequest hr=0x{hr1:X8}");
 			if (hr1 < 0) return hr1;
 
+			// TEMP PRF INSTRUMENTATION (remove after confirming salt delivery form).
+			// Logs which of the two salt representations Windows populates and their sizes,
+			// to decide whether salts arrive as encrypted CTAP form (pHmacSaltExtension) or
+			// decrypted 32-byte values (pbHmacSecretSaltValues). See docs/prf-implementation-plan.md.
+			LogPrfSaltShape(pDecoded);
+
 			try
 			{
 				// 2. Verify request signature
@@ -241,12 +266,19 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
 
+				// TEMP PRF PROBE: parse the salt(s), HMAC with the fixed probe key, and forward the
+				// output to the plugin so it embeds it in the SIGNED authData extensions.
+				byte[] getExtMap = ExtractCborExtensionsMap(pDecoded->cbCborExtensionsMap, pDecoded->pbCborExtensionsMap);
+				byte[]? prfPayload = PrfProbe.ComputeHmacPayload(getExtMap);
+				Log.Info($"PRF: assertion hmacOutput={(prfPayload != null ? Convert.ToHexString(prfPayload) : "(none)")}");
+
 				// 5. Build JSON pipe request
 				var request = new GetAssertionRequest
 				{
 					RpId = rpIdUtf8,
 					ClientDataHash = clientDataHashB64,
 					AllowCredentials = allowList,
+					HmacSecretOutput = prfPayload != null ? Base64Url.Encode(prfPayload) : null,
 				};
 
 				// 6. Send to KeePass plugin
@@ -266,10 +298,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 					return MapErrorCode(response.ErrorCode);
 				}
 
-				// 7. Encode assertion response
+				// 7. Encode assertion response (authData passes through unchanged; the plugin already
+				// embedded and signed the hmac-secret extension).
 				int hrEnc = EncodeAssertion(
 					response.AuthenticatorData, response.Signature, response.CredentialId, response.UserHandle,
-					response.UserName, response.UserDisplayName, out uint cbEncoded, out byte* pbEncoded);
+					response.UserName, response.UserDisplayName, null, out uint cbEncoded, out byte* pbEncoded);
 				Log.Info($"WebAuthNEncodeGetAssertionResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
 				if (hrEnc < 0) return hrEnc;
 
@@ -378,6 +411,81 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 	}
 
 	/// <summary>
+	/// TEMP PRF INSTRUMENTATION (remove after confirming salt delivery form).
+	/// Dumps which of the two hmac-secret salt representations Windows populated on a decoded
+	/// get_assertion request, and their sizes, so we can tell whether the plugin receives the
+	/// encrypted CTAP form (<see cref="WebAuthnCtapCborHmacSaltExtension"/>) or decrypted 32-byte
+	/// salt values. See docs/prf-implementation-plan.md "How to confirm cheaply".
+	/// </summary>
+	private static unsafe void LogPrfSaltShape(WebAuthnCtapCborGetAssertionRequest* pDecoded)
+	{
+		try
+		{
+			var ext = pDecoded->pHmacSaltExtension;
+			if (ext != null)
+			{
+				Log.Info($"PRF: pHmacSaltExtension NON-NULL ver={ext->dwVersion} " +
+						 $"pKeyAgreement={(ext->pKeyAgreement != null ? "set" : "null")} " +
+						 $"cbEncryptedSalt={ext->cbEncryptedSalt} cbSaltAuth={ext->cbSaltAuth}");
+			}
+			else
+			{
+				Log.Info("PRF: pHmacSaltExtension NULL");
+			}
+
+			Log.Info($"PRF: cbHmacSecretSaltValues={pDecoded->cbHmacSecretSaltValues} " +
+					 $"pbHmacSecretSaltValues={(pDecoded->pbHmacSecretSaltValues != null ? "set" : "null")}");
+
+			Log.Info($"PRF: cbCborExtensionsMap={pDecoded->cbCborExtensionsMap} " +
+					 $"dwPinProtocol={pDecoded->dwPinProtocol}");
+
+			if (pDecoded->cbCborExtensionsMap > 0 && pDecoded->pbCborExtensionsMap != null)
+			{
+				var map = new ReadOnlySpan<byte>(pDecoded->pbCborExtensionsMap, (int)pDecoded->cbCborExtensionsMap);
+				Log.Info($"PRF: extensionsMap hex={Convert.ToHexString(map)}");
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Warn($"PRF: instrumentation failed {ex.GetType().Name}: {ex.Message}");
+		}
+	}
+
+	/// <summary>
+	/// TEMP PRF INSTRUMENTATION (remove). Dumps the PRF/hmac-secret request fields and raw
+	/// extensions map on a decoded make_credential request, to understand the registration-side
+	/// enable handshake. See docs/prf-implementation-plan.md.
+	/// </summary>
+	private static unsafe void LogPrfMakeShape(WebAuthnCtapCborMakeCredentialRequest* pDecoded)
+	{
+		try
+		{
+			Log.Info($"PRF: lHmacSecretExt={pDecoded->lHmacSecretExt} lPrfExt={pDecoded->lPrfExt} " +
+					 $"pHmacSecretMcExtension={(pDecoded->pHmacSecretMcExtension != null ? "set" : "null")} " +
+					 $"cbHmacSecretSaltValues={pDecoded->cbHmacSecretSaltValues}");
+			Log.Info($"PRF: cbCborExtensionsMap={pDecoded->cbCborExtensionsMap}");
+			if (pDecoded->cbCborExtensionsMap > 0 && pDecoded->pbCborExtensionsMap != null)
+			{
+				var map = new ReadOnlySpan<byte>(pDecoded->pbCborExtensionsMap, (int)pDecoded->cbCborExtensionsMap);
+				Log.Info($"PRF: extensionsMap hex={Convert.ToHexString(map)}");
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Warn($"PRF: make instrumentation failed {ex.GetType().Name}: {ex.Message}");
+		}
+	}
+
+	/// <summary>
+	/// TEMP PRF PROBE: copies the raw CBOR extensions map (where Windows actually delivers the
+	/// `prf` extension) out of a decoded request into a managed array.
+	/// </summary>
+	private static unsafe byte[] ExtractCborExtensionsMap(uint cb, byte* pb)
+		=> cb > 0 && pb != null
+			? new ReadOnlySpan<byte>(pb, (int)cb).ToArray()
+			: Array.Empty<byte>();
+
+	/// <summary>
 	/// Verifies the request signature by extracting fields from the request pointer.
 	/// </summary>
 	private static unsafe int VerifyRequestSignature(WebAuthnPluginOperationRequest* pRequest)
@@ -428,10 +536,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 	/// Isolates the fixed-pinning block and WebAuthnCredentialAttestation struct construction.
 	/// </summary>
 	private static unsafe int EncodeAttestation(
-		byte[] authData, out uint cbEncoded, out byte* pbEncoded)
+		byte[] authData, byte[]? unsignedExtOutputs, out uint cbEncoded, out byte* pbEncoded)
 	{
 		fixed (char* fmtPtr = "none")
 		fixed (byte* authPtr = authData)
+		fixed (byte* extPtr = unsignedExtOutputs != null && unsignedExtOutputs.Length > 0 ? unsignedExtOutputs : new byte[1])
 		{
 			var attestation = new WebAuthnCredentialAttestation
 			{
@@ -441,7 +550,18 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				pbAuthenticatorData = authPtr,
 				cbAttestation = 0,
 				pbAttestation = null,
+				// TEMP PRF PROBE (remove): force PRF enabled so Windows records the credential as
+				// hmac-secret-capable and processes salts at assertion. Lets us observe the salt
+				// delivery form before building real storage. See docs/prf-implementation-plan.md.
+				bPrfEnabled = 1,
 			};
+
+			// TEMP PRF PROBE: registration unsigned extension output (e.g. {"prf":{"enabled":true}}).
+			if (unsignedExtOutputs != null && unsignedExtOutputs.Length > 0)
+			{
+				attestation.cbUnsignedExtensionOutputs = (uint)unsignedExtOutputs.Length;
+				attestation.pbUnsignedExtensionOutputs = extPtr;
+			}
 
 			uint cb = 0;
 			byte* pb = null;
@@ -461,8 +581,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		string? authDataB64, string? signatureB64,
 		string? credIdB64, string? userHandleB64,
 		string? userName, string? userDisplayName,
+		byte[]? hmacSecretOutput,
 		out uint cbEncoded, out byte* pbEncoded)
 	{
+		// TEMP PRF PROBE: split the raw HMAC payload into first (32) / optional second (32).
+		byte[] hmacFirst = hmacSecretOutput != null && hmacSecretOutput.Length >= 32
+			? hmacSecretOutput[..32] : Array.Empty<byte>();
+		byte[] hmacSecond = hmacSecretOutput != null && hmacSecretOutput.Length >= 64
+			? hmacSecretOutput[32..64] : Array.Empty<byte>();
 		// Convert base64/base64url strings to byte arrays
 		byte[] authDataBytes = Convert.FromBase64String(authDataB64 ?? string.Empty);
 		byte[] signatureBytes = Convert.FromBase64String(signatureB64 ?? string.Empty);
@@ -477,6 +603,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		fixed (byte* sigPtr = signatureBytes)
 		fixed (byte* uhPtr = userHandleBytes.Length > 0 ? userHandleBytes : new byte[1])
 		fixed (byte* credPtr = credIdBytes.Length > 0 ? credIdBytes : new byte[1])
+		fixed (byte* hmacFirstPtr = hmacFirst.Length > 0 ? hmacFirst : new byte[1])
+		fixed (byte* hmacSecondPtr = hmacSecond.Length > 0 ? hmacSecond : new byte[1])
 		fixed (char* typePtr = WebAuthnConstants.CredentialTypePublicKey)
 		fixed (char* namePtr = userName ?? string.Empty)
 		fixed (char* dispPtr = (userDisplayName ?? userName) ?? string.Empty)
@@ -501,6 +629,20 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 			assertionResp.WebAuthNAssertion.pbUserId = userHandleBytes.Length > 0 ? uhPtr : null;
 			assertionResp.dwNumberOfCredentials = 1;
 			assertionResp.lUserSelected = 1; // TRUE
+
+			// TEMP PRF PROBE: structured hmac-secret output via WebAuthnAssertion.pHmacSecret.
+			WebAuthnHmacSecretSalt hmacSalt = default;
+			if (hmacFirst.Length > 0)
+			{
+				hmacSalt.cbFirst = (uint)hmacFirst.Length;
+				hmacSalt.pbFirst = hmacFirstPtr;
+				if (hmacSecond.Length > 0)
+				{
+					hmacSalt.cbSecond = (uint)hmacSecond.Length;
+					hmacSalt.pbSecond = hmacSecondPtr;
+				}
+				assertionResp.WebAuthNAssertion.pHmacSecret = &hmacSalt;
+			}
 
 			// Build user info if we have a user handle
 			WebAuthnUserEntityInformation userInfo = default;

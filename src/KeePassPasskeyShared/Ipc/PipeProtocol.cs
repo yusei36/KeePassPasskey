@@ -114,6 +114,11 @@ public sealed class GetAssertionRequest : PipeRequestBase
 
 	[JsonProperty("allowCredentials", NullValueHandling = NullValueHandling.Ignore)]
 	public List<string> AllowCredentials { get; set; }
+
+	// TEMP PRF PROBE (remove): cleartext hmac-secret output (base64url, 32 or 64 bytes) the
+	// plugin should embed in the signed authData extensions. See docs/prf-implementation-plan.md.
+	[JsonProperty("hmacSecretOutput", NullValueHandling = NullValueHandling.Ignore)]
+	public string HmacSecretOutput { get; set; }
 }
 
 public sealed class CancelRequest : PipeRequestBase
