@@ -182,7 +182,7 @@ internal unsafe struct WebAuthnPluginAddAuthenticatorOptions
 {
     public char* pwszAuthenticatorName;  // LPCWSTR
     public Guid* rclsid;                 // REFCLSID
-    public char* pwszPluginRpId;         // LPCWSTR (optional)
+    public char* pwszPluginRpId;         // LPCWSTR (required for a nested WebAuthN call originating from a plugin)
     public char* pwszLightThemeLogoSvg;  // LPCWSTR (optional)
     public char* pwszDarkThemeLogoSvg;   // LPCWSTR (optional)
     public uint cbAuthenticatorInfo;
@@ -245,27 +245,27 @@ internal unsafe struct WebAuthnPluginUserVerificationRequest
 
 #endregion
 
-#region EXPERIMENTAL_* structures
+#region Plugin-management structures (v2 - finalized in KB5089573, OS builds 26200.8524 / 26100.8524)
 
-/// <summary>EXPERIMENTAL_WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_OPTIONS_2.</summary>
+/// <summary>WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_OPTIONS_2.</summary>
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe struct ExperimentalWebAuthnPluginAddAuthenticatorOptions2
+internal unsafe struct WebAuthnPluginAddAuthenticatorOptions2
 {
     public char* pwszAuthenticatorName;
     public Guid* pClsid;                 // const CLSID*
-    public char* pwszPluginRpId;
+    public char* pwszPluginRpId;         // required for a nested WebAuthN call originating from a plugin
     public char* pwszLightThemeLogoSvg;
     public char* pwszDarkThemeLogoSvg;
     public uint cbAuthenticatorInfo;
     public byte* pbAuthenticatorInfo;
     public uint cSupportedRpIds;
     public char** ppwszSupportedRpIds;
-    public char* pwszUserVerificationKeyName; // optional
+    public char* pwszUserVerificationKeyName; // name for KeyCredentialManager.RequestCreateAsync (optional)
 }
 
-/// <summary>EXPERIMENTAL_WEBAUTHN_PLUGIN_UPDATE_AUTHENTICATOR_DETAILS_2.</summary>
+/// <summary>WEBAUTHN_PLUGIN_UPDATE_AUTHENTICATOR_DETAILS_2.</summary>
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe struct ExperimentalWebAuthnPluginUpdateAuthenticatorDetails2
+internal unsafe struct WebAuthnPluginUpdateAuthenticatorDetails2
 {
     public char* pwszAuthenticatorName;
     public Guid* pClsid;                 // const CLSID*
@@ -276,19 +276,19 @@ internal unsafe struct ExperimentalWebAuthnPluginUpdateAuthenticatorDetails2
     public byte* pbAuthenticatorInfo;
     public uint cSupportedRpIds;
     public char** ppwszSupportedRpIds;
-    public char* pwszUserVerificationKeyName; // optional
+    public char* pwszUserVerificationKeyName; // name for KeyCredentialManager.RequestCreateAsync (optional, NULL removes this)
 }
 
-/// <summary>EXPERIMENTAL_WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST_2.</summary>
+/// <summary>WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST_2.</summary>
 [StructLayout(LayoutKind.Sequential)]
-internal unsafe struct ExperimentalWebAuthnPluginUserVerificationRequest2
+internal unsafe struct WebAuthnPluginUserVerificationRequest2
 {
     public nint hwnd;                 // HWND
     public Guid* pGuidTransactionId;  // const GUID*
     public char* pwszUsername;
     public char* pwszDisplayHint;
     public uint cbBufferToSign;
-    public byte* pbBufferToSign;      // optional buffer signed by the UV key
+    public byte* pbBufferToSign;      // custom buffer signed by the UV key (optional; not hashed by the API)
 }
 
 #endregion
@@ -300,9 +300,9 @@ internal unsafe struct ExperimentalWebAuthnPluginUserVerificationRequest2
 /// autofill-cache and user-verification APIs, plus the CTAP-CBOR encode/decode
 /// helpers. All entry points resolve lazily from webauthn.dll at first call.
 ///
-/// EXPERIMENTAL_* entry points mirror the header. They are not guaranteed to be
-/// present on every Windows build; because P/Invoke resolves entry points lazily
-/// at first call, declaring them is harmless until actually invoked.
+/// The *2 entry points (finalized in KB5089573) require recent Windows builds
+/// (26200.8524 / 26100.8524); because P/Invoke resolves entry points lazily at
+/// first call, declaring them is harmless on older builds until actually invoked.
 /// </summary>
 internal static unsafe class WebAuthnPluginApi
 {
@@ -355,8 +355,8 @@ internal static unsafe class WebAuthnPluginApi
         WebAuthnPluginAddAuthenticatorResponse** ppPluginAddAuthenticatorResponse);
 
     [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int EXPERIMENTAL_WebAuthNPluginAddAuthenticator2(
-        ExperimentalWebAuthnPluginAddAuthenticatorOptions2* pPluginAddAuthenticatorOptions,
+    internal static extern int WebAuthNPluginAddAuthenticator2(
+        WebAuthnPluginAddAuthenticatorOptions2* pPluginAddAuthenticatorOptions,
         WebAuthnPluginAddAuthenticatorResponse** ppPluginAddAuthenticatorResponse);
 
     [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
@@ -371,8 +371,8 @@ internal static unsafe class WebAuthnPluginApi
         WebAuthnPluginUpdateAuthenticatorDetails* pPluginUpdateAuthenticatorDetails);
 
     [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int EXPERIMENTAL_WebAuthNPluginUpdateAuthenticatorDetails2(
-        ExperimentalWebAuthnPluginUpdateAuthenticatorDetails2* pPluginUpdateAuthenticatorDetails);
+    internal static extern int WebAuthNPluginUpdateAuthenticatorDetails2(
+        WebAuthnPluginUpdateAuthenticatorDetails2* pPluginUpdateAuthenticatorDetails);
 
     // --- Autofill credential cache ----------------------------------------
 
@@ -411,8 +411,8 @@ internal static unsafe class WebAuthnPluginApi
         byte** ppbResponse);
 
     [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int EXPERIMENTAL_WebAuthNPluginPerformUserVerification2(
-        ExperimentalWebAuthnPluginUserVerificationRequest2* pPluginUserVerification,
+    internal static extern int WebAuthNPluginPerformUserVerification2(
+        WebAuthnPluginUserVerificationRequest2* pPluginUserVerification,
         uint* pcbResponse,
         byte** ppbResponse);
 
