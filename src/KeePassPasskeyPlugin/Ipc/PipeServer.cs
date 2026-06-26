@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Pipes;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -196,18 +198,67 @@ namespace KeePassPasskey.Ipc
             if (firstInstance)
                 openMode |= FILE_FLAG_FIRST_PIPE_INSTANCE;
 
-            SafePipeHandle handle = CreateNamedPipe(
-                @"\\.\pipe\" + PipeConstants.PipeName,
-                openMode,
-                PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
-                (uint)MaxInstances,
-                0, 0, 0,
-                IntPtr.Zero);
+            GCHandle sdPin = default;
+            IntPtr pSecAttrs = IntPtr.Zero;
+            try
+            {
+                IntPtr lpSecurityAttributes = IntPtr.Zero;
+                if (_securityDescriptor != null)
+                {
+                    sdPin = GCHandle.Alloc(_securityDescriptor, GCHandleType.Pinned);
+                    var sa = new SECURITY_ATTRIBUTES
+                    {
+                        nLength = (uint)Marshal.SizeOf<SECURITY_ATTRIBUTES>(),
+                        lpSecurityDescriptor = sdPin.AddrOfPinnedObject(),
+                        bInheritHandle = false,
+                    };
+                    pSecAttrs = Marshal.AllocHGlobal((int)sa.nLength);
+                    Marshal.StructureToPtr(sa, pSecAttrs, false);
+                    lpSecurityAttributes = pSecAttrs;
+                }
 
-            if (handle.IsInvalid)
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                SafePipeHandle handle = CreateNamedPipe(
+                    @"\\.\pipe\" + PipeConstants.PipeName,
+                    openMode,
+                    PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
+                    (uint)MaxInstances,
+                    0, 0, 0,
+                    lpSecurityAttributes);
 
-            return new NamedPipeServerStream(PipeDirection.InOut, isAsync: true, isConnected: false, handle);
+                if (handle.IsInvalid)
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+
+                return new NamedPipeServerStream(PipeDirection.InOut, isAsync: true, isConnected: false, handle);
+            }
+            finally
+            {
+                if (pSecAttrs != IntPtr.Zero) Marshal.FreeHGlobal(pSecAttrs);
+                if (sdPin.IsAllocated) sdPin.Free();
+            }
+        }
+
+        // Self-relative security descriptor limiting the pipe to the current user and SYSTEM (no Everyone/anonymous)
+        // with a medium-integrity mandatory label so lower-integrity processes
+        // cannot connect. Null falls back to the default ACL.
+        private static readonly byte[] _securityDescriptor = BuildSecurityDescriptor();
+
+        private static byte[] BuildSecurityDescriptor()
+        {
+            try
+            {
+                string userSid = WindowsIdentity.GetCurrent().User.Value;
+                // D: full control to the user and SYSTEM. S: medium label, deny read/write-up from below.
+                string sddl = $"D:(A;;GA;;;{userSid})(A;;GA;;;SY)S:(ML;;NRNW;;;ME)";
+                var rsd = new RawSecurityDescriptor(sddl);
+                var bytes = new byte[rsd.BinaryLength];
+                rsd.GetBinaryForm(bytes, 0);
+                return bytes;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn($"Could not build pipe security descriptor, using default ACL: {ex.Message}");
+                return null;
+            }
         }
 
         #region Native methods
@@ -219,6 +270,14 @@ namespace KeePassPasskey.Ipc
         private const uint PIPE_READMODE_BYTE = 0x0;
         private const uint PIPE_WAIT = 0x0;
         private const int ERROR_ACCESS_DENIED = 5;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SECURITY_ATTRIBUTES
+        {
+            public uint nLength;
+            public IntPtr lpSecurityDescriptor;
+            [MarshalAs(UnmanagedType.Bool)] public bool bInheritHandle;
+        }
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafePipeHandle CreateNamedPipe(
