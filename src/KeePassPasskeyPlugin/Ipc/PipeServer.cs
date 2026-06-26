@@ -7,6 +7,7 @@ using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Win32.SafeHandles;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
@@ -21,6 +22,9 @@ namespace KeePassPasskey.Ipc
     internal sealed class PipeServer : IDisposable
     {
         private const int MaxInstances = 4;
+        // A complete request or response must transfer within this window, or the connection is
+        // dropped. Bounds slow/stalled clients holding a thread and a pipe instance open (slowloris).
+        private const int MessageTimeoutMs = 10000;
 
         private readonly RequestHandler _handler;
         private volatile bool _running;
@@ -97,7 +101,7 @@ namespace KeePassPasskey.Ipc
                     // Hand off to thread pool
                     var connectedPipe = pipe;
                     pipe = null;
-                    ThreadPool.QueueUserWorkItem(_ => HandleConnection(connectedPipe));
+                    _ = Task.Run(() => HandleConnection(connectedPipe));
                 }
                 catch (Exception) when (!_running)
                 {
@@ -114,7 +118,7 @@ namespace KeePassPasskey.Ipc
             }
         }
 
-        private void HandleConnection(NamedPipeServerStream pipe)
+        private async Task HandleConnection(NamedPipeServerStream pipe)
         {
             try
             {
@@ -129,48 +133,56 @@ namespace KeePassPasskey.Ipc
 
                     while (pipe.IsConnected)
                     {
-                        var requestJson = ReadMessage(pipe);
+                        string requestJson;
+                        using (var cts = new CancellationTokenSource(MessageTimeoutMs))
+                            requestJson = await ReadMessage(pipe, cts.Token);
                         if (requestJson == null) break;
 
                         var responseJson = _handler.Handle(requestJson);
-                        WriteMessage(pipe, responseJson);
+
+                        using (var cts = new CancellationTokenSource(MessageTimeoutMs))
+                            await WriteMessage(pipe, responseJson, cts.Token);
                     }
                 }
             }
-            catch(Exception ex)
+            catch (OperationCanceledException)
+            {
+                Log.Warn("Connection dropped: message timed out");
+            }
+            catch (Exception ex)
             {
                 Log.Error($"Unexpected error: {ex.Message}");
             }
         }
 
-        private static string ReadMessage(Stream stream)
+        private static async Task<string> ReadMessage(Stream stream, CancellationToken ct)
         {
             // Read 4-byte length prefix (little-endian)
             var lenBuf = new byte[4];
-            if (!ReadExact(stream, lenBuf, 4)) return null;
+            if (!await ReadExact(stream, lenBuf, 4, ct)) return null;
             var length = BitConverter.ToUInt32(lenBuf, 0);
             if (length == 0 || length > 1024 * 1024) return null; // sanity check: max 1 MB
 
             var buf = new byte[length];
-            if (!ReadExact(stream, buf, (int)length)) return null;
+            if (!await ReadExact(stream, buf, (int)length, ct)) return null;
             return Encoding.UTF8.GetString(buf);
         }
 
-        private static void WriteMessage(Stream stream, string json)
+        private static async Task WriteMessage(Stream stream, string json, CancellationToken ct)
         {
             var body = Encoding.UTF8.GetBytes(json);
             var lenBuf = BitConverter.GetBytes((uint)body.Length);
-            stream.Write(lenBuf, 0, 4);
-            stream.Write(body, 0, body.Length);
-            stream.Flush();
+            await stream.WriteAsync(lenBuf, 0, 4, ct);
+            await stream.WriteAsync(body, 0, body.Length, ct);
+            await stream.FlushAsync(ct);
         }
 
-        private static bool ReadExact(Stream stream, byte[] buf, int count)
+        private static async Task<bool> ReadExact(Stream stream, byte[] buf, int count, CancellationToken ct)
         {
             var offset = 0;
             while (offset < count)
             {
-                var read = stream.Read(buf, offset, count - offset);
+                var read = await stream.ReadAsync(buf, offset, count - offset, ct);
                 if (read <= 0) return false;
                 offset += read;
             }
