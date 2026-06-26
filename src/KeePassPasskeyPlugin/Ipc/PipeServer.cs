@@ -1,10 +1,13 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Pipes;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using Microsoft.Win32.SafeHandles;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 
@@ -22,17 +25,41 @@ namespace KeePassPasskey.Ipc
         private readonly RequestHandler _handler;
         private volatile bool _running;
         private Thread _listenThread;
+        private NamedPipeServerStream _firstPipe;
 
         internal PipeServer(RequestHandler handler)
         {
             _handler = handler;
         }
 
-        internal void Start()
+        /// <summary>
+        /// Claims the pipe name and starts listening. Returns false if the name is already in use
+        /// (possible pipe-name squatting), in which case the server serves no requests.
+        /// </summary>
+        internal bool Start()
         {
+            // First instance uses FILE_FLAG_FIRST_PIPE_INSTANCE, so an existing squatter is detected here.
+            try
+            {
+                _firstPipe = CreatePipe(firstInstance: true);
+            }
+            catch (Win32Exception ex) when (ex.NativeErrorCode == ERROR_ACCESS_DENIED)
+            {
+                Log.Error($"Pipe name '{PipeConstants.PipeName}' is already in use by another process. " +
+                          "Refusing to serve passkey requests (possible pipe-name squatting). " +
+                          "Close the other process and restart KeePass.");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to create named pipe: {ex.Message}");
+                return false;
+            }
+
             _running = true;
             _listenThread = new Thread(ListenLoop) { IsBackground = true, Name = "KeePass-Passkey-PipeServer" };
             _listenThread.Start();
+            return true;
         }
 
         internal void Stop()
@@ -56,12 +83,8 @@ namespace KeePassPasskey.Ipc
                 NamedPipeServerStream pipe = null;
                 try
                 {
-                    pipe = new NamedPipeServerStream(
-                        PipeConstants.PipeName,
-                        PipeDirection.InOut,
-                        MaxInstances,
-                        PipeTransmissionMode.Byte,
-                        PipeOptions.Asynchronous);
+                    // Reuse the instance claimed in Start() for the first iteration, then create more.
+                    pipe = Interlocked.Exchange(ref _firstPipe, null) ?? CreatePipe(firstInstance: false);
 
                     pipe.WaitForConnection();
 
@@ -153,5 +176,43 @@ namespace KeePassPasskey.Ipc
             }
             return true;
         }
+
+        // The managed PipeOptions enum lacks FILE_FLAG_FIRST_PIPE_INSTANCE on .NET Framework.
+        private static NamedPipeServerStream CreatePipe(bool firstInstance)
+        {
+            uint openMode = PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED;
+            if (firstInstance)
+                openMode |= FILE_FLAG_FIRST_PIPE_INSTANCE;
+
+            SafePipeHandle handle = CreateNamedPipe(
+                @"\\.\pipe\" + PipeConstants.PipeName,
+                openMode,
+                PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
+                (uint)MaxInstances,
+                0, 0, 0,
+                IntPtr.Zero);
+
+            if (handle.IsInvalid)
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+
+            return new NamedPipeServerStream(PipeDirection.InOut, isAsync: true, isConnected: false, handle);
+        }
+
+        #region Native methods
+
+        private const uint PIPE_ACCESS_DUPLEX = 0x00000003;
+        private const uint FILE_FLAG_OVERLAPPED = 0x40000000;
+        private const uint FILE_FLAG_FIRST_PIPE_INSTANCE = 0x00080000;
+        private const uint PIPE_TYPE_BYTE = 0x0;
+        private const uint PIPE_READMODE_BYTE = 0x0;
+        private const uint PIPE_WAIT = 0x0;
+        private const int ERROR_ACCESS_DENIED = 5;
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern SafePipeHandle CreateNamedPipe(
+            string lpName, uint dwOpenMode, uint dwPipeMode, uint nMaxInstances,
+            uint nOutBufferSize, uint nInBufferSize, uint nDefaultTimeOut, IntPtr lpSecurityAttributes);
+
+        #endregion
     }
 }

@@ -69,10 +69,18 @@ namespace KeePassPasskey
                 var passkeyStorage = new PasskeyEntryStorage(_host, settingsStorage);
                 var handler = new RequestHandler(_host, passkeyStorage, settingsStorage);
                 _pipeServer = new PipeServer(handler);
-                _pipeServer.Start();
-
-                // Drive Windows credential-cache sync from KeePass database/passkey events.
-                _syncTrigger = new PasskeySyncTrigger(_host, passkeyStorage, settingsStorage);
+                if (_pipeServer.Start())
+                {
+                    // Drive Windows credential-cache sync from KeePass database/passkey events.
+                    _syncTrigger = new PasskeySyncTrigger(_host, passkeyStorage, settingsStorage);
+                }
+                else
+                {
+                    // Pipe name held by another process; skip sync (it would feed the squatter) and warn.
+                    KeePassLib.Utility.MessageService.ShowWarning(
+                        "KeePassPasskey could not claim its named pipe.",
+                        "Another process is already using the passkey pipe name. Passkey operations are disabled until you close that process and restart KeePass.");
+                }
             }
             catch (Exception ex)
             {
