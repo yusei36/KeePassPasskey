@@ -27,6 +27,10 @@ namespace KeePassPasskeyShared.Settings
         [JsonProperty("resolveTitlePlaceholders")]
         public bool ResolveTitlePlaceholders { get; set; } = true;
 
+        [JsonProperty("newEntryGroupMode")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public PasskeyEntryGroupMode NewEntryGroupMode { get; set; } = PasskeyEntryGroupMode.PasskeysGroup;
+
         [JsonProperty("notificationVerificationTimeoutMilliseconds")]
         public int NotificationVerificationTimeoutMilliseconds { get; set; } = 30_000;
 

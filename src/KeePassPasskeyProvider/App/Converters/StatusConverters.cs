@@ -68,12 +68,3 @@ internal static class UserVerificationModeConverters
 
     private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);
 }
-
-file sealed class LambdaConverter(Func<object?, object?> convert) : IValueConverter
-{
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => convert(value);
-
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => throw new NotSupportedException();
-}

@@ -67,7 +67,7 @@ namespace KeePassPasskey.Storage
             // Title is built last so its placeholders can resolve against the populated entry.
             entry.Strings.Set(PwDefs.TitleField, new ProtectedString(false, BuildTitle(settings, credential, entry, db)));
 
-            var targetGroup = GetOrCreatePasskeyGroup(db);
+            var targetGroup = ResolveTargetGroup(db, settings);
             targetGroup.AddEntry(entry, true);
 
             _host.MainWindow.BeginInvoke(new MethodInvoker(() =>
@@ -319,6 +319,44 @@ namespace KeePassPasskey.Storage
                 group = group.ParentGroup;
             }
             return true;
+        }
+
+        private PwGroup ResolveTargetGroup(PwDatabase db, KeePassPasskeySettings settings)
+        {
+            if (settings.NewEntryGroupMode == PasskeyEntryGroupMode.SelectedGroup)
+            {
+                var selected = GetSelectedGroup();
+                if (selected != null && GroupBelongsToDatabase(db, selected))
+                    return selected;
+
+                Log.Warn("Selected group is unavailable or not in the target database; using the Passkeys group instead",
+                    nameof(ResolveTargetGroup));
+            }
+
+            return GetOrCreatePasskeyGroup(db);
+        }
+
+        private PwGroup GetSelectedGroup()
+        {
+            var mainWindow = _host.MainWindow;
+            try
+            {
+                if (mainWindow.InvokeRequired)
+                    return (PwGroup)mainWindow.Invoke(new Func<PwGroup>(mainWindow.GetSelectedGroup));
+                return mainWindow.GetSelectedGroup();
+            }
+            catch (Exception ex)
+            {
+                Log.Warn($"Could not read the selected group: {ex.Message}", nameof(GetSelectedGroup));
+                return null;
+            }
+        }
+
+        private static bool GroupBelongsToDatabase(PwDatabase db, PwGroup group)
+        {
+            for (var g = group; g != null; g = g.ParentGroup)
+                if (g == db.RootGroup) return true;
+            return false;
         }
 
         private PwGroup GetOrCreatePasskeyGroup(PwDatabase db)

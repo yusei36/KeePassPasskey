@@ -21,6 +21,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private bool _addPasskeyTag;
     [ObservableProperty] private string _entryTitleTemplate = "";
     [ObservableProperty] private bool _resolveTitlePlaceholders;
+    [ObservableProperty] private PasskeyEntryGroupMode _newEntryGroupMode;
     [ObservableProperty] private double _notificationTimeoutSeconds;
     [ObservableProperty] private LogLevel _logLevel;
     [ObservableProperty] private bool _syncCredentialsToWindows;
@@ -105,6 +106,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         AddPasskeyTag                          = AddPasskeyTag,
         EntryTitleTemplate                     = EntryTitleTemplate,
         ResolveTitlePlaceholders               = ResolveTitlePlaceholders,
+        NewEntryGroupMode                      = NewEntryGroupMode,
         NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
         LogLevel                               = LogLevel,
         IsCredentialSyncEnabled                = SyncCredentialsToWindows,
@@ -112,6 +114,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     };
 
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
+    public static PasskeyEntryGroupMode[] GroupModes { get; } = (PasskeyEntryGroupMode[])Enum.GetValues(typeof(PasskeyEntryGroupMode));
     public static LogLevel[] LogLevels { get; } = (LogLevel[])Enum.GetValues(typeof(LogLevel));
     public static Theme[] Themes { get; } = (Theme[])Enum.GetValues(typeof(Theme));
     public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
@@ -263,6 +266,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         AddPasskeyTag                   = c.AddPasskeyTag;
         EntryTitleTemplate              = c.EntryTitleTemplate;
         ResolveTitlePlaceholders        = c.ResolveTitlePlaceholders;
+        NewEntryGroupMode               = c.NewEntryGroupMode;
         NotificationTimeoutSeconds      = c.NotificationVerificationTimeoutMilliseconds / 1000;
         LogLevel                        = c.LogLevel;
         SyncCredentialsToWindows        = c.IsCredentialSyncEnabled;
