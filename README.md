@@ -77,8 +77,9 @@ Credentials created here can be read by KeePassXC and vice versa. Three algorith
 
 ## Security
 
-- The KeePass plugin verifies the identity of the connecting COM server before processing any request. In production (MSIX-installed) it checks the package family name.
 - All signing happens inside KeePass, so private keys are never sent over the pipe.
+- The KeePass plugin and the COM server mutually authenticate over the pipe: the plugin verifies the connecting COM server, and the COM server verifies the plugin, before any request is processed. In production (MSIX-installed) this checks the package family name.
+- The named pipe is restricted by ACL to the current user at medium integrity, so other users and lower-integrity processes cannot connect.
 
 ## Identifiers
 
