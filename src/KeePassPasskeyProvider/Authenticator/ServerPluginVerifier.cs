@@ -1,12 +1,10 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 #if !DEBUG
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 
@@ -17,9 +15,9 @@ namespace KeePassPasskeyProvider.Authenticator;
 #pragma warning disable SYSLIB0057
 
 /// <summary>
-/// Release-only check that the KeePass process serving the pipe has our plugin DLL loaded, signed by
-/// the same cert as this provider's MSIX. Registered via a module initializer so it is active before
-/// any <see cref="PipeClient"/> call; compiled out in Debug, where local plugin builds are unsigned.
+/// Release-only check (compiled out in Debug) that the KeePass process serving the pipe carries our
+/// signed plugin DLL. KeePass loads plugins as managed assemblies invisible to module enumeration, so
+/// we verify the on-disk file in its plugin directories. Registered via a module initializer.
 /// </summary>
 internal static class ServerPluginVerifier
 {
@@ -31,48 +29,134 @@ internal static class ServerPluginVerifier
         ServerVerifier.PluginSignatureValidator = ValidatePluginSignature;
     }
 
-    /// <summary>Returns null if the server's loaded plugin DLL is validly signed by our cert; otherwise a reason.</summary>
-    private static string ValidatePluginSignature(uint serverPid)
+    /// <summary>
+    /// Returns a reason only when the copy KeePass actually loaded (the locked one) is foreign-signed;
+    /// fail-open in every other case. The lock binds the verdict to the loaded copy among duplicates.
+    /// </summary>
+    private static string ValidatePluginSignature(uint serverPid, string serverImagePath)
     {
-        IntPtr hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, serverPid);
-        if (hProcess == IntPtr.Zero)
-        {
-            // Cannot inspect the server (e.g. KeePass elevated). Not a bypass: a same-user squatter is
-            // at equal integrity and inspectable; only a higher-integrity target, which outranks this, fails.
-            Log.Warn($"cannot open server process {serverPid} (err {Marshal.GetLastWin32Error()}); skipping plugin signature pin");
-            return null;
-        }
-
         try
         {
-            string dllPath = FindLoadedModule(hProcess, PluginDllName);
-            if (dllPath == null)
-                return $"Plugin DLL '{PluginDllName}' is not loaded in the server process";
+            if (string.IsNullOrEmpty(serverImagePath))
+            {
+                Log.Warn("server image path unavailable; skipping plugin signature pin");
+                return null;
+            }
 
-            if (!IsAuthenticodeSignatureValid(dllPath))
-                return "Plugin DLL Authenticode signature is missing or invalid";
-
-            string dllThumbprint;
-            using (var dllCert = new X509Certificate2(X509Certificate.CreateFromSignedFile(dllPath)))
-                dllThumbprint = dllCert.Thumbprint;
+            string appDir = Path.GetDirectoryName(serverImagePath);
+            if (string.IsNullOrEmpty(appDir))
+            {
+                Log.Warn($"could not derive KeePass directory from '{serverImagePath}'; skipping plugin signature pin");
+                return null;
+            }
 
             string expectedThumbprint = GetOwnPackageSignerThumbprint();
             if (expectedThumbprint == null)
-                return "could not determine own package signer to verify the plugin DLL";
+            {
+                Log.Warn("could not determine own package signer; skipping plugin signature pin");
+                return null;
+            }
 
-            if (!string.Equals(dllThumbprint, expectedThumbprint, StringComparison.OrdinalIgnoreCase))
-                return $"Plugin DLL is signed by an unexpected certificate ({dllThumbprint})";
+            bool ourCopyPresent = false;
+            bool foreignLoaded = false;
+            bool foreignPresent = false;
+            foreach (string candidate in EnumeratePluginCandidates(appDir))
+            {
+                if (!IsAuthenticodeSignatureValid(candidate))
+                    continue;
 
+                string thumbprint;
+                using (var cert = new X509Certificate2(X509Certificate.CreateFromSignedFile(candidate)))
+                    thumbprint = cert.Thumbprint;
+
+                bool ours = string.Equals(thumbprint, expectedThumbprint, StringComparison.OrdinalIgnoreCase);
+                bool loaded = IsFileHeldOpen(candidate);
+
+                if (ours)
+                {
+                    if (loaded)
+                        return null;
+                    ourCopyPresent = true;
+                }
+                else
+                {
+                    foreignPresent = true;
+                    if (loaded)
+                        foreignLoaded = true;
+                }
+            }
+
+            if (foreignLoaded)
+                return $"The loaded '{PluginDllName}' is signed by an unexpected certificate";
+
+            if (ourCopyPresent)
+                return null;
+
+            if (foreignPresent)
+                Log.Warn($"only a foreign-signed, non-loaded '{PluginDllName}' was found under '{appDir}'; skipping plugin signature pin");
+            else
+                Log.Warn($"no validly signed '{PluginDllName}' found under '{appDir}'; skipping plugin signature pin");
             return null;
         }
         catch (Exception ex)
         {
             Log.Warn($"plugin signature validation failed: {ex.Message}");
-            return $"plugin signature validation error: {ex.Message}";
+            return null;
         }
-        finally
+    }
+
+    /// <summary>
+    /// True if another process holds the file open (KeePass locks a loaded plugin for its lifetime).
+    /// Read-only no-share probe so it works in Program Files; false when undeterminable.
+    /// </summary>
+    private static bool IsFileHeldOpen(string path)
+    {
+        try
         {
-            CloseHandle(hProcess);
+            using (File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None))
+                return false;
+        }
+        // ERROR_SHARING_VIOLATION (0x20) / ERROR_LOCK_VIOLATION (0x21): held open elsewhere.
+        catch (IOException ex) when ((ex.HResult & 0xFFFF) == 0x20 || (ex.HResult & 0xFFFF) == 0x21)
+        {
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"could not determine lock state of '{path}': {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>AppDir (top level) and AppDir\Plugins (recursive), where KeePass loads plugins from.</summary>
+    private static IEnumerable<string> EnumeratePluginCandidates(string appDir)
+    {
+        foreach (string f in SafeEnumerateFiles(appDir, recurse: false))
+            yield return f;
+
+        string pluginsDir = Path.Combine(appDir, "Plugins");
+        foreach (string f in SafeEnumerateFiles(pluginsDir, recurse: true))
+            yield return f;
+    }
+
+    private static IEnumerable<string> SafeEnumerateFiles(string dir, bool recurse)
+    {
+        if (!Directory.Exists(dir))
+            return Array.Empty<string>();
+        try
+        {
+            var options = new EnumerationOptions
+            {
+                RecurseSubdirectories = recurse,
+                IgnoreInaccessible = true,
+                MaxRecursionDepth = 16,
+            };
+            return Directory.EnumerateFiles(dir, PluginDllName, options);
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"could not enumerate '{dir}': {ex.Message}");
+            return Array.Empty<string>();
         }
     }
 
@@ -107,27 +191,6 @@ internal static class ServerPluginVerifier
             string candidate = Path.Combine(dir.FullName, "AppxSignature.p7x");
             if (File.Exists(candidate))
                 return candidate;
-        }
-        return null;
-    }
-
-    private static string FindLoadedModule(IntPtr hProcess, string moduleName)
-    {
-        IntPtr[] modules = new IntPtr[1024];
-        int byteSize = modules.Length * IntPtr.Size;
-        if (!EnumProcessModulesEx(hProcess, modules, byteSize, out int needed, LIST_MODULES_ALL))
-            throw new Win32Exception(Marshal.GetLastWin32Error());
-
-        int count = Math.Min(needed / IntPtr.Size, modules.Length);
-        var sb = new StringBuilder(1024);
-        for (int i = 0; i < count; i++)
-        {
-            sb.Clear();
-            if (GetModuleFileNameEx(hProcess, modules[i], sb, sb.Capacity) == 0)
-                continue;
-            string path = sb.ToString();
-            if (string.Equals(Path.GetFileName(path), moduleName, StringComparison.OrdinalIgnoreCase))
-                return path;
         }
         return null;
     }
@@ -178,10 +241,6 @@ internal static class ServerPluginVerifier
 
     #region Native methods
 
-    private const uint PROCESS_QUERY_INFORMATION = 0x0400;
-    private const uint PROCESS_VM_READ = 0x0010;
-    private const uint LIST_MODULES_ALL = 0x03;
-
     private const uint WTD_UI_NONE = 2;
     private const uint WTD_REVOKE_NONE = 0;
     private const uint WTD_CHOICE_FILE = 1;
@@ -219,18 +278,6 @@ internal static class ServerPluginVerifier
         public uint dwUIContext;
         public IntPtr pSignatureSettings;
     }
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CloseHandle(IntPtr hObject);
-
-    [DllImport("psapi.dll", SetLastError = true)]
-    private static extern bool EnumProcessModulesEx(IntPtr hProcess, [Out] IntPtr[] lphModule, int cb, out int lpcbNeeded, uint dwFilterFlag);
-
-    [DllImport("psapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern int GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, StringBuilder lpFilename, int nSize);
 
     [DllImport("wintrust.dll", ExactSpelling = true, SetLastError = false)]
     private static extern int WinVerifyTrust(IntPtr hwnd, [MarshalAs(UnmanagedType.LPStruct)] Guid pgActionID, IntPtr pWVTData);

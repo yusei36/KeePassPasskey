@@ -18,9 +18,10 @@ namespace KeePassPasskeyShared.Ipc
 
         /// <summary>
         /// Optional extra server check (the provider registers it, Release only): given the server
-        /// process id, returns null on success or a failure reason. Null delegate skips the check.
+        /// process id and its resolved image path, returns null on success or a failure reason.
+        /// Null delegate skips the check.
         /// </summary>
-        public static Func<uint, string> PluginSignatureValidator;
+        public static Func<uint, string, string> PluginSignatureValidator;
 
         /// <summary>
         /// Verifies the server end of a connected client pipe.
@@ -56,7 +57,7 @@ namespace KeePassPasskeyShared.Ipc
                 var signatureValidator = PluginSignatureValidator;
                 if (signatureValidator != null)
                 {
-                    string sigReason = signatureValidator(serverPid);
+                    string sigReason = signatureValidator(serverPid, imagePath);
                     if (sigReason != null)
                     {
                         reason = sigReason;
