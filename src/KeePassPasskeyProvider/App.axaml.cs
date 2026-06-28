@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input.Platform;
 using Avalonia.Markup.Xaml;
 using KeePassPasskeyProvider.App;
 using KeePassPasskeyProvider.App.ViewModel;

@@ -23,7 +23,7 @@
             <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
 
                     <!-- Version mismatch warning -->
-                    <ui:InfoBar Grid.Row="0"
+                    <ui:FAInfoBar Grid.Row="0"
                                 Title="Version mismatch"
                                 Severity="Error"
                                 IsOpen="{Binding IsVersionMismatch}"
@@ -55,7 +55,7 @@
                                         Command="{Binding CopyToClipboardCommand}"
                                         CommandParameter="{Binding ClientVersion}"
                                         ToolTip.Tip="Copy provider version">
-                                    <ui:SymbolIcon Symbol="Copy" FontSize="14" />
+                                    <ui:FASymbolIcon Symbol="Copy" FontSize="14" />
                                 </Button>
                             </Grid>
 
@@ -87,7 +87,7 @@
                                         CommandParameter="{Binding ServerVersion}"
                                         IsVisible="{Binding IsServerVersionAvailable}"
                                         ToolTip.Tip="Copy plugin version">
-                                    <ui:SymbolIcon Symbol="Copy" FontSize="14" />
+                                    <ui:FASymbolIcon Symbol="Copy" FontSize="14" />
                                 </Button>
                             </Grid>
 
@@ -110,7 +110,7 @@
                                         Padding="4"
                                         Command="{Binding OpenLogDirCommand}"
                                         ToolTip.Tip="Open log directory">
-                                    <ui:SymbolIcon Symbol="Folder" FontSize="14" />
+                                    <ui:FASymbolIcon Symbol="Folder" FontSize="14" />
                                 </Button>
                             </Grid>
 

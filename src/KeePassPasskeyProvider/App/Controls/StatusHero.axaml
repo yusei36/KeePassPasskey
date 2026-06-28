@@ -22,13 +22,13 @@
             <Setter Property="Background"  Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
         </Style>
         <!-- Icon inside ring inherits ring color via descendant selector -->
-        <Style Selector="Border.ringSuccess fa|SymbolIcon">
+        <Style Selector="Border.ringSuccess fa|FASymbolIcon">
             <Setter Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
         </Style>
-        <Style Selector="Border.ringCaution fa|SymbolIcon">
+        <Style Selector="Border.ringCaution fa|FASymbolIcon">
             <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
         </Style>
-        <Style Selector="Border.ringCritical fa|SymbolIcon">
+        <Style Selector="Border.ringCritical fa|FASymbolIcon">
             <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
         </Style>
         <!-- Status dots -->
@@ -61,13 +61,13 @@
                             Classes.ringCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected'}"
                             Classes.ringCritical="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,VersionMismatch'}">
                         <Grid>
-                            <fa:SymbolIcon Symbol="Accept" FontSize="18"
+                            <fa:FASymbolIcon Symbol="Accept" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                            IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}" />
-                            <fa:SymbolIcon Symbol="Important" FontSize="18"
+                            <fa:FASymbolIcon Symbol="Important" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                            IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected'}" />
-							<fa:SymbolIcon Symbol="Dismiss" FontSize="18"
+							<fa:FASymbolIcon Symbol="Dismiss" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                            IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,VersionMismatch'}" />
                         </Grid>

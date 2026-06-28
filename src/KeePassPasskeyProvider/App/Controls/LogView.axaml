@@ -52,10 +52,10 @@
         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top"
                     Orientation="Horizontal" Spacing="2" Margin="0 2 4 0">
             <Button Padding="4" Command="{Binding CopyLogCommand}" ToolTip.Tip="Copy log to clipboard">
-                <ui:SymbolIcon Symbol="Copy" FontSize="14" />
+                <ui:FASymbolIcon Symbol="Copy" FontSize="14" />
             </Button>
             <Button Padding="4" Command="{Binding OpenLogFileCommand}" ToolTip.Tip="Open log file">
-                <ui:SymbolIcon Symbol="Document" FontSize="14" />
+                <ui:FASymbolIcon Symbol="Document" FontSize="14" />
             </Button>
         </StackPanel>
     </Grid>

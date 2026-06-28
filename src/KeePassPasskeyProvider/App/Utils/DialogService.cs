@@ -15,12 +15,12 @@ internal static class DialogService
             return;
         }
 
-        var dialog = new ContentDialog
+        var dialog = new FAContentDialog
         {
             Title = title,
             Content = message,
             CloseButtonText = "OK",
-            DefaultButton = ContentDialogButton.Close,
+            DefaultButton = FAContentDialogButton.Close,
         };
 
         await dialog.ShowAsync(mainWindow);
