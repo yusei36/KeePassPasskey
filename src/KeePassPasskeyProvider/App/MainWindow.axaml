@@ -1,6 +1,6 @@
 ﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<ui:AppWindow xmlns="https://github.com/avaloniaui"
+<ui:FAAppWindow xmlns="https://github.com/avaloniaui"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:ui="using:FluentAvalonia.UI.Windowing"
               xmlns:fa="using:FluentAvalonia.UI.Controls"
@@ -11,18 +11,14 @@
               Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
               Width="800" Height="650"
               CanResize="False"
+              CanMaximize="False"
               WindowStartupLocation="CenterScreen">
-	<ui:AppWindow.Styles>
-		<Style Selector="ui|AppWindow /template/ ui|MinMaxCloseControl /template/ Button#MaxRestoreButton">
-			<Setter Property="IsVisible" Value="False"/>
-		</Style>
-    </ui:AppWindow.Styles>
-	<ui:AppWindow.Resources>
+	<ui:FAAppWindow.Resources>
 		<Thickness x:Key="NavigationViewButtonHolderGridMargin">0</Thickness>
-	</ui:AppWindow.Resources>
+	</ui:FAAppWindow.Resources>
     <Grid RowDefinitions="Auto,Auto,*">
         <!-- Dev build warning -->
-        <fa:InfoBar Grid.Row="0"
+        <fa:FAInfoBar Grid.Row="0"
                     Margin="8 4 8 0"
                     Title="Development build"
                     Message="This is a dev build with a separate identity, installed alongside any stable release. Not for production use."
@@ -31,7 +27,7 @@
                     IsClosable="True" />
 
         <!-- Not-packaged warning -->
-        <fa:InfoBar Grid.Row="1"
+        <fa:FAInfoBar Grid.Row="1"
                     Margin="8 4 8 0"
                     Title="Not installed as package"
                     Message="Register and Unregister will not work correctly. Please install the MSIX package first."
@@ -40,26 +36,26 @@
                     IsClosable="True" />
 
         <!-- NavigationView -->
-        <fa:NavigationView Grid.Row="2"
+        <fa:FANavigationView Grid.Row="2"
 						   Margin="0"
                            x:Name="NavView"
                            PaneDisplayMode="Left"
                            IsSettingsVisible="False"
                            OpenPaneLength="200"
                            IsPaneOpen="False">
-            <fa:NavigationView.MenuItems>
-                <fa:NavigationViewItem Content="Status"
+            <fa:FANavigationView.MenuItems>
+                <fa:FANavigationViewItem Content="Status"
                                        Tag="home"
                                        IconSource="Home" />
-                <fa:NavigationViewItem Content="Diagnostics"
+                <fa:FANavigationViewItem Content="Diagnostics"
                                        Tag="diagnostics"
                                        IconSource="Repair" />
-            </fa:NavigationView.MenuItems>
-            <fa:NavigationView.FooterMenuItems>
-                <fa:NavigationViewItem Content="Settings"
+            </fa:FANavigationView.MenuItems>
+            <fa:FANavigationView.FooterMenuItems>
+                <fa:FANavigationViewItem Content="Settings"
                                        Tag="settings"
                                        IconSource="Setting" />
-            </fa:NavigationView.FooterMenuItems>
-        </fa:NavigationView>
+            </fa:FANavigationView.FooterMenuItems>
+        </fa:FANavigationView>
     </Grid>
-</ui:AppWindow>
+</ui:FAAppWindow>

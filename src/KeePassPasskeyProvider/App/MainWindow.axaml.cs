@@ -13,7 +13,7 @@ using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.App;
 
-public partial class MainWindow : AppWindow
+public partial class MainWindow : FAAppWindow
 {
     private HomePage? _homePage;
     private DiagnosticsPage? _diagnosticsPage;
@@ -52,17 +52,17 @@ public partial class MainWindow : AppWindow
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
-        NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
+        NavView.SelectedItem = NavView.MenuItems.OfType<FANavigationViewItem>().First();
     }
 
     internal void NavigateToHome()
     {
-        NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
+        NavView.SelectedItem = NavView.MenuItems.OfType<FANavigationViewItem>().First();
     }
 
     internal void NavigateToSettings()
     {
-        var settings = NavView.FooterMenuItems.OfType<NavigationViewItem>()
+        var settings = NavView.FooterMenuItems.OfType<FANavigationViewItem>()
             .FirstOrDefault(i => i.Tag?.ToString() == "settings");
         if (settings != null)
             NavView.SelectedItem = settings;
@@ -79,9 +79,9 @@ public partial class MainWindow : AppWindow
         }
     }
 
-    private void NavView_SelectionChanged(object? sender, NavigationViewSelectionChangedEventArgs args)
+    private void NavView_SelectionChanged(object? sender, FANavigationViewSelectionChangedEventArgs args)
     {
-        if (args.SelectedItem is not NavigationViewItem item) return;
+        if (args.SelectedItem is not FANavigationViewItem item) return;
         var vm = (MainWindowViewModel)DataContext!;
         switch (item.Tag?.ToString())
         {

@@ -14,7 +14,7 @@
                         Command="{Binding OpenUserGuideCommand}"
                         ToolTip.Tip="Open user guide"
                         VerticalAlignment="Center">
-                    <fa:FontIcon Glyph="&#xE8F1;" FontSize="16" FontFamily="Segoe MDL2 Assets" />
+                    <fa:FAFontIcon Glyph="&#xE8F1;" FontSize="16" FontFamily="Segoe MDL2 Assets" />
                 </Button>
             </StackPanel>
         </Expander.Header>

@@ -42,14 +42,14 @@ public partial class SettingsPage : UserControl
         base.OnUnloaded(e);
         this.RemoveHandler(GotFocusEvent, OnAnyGotFocus);
         this.RemoveHandler(KeyDownEvent, OnAnyKeyDown);
-        foreach (var nb in this.GetVisualDescendants().OfType<NumberBox>())
+        foreach (var nb in this.GetVisualDescendants().OfType<FANumberBox>())
             nb.ValueChanged -= NumberBox_ValueChanged;
     }
 
-    private static void OnAnyGotFocus(object? sender, GotFocusEventArgs e)
+    private static void OnAnyGotFocus(object? sender, FocusChangedEventArgs e)
     {
         if (e.Source is not TextBox tb) return;
-        var nb = tb.GetVisualAncestors().OfType<NumberBox>().FirstOrDefault();
+        var nb = tb.GetVisualAncestors().OfType<FANumberBox>().FirstOrDefault();
         if (nb == null) return;
 
         // Lazily subscribe ValueChanged so NaN is always caught, even for
@@ -80,7 +80,7 @@ public partial class SettingsPage : UserControl
     {
         if (e.Key != Key.Enter) return;
         if (e.Source is not TextBox tb) return;
-        var nb = tb.GetVisualAncestors().OfType<NumberBox>().FirstOrDefault();
+        var nb = tb.GetVisualAncestors().OfType<FANumberBox>().FirstOrDefault();
         if (nb?.NumberFormatter == null) return;
         StripSecondsSuffix(tb);
     }
@@ -91,7 +91,7 @@ public partial class SettingsPage : UserControl
             tb.Text = tb.Text[..^1];
     }
 
-    private static void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs e)
+    private static void NumberBox_ValueChanged(FANumberBox sender, FANumberBoxValueChangedEventArgs e)
     {
         if (double.IsNaN(e.NewValue))
             sender.Value = sender.Minimum;
