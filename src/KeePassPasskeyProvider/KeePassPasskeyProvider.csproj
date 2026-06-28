@@ -79,7 +79,7 @@
       <IsTrimmable>false</IsTrimmable>
     </PackageReference>
     <!-- Override vulnerable transitive dep from Avalonia.Desktop (Linux D-Bus, unused on Windows) -->
-    <PackageReference Include="Tmds.DBus.Protocol" Version="0.93.0" />
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.94.2" />
     <!-- Override vulnerable transitive dep from Microsoft.Toolkit.Uwp.Notifications (CVE GHSA-rxg9-xrhp-64gj) -->
     <PackageReference Include="System.Drawing.Common" Version="10.*" />
   </ItemGroup>
