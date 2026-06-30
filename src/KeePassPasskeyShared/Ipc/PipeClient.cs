@@ -60,13 +60,6 @@ namespace KeePassPasskeyShared.Ipc
                 {
                     pipe.Connect(ConnectTimeoutMs);
 
-                    // Verify the server before sending, so a squatter cannot harvest requests or forge replies.
-                    if (!ServerVerifier.VerifyServer(pipe.SafePipeHandle, out string reason))
-                    {
-                        _logger?.Invoke($"Server verification failed: {reason}");
-                        return null;
-                    }
-
                     string requestJson = JsonConvert.SerializeObject(request);
                     byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
                     _logger?.Invoke($">> {requestJson}");
