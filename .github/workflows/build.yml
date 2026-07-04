@@ -34,6 +34,14 @@ jobs:
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Release -SkipSign
 
+      - name: Upload Defender scan report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: defender-scan-report
+          path: build\defender-scan-*.txt
+          if-no-files-found: ignore
+
       - name: Upload artifact (Debug, optimized)
         uses: actions/upload-artifact@v7
         with:

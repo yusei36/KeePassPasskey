@@ -178,7 +178,93 @@ $zipSize = [math]::Round((Get-Item $zipPath).Length / 1MB, 2)
 
 $productVersion = Get-PluginVersion -BuildDir $buildDir
 
+# -- 7. Antivirus self-check (Microsoft Defender) -------------------------------
+# Scan every shipped artifact with the same engine that produces Defender's cloud/ML verdicts, so a
+# regression is caught before release. Writes a full per-file report plus a short console overview.
+Write-Step "Scanning artifacts with Microsoft Defender"
+$scanReport  = "$RepoRoot\build\defender-scan-$($versions.Version)$suffix.txt"
+$scanSummary = ''
+$scanColor   = 'Green'
+$scanFailed  = $false
+# Prefer the up-to-date versioned platform copy; fall back to the base install.
+$mpCmd = Get-ChildItem "$env:ProgramData\Microsoft\Windows Defender\Platform\*\MpCmdRun.exe" -ErrorAction SilentlyContinue |
+         Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+if (-not $mpCmd -and (Test-Path "$env:ProgramFiles\Windows Defender\MpCmdRun.exe")) {
+    $mpCmd = "$env:ProgramFiles\Windows Defender\MpCmdRun.exe"
+}
+
+if (-not $mpCmd) {
+    $scanSummary = 'SKIPPED - MpCmdRun.exe not found, artifacts were NOT scanned'
+    $scanColor   = 'Yellow'
+    Write-Host "  WARNING: MpCmdRun.exe not found; Microsoft Defender is unavailable." -ForegroundColor Yellow
+    Write-Host "  The release artifacts were NOT antivirus-scanned. Verify on a machine with Defender." -ForegroundColor Yellow
+    @(
+        'Microsoft Defender scan SKIPPED',
+        "  Date:    $(Get-Date -Format 'u')",
+        "  Version: $($versions.Version)$suffix ($Configuration)",
+        '  Reason:  MpCmdRun.exe not found (Microsoft Defender unavailable on this machine).',
+        '  Result:  Artifacts were NOT scanned; this build has not been antivirus-verified.'
+    ) | Set-Content $scanReport -Encoding UTF8
+} else {
+    # Artifacts: the zip, the MSIX, the provider exe + all its loose DLLs, and the merged plugin DLL.
+    $providerDir = "$buildDir\KeePassPasskeyProvider"
+    $scanTargets = @($zipPath, $MsixPath, "$providerDir\KeePassPasskeyProvider.exe")
+    $scanTargets += Get-ChildItem $providerDir -Filter '*.dll' -File | Select-Object -ExpandProperty FullName
+    $scanTargets += "$buildDir\KeePassPasskey.dll"
+    $scanTargets = $scanTargets | Where-Object { $_ -and (Test-Path $_) } | Select-Object -Unique
+
+    # -DisableRemediation: report only, never quarantine/delete the build output. 0 = clean, 2 = threat.
+    $results = @(foreach ($file in $scanTargets) {
+        & $mpCmd -Scan -ScanType 3 -File $file -DisableRemediation | Out-Null
+        $code    = $LASTEXITCODE
+        $verdict = switch ($code) { 0 { 'CLEAN' } 2 { 'THREAT' } default { "ERROR($code)" } }
+        [pscustomobject]@{ Verdict = $verdict; File = $file }
+    })
+    $threats = @($results | Where-Object { $_.Verdict -eq 'THREAT' })
+    $errored = @($results | Where-Object { $_.Verdict -like 'ERROR*' })
+    $clean   = @($results | Where-Object { $_.Verdict -eq 'CLEAN' })
+
+    # Full per-file report to its own file. Cloud (MAPS) state is recorded because the !ml/!cl
+    # cloud/ML verdicts only reproduce when cloud-delivered protection is on (2 = Advanced).
+    $report  = @(
+        'Microsoft Defender scan report',
+        "  Date:          $(Get-Date -Format 'u')",
+        "  Version:       $($versions.Version)$suffix ($Configuration)",
+        "  MpCmdRun:      $mpCmd",
+        "  Signatures:    $((Get-MpComputerStatus).AntivirusSignatureVersion)",
+        "  Cloud (MAPS):  $((Get-MpPreference).MAPSReporting)  (2 = Advanced)",
+        "  Result:        $($results.Count) scanned, $($clean.Count) clean, $($threats.Count) threats, $($errored.Count) errors",
+        ''
+    )
+    $report += $results | ForEach-Object { '  [{0,-9}] {1}' -f $_.Verdict, $_.File }
+    $report | Set-Content $scanReport -Encoding UTF8
+
+    if ($threats.Count -gt 0) {
+        $scanSummary = "$($threats.Count) THREAT(S) detected - see report"
+        $scanColor   = 'Red'
+        $scanFailed  = $true
+        Write-Host "  THREATS DETECTED in $($threats.Count) file(s):" -ForegroundColor Red
+        $threats | ForEach-Object { Write-Host "    $($_.File)" -ForegroundColor Red }
+    } elseif ($errored.Count -gt 0) {
+        $scanSummary = "$($clean.Count)/$($results.Count) clean, $($errored.Count) could not be scanned"
+        $scanColor   = 'Yellow'
+        Write-Host "  $scanSummary" -ForegroundColor Yellow
+    } else {
+        $scanSummary = "all $($results.Count) artifacts clean"
+        Write-Host "  $scanSummary" -ForegroundColor Green
+    }
+    Write-Host "  Report: $scanReport"
+}
+
 Write-Step "Done"
 Write-Host "  Version:   $productVersion ($Configuration)" -ForegroundColor Green
 Write-Host "  Archive:   $zipPath ($zipSize MB)" -ForegroundColor Green
 Write-Host "  SHA256:    $hash" -ForegroundColor Green
+Write-Host "  AV scan:   $scanSummary" -ForegroundColor $scanColor
+
+# Fail the build (non-zero exit) so CI blocks a release when Defender flags an artifact.
+if ($scanFailed) {
+    Write-Host ''
+    Write-Host "Microsoft Defender flagged one or more artifacts; see $scanReport" -ForegroundColor Red
+    exit 1
+}
