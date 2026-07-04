@@ -20,12 +20,10 @@
     <ApplicationIcon>Resources\app-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
-  <!-- Single-file/trimmed publish is gated on Optimized (not Configuration) so a Debug-identity
-       build can still be packaged release-like. Optimized defaults true for Release; -->
+  <!-- Trimmed publish, gated on Optimized (not Configuration) so a Debug-identity build can still be
+       packaged release-like (Optimized defaults true for Release). Loose self-contained ships the
+       runtime as ordinary DLLs in the MSIX, so users need no separate .NET install. -->
   <PropertyGroup Condition="'$(Optimized)' == 'true'">
-    <PublishSingleFile>true</PublishSingleFile>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>partial</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>

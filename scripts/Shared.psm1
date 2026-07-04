@@ -61,7 +61,7 @@ function Get-BuildVersions([string]$RepoRoot, [string]$Configuration = '') {
     return @{ FileVersion = $fileVersion; Version = $version }
 }
 
-# Publishes the provider exe via dotnet publish (handles restore; single-file bundling when -Optimized).
+# Publishes the provider via dotnet publish (handles restore; loose self-contained + trim when -Optimized).
 function Invoke-PublishProvider {
     param(
         [string]$RepoRoot,
