@@ -9,7 +9,7 @@
               x:DataType="vm:MainWindowViewModel"
               Title="{Binding WindowTitle}"
               Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
-              Width="800" Height="650"
+              Width="800" Height="680"
               CanResize="False"
               CanMaximize="False"
               WindowStartupLocation="CenterScreen">
