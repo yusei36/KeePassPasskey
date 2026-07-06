@@ -17,8 +17,7 @@ echo Install started at %DATE% %TIME%
 for %%f in ("%~dp0*.cer")  do set "CER=%%f"
 for %%f in ("%~dp0*.msix") do set "MSIX=%%f"
 
-for /f "tokens=1" %%u in ('query user ^| findstr "^>"') do set "ACTUAL_USER=%%u"
-set "ACTUAL_USER=%ACTUAL_USER:>=%"
+for /f "usebackq delims=" %%u in (`PowerShell -ExecutionPolicy Bypass -Command "$user = (Get-CimInstance Win32_ComputerSystem).UserName; if (-not $user) { $user = \"$env:USERDOMAIN\$env:USERNAME\" }; Write-Output $user"`) do set "ACTUAL_USER=%%u"
 echo Found active user: %ACTUAL_USER%
 
 echo Installing certificate...
@@ -50,4 +49,4 @@ set "PS1=%~dp0install_user.ps1"
 ) > "%PS1%"
 
 echo Creating and running scheduled task...
-PowerShell -ExecutionPolicy Bypass -Command "Register-ScheduledTask -TaskName 'InstallKeePassPasskeyMSIX' -Action (New-ScheduledTaskAction -Execute 'PowerShell' -Argument '-ExecutionPolicy Bypass -File \"%PS1%\"') -Principal (New-ScheduledTaskPrincipal -UserId '%ACTUAL_USER%') -Force | Out-Null; Start-ScheduledTask -TaskName 'InstallKeePassPasskeyMSIX'"
+PowerShell -ExecutionPolicy Bypass -Command "$action = New-ScheduledTaskAction -Execute 'PowerShell' -Argument '-ExecutionPolicy Bypass -File \"%PS1%\"'; $principal = New-ScheduledTaskPrincipal -UserId '%ACTUAL_USER%'; try { Register-ScheduledTask -TaskName 'InstallKeePassPasskeyMSIX' -Action $action -Principal $principal -Force | Out-Null; Start-ScheduledTask -TaskName 'InstallKeePassPasskeyMSIX' } catch { Write-Host \"ERROR: Could not create scheduled task for user %ACTUAL_USER%: $_\" -ForegroundColor Red; exit 1 }"
