@@ -12,6 +12,10 @@ on:
         description: 'Also build Release (unsigned)'
         type: boolean
         default: false
+      build_store:
+        description: 'Also build Store MSIX (unsigned, for Partner Center)'
+        type: boolean
+        default: true
 
 jobs:
   build:
@@ -33,6 +37,12 @@ jobs:
         if: inputs.build_release
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Release -SkipSign
+
+      # Opt-in via the build_store input (default true), and always on the Store-prep branch for now.
+      - name: Build (Store MSIX, unsigned)
+        if: ${{ inputs.build_store || github.ref == 'refs/heads/feature/windows-store-release-prep' }}
+        shell: pwsh
+        run: .\scripts\Publish-Package.ps1 -Store
 
       - name: Upload Defender scan report
         if: always()
@@ -56,3 +66,10 @@ jobs:
           path: |
             build\KeePassPasskey-*.zip
             !build\KeePassPasskey-*-debug-*.zip
+
+      - name: Upload artifact (Store MSIX)
+        if: ${{ inputs.build_store || github.ref == 'refs/heads/feature/windows-store-release-prep' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: KeePassPasskey-store-msix
+          path: build\KeePassPasskeyProvider.Package_*_x64_Store.msix
