@@ -67,6 +67,14 @@
     <Content Include="Assets\StoreLogo.scale-200.png" />
     <Content Include="Assets\StoreLogo.scale-400.png" />
   </ItemGroup>
+  <!-- Bundle the merged KeePass plugin DLL into the package under KeePassPasskeyPlugin\ for store distribution.
+       Need to be built by Publish-Package before this project; Condition guards VS/design-time builds. -->
+  <ItemGroup>
+    <Content Include="..\..\build\$(Configuration)\KeePassPasskey.dll"
+             Condition="Exists('..\..\build\$(Configuration)\KeePassPasskey.dll')">
+      <Link>KeePassPasskeyPlugin\KeePassPasskey.dll</Link>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj">
       <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>

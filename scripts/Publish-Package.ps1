@@ -106,11 +106,16 @@ if (-not $SkipBuild) {
     Write-Step "Building provider app"
     Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration -Optimized:$optimized -Store:$Store
 
-    Write-Step "Building MSIX package"
-    Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized -Store:$Store
-
+    # Plugin is built and merged BEFORE the MSIX so the wapproj can bundle the single merged DLL
+    # under KeePassPasskeyPlugin\ (the provider copies it into KeePass's Plugins folder).
     Write-Step "Building KeePassPasskey plugin DLL"
     Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -Optimized:$optimized
+
+    Write-Step "Merging plugin DLLs with ILRepack"
+    Invoke-ILRepack -BuildDir "$RepoRoot\build\$Configuration" -Configuration $Configuration
+
+    Write-Step "Building MSIX package"
+    Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized -Store:$Store
 }
 
 # -- 3. Locate build artifacts --------------------------------------------------
@@ -122,17 +127,12 @@ if ($Store) {
     $storeMsix = "$RepoRoot\build\KeePassPasskeyProvider.Package_$($versions.FileVersion)_x64_Store.msix"
     Copy-Item $MsixPath $storeMsix -Force
     Write-Step "Done (Store channel)"
-    Write-Host "  Unsigned MSIX for Partner Center upload:" -ForegroundColor Green
+    Write-Host "  Unsigned MSIX for Partner Center upload (includes bundled plugin):" -ForegroundColor Green
     Write-Host "    $storeMsix" -ForegroundColor Green
-    Write-Host "  (provider only; plugin bundling still pending)" -ForegroundColor Yellow
     return
 }
 
-# -- 4. Merge plugin DLLs -------------------------------------------------------
-Write-Step "Merging plugin DLLs with ILRepack"
-Invoke-ILRepack -BuildDir $buildDir -Configuration $Configuration
-
-# -- 5. Sign MSIX ---------------------------------------------------------------
+# -- 4. Sign MSIX ---------------------------------------------------------------
 $cert = $null
 if (-not $SkipSign) {
     Write-Step "Checking for signing certificate"
@@ -148,7 +148,7 @@ if (-not $SkipSign) {
     }
 }
 
-# -- 6. Assemble zip ------------------------------------------------------------
+# -- 5. Assemble zip ------------------------------------------------------------
 $versions   = Get-BuildVersions $RepoRoot -Configuration $Configuration
 $tags       = @()
 if ($Configuration -eq 'Debug') { $tags += 'debug' }
@@ -202,7 +202,7 @@ $zipSize = [math]::Round((Get-Item $zipPath).Length / 1MB, 2)
 
 $productVersion = Get-PluginVersion -BuildDir $buildDir
 
-# -- 7. Antivirus self-check (Microsoft Defender) -------------------------------
+# -- 6. Antivirus self-check (Microsoft Defender) -------------------------------
 # Scan every shipped artifact with the same engine that produces Defender's cloud/ML verdicts, so a
 # regression is caught before release. Writes a full per-file report plus a short console overview.
 Write-Step "Scanning artifacts with Microsoft Defender"
