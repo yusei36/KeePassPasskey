@@ -11,12 +11,17 @@ namespace KeePassPasskey.Ipc
     /// </summary>
     internal static class ClientVerifier
     {
-        // Expected package family name for the MSIX-packaged provider.
-        // Debug builds accept any package starting with the base name to allow self-signed dev certs.
+        // Expected package family names for the MSIX-packaged provider.
+        // Debug accepts any package starting with the base name (self-signed dev certs).
 #if DEBUG
-        private const string ExpectedPackageFamilyName = "KeePassPasskeyProvider";
+        private static readonly string[] ExpectedPackageFamilyNames = { "KeePassPasskeyProvider" };
 #else
-        private const string ExpectedPackageFamilyName = "KeePassPasskeyProvider_rcm79ea08mqe4";
+        // Release accepts both official channels: GitHub self-signed and Microsoft Store.
+        private static readonly string[] ExpectedPackageFamilyNames =
+        {
+            "KeePassPasskeyProvider_rcm79ea08mqe4",       // GitHub channel
+            "51133UweKgel.KeePassPasskey_2xyhjw5z6d8g4",  // Store channel
+        };
 #endif
 
         /// <summary>
@@ -49,10 +54,13 @@ namespace KeePassPasskey.Ipc
                 }
 
 #if DEBUG
-                if (!packageFamilyName.StartsWith(ExpectedPackageFamilyName, StringComparison.OrdinalIgnoreCase))
+                bool matched = Array.Exists(ExpectedPackageFamilyNames,
+                    n => packageFamilyName.StartsWith(n, StringComparison.OrdinalIgnoreCase));
 #else
-                if (!packageFamilyName.Equals(ExpectedPackageFamilyName, StringComparison.OrdinalIgnoreCase))
+                bool matched = Array.Exists(ExpectedPackageFamilyNames,
+                    n => packageFamilyName.Equals(n, StringComparison.OrdinalIgnoreCase));
 #endif
+                if (!matched)
                 {
                     reason = $"Unexpected package: {packageFamilyName}";
                     return false;

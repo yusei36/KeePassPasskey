@@ -158,8 +158,8 @@ public sealed partial class SettingsViewModel : ObservableObject
             return false;
         try
         {
-            return Windows.ApplicationModel.Package.Current.Id.FamilyName
-                == Authenticator.PluginConstants.OfficialPackageFamilyName;
+            return Authenticator.PluginConstants.IsOfficialPackageFamilyName(
+                Windows.ApplicationModel.Package.Current.Id.FamilyName);
         }
         catch
         {

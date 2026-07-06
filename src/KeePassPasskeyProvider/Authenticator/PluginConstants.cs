@@ -11,10 +11,17 @@ internal static class PluginConstants
     /// <summary>KeePassPasskey Provider AAGUID (dev).</summary>
     public static readonly Guid KeePassPasskeyProviderAaguid = new("56fc5580-c119-4fb8-8964-a1241f2da8ed");
 #else
-    /// <summary>KeePassPasskey Provider COM server CLSID.</summary>
+    // Two Release channels: distinct CLSID (avoids COM class collision) selected by the STORE
+    // constant (/p:Store=true); shared AAGUID since it names the model, not the instance.
+#if STORE
+    /// <summary>KeePassPasskey Provider COM server CLSID (Microsoft Store channel).</summary>
+    public static readonly Guid KeePassPasskeyProviderClsid = new("281969eb-44a9-4577-954d-b47e72665442");
+#else
+    /// <summary>KeePassPasskey Provider COM server CLSID (self-signed GitHub channel).</summary>
     public static readonly Guid KeePassPasskeyProviderClsid = new("4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e");
+#endif
 
-    /// <summary>KeePassPasskey Provider AAGUID.</summary>
+    /// <summary>KeePassPasskey Provider AAGUID (shared across both Release channels).</summary>
     public static readonly Guid KeePassPasskeyProviderAaguid = new("9addb28c-b46f-4402-808f-019651441ff3");
 #endif
 
@@ -43,5 +50,13 @@ internal static class PluginConstants
 
     public const string StartupTaskTrayApp   = "KeePassPasskeyTrayApp";
 
-    public const string OfficialPackageFamilyName = "KeePassPasskeyProvider_rcm79ea08mqe4";
+    /// <summary>PFNs of the official provider packages.</summary>
+    public static readonly string[] OfficialPackageFamilyNames =
+    {
+        "KeePassPasskeyProvider_rcm79ea08mqe4",       // GitHub channel
+        "51133UweKgel.KeePassPasskey_2xyhjw5z6d8g4",  // Store channel
+    };
+
+    public static bool IsOfficialPackageFamilyName(string familyName) =>
+        Array.Exists(OfficialPackageFamilyNames, n => string.Equals(n, familyName, StringComparison.OrdinalIgnoreCase));
 }

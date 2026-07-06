@@ -30,6 +30,11 @@
     <NoWarn>$(NoWarn);IL2026;IL2104</NoWarn>
   </PropertyGroup>
 
+  <!-- /p:Store=true selects the Store channel CLSID (see PluginConstants.cs). Release only. -->
+  <PropertyGroup Condition="'$(Store)' == 'true'">
+    <DefineConstants>$(DefineConstants);STORE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\KeePassPasskeyShared\KeePassPasskeyShared.csproj" />
   </ItemGroup>
