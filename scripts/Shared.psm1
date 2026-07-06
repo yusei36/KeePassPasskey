@@ -8,6 +8,11 @@ $script:DevCertSubject = 'CN=KeePassPasskey Dev'
 # These must match the #if DEBUG values in PluginConstants.cs.
 $script:ReleaseClsid = '4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e'
 $script:DevClsid     = 'f048763a-d151-4fb0-b96e-315c543b2431'
+# Store channel: distinct CLSID + Partner Center package identity. CLSID must match the
+# STORE branch in PluginConstants.cs; Name/Publisher come from Partner Center > Product Identity.
+$script:StoreClsid         = '281969eb-44a9-4577-954d-b47e72665442'
+$script:StoreIdentityName  = '51133UweKgel.KeePassPasskey'
+$script:StorePublisher     = 'CN=B667D1D3-B0C8-481A-A48D-1D8129DA4932'
 $script:SignToolPath = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
 
 # Signing cert subject for a build configuration. Debug = dev identity, Release = product identity.
@@ -66,16 +71,16 @@ function Invoke-PublishProvider {
     param(
         [string]$RepoRoot,
         [string]$Configuration,
-        [switch]$Optimized
+        [switch]$Optimized,
+        [switch]$Store
     )
     $csproj = "$RepoRoot\src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj"
     $outDir = "$RepoRoot\build\$Configuration\KeePassPasskeyProvider"
+    $pubArgs = @('publish', $csproj, '-c', $Configuration, '-r', 'win-x64', '-o', $outDir, '--nologo')
+    if ($Optimized) { $pubArgs += '/p:Optimized=true' }
+    if ($Store)     { $pubArgs += '/p:Store=true' }
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
-    if ($Optimized) {
-        & dotnet publish $csproj -c $Configuration -r win-x64 -o $outDir --nologo /p:Optimized=true
-    } else {
-        & dotnet publish $csproj -c $Configuration -r win-x64 -o $outDir --nologo
-    }
+    & dotnet $pubArgs
     if ($LASTEXITCODE -ne 0) { throw "dotnet publish failed with exit code $LASTEXITCODE" }
     Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
 }
@@ -86,7 +91,8 @@ function Invoke-BuildWapproj {
         [string]$RepoRoot,
         [string]$Configuration,
         [string]$MSBuild,
-        [switch]$Optimized
+        [switch]$Optimized,
+        [switch]$Store
     )
     $versions = Get-BuildVersions $RepoRoot
     $manifest         = "$RepoRoot\src\KeePassPasskeyProvider.Package\Package.appxmanifest"
@@ -101,6 +107,13 @@ function Invoke-BuildWapproj {
         $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey"', 'DisplayName="KeePassPasskey Dev"'
         $patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey \(tray\)"', 'DisplayName="KeePassPasskey Dev (tray)"'
         $patchedContent = $patchedContent -replace 'Alias="KeePassPasskeyProvider.exe"', 'Alias="KeePassPasskeyProviderDev.exe"'
+    }
+    # Store builds get the Partner Center package identity + Store CLSID. PublisherDisplayName
+    # already matches, so it is left as-is.
+    elseif ($Store) {
+        $patchedContent = $patchedContent -replace 'Name="KeePassPasskeyProvider"', "Name=`"$script:StoreIdentityName`""
+        $patchedContent = $patchedContent -replace 'Publisher="CN=KeePassPasskey"', "Publisher=`"$script:StorePublisher`""
+        $patchedContent = $patchedContent -replace [regex]::Escape($script:ReleaseClsid), $script:StoreClsid
     }
     [IO.File]::WriteAllText($manifest, $patchedContent)
 
@@ -119,6 +132,7 @@ function Invoke-BuildWapproj {
         '/p:AppxPackageSigningEnabled=false'
     )
     if ($Optimized) { $wapArgs += '/p:Optimized=true' }
+    if ($Store)     { $wapArgs += '/p:Store=true' }
     $wapArgs += @('/m', '/v:minimal')
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     try {

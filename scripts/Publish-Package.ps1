@@ -44,9 +44,15 @@
     build. Only meaningful for the Debug configuration; Release stays optimized via the props default.
     The zip is tagged 'unopt'.
 
+.PARAMETER Store
+    Build the Microsoft Store channel: stamps the Partner Center package identity + Store CLSID, builds
+    unsigned (the Store re-signs), and emits the bare .msix for Partner Center upload instead of the zip.
+    Release only.
+
 .EXAMPLE
     .\Publish-Package.ps1
     .\Publish-Package.ps1 -Dev
+    .\Publish-Package.ps1 -Store
     .\Publish-Package.ps1 -Configuration Debug
     .\Publish-Package.ps1 -SkipBuild
     .\Publish-Package.ps1 -Configuration Debug -SkipSign
@@ -59,12 +65,19 @@ param(
     [switch]$SkipCert,
     [switch]$SkipSign,
     [switch]$Dev,
-    [switch]$NoOptimize
+    [switch]$NoOptimize,
+    [switch]$Store
 )
 
 # -Dev maps to the Debug identity. Output is release-like optimized by default (see -NoOptimize);
 # Configuration here only chooses product (Release) vs dev (Debug) identity. Debug auto-stamps 'dev'.
 if ($Dev) { $Configuration = 'Debug' }
+
+# Store is a Release-only channel and is uploaded unsigned (the Store re-signs).
+if ($Store) {
+    if ($Configuration -ne 'Release') { throw "-Store is only valid with the Release configuration (not -Dev / -Configuration Debug)." }
+    $SkipSign = $true
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -91,10 +104,10 @@ if (-not $SkipBuild) {
     # Release-like optimized by default; -NoOptimize produces a plain debuggable build (Debug only).
     $optimized = -not $NoOptimize
     Write-Step "Building provider app"
-    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration -Optimized:$optimized
+    Invoke-PublishProvider -RepoRoot $RepoRoot -Configuration $Configuration -Optimized:$optimized -Store:$Store
 
     Write-Step "Building MSIX package"
-    Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized
+    Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized -Store:$Store
 
     Write-Step "Building KeePassPasskey plugin DLL"
     Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration -Optimized:$optimized
@@ -103,6 +116,17 @@ if (-not $SkipBuild) {
 # -- 3. Locate build artifacts --------------------------------------------------
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
 $buildDir = "$RepoRoot\build\$Configuration"
+
+# Store channel: emit the unsigned MSIX for Partner Center upload; no signing, no zip.
+if ($Store) {
+    $storeMsix = "$RepoRoot\build\KeePassPasskeyProvider.Package_$($versions.FileVersion)_x64_Store.msix"
+    Copy-Item $MsixPath $storeMsix -Force
+    Write-Step "Done (Store channel)"
+    Write-Host "  Unsigned MSIX for Partner Center upload:" -ForegroundColor Green
+    Write-Host "    $storeMsix" -ForegroundColor Green
+    Write-Host "  (provider only; plugin bundling still pending)" -ForegroundColor Yellow
+    return
+}
 
 # -- 4. Merge plugin DLLs -------------------------------------------------------
 Write-Step "Merging plugin DLLs with ILRepack"
