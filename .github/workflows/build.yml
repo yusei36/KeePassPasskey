@@ -38,9 +38,9 @@ jobs:
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Release -SkipSign
 
-      # Opt-in via the build_store input (default true), and always on the Store-prep branch for now.
+      # For now: build on every push/PR; on manual dispatch, respect the build_store checkbox.
       - name: Build (Store MSIX, unsigned)
-        if: ${{ inputs.build_store || github.ref == 'refs/heads/feature/windows-store-release-prep' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.build_store }}
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Store
 
@@ -68,7 +68,7 @@ jobs:
             !build\KeePassPasskey-*-debug-*.zip
 
       - name: Upload artifact (Store MSIX)
-        if: ${{ inputs.build_store || github.ref == 'refs/heads/feature/windows-store-release-prep' }}
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.build_store }}
         uses: actions/upload-artifact@v7
         with:
           name: KeePassPasskey-store-msix
