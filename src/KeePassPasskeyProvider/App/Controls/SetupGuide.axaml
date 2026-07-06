@@ -29,15 +29,20 @@
                     <TextBlock Text="1" FontSize="12" FontWeight="SemiBold" Opacity="0.7"
                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
-                <StackPanel Grid.Column="1" Spacing="2">
+                <StackPanel Grid.Column="1" Spacing="4">
                     <TextBlock Text="Install the plugin" FontWeight="SemiBold" FontSize="13" />
                     <TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-                        <Run Text="Copy the " />
-                        <Run Text="KeePassPasskeyPlugin" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-                        <Run Text=" folder into your KeePass " />
+                        <Run Text="Copy " />
+                        <Run Text="KeePassPasskey.dll" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
+                        <Run Text=" into your KeePass " />
                         <Run Text="Plugins" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text=" folder and restart KeePass." />
                     </TextBlock>
+                    <Button Content="Show KeePassPasskey.dll to copy"
+                            Command="{Binding ShowPluginFileCommand}"
+                            IsVisible="{Binding HasBundledPlugin}"
+                            ToolTip.Tip="Show KeePassPasskey.dll in File Explorer so you can copy it"
+                            Padding="6 2" FontSize="12" HorizontalAlignment="Left" />
                 </StackPanel>
             </Grid>
 
