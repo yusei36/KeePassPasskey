@@ -11,8 +11,6 @@ namespace KeePassPasskeyProvider.Authenticator;
 /// </summary>
 internal static class LogoResources
 {
-    // The Store channel uses a variant carrying a small "Store" badge so it is distinguishable
-    // from the GitHub channel in the Windows passkey selector.
 #if STORE
     public static string DarkThemeSvg  { get; } = Load("logo-store-dark.svg");
     public static string LightThemeSvg { get; } = Load("logo-store-light.svg");
