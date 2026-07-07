@@ -252,26 +252,6 @@ namespace KeePassPasskey.Storage
             return results;
         }
 
-        internal bool HasAnyExcludeCredentialForRpId(string rpId, List<string> credentialIds, DatabaseInfo target = null)
-        {
-            var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
-            var db = ResolveDatabaseOrFallback(target, nameof(HasAnyExcludeCredentialForRpId));
-            if (db == null || !db.IsOpen) return false;
-
-            foreach (var entry in db.RootGroup.GetEntries(true))
-            {
-                if (!IsSearchable(entry)) continue;
-                if (!entry.Strings.Exists(FieldCredentialId)) continue;
-                var entryCredId = entry.Strings.ReadSafe(FieldCredentialId);
-                if (!credIdSet.Contains(entryCredId)) continue;
-                if (!entry.Strings.Exists(FieldRelyingParty)) continue;
-                var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
-                if (string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-            return false;
-        }
-
         // Finds existing entries a passkey could be attached to: entries already tagged with this
         // RP id, or ordinary login entries whose URL host matches the RP id (host == rpId or a
         // subdomain). Each result carries whether it already holds a passkey so the UI can label it.

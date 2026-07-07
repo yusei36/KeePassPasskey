@@ -152,14 +152,7 @@ namespace KeePassPasskey.Ipc
             if (string.IsNullOrEmpty(req.RpId))
                 return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "rpId is required" };
 
-            // KeePassXC-style excludeCredentials: reject if any excluded credential exists for this RP
-            // Only check the target database to allow users to create credentials in different DBs
-            if (req.ExcludeCredentials != null && req.ExcludeCredentials.Count > 0)
-            {
-                if (_passkeyStorage.HasAnyExcludeCredentialForRpId(req.RpId, req.ExcludeCredentials, req.TargetDatabase))
-                    return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
-            }
-
+            
             // Algorithm selection: ES256 > EdDSA > RS256, intersected with RP preference
             var chosenAlg = SelectAlgorithm(req.PubKeyCredParams);
             if (chosenAlg == null)
