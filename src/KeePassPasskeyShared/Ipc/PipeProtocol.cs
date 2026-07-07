@@ -86,9 +86,6 @@ namespace KeePassPasskeyShared.Ipc
         [JsonProperty("userDisplayName", NullValueHandling = NullValueHandling.Ignore)]
         public string UserDisplayName { get; set; }
 
-        [JsonProperty("excludeCredentials", NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> ExcludeCredentials { get; set; }
-
         [JsonProperty("pubKeyCredParams", NullValueHandling = NullValueHandling.Ignore)]
         public List<int> PubKeyCredParams { get; set; }
 

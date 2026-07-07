@@ -130,7 +130,6 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     UserId = userIdB64,
                     UserName = userNameStr,
                     UserDisplayName = userDisplayStr,
-                    ExcludeCredentials = excludeList,
                     PubKeyCredParams = pubKeyCredParams.Count > 0 ? pubKeyCredParams : null,
                     TargetDatabase = targetDatabase,
                     TargetEntry = targetEntry,
