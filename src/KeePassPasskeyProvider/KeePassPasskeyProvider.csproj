@@ -42,6 +42,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\logo-dark.svg" />
     <EmbeddedResource Include="Resources\logo-light.svg" />
+    <EmbeddedResource Include="Resources\logo-store-dark.svg" />
+    <EmbeddedResource Include="Resources\logo-store-light.svg" />
   </ItemGroup>
 
   <ItemGroup>
