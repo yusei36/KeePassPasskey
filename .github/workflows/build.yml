@@ -29,6 +29,10 @@ jobs:
         with:
           dotnet-version: '10.x'
 
+      - name: Run unit tests
+        shell: pwsh
+        run: dotnet test src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj -c Debug --nologo
+
       - name: Build (Debug, optimized, unsigned)
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Debug -SkipSign

@@ -95,13 +95,32 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     return HResults.E_FAIL;
                 }
 
+                var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
+
+                // 3d. Look up existing entries this passkey could attach to, and fail fast if an
+                // excluded credential already exists - before any user-verification prompt.
+                IReadOnlyList<EntryMatchInfo> candidates = Array.Empty<EntryMatchInfo>();
+                var matchResponse = _pipeClient.FindMatchingEntries(new FindMatchingEntriesRequest
+                {
+                    RpId = rpIdUtf8,
+                    ExcludeCredentials = excludeList,
+                });
+                if (matchResponse?.ExcludedCredentialExists == true)
+                {
+                    Log.Warn("excluded credential already exists; rejecting before verification");
+                    Notifier.ShowMakeCredentialError(rpIdUtf8, PipeErrorCode.Duplicate, "Credential already exists for this RP");
+                    return HResults.ERROR_ALREADY_EXISTS;
+                }
+                if (matchResponse?.Entries != null && matchResponse.Entries.Count > 0
+                    && KeePassPasskeySettings.Current.SaveToExistingEntry)
+                    candidates = matchResponse.Entries;
+
                 // 4. User verification
-                var (hrUv, targetDatabase) = UserVerifierDispatcher.VerifyForRegistration(
-                    (nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases);
-                Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"}");
+                var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
+                    (nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases, candidates);
+                Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");
                 if (hrUv < 0) return hrUv;
 
-                var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
                 var pubKeyCredParams = ExtractPubKeyCredParams(pDecoded->WebAuthNCredentialParameters);
 
                 var request = new MakeCredentialRequest
@@ -114,6 +133,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     ExcludeCredentials = excludeList,
                     PubKeyCredParams = pubKeyCredParams.Count > 0 ? pubKeyCredParams : null,
                     TargetDatabase = targetDatabase,
+                    TargetEntry = targetEntry,
                 };
 
                 // 5. Send to KeePass plugin

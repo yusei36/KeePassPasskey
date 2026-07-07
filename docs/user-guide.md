@@ -45,6 +45,16 @@ The passkey is now stored as an entry in the **Passkeys** group in your open Kee
 
 <img src="images/passkey-creation-step4.png" width="450" alt="KeePass database showing the newly created passkey entry in the Passkeys group">
 
+### Saving a passkey to an existing entry
+
+If you already have an entry for the website (for example your username and password login), KeePassPasskey can save the new passkey **onto that existing entry** instead of creating a separate one, so the passkey lives next to your login.
+
+When matching entries are found, the creation notification shows an extra **Add to existing** button next to **Create passkey**. Choosing it opens a second notification listing the matching entries; entries that already hold a passkey are labelled **[overwrite passkey]**. Pick one and confirm to write the passkey onto it.
+
+Matching is by website: an entry qualifies when it already holds a passkey for this site, or when its **URL** field points at the same site (the same domain or a subdomain). If you overwrite an entry that already had a passkey, the previous version is kept in that entry's **History** tab so you can restore it.
+
+This is controlled by the **Offer saving to an existing entry** setting (on by default). Turn it off to always create new entries.
+
 ## Signing in with a passkey
 
 ### Login with a passkey instead of a password
@@ -157,6 +167,8 @@ Controls how new passkey entries are created in your database.
 **Resolve title placeholders**: when enabled (default), placeholders are resolved when the passkey is created and the resulting text is stored as the title. When disabled, the placeholders are stored as-is so KeePass resolves them each time the entry is shown (useful if you later edit a referenced field). `{RP_NAME}` is always resolved, because it has no underlying entry field.
 
 **Tag new passkeys**: when enabled (default), a `Passkey` tag is added to each entry created when a new passkey is registered.
+
+**Offer saving to an existing entry**: when enabled (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History.
 
 ### Advanced
 

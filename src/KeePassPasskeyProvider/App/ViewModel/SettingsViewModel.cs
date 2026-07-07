@@ -19,6 +19,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private UserVerificationMode _signInVerification;
     [ObservableProperty] private bool _showErrorNotifications;
     [ObservableProperty] private bool _addPasskeyTag;
+    [ObservableProperty] private bool _saveToExistingEntry;
     [ObservableProperty] private string _entryTitleTemplate = "";
     [ObservableProperty] private bool _resolveTitlePlaceholders;
     [ObservableProperty] private PasskeyEntryGroupMode _newEntryGroupMode;
@@ -104,6 +105,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         SignInVerification                     = SignInVerification,
         ShowErrorNotifications                 = ShowErrorNotifications,
         AddPasskeyTag                          = AddPasskeyTag,
+        SaveToExistingEntry                    = SaveToExistingEntry,
         EntryTitleTemplate                     = EntryTitleTemplate,
         ResolveTitlePlaceholders               = ResolveTitlePlaceholders,
         NewEntryGroupMode                      = NewEntryGroupMode,
@@ -264,6 +266,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         SignInVerification               = c.SignInVerification;
         ShowErrorNotifications          = c.ShowErrorNotifications;
         AddPasskeyTag                   = c.AddPasskeyTag;
+        SaveToExistingEntry             = c.SaveToExistingEntry;
         EntryTitleTemplate              = c.EntryTitleTemplate;
         ResolveTitlePlaceholders        = c.ResolveTitlePlaceholders;
         NewEntryGroupMode               = c.NewEntryGroupMode;

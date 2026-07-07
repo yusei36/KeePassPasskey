@@ -20,6 +20,9 @@ namespace KeePassPasskeyShared.Settings
 
         [JsonProperty("addPasskeyTag")]
         public bool AddPasskeyTag { get; set; } = true;
+        
+        [JsonProperty("saveToExistingEntry")]
+        public bool SaveToExistingEntry { get; set; } = true;
 
         [JsonProperty("entryTitleTemplate")]
         public string EntryTitleTemplate { get; set; } = "{RP_NAME} (Passkey)";

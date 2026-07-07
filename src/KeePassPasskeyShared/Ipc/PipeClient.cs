@@ -34,6 +34,9 @@ namespace KeePassPasskeyShared.Ipc
         public GetDatabasesResponse GetDatabases()
             => Send<GetDatabasesResponse>(new GetDatabasesRequest());
 
+        public FindMatchingEntriesResponse FindMatchingEntries(FindMatchingEntriesRequest request)
+            => Send<FindMatchingEntriesResponse>(request);
+
         public MakeCredentialResponse MakeCredential(MakeCredentialRequest request)
             => Send<MakeCredentialResponse>(request);
 

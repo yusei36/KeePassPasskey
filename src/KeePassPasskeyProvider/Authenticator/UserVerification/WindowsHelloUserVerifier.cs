@@ -13,9 +13,11 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
     public UserVerificationMode Mode => UserVerificationMode.WindowsHello;
 
     public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
-        Guid transactionId, IReadOnlyList<DatabaseInfo> databases, out DatabaseInfo? selectedDatabase)
+        Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
+        out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
     {
         selectedDatabase = null;
+        selectedEntry = null;
         return Verify(pRequest, username, displayHint, transactionId);
     }
 

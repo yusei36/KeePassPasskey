@@ -49,6 +49,7 @@ namespace KeePassPasskey.Ipc
                     PingRequest r           => HandlePing(r),
                     GetCredentialsRequest r => HandleGetCredentials(r),
                     GetDatabasesRequest r   => HandleGetDatabases(r),
+                    FindMatchingEntriesRequest r => HandleFindMatchingEntries(r),
                     MakeCredentialRequest r => HandleMakeCredential(r),
                     GetAssertionRequest r   => HandleGetAssertion(r),
                     CancelRequest r         => HandleCancel(r),
@@ -128,6 +129,21 @@ namespace KeePassPasskey.Ipc
             return new DatabaseInfo { Id = id, Name = string.IsNullOrEmpty(name) ? "(unnamed)" : name };
         }
 
+        private FindMatchingEntriesResponse HandleFindMatchingEntries(FindMatchingEntriesRequest req)
+        {
+            if (!IsDatabaseOpen())
+                return new FindMatchingEntriesResponse { ErrorCode = PipeErrorCode.DbLocked, ErrorMessage = "No database open" };
+
+            if (string.IsNullOrEmpty(req.RpId))
+                return new FindMatchingEntriesResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "rpId is required" };
+
+            return new FindMatchingEntriesResponse
+            {
+                Entries = _passkeyStorage.FindMatchingEntries(req.RpId),
+                ExcludedCredentialExists = _passkeyStorage.HasExcludeCredentialAcrossDatabases(req.RpId, req.ExcludeCredentials),
+            };
+        }
+
         private MakeCredentialResponse HandleMakeCredential(MakeCredentialRequest req)
         {
             if (!IsDatabaseOpen())
@@ -170,8 +186,11 @@ namespace KeePassPasskey.Ipc
                 Origin = string.IsNullOrEmpty(req.RpId) ? "" : "https://" + req.RpId
             };
 
-            if (!_passkeyStorage.CreatePasskeyEntry(credential, req.TargetDatabase))
-                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to create KeePass entry" };
+            bool saved = req.TargetEntry != null
+                ? _passkeyStorage.AddPasskeyToExistingEntry(credential, req.TargetEntry)
+                : _passkeyStorage.CreatePasskeyEntry(credential, req.TargetDatabase);
+            if (!saved)
+                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to save passkey to KeePass entry" };
 
             return new MakeCredentialResponse
             {

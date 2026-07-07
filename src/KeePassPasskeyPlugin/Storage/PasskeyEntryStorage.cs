@@ -4,6 +4,7 @@ using KeePass.Plugins;
 using KeePass.Util.Spr;
 using KeePassLib;
 using KeePassLib.Security;
+using KeePassLib.Utility;
 using KeePassPasskey.Passkey;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
@@ -50,13 +51,7 @@ namespace KeePassPasskey.Storage
             entry.Strings.Set(PwDefs.UrlField, new ProtectedString(false, credential.Origin ?? ""));
             entry.Strings.Set(PwDefs.PasswordField, new ProtectedString(true, ""));
 
-            entry.Strings.Set(FieldCredentialId, new ProtectedString(true, credential.CredentialId));
-            entry.Strings.Set(FieldPrivateKey, new ProtectedString(true, credential.PrivateKeyPem));
-            entry.Strings.Set(FieldRelyingParty, new ProtectedString(false, credential.RelyingParty));
-            entry.Strings.Set(FieldUserHandle, new ProtectedString(true, credential.UserHandle ?? ""));
-            entry.Strings.Set(FieldUsername, new ProtectedString(false, credential.Username ?? ""));
-            entry.Strings.Set(FieldFlagBe, new ProtectedString(false, "1"));
-            entry.Strings.Set(FieldFlagBs, new ProtectedString(false, "1"));
+            ApplyPasskeyFields(entry, credential);
 
             if (settings.AddPasskeyTag)
                 entry.AddTag(PasskeyTagName);
@@ -70,14 +65,88 @@ namespace KeePassPasskey.Storage
             var targetGroup = ResolveTargetGroup(db, settings);
             targetGroup.AddEntry(entry, true);
 
+            RefreshAndSave(db);
+            return true;
+        }
+
+        // Writes the passkey onto an existing entry (e.g. the site's login entry) instead of
+        // creating a new one. The entry's prior state is pushed onto KeePass's history first so
+        // the user can restore it; Title/URL/UserName the user already set are preserved.
+        internal bool AddPasskeyToExistingEntry(PasskeyCredential credential, EntryTargetInfo target)
+        {
+            if (target == null || string.IsNullOrEmpty(target.EntryUuid))
+                return false;
+
+            var settings = _settingsStorage.Load();
+
+            var uuid = new PwUuid(MemUtil.HexStringToByteArray(target.EntryUuid));
+            PwDatabase db = null;
+            PwEntry entry = null;
+            foreach (var candidate in GetSearchDatabases())
+            {
+                if (!string.IsNullOrEmpty(target.DatabaseId)
+                    && !string.Equals(candidate.RootGroup.Uuid.ToHexString(), target.DatabaseId, StringComparison.Ordinal))
+                    continue;
+                var found = candidate.RootGroup.FindEntry(uuid, true);
+                if (found != null) { db = candidate; entry = found; break; }
+            }
+
+            // Fall back to a database-agnostic search if the id did not match (e.g. the entry moved).
+            if (entry == null)
+            {
+                foreach (var candidate in GetSearchDatabases())
+                {
+                    var found = candidate.RootGroup.FindEntry(uuid, true);
+                    if (found != null) { db = candidate; entry = found; break; }
+                }
+            }
+
+            if (entry == null || db == null || !db.IsOpen)
+            {
+                Log.Warn($"Target entry {target.EntryUuid} not found for passkey save", nameof(AddPasskeyToExistingEntry));
+                return false;
+            }
+
+            entry.CreateBackup(db); // preserve the pre-overwrite state in the entry's history
+
+            ApplyPasskeyFields(entry, credential);
+
+            if (settings.AddPasskeyTag)
+                entry.AddTag(PasskeyTagName);
+
+            // Only fill URL/UserName when empty so the user's existing login data is preserved.
+            if (string.IsNullOrEmpty(entry.Strings.ReadSafe(PwDefs.UrlField)) && !string.IsNullOrEmpty(credential.Origin))
+                entry.Strings.Set(PwDefs.UrlField, new ProtectedString(false, credential.Origin));
+            if (string.IsNullOrEmpty(entry.Strings.ReadSafe(PwDefs.UserNameField)) && !string.IsNullOrEmpty(credential.Username))
+                entry.Strings.Set(PwDefs.UserNameField, new ProtectedString(false, credential.Username));
+
+            entry.Touch(true);
+
+            RefreshAndSave(db);
+            return true;
+        }
+
+        // Sets the KPEX_PASSKEY_* fields (and BE/BS flags) on an entry. Shared by new-entry
+        // creation and save-to-existing-entry so both write identical passkey material.
+        private static void ApplyPasskeyFields(PwEntry entry, PasskeyCredential credential)
+        {
+            entry.Strings.Set(FieldCredentialId, new ProtectedString(true, credential.CredentialId));
+            entry.Strings.Set(FieldPrivateKey, new ProtectedString(true, credential.PrivateKeyPem));
+            entry.Strings.Set(FieldRelyingParty, new ProtectedString(false, credential.RelyingParty));
+            entry.Strings.Set(FieldUserHandle, new ProtectedString(true, credential.UserHandle ?? ""));
+            entry.Strings.Set(FieldUsername, new ProtectedString(false, credential.Username ?? ""));
+            entry.Strings.Set(FieldFlagBe, new ProtectedString(false, "1"));
+            entry.Strings.Set(FieldFlagBs, new ProtectedString(false, "1"));
+        }
+
+        private void RefreshAndSave(PwDatabase db)
+        {
             _host.MainWindow.BeginInvoke(new MethodInvoker(() =>
             {
                 _host.MainWindow.UpdateUI(false, null, true, null, true, null, true);
                 if (KeePass.Program.Config.Application.AutoSaveAfterEntryEdit)
                     _host.MainWindow.SaveDatabase(db, null);
             }));
-
-            return true;
         }
 
         // Builds the title from the template. Placeholders are compiled first (when enabled), then the
@@ -199,6 +268,68 @@ namespace KeePassPasskey.Storage
                 var entryRpId = entry.Strings.ReadSafe(FieldRelyingParty);
                 if (string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
                     return true;
+            }
+            return false;
+        }
+
+        // Finds existing entries a passkey could be attached to: entries already tagged with this
+        // RP id, or ordinary login entries whose URL host matches the RP id (host == rpId or a
+        // subdomain). Each result carries whether it already holds a passkey so the UI can label it.
+        internal List<EntryMatchInfo> FindMatchingEntries(string rpId)
+        {
+            var results = new List<EntryMatchInfo>();
+            if (string.IsNullOrEmpty(rpId)) return results;
+
+            foreach (var db in GetSearchDatabases())
+            {
+                string dbId = db.RootGroup.Uuid.ToHexString();
+                string dbName = string.IsNullOrEmpty(db.Name) ? "(unnamed)" : db.Name;
+
+                foreach (var entry in db.RootGroup.GetEntries(true))
+                {
+                    if (!IsSearchable(entry)) continue;
+
+                    bool hasPasskey = entry.Strings.Exists(FieldCredentialId)
+                        && !string.IsNullOrEmpty(entry.Strings.ReadSafe(FieldCredentialId));
+
+                    bool rpMatch = entry.Strings.Exists(FieldRelyingParty)
+                        && string.Equals(entry.Strings.ReadSafe(FieldRelyingParty), rpId, StringComparison.OrdinalIgnoreCase);
+
+                    bool urlMatch = RpIdMatcher.UrlHostMatchesRpId(entry.Strings.ReadSafe(PwDefs.UrlField), rpId);
+
+                    if (!rpMatch && !urlMatch) continue;
+
+                    results.Add(new EntryMatchInfo
+                    {
+                        EntryUuid = entry.Uuid.ToHexString(),
+                        DatabaseId = dbId,
+                        DatabaseName = dbName,
+                        Title = ResolveTitle(entry, db),
+                        HasPasskey = hasPasskey,
+                    });
+                }
+            }
+            return results;
+        }
+
+        // Pre-verification excludeCredentials check across all searched databases, so a registration
+        // that would duplicate an existing credential fails fast before any user-verification prompt.
+        internal bool HasExcludeCredentialAcrossDatabases(string rpId, List<string> credentialIds)
+        {
+            if (credentialIds == null || credentialIds.Count == 0) return false;
+            var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
+
+            foreach (var db in GetSearchDatabases())
+            {
+                foreach (var entry in db.RootGroup.GetEntries(true))
+                {
+                    if (!IsSearchable(entry)) continue;
+                    if (!entry.Strings.Exists(FieldCredentialId)) continue;
+                    if (!credIdSet.Contains(entry.Strings.ReadSafe(FieldCredentialId))) continue;
+                    if (!entry.Strings.Exists(FieldRelyingParty)) continue;
+                    if (string.Equals(entry.Strings.ReadSafe(FieldRelyingParty), rpId, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
             }
             return false;
         }

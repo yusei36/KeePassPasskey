@@ -17,12 +17,13 @@ internal static class UserVerifierDispatcher
         new NotificationUserVerifier(),
     ];
 
-    public static (int hr, DatabaseInfo? selectedDatabase) VerifyForRegistration(
+    public static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) VerifyForRegistration(
         nint pRequest, Guid transactionId,
         string rpId, string rpName, string uvUsername, string uvDisplayHint,
-        IReadOnlyList<DatabaseInfo> databases)
+        IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries)
         => DispatchRegistration(KeePassPasskeySettings.Current.RegistrationVerification,
-            (IUserVerifier v, out DatabaseInfo? sel) => v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, out sel));
+            (IUserVerifier v, out DatabaseInfo? sel, out EntryTargetInfo? selEntry) =>
+                v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, candidateEntries, out sel, out selEntry));
 
     public static int VerifyForSignIn(
         nint pRequest, Guid transactionId,
@@ -30,7 +31,7 @@ internal static class UserVerifierDispatcher
         => DispatchSignIn(KeePassPasskeySettings.Current.SignInVerification,
             v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId));
 
-    private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase);
+    private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
 
     private static bool AreNotificationsDisabled(UserVerificationMode mode)
     {
@@ -43,21 +44,23 @@ internal static class UserVerifierDispatcher
         return true;
     }
 
-    private static (int hr, DatabaseInfo? selectedDatabase) DispatchRegistration(
+    private static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) DispatchRegistration(
         UserVerificationMode mode, VerifyRegistrationFunc call)
     {
-        if (AreNotificationsDisabled(mode)) return (HResults.E_FAIL, null);
+        if (AreNotificationsDisabled(mode)) return (HResults.E_FAIL, null, null);
 
         DatabaseInfo? selected = null;
+        EntryTargetInfo? selectedEntry = null;
         foreach (var verifier in _verifiers)
         {
             if (!mode.HasFlag(verifier.Mode)) continue;
-            int hr = call(verifier, out DatabaseInfo? sel);
+            int hr = call(verifier, out DatabaseInfo? sel, out EntryTargetInfo? selEntry);
             Log.Info($"verifier={verifier.Mode} hr=0x{hr:X8}");
             if (sel != null) selected = sel;
-            if (hr < HResults.S_OK) return (hr, null);
+            if (selEntry != null) selectedEntry = selEntry;
+            if (hr < HResults.S_OK) return (hr, null, null);
         }
-        return (HResults.S_OK, selected);
+        return (HResults.S_OK, selected, selectedEntry);
     }
 
     private static int DispatchSignIn(UserVerificationMode mode, Func<IUserVerifier, int> call)

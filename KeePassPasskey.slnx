@@ -10,4 +10,5 @@
   </Project>
   <Project Path="src/KeePassPasskeyProvider/KeePassPasskeyProvider.csproj" />
   <Project Path="src/KeePassPasskeyShared/KeePassPasskeyShared.csproj" />
+  <Project Path="src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj" />
 </Solution>

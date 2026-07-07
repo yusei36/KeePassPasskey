@@ -14,14 +14,15 @@ namespace KeePassPasskeyShared.Ipc
 
     public static class PipeMessageTypes
     {
-        public const string Ping           = "ping";
-        public const string GetCredentials = "get_credentials";
-        public const string GetDatabases   = "get_databases";
-        public const string MakeCredential = "make_credential";
-        public const string GetAssertion   = "get_assertion";
-        public const string Cancel         = "cancel";
-        public const string GetSettings    = "get_settings";
-        public const string SaveSettings   = "save_settings";
+        public const string Ping                = "ping";
+        public const string GetCredentials      = "get_credentials";
+        public const string GetDatabases        = "get_databases";
+        public const string FindMatchingEntries = "find_matching_entries";
+        public const string MakeCredential      = "make_credential";
+        public const string GetAssertion        = "get_assertion";
+        public const string Cancel              = "cancel";
+        public const string GetSettings         = "get_settings";
+        public const string SaveSettings        = "save_settings";
     }
 
     [JsonConverter(typeof(PipeRequestConverter))]
@@ -55,6 +56,17 @@ namespace KeePassPasskeyShared.Ipc
         public override string Type => PipeMessageTypes.GetDatabases;
     }
 
+    public sealed class FindMatchingEntriesRequest : PipeRequestBase
+    {
+        public override string Type => PipeMessageTypes.FindMatchingEntries;
+
+        [JsonProperty("rpId")]
+        public string RpId { get; set; }
+
+        [JsonProperty("excludeCredentials", NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> ExcludeCredentials { get; set; }
+    }
+
     public sealed class MakeCredentialRequest : PipeRequestBase
     {
         public override string Type => PipeMessageTypes.MakeCredential;
@@ -82,6 +94,9 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("targetDatabase", NullValueHandling = NullValueHandling.Ignore)]
         public DatabaseInfo TargetDatabase { get; set; }
+
+        [JsonProperty("targetEntry", NullValueHandling = NullValueHandling.Ignore)]
+        public EntryTargetInfo TargetEntry { get; set; }
     }
 
     public sealed class GetAssertionRequest : PipeRequestBase
@@ -174,6 +189,17 @@ namespace KeePassPasskeyShared.Ipc
         public List<DatabaseInfo> Databases { get; set; }
     }
 
+    public sealed class FindMatchingEntriesResponse : PipeResponseBase
+    {
+        public FindMatchingEntriesResponse() { Type = PipeMessageTypes.FindMatchingEntries; }
+
+        [JsonProperty("entries")]
+        public List<EntryMatchInfo> Entries { get; set; }
+
+        [JsonProperty("excludedCredentialExists")]
+        public bool ExcludedCredentialExists { get; set; }
+    }
+
     public sealed class MakeCredentialResponse : PipeResponseBase
     {
         public MakeCredentialResponse() { Type = PipeMessageTypes.MakeCredential; }
@@ -256,6 +282,35 @@ namespace KeePassPasskeyShared.Ipc
         public string Name { get; set; }
     }
 
+    // A candidate existing entry a passkey may be saved onto (matched by RP id or URL host).
+    public sealed class EntryMatchInfo
+    {
+        [JsonProperty("entryUuid")]
+        public string EntryUuid { get; set; }
+
+        [JsonProperty("databaseId")]
+        public string DatabaseId { get; set; }
+
+        [JsonProperty("databaseName")]
+        public string DatabaseName { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("hasPasskey")]
+        public bool HasPasskey { get; set; }
+    }
+
+    // Identifies the existing entry a passkey should be written onto.
+    public sealed class EntryTargetInfo
+    {
+        [JsonProperty("entryUuid")]
+        public string EntryUuid { get; set; }
+
+        [JsonProperty("databaseId")]
+        public string DatabaseId { get; set; }
+    }
+
 
     internal sealed class PipeRequestConverter : JsonConverter
     {
@@ -271,6 +326,7 @@ namespace KeePassPasskeyShared.Ipc
                 PipeMessageTypes.Ping           => new PingRequest(),
                 PipeMessageTypes.GetCredentials => new GetCredentialsRequest(),
                 PipeMessageTypes.GetDatabases   => new GetDatabasesRequest(),
+                PipeMessageTypes.FindMatchingEntries => new FindMatchingEntriesRequest(),
                 PipeMessageTypes.MakeCredential => new MakeCredentialRequest(),
                 PipeMessageTypes.GetAssertion   => new GetAssertionRequest(),
                 PipeMessageTypes.Cancel         => new CancelRequest(),
