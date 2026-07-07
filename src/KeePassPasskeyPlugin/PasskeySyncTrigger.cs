@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using KeePass.Plugins;
@@ -18,13 +17,6 @@ namespace KeePassPasskey
     /// </summary>
     internal sealed class PasskeySyncTrigger : IDisposable
     {
-        // The provider's app execution alias forks by build identity so a dev plugin launches the
-        // dev provider and a release plugin the release provider, even when both are installed.
-#if DEBUG
-        private const string ProviderAlias = "KeePassPasskeyProviderDev.exe";
-#else
-        private const string ProviderAlias = "KeePassPasskeyProvider.exe";
-#endif
         private const int DebounceMs = 1000;
 
         private readonly IPluginHost _host;
@@ -106,21 +98,9 @@ namespace KeePassPasskey
 
         private void LaunchProviderSync()
         {
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName        = ProviderAlias,
-                    Arguments       = "/synccredential",
-                    UseShellExecute = false,
-                    CreateNoWindow  = true,
-                });
-                Log.Debug("launched " + ProviderAlias + " /synccredential");
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("failed to launch provider sync (" + ProviderAlias + "): " + ex.Message);
-            }
+            // Debug launches the dev provider via its alias; Release refreshes every installed
+            // channel (GitHub + Store) by full install path. See ProviderSyncLauncher.
+            ProviderSyncLauncher.LaunchSync();
         }
 
         private bool IsAnyDatabaseOpen()
