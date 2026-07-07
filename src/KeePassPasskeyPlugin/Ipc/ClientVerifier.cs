@@ -42,10 +42,10 @@ namespace KeePassPasskey.Ipc
                     return false;
                 }
 
-                // 2. Verify the client is our MSIX-packaged provider.
-                // The Package Family Name is derived from the package name and a hash of the
-                // publisher certificate's public key. Only packages signed with a matching
-                // private key can produce this exact PFN.
+                // 2. Verify the client is our MSIX-packaged provider by Package Family Name.
+                // It is a valid trust signal because running under it requires
+                // installing a package whose signing cert Subject matches that Publisher and is
+                // trusted on this machine, which a non-admin attacker cannot arrange.
                 string packageFamilyName = GetPackageFamilyName(clientPid);
                 if (packageFamilyName == null)
                 {

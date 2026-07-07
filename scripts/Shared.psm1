@@ -21,6 +21,11 @@ function Get-CertSubject([string]$Configuration) {
     return $script:CertSubject
 }
 
+# Microsoft Store channel package identity (Partner Center > Product Identity). The Publisher
+# doubles as the signing-cert Subject required to sideload the Store MSIX for local testing.
+function Get-StorePublisher    { return $script:StorePublisher }
+function Get-StoreIdentityName { return $script:StoreIdentityName }
+
 function Write-Step([string]$msg) {
     Write-Host "`n==> $msg" -ForegroundColor Cyan
 }
@@ -394,6 +399,7 @@ function Invoke-ILRepack {
 }
 
 Export-ModuleMember -Function Write-Step, Assert-Elevation, Find-MSBuild, Get-BuildVersions, Get-CertSubject,
+                               Get-StorePublisher, Get-StoreIdentityName,
                                Invoke-PublishProvider, Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
                                Get-OrCreateCertificate, Test-CertificateTrusted, Add-TrustedCertificate,
                                Invoke-SignFile, Invoke-SignMsix,
