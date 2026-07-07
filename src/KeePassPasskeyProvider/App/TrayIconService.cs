@@ -15,9 +15,6 @@ namespace KeePassPasskeyProvider.App;
 
 internal sealed class TrayIconService : IDisposable
 {
-    // Named event used to signal the running instance to show its window.
-    // A second launch calls OpenEvent + SetEvent; this service watches for it.
-    internal const string ShowEventName = "Local\\KeePassPasskeyProvider_Show";
 
     // SystemFillColorSuccess (light), SystemFillColorCaution (dark), SystemFillColorCritical (light)
     private static readonly Color StatusColorSuccess = Color.FromRgb(0x0F, 0x7B, 0x0F);
@@ -39,7 +36,7 @@ internal sealed class TrayIconService : IDisposable
         _window     = window;
         _statusHero = statusHero;
 
-        _showEvent = Win32Native.CreateEvent(0, false, false, ShowEventName);
+        _showEvent = Win32Native.CreateEvent(0, false, false, Authenticator.PluginConstants.ShowEventName);
         _ = Task.Run(WatchShowEvent);
 
         _statusHero.PropertyChanged += OnStatusChanged;

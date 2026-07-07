@@ -37,15 +37,37 @@ internal static class PluginConstants
 
 #if DEBUG
     public const string PluginName      = "KeePassPasskey Dev ";
-    public const string ComServerMutexName = @"Local\KeePassPasskeyProvider_COM_Dev";
-    public const string ManagementUiMutexName = @"Local\KeePassPasskeyProvider_UI_Dev";
-    public const string CacheSyncMutexName = @"Local\KeePassPasskeyProvider_CacheSync_Dev";
 #else
     public const string PluginName      = "KeePassPasskey "; // trailing space is to work around Windows quirk where in some contexts the name is not properly displayed
-    public const string ComServerMutexName = @"Local\KeePassPasskeyProvider_COM";
-    public const string ManagementUiMutexName = @"Local\KeePassPasskeyProvider_UI";
-    public const string CacheSyncMutexName = @"Local\KeePassPasskeyProvider_CacheSync";
 #endif
+
+    // Named kernel objects (mutexes + the tray "show" event) are namespaced by the MSIX
+    // Package Family Name so each installed package (Debug dev / GitHub / Store) gets its own
+    // session-local names and the packages can coexist without contending on shared handles.
+    private static readonly string SyncObjectBase = ResolveSyncObjectBase();
+
+    private static string ResolveSyncObjectBase()
+    {
+        try
+        {
+            return $@"Local\{Windows.ApplicationModel.Package.Current.Id.FamilyName}";
+        }
+        catch
+        {
+            // Running unpackaged (no Package.Current): fall back to a fixed base.
+            return @"Local\KeePassPasskeyProvider_DEV";
+        }
+    }
+
+    /// <summary>Single-instance guard for the on-demand COM server.</summary>
+    public static readonly string ComServerMutexName = SyncObjectBase + "_COM";
+    /// <summary>Single-instance guard for the tray/management app.</summary>
+    public static readonly string ManagementUiMutexName = SyncObjectBase + "_UI";
+    /// <summary>Cross-process lock serializing Windows credential-cache writes.</summary>
+    public static readonly string CacheSyncMutexName = SyncObjectBase + "_CacheSync";
+    /// <summary>Event signalling the running management app to show its window.</summary>
+    public static readonly string ShowEventName = SyncObjectBase + "_Show";
+
     public const string PluginRpId      = "keepasspasskey.github.io";
 
     public const string StartupTaskTrayApp   = "KeePassPasskeyTrayApp";

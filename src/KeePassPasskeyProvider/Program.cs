@@ -186,7 +186,7 @@ internal static class Program
         }
 
         // Window is hidden to tray — signal the running instance to show itself
-        nint ev = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE, false, TrayIconService.ShowEventName);
+        nint ev = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE, false, PluginConstants.ShowEventName);
         if (ev != 0)
         {
             Win32Native.SetEvent(ev);
