@@ -51,6 +51,8 @@ If you already have an entry for the website (for example your username and pass
 
 When matching entries are found, the creation notification shows an extra **Add to existing** button next to **Create passkey**. Choosing it opens a second notification listing the matching entries; entries that already hold a passkey are labelled **[overwrite passkey]**. Pick one and confirm to write the passkey onto it.
 
+At most **5** matching entries are offered. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If more than 5 entries match, the extra ones are not shown.
+
 Matching is by website: an entry qualifies when it already holds a passkey for this site, or when its **URL** field points at the same site (the same domain or a subdomain). If you overwrite an entry that already had a passkey, the previous version is kept in that entry's **History** tab so you can restore it.
 
 This is controlled by the **Offer saving to an existing entry** setting (on by default). Turn it off to always create new entries.
@@ -107,7 +109,7 @@ A KeePassPasskey notification appears in the taskbar. Click **Approve** to confi
 
 Passkeys are stored as standard KeePass entries in the **Passkeys** group.
 
-When creating a passkey and multiple databases are open, KeePassPasskey will ask you to choose which database to save it to (see step 3 in [Creating a passkey](#creating-a-passkey)). During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong database, you can move it via **Entry → Data Exchange → Copy/Paste Entry**.
+When creating a passkey and multiple databases are open, KeePassPasskey will ask you to choose which database to save it to (see step 3 in [Creating a passkey](#creating-a-passkey)). At most **5** open databases are offered in this picker. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If more than 5 databases are open, keep only the ones you save passkeys to unlocked. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong database, you can move it via **Entry → Data Exchange → Copy/Paste Entry**.
 
 Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **Passkeys** group itself can also be renamed. Note that if a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey. The KeePass Recycle Bin has searching disabled by default, so restoring a deleted passkey entry from there requires moving it to another group first.
 

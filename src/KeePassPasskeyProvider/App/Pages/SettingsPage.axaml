@@ -182,7 +182,7 @@
                 </ui:FASettingsExpanderItem>
 
                 <ui:FASettingsExpanderItem Content="Offer saving to an existing entry"
-                                         Description="When creating a passkey, offer an &quot;Add to existing&quot; option to save it onto a matching entry (by website) instead of always creating a new one. Overwriting an entry's existing passkey keeps the previous version in the entry's history.">
+                                         Description="Offer to save a passkey onto a matching entry instead of always creating a new one. Up to 5 matches are offered.">
                     <ui:FASettingsExpanderItem.Footer>
                         <ToggleSwitch IsChecked="{Binding SaveToExistingEntry}"
                                       OnContent="On"
