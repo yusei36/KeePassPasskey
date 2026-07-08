@@ -128,8 +128,8 @@ Each passkey entry contains these custom fields:
 | `KPEX_PASSKEY_RELYING_PARTY` | Website domain (e.g. `github.com`) |
 | `KPEX_PASSKEY_USERNAME` | Username used during registration |
 | `KPEX_PASSKEY_USER_HANDLE` | User identifier from the website |
-| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag, always `1` |
-| `KPEX_PASSKEY_FLAG_BS` | Backup State flag, always `1` |
+| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag (`1`/`0`, default `1`) |
+| `KPEX_PASSKEY_FLAG_BS` | Backup State flag (`1`/`0`, default `1`) |
 
 ## Settings
 
@@ -179,6 +179,21 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 | Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
 | Status refresh interval | How often the app polls for connection status. |
 | Sync passkeys to Windows | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
+
+### Expert
+
+Advanced options for uncommon setups. Leave them at their defaults unless you specifically need a different value.
+
+#### Backup flags
+
+These control the **backup flags** (`BE`/`BS`) written to newly created passkeys. **Changing them can make some websites reject the passkey.** The defaults are both **On**.
+
+| Setting | Description |
+|---|---|
+| Backup eligible (BE) | When **On** (default), new passkeys are advertised as syncable multi-device credentials. Turn it **Off** to present them as device-bound, like a hardware security key. This value is fixed for the life of each passkey, so it applies only to passkeys created afterwards. |
+| Currently synced (BS) | When **On** (default), new passkeys are advertised as currently backed up. Only available while **Backup eligible** is On; turning eligibility off automatically turns this off too. |
+
+These are the defaults for *new* passkeys. Each passkey stores its own `KPEX_PASSKEY_FLAG_BE`/`KPEX_PASSKEY_FLAG_BS` values, which are replayed on every sign-in. To change the flags on an existing passkey, edit those fields directly in the entry's **Advanced** tab in KeePass (`1` = on, `0` = off).
 
 ## FAQ & Troubleshooting
 

@@ -15,5 +15,7 @@ namespace KeePassPasskey.Passkey
         internal string RpName { get; set; }
         internal string Origin { get; set; }
         internal PasskeyAlgorithm Algorithm { get; set; }
+        internal bool BackupEligible { get; set; } = true;
+        internal bool BackupState { get; set; } = true;
     }
 }

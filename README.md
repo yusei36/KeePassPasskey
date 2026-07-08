@@ -68,12 +68,12 @@ Passkeys are stored as standard KeePass entries using [KeePassXC's passkey field
 | `KPEX_PASSKEY_RELYING_PARTY` | Relying party ID (e.g. `github.com`) |
 | `KPEX_PASSKEY_USERNAME` | User name from registration |
 | `KPEX_PASSKEY_USER_HANDLE` | Base64url user handle |
-| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag, always `1` |
-| `KPEX_PASSKEY_FLAG_BS` | Backup State flag, always `1` |
+| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag (`1`/`0`, default `1`) |
+| `KPEX_PASSKEY_FLAG_BS` | Backup State flag (`1`/`0`, default `1`) |
 
 Credentials created here can be read by KeePassXC and vice versa. Three algorithms are supported: **ES256** (EC P-256), **EdDSA** (Ed25519), and **RS256** (RSA-2048). The algorithm is encoded in the PKCS#8 OID and requires no separate field, matching KeePassXC's storage format exactly.
 
-`FLAG_BE` and `FLAG_BS` correspond to bits 3 and 4 of the WebAuthn authenticatorData flags byte. `BE=1` means the credential is eligible to be synced across devices; `BS=1` means it currently is. Both are set to `1` because a KeePass database is typically synced via cloud storage (Dropbox, OneDrive, etc.), making its passkeys genuine synced credentials. Relying parties use these flags to distinguish synced passkeys (`BE=1`) from hardware-bound keys such as a YubiKey (`BE=0`). This matches KeePassXC's behaviour.
+`FLAG_BE` and `FLAG_BS` correspond to bits 3 and 4 of the WebAuthn authenticatorData flags byte. `BE=1` means the credential is eligible to be synced across devices; `BS=1` means it currently is. Both default to `1`, matching KeePassXC's behaviour. The default for new passkeys is configurable and can be overridden per entry, see the [user guide](docs/user-guide.md#expert).
 
 ## Security
 

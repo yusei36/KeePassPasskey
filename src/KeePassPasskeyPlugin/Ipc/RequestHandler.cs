@@ -168,6 +168,11 @@ namespace KeePassPasskey.Ipc
                 rng.GetBytes(credentialIdBytes);
             var credentialId = Base64Url.Encode(credentialIdBytes);
 
+            // Backup flags from settings (BS implies BE)
+            var settings = _settingsStorage.Load();
+            bool backupEligible = settings.NewPasskeyBackupEligible;
+            bool backupState = settings.NewPasskeyBackupState && backupEligible;
+
             var credential = new PasskeyCredential
             {
                 CredentialId = credentialId,
@@ -176,7 +181,9 @@ namespace KeePassPasskey.Ipc
                 RpName = req.RpName,
                 UserHandle = req.UserId ?? "",
                 Username = req.UserName ?? "",
-                Origin = string.IsNullOrEmpty(req.RpId) ? "" : "https://" + req.RpId
+                Origin = string.IsNullOrEmpty(req.RpId) ? "" : "https://" + req.RpId,
+                BackupEligible = backupEligible,
+                BackupState = backupState,
             };
 
             bool saved = req.TargetEntry != null
@@ -189,6 +196,8 @@ namespace KeePassPasskey.Ipc
             {
                 CredentialId = credentialId,
                 CoseKey = Base64Url.Encode(coseKeyBytes),
+                BackupEligible = backupEligible,
+                BackupState = backupState,
             };
         }
 
@@ -215,7 +224,7 @@ namespace KeePassPasskey.Ipc
 
             var credential = candidates[0];
 
-            var authData = AuthenticatorData.BuildForAuthentication(req.RpId, 0);
+            var authData = AuthenticatorData.BuildForAuthentication(req.RpId, 0, credential.BackupEligible, credential.BackupState);
 
             var clientDataHashBytes = Convert.FromBase64String(req.ClientDataHash);
             var dataToSign = new byte[authData.Length + clientDataHashBytes.Length];

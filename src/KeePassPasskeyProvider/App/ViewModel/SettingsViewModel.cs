@@ -27,6 +27,14 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private LogLevel _logLevel;
     [ObservableProperty] private bool _syncCredentialsToWindows;
     [ObservableProperty] private double _statusRefreshIntervalSeconds;
+    [ObservableProperty] private bool _newPasskeyBackupEligible;
+    [ObservableProperty] private bool _newPasskeyBackupState;
+
+    // BS implies BE: turning eligibility off forces synced off.
+    partial void OnNewPasskeyBackupEligibleChanged(bool value)
+    {
+        if (!value) NewPasskeyBackupState = false;
+    }
     private Theme _theme = AppSettings.Current.Theme;
     public Theme Theme
     {
@@ -113,6 +121,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         LogLevel                               = LogLevel,
         IsCredentialSyncEnabled                = SyncCredentialsToWindows,
         StatusRefreshIntervalMilliseconds      = (int)StatusRefreshIntervalSeconds * 1000,
+        NewPasskeyBackupEligible               = NewPasskeyBackupEligible,
+        NewPasskeyBackupState                  = NewPasskeyBackupState && NewPasskeyBackupEligible, // BS implies BE
     };
 
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
@@ -274,6 +284,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         LogLevel                        = c.LogLevel;
         SyncCredentialsToWindows        = c.IsCredentialSyncEnabled;
         StatusRefreshIntervalSeconds    = c.StatusRefreshIntervalMilliseconds / 1000;
+        NewPasskeyBackupEligible        = c.NewPasskeyBackupEligible;
+        NewPasskeyBackupState           = c.NewPasskeyBackupState && c.NewPasskeyBackupEligible;
         _isLoading = false;
         CheckForUnsavedChanges();
     }

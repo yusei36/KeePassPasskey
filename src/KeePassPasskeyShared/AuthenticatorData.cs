@@ -8,17 +8,28 @@ namespace KeePassPasskeyShared
 {
     public static class AuthenticatorData
     {
-        // Flags: UP(0x01) | UV(0x04) | BE(0x08) | BS(0x10) | AT(0x40) = 0x5D
-        private const byte RegistrationFlags = 0x5D;
-        // Flags: UP(0x01) | UV(0x04) | BE(0x08) | BS(0x10) = 0x1D
-        private const byte AuthenticationFlags = 0x1D;
+        private const byte FlagUp = 0x01; // User Present
+        private const byte FlagUv = 0x04; // User Verified
+        private const byte FlagBe = 0x08; // Backup Eligible
+        private const byte FlagBs = 0x10; // Backup State
+        private const byte FlagAt = 0x40; // Attested credential data
 
-        public static byte[] BuildForRegistration(string rpId, byte[] aaguid, byte[] credentialId, byte[] coseKey)
+        // BS implies BE: mask BS by BE so an illegal combination is never emitted.
+        private static byte BackupFlags(bool backupEligible, bool backupState)
         {
+            byte flags = 0;
+            if (backupEligible) flags |= FlagBe;
+            if (backupState && backupEligible) flags |= FlagBs;
+            return flags;
+        }
+
+        public static byte[] BuildForRegistration(string rpId, byte[] aaguid, byte[] credentialId, byte[] coseKey, bool backupEligible, bool backupState)
+        {
+            byte flags = (byte)(FlagUp | FlagUv | FlagAt | BackupFlags(backupEligible, backupState));
             using (var ms = new MemoryStream())
             {
                 WriteRpIdHash(ms, rpId);
-                ms.WriteByte(RegistrationFlags);
+                ms.WriteByte(flags);
                 WriteUInt32BE(ms, 0); // sign count = 0
                 ms.Write(aaguid, 0, aaguid.Length);
                 ms.WriteByte((byte)(credentialId.Length >> 8));
@@ -29,12 +40,13 @@ namespace KeePassPasskeyShared
             }
         }
 
-        public static byte[] BuildForAuthentication(string rpId, uint signCount)
+        public static byte[] BuildForAuthentication(string rpId, uint signCount, bool backupEligible, bool backupState)
         {
+            byte flags = (byte)(FlagUp | FlagUv | BackupFlags(backupEligible, backupState));
             using (var ms = new MemoryStream())
             {
                 WriteRpIdHash(ms, rpId);
-                ms.WriteByte(AuthenticationFlags);
+                ms.WriteByte(flags);
                 WriteUInt32BE(ms, signCount);
                 return ms.ToArray();
             }

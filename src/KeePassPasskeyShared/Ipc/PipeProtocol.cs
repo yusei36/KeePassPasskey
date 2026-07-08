@@ -206,6 +206,12 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("coseKey", NullValueHandling = NullValueHandling.Ignore)]
         public string CoseKey { get; set; }
+        
+        [JsonProperty("backupEligible")]
+        public bool BackupEligible { get; set; } = true;
+
+        [JsonProperty("backupState")]
+        public bool BackupState { get; set; } = true;
     }
 
     public sealed class GetAssertionResponse : PipeResponseBase

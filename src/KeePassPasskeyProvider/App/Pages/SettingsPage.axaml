@@ -233,6 +233,34 @@
 
             </ui:FASettingsExpander>
 
+            <ui:FASettingsExpander Header="Expert"
+                                 IconSource="Important"
+                                 Description="Advanced options for uncommon setups. Change only if you know why."
+                                 IsExpanded="False">
+
+                <ui:FASettingsExpanderItem Content="Backup eligible (BE)"
+                                         Description="Advertise new passkeys as syncable multi-device credentials. Turn off to present them as device-bound (like a hardware key). This value is fixed for the life of each passkey.">
+                    <ui:FASettingsExpanderItem.Footer>
+                        <ToggleSwitch IsChecked="{Binding NewPasskeyBackupEligible}"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      Margin="0 0 4 0" />
+                    </ui:FASettingsExpanderItem.Footer>
+                </ui:FASettingsExpanderItem>
+
+                <ui:FASettingsExpanderItem Content="Currently synced (BS)"
+                                         Description="Advertise new passkeys as currently backed up. Only available when &quot;Backup eligible&quot; is on.">
+                    <ui:FASettingsExpanderItem.Footer>
+                        <ToggleSwitch IsChecked="{Binding NewPasskeyBackupState}"
+                                      IsEnabled="{Binding NewPasskeyBackupEligible}"
+                                      OnContent="On"
+                                      OffContent="Off"
+                                      Margin="0 0 4 0" />
+                    </ui:FASettingsExpanderItem.Footer>
+                </ui:FASettingsExpanderItem>
+
+            </ui:FASettingsExpander>
+
             <ui:FASettingsExpander Header="About"
                                  IconSource="Help"
                                  Description="Version, source code and license"

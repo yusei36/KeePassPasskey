@@ -135,8 +135,11 @@ namespace KeePassPasskey.Storage
             entry.Strings.Set(FieldRelyingParty, new ProtectedString(false, credential.RelyingParty));
             entry.Strings.Set(FieldUserHandle, new ProtectedString(true, credential.UserHandle ?? ""));
             entry.Strings.Set(FieldUsername, new ProtectedString(false, credential.Username ?? ""));
-            entry.Strings.Set(FieldFlagBe, new ProtectedString(false, "1"));
-            entry.Strings.Set(FieldFlagBs, new ProtectedString(false, "1"));
+            
+            bool be = credential.BackupEligible;
+            bool bs = credential.BackupState && be; // BS implies BE.
+            entry.Strings.Set(FieldFlagBe, new ProtectedString(false, be ? "1" : "0"));
+            entry.Strings.Set(FieldFlagBs, new ProtectedString(false, bs ? "1" : "0"));
         }
 
         private void RefreshAndSave(PwDatabase db)
@@ -384,6 +387,7 @@ namespace KeePassPasskey.Storage
         // Returns only public metadata - no private key material. Used for listing credentials.
         private static PasskeyCredential ExtractCredentialMetadata(PwEntry entry, PwDatabase db)
         {
+            bool be = ReadFlag(entry, FieldFlagBe, true);
             return new PasskeyCredential
             {
                 CredentialId = entry.Strings.ReadSafe(FieldCredentialId),
@@ -391,7 +395,20 @@ namespace KeePassPasskey.Storage
                 UserHandle = entry.Strings.ReadSafe(FieldUserHandle),
                 Username = entry.Strings.ReadSafe(FieldUsername),
                 Title = ResolveTitle(entry, db),
+                BackupEligible = be,
+                BackupState = be && ReadFlag(entry, FieldFlagBs, true), // BS implies BE
             };
+        }
+
+        // Absent/unrecognized values fall back to the default (keeps pre-existing entries working).
+        private static bool ReadFlag(PwEntry entry, string field, bool defaultValue)
+        {
+            if (!entry.Strings.Exists(field)) return defaultValue;
+            var raw = entry.Strings.ReadSafe(field).Trim();
+            if (string.IsNullOrEmpty(raw)) return defaultValue;
+            if (raw == "1" || raw.Equals("true", StringComparison.OrdinalIgnoreCase)) return true;
+            if (raw == "0" || raw.Equals("false", StringComparison.OrdinalIgnoreCase)) return false;
+            return defaultValue;
         }
 
         internal PasskeyCredential ExtractCredential(PwEntry entry, PwDatabase db)

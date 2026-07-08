@@ -54,6 +54,12 @@ namespace KeePassPasskeyShared.Settings
         [JsonProperty("statusRefreshIntervalMilliseconds")]
         public int StatusRefreshIntervalMilliseconds { get; set; } = 30_000;
 
+        [JsonProperty("newPasskeyBackupEligible")]
+        public bool NewPasskeyBackupEligible { get; set; } = true;
+
+        [JsonProperty("newPasskeyBackupState")]
+        public bool NewPasskeyBackupState { get; set; } = true;
+
         // JSON-based comparison keeps Equals auto-maintaining: new fields are included
         // automatically without needing to update this method. If performance ever becomes
         // a concern, replace with explicit field-by-field comparison.
