@@ -97,23 +97,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
                 var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
 
-                // 3d. Look up existing entries this passkey could attach to, and fail fast if an
-                // excluded credential already exists - before any user-verification prompt.
+                // 3d. Look up candidate entries to save onto, only if that feature is enabled.
                 IReadOnlyList<EntryMatchInfo> candidates = Array.Empty<EntryMatchInfo>();
-                var matchResponse = _pipeClient.FindMatchingEntries(new FindMatchingEntriesRequest
+                if (KeePassPasskeySettings.Current.SaveToExistingEntry)
                 {
-                    RpId = rpIdUtf8,
-                    ExcludeCredentials = excludeList,
-                });
-                if (matchResponse?.ExcludedCredentialExists == true)
-                {
-                    Log.Warn("excluded credential already exists; rejecting before verification");
-                    Notifier.ShowMakeCredentialError(rpIdUtf8, PipeErrorCode.Duplicate, "Credential already exists for this RP");
-                    return HResults.ERROR_ALREADY_EXISTS;
+                    var matchResponse = _pipeClient.FindMatchingEntries(new FindMatchingEntriesRequest { RpId = rpIdUtf8 });
+                    if (matchResponse?.Entries != null && matchResponse.Entries.Count > 0)
+                        candidates = matchResponse.Entries;
                 }
-                if (matchResponse?.Entries != null && matchResponse.Entries.Count > 0
-                    && KeePassPasskeySettings.Current.SaveToExistingEntry)
-                    candidates = matchResponse.Entries;
 
                 // 4. User verification
                 var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
@@ -131,6 +122,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                     UserName = userNameStr,
                     UserDisplayName = userDisplayStr,
                     PubKeyCredParams = pubKeyCredParams.Count > 0 ? pubKeyCredParams : null,
+                    ExcludeCredentials = excludeList,
                     TargetDatabase = targetDatabase,
                     TargetEntry = targetEntry,
                 };

@@ -23,6 +23,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] private string _entryTitleTemplate = "";
     [ObservableProperty] private bool _resolveTitlePlaceholders;
     [ObservableProperty] private PasskeyEntryGroupMode _newEntryGroupMode;
+    [ObservableProperty] private ExcludeCredentialCheckMode _excludeCredentialCheckMode;
     [ObservableProperty] private double _notificationTimeoutSeconds;
     [ObservableProperty] private LogLevel _logLevel;
     [ObservableProperty] private bool _syncCredentialsToWindows;
@@ -117,6 +118,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         EntryTitleTemplate                     = EntryTitleTemplate,
         ResolveTitlePlaceholders               = ResolveTitlePlaceholders,
         NewEntryGroupMode                      = NewEntryGroupMode,
+        ExcludeCredentialCheckMode             = ExcludeCredentialCheckMode,
         NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
         LogLevel                               = LogLevel,
         IsCredentialSyncEnabled                = SyncCredentialsToWindows,
@@ -127,6 +129,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
     public static PasskeyEntryGroupMode[] GroupModes { get; } = (PasskeyEntryGroupMode[])Enum.GetValues(typeof(PasskeyEntryGroupMode));
+    public static ExcludeCredentialCheckMode[] ExcludeCredentialCheckModes { get; } = (ExcludeCredentialCheckMode[])Enum.GetValues(typeof(ExcludeCredentialCheckMode));
     public static LogLevel[] LogLevels { get; } = (LogLevel[])Enum.GetValues(typeof(LogLevel));
     public static Theme[] Themes { get; } = (Theme[])Enum.GetValues(typeof(Theme));
     public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
@@ -280,6 +283,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         EntryTitleTemplate              = c.EntryTitleTemplate;
         ResolveTitlePlaceholders        = c.ResolveTitlePlaceholders;
         NewEntryGroupMode               = c.NewEntryGroupMode;
+        ExcludeCredentialCheckMode      = c.ExcludeCredentialCheckMode;
         NotificationTimeoutSeconds      = c.NotificationVerificationTimeoutMilliseconds / 1000;
         LogLevel                        = c.LogLevel;
         SyncCredentialsToWindows        = c.IsCredentialSyncEnabled;

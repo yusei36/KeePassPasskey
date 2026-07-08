@@ -191,6 +191,21 @@
                     </ui:FASettingsExpanderItem.Footer>
                 </ui:FASettingsExpanderItem>
 
+                <ui:FASettingsExpanderItem Content="Allow duplicate passkeys"
+                                         Description="Where to enforce a website's request not to add a second passkey for an account it already has one for.">
+                    <ui:FASettingsExpanderItem.Footer>
+                        <ComboBox SelectedItem="{Binding ExcludeCredentialCheckMode}"
+                                  ItemsSource="{Binding ExcludeCredentialCheckModes}"
+                                  MinWidth="200">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={x:Static conv:ExcludeCredentialCheckModeConverters.Text}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </ui:FASettingsExpanderItem.Footer>
+                </ui:FASettingsExpanderItem>
+
             </ui:FASettingsExpander>
 
             <ui:FASettingsExpander Header="Advanced"

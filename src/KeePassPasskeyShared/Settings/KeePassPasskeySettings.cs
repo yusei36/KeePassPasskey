@@ -34,6 +34,10 @@ namespace KeePassPasskeyShared.Settings
         [JsonConverter(typeof(StringEnumConverter))]
         public PasskeyEntryGroupMode NewEntryGroupMode { get; set; } = PasskeyEntryGroupMode.PasskeysGroup;
 
+        [JsonProperty("excludeCredentialCheckMode")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ExcludeCredentialCheckMode ExcludeCredentialCheckMode { get; set; } = ExcludeCredentialCheckMode.TargetDatabase;
+
         [JsonProperty("notificationVerificationTimeoutMilliseconds")]
         public int NotificationVerificationTimeoutMilliseconds { get; set; } = 30_000;
 

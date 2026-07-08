@@ -140,7 +140,6 @@ namespace KeePassPasskey.Ipc
             return new FindMatchingEntriesResponse
             {
                 Entries = _passkeyStorage.FindMatchingEntries(req.RpId),
-                ExcludedCredentialExists = _passkeyStorage.HasExcludeCredentialAcrossDatabases(req.RpId, req.ExcludeCredentials),
             };
         }
 
@@ -152,7 +151,10 @@ namespace KeePassPasskey.Ipc
             if (string.IsNullOrEmpty(req.RpId))
                 return new MakeCredentialResponse { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "rpId is required" };
 
-            
+            // excludeCredentials duplicate check against the selected target (scoped by setting).
+            if (_passkeyStorage.HasExcludeCredential(req.RpId, req.ExcludeCredentials, req.TargetDatabase, req.TargetEntry))
+                return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
+
             // Algorithm selection: ES256 > EdDSA > RS256, intersected with RP preference
             var chosenAlg = SelectAlgorithm(req.PubKeyCredParams);
             if (chosenAlg == null)

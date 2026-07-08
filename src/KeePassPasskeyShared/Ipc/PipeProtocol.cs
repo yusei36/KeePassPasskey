@@ -62,9 +62,6 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("rpId")]
         public string RpId { get; set; }
-
-        [JsonProperty("excludeCredentials", NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> ExcludeCredentials { get; set; }
     }
 
     public sealed class MakeCredentialRequest : PipeRequestBase
@@ -88,6 +85,9 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("pubKeyCredParams", NullValueHandling = NullValueHandling.Ignore)]
         public List<int> PubKeyCredParams { get; set; }
+
+        [JsonProperty("excludeCredentials", NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> ExcludeCredentials { get; set; }
 
         [JsonProperty("targetDatabase", NullValueHandling = NullValueHandling.Ignore)]
         public DatabaseInfo TargetDatabase { get; set; }
@@ -192,9 +192,6 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("entries")]
         public List<EntryMatchInfo> Entries { get; set; }
-
-        [JsonProperty("excludedCredentialExists")]
-        public bool ExcludedCredentialExists { get; set; }
     }
 
     public sealed class MakeCredentialResponse : PipeResponseBase

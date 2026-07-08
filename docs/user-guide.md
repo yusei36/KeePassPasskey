@@ -183,6 +183,16 @@ Controls how new passkey entries are created in your database.
 
 **Offer saving to an existing entry**: when enabled (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History.
 
+**Allow duplicate passkeys**: a website can ask not to register a second passkey for an account it already has one for. This setting controls where that request is enforced:
+
+| Option | Behaviour |
+|---|---|
+| Don't check | Always allow a duplicate, even when the website asks not to. |
+| Check target database (default) | Block only when the existing passkey is in the database the new one would be saved to. |
+| Check all databases | Block when the existing passkey is in any open database. |
+
+Relax this if you deliberately keep the same account's passkey in more than one database and a site refuses to register it again.
+
 ### Advanced
 
 These settings are rarely needed. Leave them at their defaults unless you are troubleshooting.

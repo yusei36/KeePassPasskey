@@ -375,15 +375,23 @@ namespace KeePassPasskey.Storage
             return results;
         }
 
-        // Pre-verification excludeCredentials check across all searched databases, so a registration
-        // that would duplicate an existing credential fails fast before any user-verification prompt.
-        internal bool HasExcludeCredentialAcrossDatabases(string rpId, List<string> credentialIds)
+        // Does an excluded credential already exist for this RP within the ExcludeCredentialCheckMode scope?
+        internal bool HasExcludeCredential(string rpId, List<string> credentialIds, DatabaseInfo targetDatabase, EntryTargetInfo targetEntry)
         {
             if (credentialIds == null || credentialIds.Count == 0) return false;
+
+            var mode = _settingsStorage.Load().ExcludeCredentialCheckMode;
+            if (mode == ExcludeCredentialCheckMode.None) return false;
+
+            var databases = mode == ExcludeCredentialCheckMode.AllDatabases
+                ? GetSearchDatabases()
+                : new List<PwDatabase> { ResolveTargetDatabase(targetDatabase, targetEntry) };
+
             var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
 
-            foreach (var db in GetSearchDatabases())
+            foreach (var db in databases)
             {
+                if (db == null || !db.IsOpen) continue;
                 foreach (var entry in db.RootGroup.GetEntries(true))
                 {
                     if (!IsSearchable(entry)) continue;
@@ -621,6 +629,21 @@ namespace KeePassPasskey.Storage
             }
 
             return databases;
+        }
+
+        // The database a new passkey will be saved to: the target entry's database, else the chosen/active one.
+        private PwDatabase ResolveTargetDatabase(DatabaseInfo target, EntryTargetInfo targetEntry)
+        {
+            if (targetEntry != null && !string.IsNullOrEmpty(targetEntry.DatabaseId))
+            {
+                foreach (var db in GetSearchDatabases())
+                {
+                    if (db != null && db.IsOpen
+                        && string.Equals(db.RootGroup.Uuid.ToHexString(), targetEntry.DatabaseId, StringComparison.Ordinal))
+                        return db;
+                }
+            }
+            return ResolveDatabaseOrFallback(target, nameof(ResolveTargetDatabase));
         }
 
         private PwDatabase ResolveDatabaseOrFallback(DatabaseInfo target, string callerName)
