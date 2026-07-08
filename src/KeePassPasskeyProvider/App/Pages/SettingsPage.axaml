@@ -274,6 +274,48 @@
                     </ui:FASettingsExpanderItem.Footer>
                 </ui:FASettingsExpanderItem>
 
+                <ui:FASettingsExpanderItem>
+                    <ui:FASettingsExpanderItem.Content>
+                        <StackPanel Spacing="8" Margin="0 4">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="Spoof AAGUID" />
+                                <TextBlock Text="Override the authenticator identifier (AAGUID) that websites see when you create a passkey. Leave empty to use the default. Applying re-registers the authenticator with Windows."
+                                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                           FontSize="12"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBox Text="{Binding SpoofAaguid}"
+                                         PlaceholderText="{Binding DefaultAaguidText}"
+                                         IsEnabled="{Binding !IsApplyingAaguid}"
+                                         Width="330"
+                                         FontFamily="Cascadia Mono, Consolas, monospace"
+                                         VerticalAlignment="Center" />
+                                <Button Command="{Binding ClearAaguidCommand}"
+                                        IsEnabled="{Binding !IsApplyingAaguid}"
+                                        ToolTip.Tip="Clear field"
+                                        VerticalAlignment="Center">
+                                    <ui:FAFontIcon Glyph="&#xE75C;" FontSize="16" FontFamily="Segoe MDL2 Assets" />
+                                </Button>
+                                <Button Content="Apply"
+                                        Command="{Binding ApplyAaguidCommand}"
+                                        Classes="accent"
+                                        VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Text="{Binding SpoofAaguidError}"
+                                       IsVisible="{Binding !IsSpoofAaguidValid}"
+                                       Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                       TextWrapping="Wrap"
+                                       FontSize="12" />
+                            <TextBlock Text="{Binding SpoofAaguidStatus}"
+                                       IsVisible="{Binding SpoofAaguidStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                       Foreground="{DynamicResource SystemFillColorSuccessBrush}"
+                                       TextWrapping="Wrap"
+                                       FontSize="12" />
+                        </StackPanel>
+                    </ui:FASettingsExpanderItem.Content>
+                </ui:FASettingsExpanderItem>
+
             </ui:FASettingsExpander>
 
             <ui:FASettingsExpander Header="About"

@@ -147,7 +147,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 // 5. Build authenticatorData and encode attestation response
                 var credentialIdBytes = Base64Url.Decode(response.CredentialId!);
                 var coseKeyBytes = Base64Url.Decode(response.CoseKey!);
-                var authData = AuthenticatorData.BuildForRegistration(rpIdUtf8, PluginConstants.KeePassPasskeyProviderAaguidBytes, credentialIdBytes, coseKeyBytes, response.BackupEligible, response.BackupState);
+                var authData = AuthenticatorData.BuildForRegistration(rpIdUtf8, AuthenticatorIdentity.EffectiveAaguidBytes, credentialIdBytes, coseKeyBytes, response.BackupEligible, response.BackupState);
                 int hrEnc = EncodeAttestation(authData, out uint cbEncoded, out byte* pbEncoded);
                 Log.Info($"WebAuthNEncodeMakeCredentialResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
                 if (hrEnc < 0) return hrEnc;

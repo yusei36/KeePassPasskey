@@ -36,6 +36,84 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         if (!value) NewPasskeyBackupState = false;
     }
+
+    // Spoofed AAGUID. Device-local (AuthenticatorIdentityStore), not part of the KeePass-synced
+    // settings, so it has its own apply-and-re-register action instead of the shared Save button.
+    [ObservableProperty] private string _spoofAaguid = "";
+    [ObservableProperty] private bool _isApplyingAaguid;
+    [ObservableProperty] private string _spoofAaguidStatus = "";
+    private string? _storedSpoofAaguid;
+
+    public bool IsSpoofAaguidValid => string.IsNullOrWhiteSpace(SpoofAaguid) || Guid.TryParse(SpoofAaguid, out _);
+    public string? SpoofAaguidError => IsSpoofAaguidValid ? null : "Enter a valid GUID, or leave empty to use the default.";
+    public bool HasAaguidChanges => NormalizeAaguid(SpoofAaguid) != NormalizeAaguid(_storedSpoofAaguid);
+    public bool CanApplyAaguid => IsSpoofAaguidValid && HasAaguidChanges && !IsApplyingAaguid;
+    public string DefaultAaguidText => Authenticator.AuthenticatorIdentity.DefaultAaguid.ToString();
+
+    private static string NormalizeAaguid(string? value) =>
+        Authenticator.AuthenticatorIdentity.TryParseStoredAaguid(value, out Guid g) ? g.ToString() : "";
+
+    partial void OnSpoofAaguidChanged(string value)
+    {
+        SpoofAaguidStatus = "";
+        OnPropertyChanged(nameof(IsSpoofAaguidValid));
+        OnPropertyChanged(nameof(SpoofAaguidError));
+        OnPropertyChanged(nameof(HasAaguidChanges));
+        OnPropertyChanged(nameof(CanApplyAaguid));
+        ApplyAaguidCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsApplyingAaguidChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanApplyAaguid));
+        ApplyAaguidCommand.NotifyCanExecuteChanged();
+    }
+
+    [RelayCommand]
+    private void ClearAaguid() => SpoofAaguid = "";
+
+    [RelayCommand(CanExecute = nameof(CanApplyAaguid))]
+    private async Task ApplyAaguidAsync()
+    {
+        if (!IsSpoofAaguidValid) return;
+        IsApplyingAaguid = true;
+        try
+        {
+            bool hasSpoof = Authenticator.AuthenticatorIdentity.TryParseStoredAaguid(SpoofAaguid, out Guid g);
+            Guid aaguidToApply = hasSpoof ? g : Authenticator.AuthenticatorIdentity.DefaultAaguid;
+            string? normalized = hasSpoof ? g.ToString() : null;
+
+            // Apply to Windows first; only persist the AAGUID once the update succeeds, so the store
+            // never holds a value Windows did not register.
+            int hr = await Task.Run(() => Authenticator.PluginRegistration.UpdateDetails(aaguidToApply));
+            if (hr < Authenticator.Native.HResults.S_OK)
+            {
+                await DialogService.ShowErrorAsync("Could not update authenticator",
+                    $"The AAGUID was not changed because Windows returned HRESULT 0x{hr:X8} while applying it.");
+                return;
+            }
+
+            AuthenticatorIdentityStore.Save(new AuthenticatorIdentityStore { SpoofAaguid = normalized });
+            _storedSpoofAaguid = normalized;
+            SpoofAaguid = normalized ?? "";
+            SpoofAaguidStatus = normalized == null ? "Using the default AAGUID." : "Spoofed AAGUID applied.";
+            OnPropertyChanged(nameof(HasAaguidChanges));
+            ApplyAaguidCommand.NotifyCanExecuteChanged();
+        }
+        finally
+        {
+            IsApplyingAaguid = false;
+        }
+    }
+
+    private void LoadAaguidFromStore()
+    {
+        _storedSpoofAaguid = AuthenticatorIdentityStore.Load().SpoofAaguid;
+        SpoofAaguid = NormalizeAaguid(_storedSpoofAaguid);
+        SpoofAaguidStatus = "";
+        OnPropertyChanged(nameof(HasAaguidChanges));
+        OnPropertyChanged(nameof(CanApplyAaguid));
+    }
     private Theme _theme = AppSettings.Current.Theme;
     public Theme Theme
     {
@@ -96,7 +174,8 @@ public sealed partial class SettingsViewModel : ObservableObject
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme)))
+        if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme)
+                or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus)))
             CheckForUnsavedChanges();
     }
 
@@ -270,7 +349,11 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     public SettingsViewModel() => LoadFromCurrent();
 
-    private void LoadFromCurrent() => LoadFrom(KeePassPasskeySettings.Current);
+    private void LoadFromCurrent()
+    {
+        LoadFrom(KeePassPasskeySettings.Current);
+        LoadAaguidFromStore();
+    }
 
     private void LoadFrom(KeePassPasskeySettings c)
     {

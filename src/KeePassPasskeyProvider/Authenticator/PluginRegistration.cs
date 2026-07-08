@@ -29,6 +29,7 @@ internal static unsafe class PluginRegistration
     public static int Register()
     {
         byte[] authenticatorInfo = BuildAuthenticatorInfoCbor();
+        LogAuthenticatorDetails("Register", AuthenticatorIdentity.EffectiveAaguid);
 
         Guid clsid = PluginConstants.KeePassPasskeyProviderClsid;
 
@@ -76,6 +77,62 @@ internal static unsafe class PluginRegistration
         return HResults.S_OK;
     }
 
+    /// <summary>
+    /// Updates the already-registered authenticator's details in place (currently the AAGUID
+    /// carried in the CTAP authenticatorGetInfo blob) via WebAuthNPluginUpdateAuthenticatorDetails.
+    /// Unlike unregister+register this keeps the platform op-signing key, so no key rotation occurs.
+    /// The authenticator must already be registered; this ensures that first.
+    /// </summary>
+    public static int UpdateDetails(Guid aaguid)
+    {
+        if (!EnsureRegistered())
+        {
+            Log.Error("cannot update details, authenticator is not registered");
+            return HResults.E_FAIL;
+        }
+
+        byte[] authenticatorInfo = BuildAuthenticatorInfoCbor(PluginConstants.AaguidToRfc4122Bytes(aaguid));
+        LogAuthenticatorDetails("UpdateDetails", aaguid);
+
+        Guid clsid = PluginConstants.KeePassPasskeyProviderClsid;
+
+#if DEBUG
+        string lightSvg = LogoResources.DarkThemeSvg;
+        string darkSvg  = LogoResources.LightThemeSvg;
+#else
+        string lightSvg = LogoResources.LightThemeSvg;
+        string darkSvg  = LogoResources.DarkThemeSvg;
+#endif
+        fixed (char* namePtr     = PluginConstants.PluginName)
+        fixed (byte* infoPtr     = authenticatorInfo)
+        fixed (char* lightSvgPtr = lightSvg)
+        fixed (char* darkSvgPtr  = darkSvg)
+        {
+            var details = new WebAuthnPluginUpdateAuthenticatorDetails
+            {
+                pwszAuthenticatorName = namePtr,
+                rclsid                = &clsid,
+                rclsidNew             = &clsid, // CLSID is unchanged; only the details are updated
+                pwszLightThemeLogoSvg = lightSvgPtr,
+                pwszDarkThemeLogoSvg  = darkSvgPtr,
+                cbAuthenticatorInfo   = (uint)authenticatorInfo.Length,
+                pbAuthenticatorInfo   = infoPtr,
+                cSupportedRpIds       = 0,
+                ppwszSupportedRpIds   = null,
+            };
+
+            int hr = WebAuthnPluginApi.WebAuthNPluginUpdateAuthenticatorDetails(&details);
+            if (hr < HResults.S_OK)
+            {
+                Log.Error($"WebAuthNPluginUpdateAuthenticatorDetails failed hr=0x{hr:X8}");
+                return hr;
+            }
+        }
+
+        Log.Info("succeeded");
+        return HResults.S_OK;
+    }
+
     /// <summary>Unregisters the plugin from the Windows passkey platform.</summary>
     public static int Unregister()
     {
@@ -106,7 +163,7 @@ internal static unsafe class PluginRegistration
     ///          9: ["internal"], 10: [{alg:-7,type:"public-key"},{alg:-8,...},{alg:-257,...}]}
     /// Keys sorted per CTAP2 canonical ordering.
     /// </summary>
-    private static byte[] BuildAuthenticatorInfoCbor()
+    private static byte[] BuildAuthenticatorInfoCbor(byte[]? aaguidBytes = null)
     {
         var encodeOptions = new CBOREncodeOptions("ctap2canonical=true");
         var info = CBORObject.NewMap();
@@ -117,8 +174,8 @@ internal static unsafe class PluginRegistration
         // 2: extensions
         info.Add(2, CBORObject.NewArray().Add("prf").Add("hmac-secret"));
 
-        // 3: aaguid (16-byte bstr)
-        info.Add(3, PluginConstants.KeePassPasskeyProviderAaguidBytes);
+        // 3: aaguid (16-byte bstr) - the passed value, or the stored/default one via AuthenticatorIdentity
+        info.Add(3, aaguidBytes ?? AuthenticatorIdentity.EffectiveAaguidBytes);
 
         // 4: options {rk:true, up:true, uv:true}
         info.Add(4, CBORObject.NewMap().Add("rk", true).Add("up", true).Add("uv", true));
@@ -134,5 +191,22 @@ internal static unsafe class PluginRegistration
         info.Add(10, algorithms);
 
         return info.EncodeToBytes(encodeOptions);
+    }
+
+    /// <summary>
+    /// Logs the full authenticator descriptor being sent to Windows. Because this feature lets the
+    /// AAGUID be spoofed, register/update issues are much easier to diagnose with the exact values
+    /// (none of which are secret) recorded at the moment they are pushed to the platform.
+    /// </summary>
+    private static void LogAuthenticatorDetails(string op, Guid aaguid)
+    {
+        Log.Info(
+            $"{op} details: name='{PluginConstants.PluginName}' " +
+            $"clsid={PluginConstants.KeePassPasskeyProviderClsid} " +
+            $"pluginRpId={PluginConstants.PluginRpId} " +
+            $"aaguid={aaguid}{(aaguid != AuthenticatorIdentity.DefaultAaguid ? $" (spoofed, default={AuthenticatorIdentity.DefaultAaguid})" : " (default)")} " +
+            $"versions=[FIDO_2_0,FIDO_2_1] extensions=[prf,hmac-secret] transports=[internal] " +
+            $"algorithms=[ES256(-7),EdDSA(-8),RS256(-257)] options={{rk,up,uv}} " +
+            $"lightLogo={LogoResources.LightThemeSvg.Length}chars darkLogo={LogoResources.DarkThemeSvg.Length}chars");
     }
 }

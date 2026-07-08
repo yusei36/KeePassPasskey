@@ -28,7 +28,8 @@ internal static class PluginConstants
     /// <summary>AAGUID as 16 bytes in RFC 4122 big-endian order, for use in authenticatorData and CBOR.</summary>
     public static readonly byte[] KeePassPasskeyProviderAaguidBytes = AaguidToRfc4122Bytes(KeePassPasskeyProviderAaguid);
 
-    private static byte[] AaguidToRfc4122Bytes(Guid guid)
+    /// <summary>Converts a GUID to 16 bytes in RFC 4122 big-endian order (authenticatorData / CBOR layout).</summary>
+    internal static byte[] AaguidToRfc4122Bytes(Guid guid)
     {
         var bytes = new byte[16];
         guid.TryWriteBytes(bytes, bigEndian: true, out _);
