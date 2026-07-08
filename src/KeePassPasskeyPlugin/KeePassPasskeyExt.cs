@@ -3,12 +3,14 @@
 using KeePass.Plugins;
 using KeePassPasskey.Storage;
 using KeePassPasskey.Ipc;
+using KeePassPasskey.UI;
 using KeePassPasskeyShared;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace KeePassPasskey
 {
@@ -22,6 +24,7 @@ namespace KeePassPasskey
         private IPluginHost _host;
         private PipeServer _pipeServer;
         private PasskeySyncTrigger _syncTrigger;
+        private EntryMenuController _entryMenu;
 
         // Loaded once; MemoryStream kept open for GDI+ lifetime requirement.
         private static readonly Image _smallIcon = LoadSmallIcon();
@@ -67,6 +70,10 @@ namespace KeePassPasskey
             try
             {
                 var passkeyStorage = new PasskeyEntryStorage(_host, settingsStorage);
+
+                // Entry context-menu cut/paste actions for moving a passkey between entries.
+                _entryMenu = new EntryMenuController(_host, passkeyStorage);
+
                 var handler = new RequestHandler(_host, passkeyStorage, settingsStorage);
                 _pipeServer = new PipeServer(handler);
                 if (_pipeServer.Start())
@@ -91,8 +98,16 @@ namespace KeePassPasskey
             return true;
         }
 
+        public override ToolStripMenuItem GetMenuItem(PluginMenuType t)
+        {
+            if (t != PluginMenuType.Entry) return null;
+            return _entryMenu?.GetEntryMenuItem();
+        }
+
         public override void Terminate()
         {
+            _entryMenu?.Dispose();
+            _entryMenu = null;
             _syncTrigger?.Dispose();
             _syncTrigger = null;
             _pipeServer?.Stop();

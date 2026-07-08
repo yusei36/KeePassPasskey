@@ -126,6 +126,79 @@ namespace KeePassPasskey.Storage
             return true;
         }
 
+        // Copies a passkey onto another entry (across databases when needed), backing up the target's
+        // history first. When removeFromSource is set it becomes a move: the source is backed up and
+        // its passkey stripped. The source keeps the passkey until the paste succeeds.
+        internal PasskeyTransferResult TransferPasskey(PwDatabase sourceDb, PwEntry sourceEntry, PwDatabase targetDb, PwEntry targetEntry, bool removeFromSource)
+        {
+            if (sourceDb == null || sourceEntry == null || targetDb == null || targetEntry == null)
+                return PasskeyTransferResult.Failed;
+            if (ReferenceEquals(sourceEntry, targetEntry))
+                return PasskeyTransferResult.SameEntry;
+
+            // Source must still be live (not deleted or its database closed since the cut/copy).
+            if (!sourceDb.IsOpen || sourceDb.RootGroup.FindEntry(sourceEntry.Uuid, true) == null || !EntryHasPasskey(sourceEntry))
+                return PasskeyTransferResult.SourceUnavailable;
+            if (!targetDb.IsOpen)
+                return PasskeyTransferResult.Failed;
+
+            var settings = _settingsStorage.Load();
+            var credential = ExtractCredential(sourceEntry, sourceDb);
+            var sourceUrl = sourceEntry.Strings.ReadSafe(PwDefs.UrlField);
+
+            // Target: back up history, write the passkey, fill URL/UserName only when empty.
+            targetEntry.CreateBackup(targetDb);
+            ApplyPasskeyFields(targetEntry, credential);
+            if (settings.AddPasskeyTag)
+                targetEntry.AddTag(PasskeyTagName);
+            if (string.IsNullOrEmpty(targetEntry.Strings.ReadSafe(PwDefs.UrlField)) && !string.IsNullOrEmpty(sourceUrl))
+                targetEntry.Strings.Set(PwDefs.UrlField, new ProtectedString(false, sourceUrl));
+            if (string.IsNullOrEmpty(targetEntry.Strings.ReadSafe(PwDefs.UserNameField)) && !string.IsNullOrEmpty(credential.Username))
+                targetEntry.Strings.Set(PwDefs.UserNameField, new ProtectedString(false, credential.Username));
+            targetEntry.Touch(true);
+
+            if (removeFromSource)
+            {
+                // Source: back up history, then strip the passkey so this is a move, not a copy.
+                sourceEntry.CreateBackup(sourceDb);
+                RemovePasskeyFields(sourceEntry);
+                sourceEntry.RemoveTag(PasskeyTagName);
+                sourceEntry.Touch(true);
+                RefreshAndSave(targetDb, sourceDb);
+            }
+            else
+            {
+                RefreshAndSave(targetDb);
+            }
+
+            return PasskeyTransferResult.Success;
+        }
+
+        // Resolves an entry's title placeholders for display (e.g. the paste menu label).
+        internal string ResolveEntryTitle(PwEntry entry, PwDatabase db)
+        {
+            if (entry == null || db == null) return string.Empty;
+            return ResolveTitle(entry, db);
+        }
+
+        internal static bool EntryHasPasskey(PwEntry entry)
+        {
+            return entry != null
+                && entry.Strings.Exists(FieldCredentialId)
+                && !string.IsNullOrEmpty(entry.Strings.ReadSafe(FieldCredentialId));
+        }
+
+        private static void RemovePasskeyFields(PwEntry entry)
+        {
+            entry.Strings.Remove(FieldCredentialId);
+            entry.Strings.Remove(FieldPrivateKey);
+            entry.Strings.Remove(FieldRelyingParty);
+            entry.Strings.Remove(FieldUserHandle);
+            entry.Strings.Remove(FieldUsername);
+            entry.Strings.Remove(FieldFlagBe);
+            entry.Strings.Remove(FieldFlagBs);
+        }
+
         // Sets the KPEX_PASSKEY_* fields (and BE/BS flags) on an entry. Shared by new-entry
         // creation and save-to-existing-entry so both write identical passkey material.
         private static void ApplyPasskeyFields(PwEntry entry, PasskeyCredential credential)
@@ -142,13 +215,20 @@ namespace KeePassPasskey.Storage
             entry.Strings.Set(FieldFlagBs, new ProtectedString(false, bs ? "1" : "0"));
         }
 
-        private void RefreshAndSave(PwDatabase db)
+        // Refreshes the UI and (when auto-save is on) saves each affected database.
+        private void RefreshAndSave(params PwDatabase[] databases)
         {
+            var affected = databases.Where(d => d != null && d.IsOpen).Distinct().ToArray();
+            if (affected.Length == 0) return;
+
             _host.MainWindow.BeginInvoke(new MethodInvoker(() =>
             {
                 _host.MainWindow.UpdateUI(false, null, true, null, true, null, true);
                 if (KeePass.Program.Config.Application.AutoSaveAfterEntryEdit)
-                    _host.MainWindow.SaveDatabase(db, null);
+                {
+                    foreach (var db in affected)
+                        _host.MainWindow.SaveDatabase(db, null);
+                }
             }));
         }
 

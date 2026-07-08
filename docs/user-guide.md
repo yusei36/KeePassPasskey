@@ -109,9 +109,20 @@ A KeePassPasskey notification appears in the taskbar. Click **Approve** to confi
 
 Passkeys are stored as standard KeePass entries in the **Passkeys** group.
 
-When creating a passkey and multiple databases are open, KeePassPasskey will ask you to choose which database to save it to (see step 3 in [Creating a passkey](#creating-a-passkey)). At most **5** open databases are offered in this picker. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If more than 5 databases are open, keep only the ones you save passkeys to unlocked. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong database, you can move it via **Entry → Data Exchange → Copy/Paste Entry**.
+When creating a passkey and multiple databases are open, KeePassPasskey will ask you to choose which database to save it to (see step 3 in [Creating a passkey](#creating-a-passkey)). At most **5** open databases are offered in this picker. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If more than 5 databases are open, keep only the ones you save passkeys to unlocked. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong entry or database, you can relocate it with the **Passkey** cut/copy/paste actions described in [Moving or copying a passkey between entries](#moving-or-copying-a-passkey-between-entries).
 
 Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **Passkeys** group itself can also be renamed. Note that if a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey. The KeePass Recycle Bin has searching disabled by default, so restoring a deleted passkey entry from there requires moving it to another group first.
+
+### Moving or copying a passkey between entries
+
+You can move or copy the passkey data from one entry to another, for example to attach a passkey to your existing login entry for a site, or to relocate one that was saved to the wrong entry or database. Right-click a passkey entry to open the **Passkey** submenu:
+
+- **Cut Passkey**, then right-click the destination entry and choose **Paste Passkey Here**, moves the passkey. It is removed from the source entry only after the paste succeeds.
+- **Copy Passkey**, then **Paste Passkey Here**, duplicates the passkey and leaves it on the source entry. The passkey stays on the clipboard, so you can paste it onto several entries in a row.
+
+This works across open databases: cut or copy in one database, switch to another open database, then paste.
+
+Both entries keep their **History**. The destination entry is backed up before the passkey is written onto it, so if it already held a passkey the previous version can be restored; when moving, the source entry is backed up before its passkey is removed. Pasting onto an entry that already has a passkey asks you to confirm the replacement first. The destination's **URL** and **User name** are filled in only when empty, so any login details you already entered there are preserved.
 
 To delete a passkey, delete its KeePass entry.
 
