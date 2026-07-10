@@ -20,6 +20,9 @@ internal sealed class NotificationUserVerifier : IUserVerifier
     // What the user chose on the registration toast.
     private enum RegistrationAction { Deny, CreateNew, AddToExisting }
 
+    // What the user chose on the entry-picker toast.
+    private enum EntryPickerAction { Cancel, CreateNew, UseEntry }
+
     public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
         Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
         out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
@@ -43,13 +46,21 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
         if (action == RegistrationAction.AddToExisting)
         {
-            var chosen = ShowEntryPickerToast(
+            var (entryAction, chosen) = ShowEntryPickerToast(
                 title: "Choose an entry",
                 body: $"Save the passkey for {site} onto an existing entry.",
                 tag: tag,
                 candidates: candidateEntries!);
-            if (chosen == null) return HResults.NTE_USER_CANCELLED;
-            selectedEntry = new EntryTargetInfo { EntryUuid = chosen.EntryUuid, DatabaseId = chosen.DatabaseId };
+
+            if (entryAction == EntryPickerAction.Cancel) return HResults.NTE_USER_CANCELLED;
+
+            if (entryAction == EntryPickerAction.CreateNew)
+            {
+                selectedDatabase = sel;
+                return HResults.S_OK;
+            }
+
+            selectedEntry = new EntryTargetInfo { EntryUuid = chosen!.EntryUuid, DatabaseId = chosen.DatabaseId };
             return HResults.S_OK;
         }
 
@@ -185,11 +196,11 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
     // Second toast: pick which existing entry to attach the passkey to. Modeled on the database
     // picker. Entries that already hold a passkey are labelled so overwriting is an informed choice.
-    private static EntryMatchInfo? ShowEntryPickerToast(
+    private static (EntryPickerAction Action, EntryMatchInfo? Entry) ShowEntryPickerToast(
         string title, string body, string tag, IReadOnlyList<EntryMatchInfo> candidates)
     {
         int timeoutSeconds = TimeoutSeconds();
-        var tcs = new TaskCompletionSource<EntryMatchInfo?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var tcs = new TaskCompletionSource<(EntryPickerAction, EntryMatchInfo?)>(TaskCreationOptions.RunContinuationsAsynchronously);
         var cts = new CancellationTokenSource();
 
         const string selectionBoxId = "entryPicker";
@@ -220,6 +231,9 @@ internal sealed class NotificationUserVerifier : IUserVerifier
                 .SetContent("Save to entry")
                 .AddArgument("action", "allow"))
             .AddButton(new ToastButton()
+                .SetContent("Create new")
+                .AddArgument("action", "new"))
+            .AddButton(new ToastButton()
                 .SetContent("Cancel")
                 .AddArgument("action", "deny"));
 
@@ -231,19 +245,21 @@ internal sealed class NotificationUserVerifier : IUserVerifier
             var args = ((ToastActivatedEventArgs)a).Arguments;
             var inputs = ((ToastActivatedEventArgs)a).UserInput;
             var parsed = string.IsNullOrEmpty(args) ? null : ToastArguments.Parse(args);
-            bool allowed = parsed == null || (parsed.TryGetValue("action", out var action) && action == "allow");
-            if (!allowed) { tcs.TrySetResult(null); return; }
+            string action = parsed != null && parsed.TryGetValue("action", out var act) ? act : "allow";
+
+            if (action == "deny") { tcs.TrySetResult((EntryPickerAction.Cancel, null)); return; }
+            if (action == "new") { tcs.TrySetResult((EntryPickerAction.CreateNew, null)); return; }
 
             string? indexStr = inputs.ContainsKey(selectionBoxId) ? inputs[selectionBoxId]?.ToString() : "0";
             int idx = int.TryParse(indexStr, out int idxParsed) && idxParsed >= 0 && idxParsed < candidates.Count ? idxParsed : 0;
-            tcs.TrySetResult(candidates[idx]);
+            tcs.TrySetResult((EntryPickerAction.UseEntry, candidates[idx]));
         };
-        toast.Dismissed += (s, a) => { cts.Cancel(); tcs.TrySetResult(null); };
-        toast.Failed    += (s, a) => { cts.Cancel(); tcs.TrySetResult(null); };
+        toast.Dismissed += (s, a) => { cts.Cancel(); tcs.TrySetResult((EntryPickerAction.Cancel, null)); };
+        toast.Failed    += (s, a) => { cts.Cancel(); tcs.TrySetResult((EntryPickerAction.Cancel, null)); };
 
         var notifier = ToastNotificationManagerCompat.CreateToastNotifier();
         notifier.Show(toast);
-        RunCountdown(notifier, toast, tag, timeoutSeconds, cts.Token, () => tcs.TrySetResult(null));
+        RunCountdown(notifier, toast, tag, timeoutSeconds, cts.Token, () => tcs.TrySetResult((EntryPickerAction.Cancel, null)));
 
         return tcs.Task.GetAwaiter().GetResult();
     }
