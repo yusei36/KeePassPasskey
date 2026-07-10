@@ -21,7 +21,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     public DiagnosticsViewModel Diagnostics { get; }
     public SettingsViewModel    Settings    { get; }
 
-    [ObservableProperty] private bool _isRefreshing;
+    [ObservableProperty] public partial bool IsRefreshing { get; set; }
 
     public bool IsNotPackaged { get; } = !IsRunningAsPackage();
 

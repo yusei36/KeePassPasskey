@@ -8,11 +8,11 @@ namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class StatusHeroViewModel : ObservableObject
 {
-    [ObservableProperty] private ProviderStatus _status;
-    [ObservableProperty] private PingStatus _pluginStatus;
-    [ObservableProperty] private bool _canRegister = true;
-    [ObservableProperty] private bool _canUnregister;
-    [ObservableProperty] private bool _showOpenPasskeySettings;
+    [ObservableProperty] public partial ProviderStatus Status { get; set; }
+    [ObservableProperty] public partial PingStatus PluginStatus { get; set; }
+    [ObservableProperty] public partial bool CanRegister { get; set; } = true;
+    [ObservableProperty] public partial bool CanUnregister { get; set; }
+    [ObservableProperty] public partial bool ShowOpenPasskeySettings { get; set; }
 
     public ICommand RegisterCommand   { get; }
     public ICommand UnregisterCommand { get; }

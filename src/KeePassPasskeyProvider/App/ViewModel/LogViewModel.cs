@@ -12,10 +12,10 @@ public sealed record LogLine(string Text, LogLevel? Level);
 
 public sealed partial class LogViewModel : ObservableObject, IDisposable
 {
-    [ObservableProperty] private IReadOnlyList<LogLine> _providerLogLines = [];
-    [ObservableProperty] private IReadOnlyList<LogLine> _pluginLogLines = [];
-    [ObservableProperty] private int _selectedLogTabIndex;
-    [ObservableProperty] private bool _isLogVisible;
+    [ObservableProperty] public partial IReadOnlyList<LogLine> ProviderLogLines { get; set; } = [];
+    [ObservableProperty] public partial IReadOnlyList<LogLine> PluginLogLines { get; set; } = [];
+    [ObservableProperty] public partial int SelectedLogTabIndex { get; set; }
+    [ObservableProperty] public partial bool IsLogVisible { get; set; }
 
     private readonly FileSystemWatcher? _providerLogWatcher;
     private readonly FileSystemWatcher? _pluginLogWatcher;

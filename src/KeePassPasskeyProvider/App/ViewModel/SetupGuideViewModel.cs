@@ -9,9 +9,9 @@ namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class SetupGuideViewModel : ObservableObject
 {
-    [ObservableProperty] private bool _isSetupExpanded = true;
-    [ObservableProperty] private bool _isReady;
-    [ObservableProperty] private bool _showTrayOffer;
+    [ObservableProperty] public partial bool IsSetupExpanded { get; set; } = true;
+    [ObservableProperty] public partial bool IsReady { get; set; }
+    [ObservableProperty] public partial bool ShowTrayOffer { get; set; }
 
     public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
 

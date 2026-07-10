@@ -15,21 +15,21 @@ namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class SettingsViewModel : ObservableObject
 {
-    [ObservableProperty] private UserVerificationMode _registrationVerification;
-    [ObservableProperty] private UserVerificationMode _signInVerification;
-    [ObservableProperty] private bool _showErrorNotifications;
-    [ObservableProperty] private bool _addPasskeyTag;
-    [ObservableProperty] private bool _saveToExistingEntry;
-    [ObservableProperty] private string _entryTitleTemplate = "";
-    [ObservableProperty] private bool _resolveTitlePlaceholders;
-    [ObservableProperty] private PasskeyEntryGroupMode _newEntryGroupMode;
-    [ObservableProperty] private ExcludeCredentialCheckMode _excludeCredentialCheckMode;
-    [ObservableProperty] private double _notificationTimeoutSeconds;
-    [ObservableProperty] private LogLevel _logLevel;
-    [ObservableProperty] private bool _syncCredentialsToWindows;
-    [ObservableProperty] private double _statusRefreshIntervalSeconds;
-    [ObservableProperty] private bool _newPasskeyBackupEligible;
-    [ObservableProperty] private bool _newPasskeyBackupState;
+    [ObservableProperty] public partial UserVerificationMode RegistrationVerification { get; set; }
+    [ObservableProperty] public partial UserVerificationMode SignInVerification { get; set; }
+    [ObservableProperty] public partial bool ShowErrorNotifications { get; set; }
+    [ObservableProperty] public partial bool AddPasskeyTag { get; set; }
+    [ObservableProperty] public partial bool SaveToExistingEntry { get; set; }
+    [ObservableProperty] public partial string EntryTitleTemplate { get; set; } = "";
+    [ObservableProperty] public partial bool ResolveTitlePlaceholders { get; set; }
+    [ObservableProperty] public partial PasskeyEntryGroupMode NewEntryGroupMode { get; set; }
+    [ObservableProperty] public partial ExcludeCredentialCheckMode ExcludeCredentialCheckMode { get; set; }
+    [ObservableProperty] public partial double NotificationTimeoutSeconds { get; set; }
+    [ObservableProperty] public partial LogLevel LogLevel { get; set; }
+    [ObservableProperty] public partial bool SyncCredentialsToWindows { get; set; }
+    [ObservableProperty] public partial double StatusRefreshIntervalSeconds { get; set; }
+    [ObservableProperty] public partial bool NewPasskeyBackupEligible { get; set; }
+    [ObservableProperty] public partial bool NewPasskeyBackupState { get; set; }
 
     // BS implies BE: turning eligibility off forces synced off.
     partial void OnNewPasskeyBackupEligibleChanged(bool value)
@@ -39,9 +39,9 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     // Spoofed AAGUID. Device-local (AuthenticatorIdentityStore), not part of the KeePass-synced
     // settings, so it has its own apply-and-re-register action instead of the shared Save button.
-    [ObservableProperty] private string _spoofAaguid = "";
-    [ObservableProperty] private bool _isApplyingAaguid;
-    [ObservableProperty] private string _spoofAaguidStatus = "";
+    [ObservableProperty] public partial string SpoofAaguid { get; set; } = "";
+    [ObservableProperty] public partial bool IsApplyingAaguid { get; set; }
+    [ObservableProperty] public partial string SpoofAaguidStatus { get; set; } = "";
     private string? _storedSpoofAaguid;
 
     public bool IsSpoofAaguidValid => string.IsNullOrWhiteSpace(SpoofAaguid) || Guid.TryParse(SpoofAaguid, out _);
@@ -162,10 +162,10 @@ public sealed partial class SettingsViewModel : ObservableObject
     internal void ReloadTrayIconState() =>
         SetProperty(ref _enableTrayIcon, AppSettings.Current.EnableTrayIcon, nameof(EnableTrayIcon));
 
-    [ObservableProperty] private bool _hasNonDefaultSettings;
-    [ObservableProperty] private bool _canResetToDefaults;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanSave))] private bool _isSaving;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanSave))] private bool _hasUnsavedChanges;
+    [ObservableProperty] public partial bool HasNonDefaultSettings { get; set; }
+    [ObservableProperty] public partial bool CanResetToDefaults { get; set; }
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanSave))] public partial bool IsSaving { get; set; }
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(CanSave))] public partial bool HasUnsavedChanges { get; set; }
     public bool CanSave => HasUnsavedChanges && !IsSaving;
 
     private static readonly KeePassPasskeySettings DefaultSettings = new();
@@ -215,7 +215,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     public string AppVersionFull => DiagnosticsViewModel.ClientVersion;
     public static bool IsOfficialRelease { get; } = CheckIsOfficialRelease();
 
-    [ObservableProperty] private string _verifyReleaseMessage = "Release build";
+    [ObservableProperty] public partial string VerifyReleaseMessage { get; set; } = "Release build";
     private static readonly string[] Principles =["Its'y ywzxy. Ajwnkd.", "Xjqk-hzxyid.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjdx, sty dtzw fhhtzsyx.", "Xtajwjnls. Fqbfdx. Dtzwx."];
     private int _verifyReleaseIndex = -1;
 

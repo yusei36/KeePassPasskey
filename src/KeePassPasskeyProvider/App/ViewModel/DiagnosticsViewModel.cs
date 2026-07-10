@@ -12,8 +12,8 @@ namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 {
-    [ObservableProperty] private string? _serverVersion;
-    [ObservableProperty] private PingStatus _pingStatus;
+    [ObservableProperty] public partial string? ServerVersion { get; set; }
+    [ObservableProperty] public partial PingStatus PingStatus { get; set; }
     public ICommand RegisterCommand   { get; }
     public ICommand UnregisterCommand { get; }
     public LogViewModel LogPanel { get; } = new LogViewModel();
