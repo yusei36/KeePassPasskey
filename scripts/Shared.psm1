@@ -14,6 +14,7 @@ $script:StoreClsid         = '281969eb-44a9-4577-954d-b47e72665442'
 $script:StoreIdentityName  = '51133UweKgel.KeePassPasskey'
 $script:StorePublisher     = 'CN=B667D1D3-B0C8-481A-A48D-1D8129DA4932'
 $script:SignToolPath = 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe'
+$script:AppCertPath  = 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit\appcert.exe'
 
 # Signing cert subject for a build configuration. Debug = dev identity, Release = product identity.
 function Get-CertSubject([string]$Configuration) {
@@ -235,7 +236,7 @@ function Invoke-SignFile([string]$FilePath, [string]$Thumbprint) {
     if (-not (Test-Path $script:SignToolPath)) {
         throw "signtool.exe not found at:`n  $script:SignToolPath`nInstall the Windows SDK 10.0.26100."
     }
-    & $script:SignToolPath sign /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 /sha1 $Thumbprint /q $FilePath
+    & $script:SignToolPath sign /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 /sha1 $Thumbprint /q $FilePath | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "signtool exited with code $LASTEXITCODE" }
     Write-Host "  Signed OK: $(Split-Path $FilePath -Leaf)"
 }
@@ -340,6 +341,87 @@ function Invoke-GenerateLicenseNotices {
     Write-Host "  Generated: $(Split-Path $OutputFile -Leaf)"
 }
 
+# Runs the Windows App Certification Kit against the Store MSIX and parses its report.
+# The Partner Center upload must stay unsigned, so WACK tests a signed throwaway copy (WACK has to
+# deploy the package, which requires a trusted signature). appcert.exe needs elevation; a
+# non-elevated caller gets a single UAC prompt and the run happens in the elevated window.
+function Invoke-Wack {
+    param(
+        [string]$RepoRoot,
+        [string]$StoreMsixPath,
+        [string]$FileVersion
+    )
+    if (-not (Test-Path $script:AppCertPath)) {
+        throw "appcert.exe not found at:`n  $script:AppCertPath`nInstall the Windows App Certification Kit (ships with the Windows SDK)."
+    }
+
+    # Signed throwaway copy for deployment; the upload MSIX stays untouched/unsigned.
+    $wackMsix = $StoreMsixPath -replace '\.msix$', '_WACK.msix'
+    Copy-Item $StoreMsixPath $wackMsix -Force
+    $cert = Get-OrCreateCertificate -Subject (Get-StorePublisher)
+    Invoke-SignMsix -MsixPath $wackMsix -Thumbprint $cert.Thumbprint
+
+    # WACK deploys the package itself; an existing install of the same identity collides.
+    $installed = Get-AppxPackage -Name (Get-StoreIdentityName) | Select-Object -First 1
+    if ($installed) {
+        Write-Host "  Removing installed Store package so WACK can deploy its own copy."
+        Write-Host "  Reinstall afterwards with: scripts\Install-StoreProvider.ps1 -SkipBuild" -ForegroundColor Yellow
+        Get-Process -Name KeePassPasskeyProvider -ErrorAction SilentlyContinue |
+            Where-Object { $_.Path -and $_.Path.StartsWith($installed.InstallLocation, [StringComparison]::OrdinalIgnoreCase) } |
+            Stop-Process -Force -ErrorAction SilentlyContinue
+        Remove-AppxPackage -Package $installed.PackageFullName
+    }
+
+    $reportPath = "$RepoRoot\build\WACK-report_$FileVersion.xml"
+    if (Test-Path $reportPath) { Remove-Item $reportPath -Force }   # appcert refuses an existing report file
+
+    # Helper script for the elevated run: trust the cert if needed, then reset + test.
+    $lines = @()
+    if (-not (Test-CertificateTrusted -Thumbprint $cert.Thumbprint)) {
+        $cerPath = "$env:TEMP\KeePassPasskeyStoreWack.cer"
+        Export-Certificate -Cert $cert -FilePath $cerPath | Out-Null
+        $lines += "Import-Certificate -FilePath '$cerPath' -CertStoreLocation Cert:\LocalMachine\TrustedPeople | Out-Null"
+    }
+    $lines += "& '$script:AppCertPath' reset"
+    $lines += "& '$script:AppCertPath' test -appxpackagepath '$wackMsix' -reportoutputpath '$reportPath'"
+    $lines += 'exit $LASTEXITCODE'
+    $helper = "$env:TEMP\KeePassPasskeyWackRun.ps1"
+    Set-Content $helper ($lines -join "`r`n") -Encoding UTF8
+
+    $isElevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    try {
+        if ($isElevated) {
+            & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $helper | Out-Host
+            if ($LASTEXITCODE -ne 0) { Write-Host "  appcert exit code: $LASTEXITCODE" -ForegroundColor Yellow }
+        } else {
+            Write-Host "  appcert.exe needs elevation - confirm the UAC prompt. WACK takes several minutes..."
+            $p = Start-Process powershell.exe -Verb RunAs -Wait -PassThru `
+                 -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $helper
+            if ($p.ExitCode -ne 0) { Write-Host "  appcert exit code: $($p.ExitCode)" -ForegroundColor Yellow }
+        }
+    } finally {
+        Remove-Item $wackMsix -Force -ErrorAction SilentlyContinue
+    }
+
+    if (-not (Test-Path $reportPath)) {
+        throw "WACK produced no report ($reportPath). Check the appcert output for errors."
+    }
+
+    [xml]$xml = Get-Content $reportPath
+    $overall = $xml.DocumentElement.GetAttribute('OVERALL_RESULT')
+    $tests  = @($xml.SelectNodes('//TEST'))
+    $failed = @($tests | Where-Object { $r = $_.SelectSingleNode('RESULT'); $r -and $r.InnerText.Trim() -eq 'FAIL' })
+    $warned = @($tests | Where-Object { $r = $_.SelectSingleNode('RESULT'); $r -and $r.InnerText.Trim() -eq 'WARNING' })
+    foreach ($t in $failed) { Write-Host "  FAILED:  $($t.GetAttribute('NAME'))" -ForegroundColor Red }
+    foreach ($t in $warned) { Write-Host "  WARNING: $($t.GetAttribute('NAME'))" -ForegroundColor Yellow }
+    return [pscustomobject]@{
+        OverallResult = $overall
+        ReportPath    = $reportPath
+        FailedCount   = $failed.Count
+        WarningCount  = $warned.Count
+    }
+}
+
 # Reads ProductVersion (includes git hash) from the plugin DLL via PE resource - no assembly loading.
 function Get-PluginVersion([string]$BuildDir) {
     $dllPath = Join-Path $BuildDir 'KeePassPasskey.dll'
@@ -402,5 +484,5 @@ Export-ModuleMember -Function Write-Step, Assert-Elevation, Find-MSBuild, Get-Bu
                                Get-StorePublisher, Get-StoreIdentityName,
                                Invoke-PublishProvider, Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
                                Get-OrCreateCertificate, Test-CertificateTrusted, Add-TrustedCertificate,
-                               Invoke-SignFile, Invoke-SignMsix,
+                               Invoke-SignFile, Invoke-SignMsix, Invoke-Wack,
                                Invoke-GenerateLicenseNotices, Get-PluginVersion, Invoke-ILRepack

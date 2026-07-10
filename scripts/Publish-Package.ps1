@@ -49,10 +49,17 @@
     unsigned (the Store re-signs), and emits the bare .msix for Partner Center upload instead of the zip.
     Release only.
 
+.PARAMETER Wack
+    Run the Windows App Certification Kit against the Store MSIX after the build (requires -Store).
+    Tests a locally signed throwaway copy; the upload MSIX stays unsigned. Needs one UAC confirmation
+    (appcert.exe runs elevated) and takes several minutes. Fails the script only when WACK's overall
+    result is FAIL (an overall WARNING is submittable). Local use only - not intended for CI.
+
 .EXAMPLE
     .\Publish-Package.ps1
     .\Publish-Package.ps1 -Dev
     .\Publish-Package.ps1 -Store
+    .\Publish-Package.ps1 -Store -Wack
     .\Publish-Package.ps1 -Configuration Debug
     .\Publish-Package.ps1 -SkipBuild
     .\Publish-Package.ps1 -Configuration Debug -SkipSign
@@ -66,7 +73,8 @@ param(
     [switch]$SkipSign,
     [switch]$Dev,
     [switch]$NoOptimize,
-    [switch]$Store
+    [switch]$Store,
+    [switch]$Wack
 )
 
 # -Dev maps to the Debug identity. Output is release-like optimized by default (see -NoOptimize);
@@ -78,6 +86,7 @@ if ($Store) {
     if ($Configuration -ne 'Release') { throw "-Store is only valid with the Release configuration (not -Dev / -Configuration Debug)." }
     $SkipSign = $true
 }
+if ($Wack -and -not $Store) { throw "-Wack requires -Store (WACK runs against the Store MSIX)." }
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -126,9 +135,26 @@ $buildDir = "$RepoRoot\build\$Configuration"
 if ($Store) {
     $storeMsix = "$RepoRoot\build\KeePassPasskeyProvider.Package_$($versions.FileVersion)_x64_Store.msix"
     Copy-Item $MsixPath $storeMsix -Force
+
+    $wackResult = $null
+    if ($Wack) {
+        Write-Step "Running Windows App Certification Kit (WACK)"
+        $wackResult = Invoke-Wack -RepoRoot $RepoRoot -StoreMsixPath $storeMsix -FileVersion $versions.FileVersion
+    }
+
     Write-Step "Done (Store channel)"
     Write-Host "  Unsigned MSIX for Partner Center upload (includes bundled plugin):" -ForegroundColor Green
     Write-Host "    $storeMsix" -ForegroundColor Green
+    if ($wackResult) {
+        $wackColor = switch ($wackResult.OverallResult) { 'PASS' { 'Green' } 'WARNING' { 'Yellow' } default { 'Red' } }
+        Write-Host "  WACK:    $($wackResult.OverallResult)  ($($wackResult.FailedCount) failed, $($wackResult.WarningCount) warning; report: $($wackResult.ReportPath))" -ForegroundColor $wackColor
+        # WARNING is submittable (WACK downgrades known desktop-bridge false positives); only FAIL blocks.
+        if ($wackResult.OverallResult -notin 'PASS', 'WARNING') {
+            Write-Host ''
+            Write-Host "WACK overall result is $($wackResult.OverallResult); see the report before uploading." -ForegroundColor Red
+            exit 1
+        }
+    }
     return
 }
 
