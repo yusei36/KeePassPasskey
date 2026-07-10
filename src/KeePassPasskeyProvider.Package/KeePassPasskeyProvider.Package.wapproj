@@ -18,6 +18,8 @@
     <AppxPackage>true</AppxPackage>
     <AppxBundle>Never</AppxBundle>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <!-- Keep the manifest's MaxVersionTested; the default replaces it with TargetPlatformVersion -->
+    <AppxOSMaxVersionTestedReplaceManifestVersion>false</AppxOSMaxVersionTestedReplaceManifestVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <EntryPointProjectUniqueName>..\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj</EntryPointProjectUniqueName>
   </PropertyGroup>
