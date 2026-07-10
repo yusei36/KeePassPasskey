@@ -208,21 +208,26 @@ internal sealed class NotificationUserVerifier : IUserVerifier
         for (int i = 1; i < candidates.Count; i++)
             if (candidates[i].DatabaseId != candidates[0].DatabaseId) { showDbName = true; break; }
 
+        int shown = Math.Min(candidates.Count, MaxToastSelectionItems);
+        bool truncated = candidates.Count > MaxToastSelectionItems;
+
         var builder = new ToastContentBuilder()
             .SetToastScenario(ToastScenario.Alarm)
             .AddAudio(new ToastAudio { Silent = true })
             .AddText(title)
             .AddText(body);
 
+        if (truncated)
+            builder.AddText($"Showing {shown} of {candidates.Count} matching entries.");
+
         var selectionBox = new ToastSelectionBox(selectionBoxId)
         {
             DefaultSelectionBoxItemId = "0",
             Title = "Save to entry"
         };
-        int shown = Math.Min(candidates.Count, MaxToastSelectionItems);
         for (int i = 0; i < shown; i++)
             selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(), EntryLabel(candidates[i], showDbName)));
-        if (candidates.Count > MaxToastSelectionItems)
+        if (truncated)
             Log.Warn($"Entry picker truncated to {MaxToastSelectionItems} of {candidates.Count} matching entries", nameof(NotificationUserVerifier));
         builder.AddToastInput(selectionBox);
 
