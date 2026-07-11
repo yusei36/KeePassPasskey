@@ -14,25 +14,10 @@ public sealed partial class SetupGuideViewModel : ObservableObject
     [ObservableProperty] public partial bool ShowTrayOffer { get; set; }
 
     public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
-
-    // Full path to the bundled plugin DLL, or null if not running packaged / not present.
-    private static readonly string? BundledPluginDll = ResolveBundledPluginDll();
+    public ICommand ShowPluginFileCommand => ProviderCommands.ShowPluginFileCommand;
 
     /// <summary>True when the bundled plugin DLL exists (gates the "Show KeePassPasskey.dll" button).</summary>
-    public bool HasBundledPlugin { get; } = BundledPluginDll != null && System.IO.File.Exists(BundledPluginDll);
-
-    private static string? ResolveBundledPluginDll()
-    {
-        try
-        {
-            var installPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
-            return System.IO.Path.Combine(installPath, "KeePassPasskeyPlugin", "KeePassPasskey.dll");
-        }
-        catch
-        {
-            return null;
-        }
-    }
+    public bool HasBundledPlugin => ProviderCommands.HasBundledPlugin;
 
     internal event EventHandler? TrayStateChanged;
 
@@ -61,17 +46,6 @@ public sealed partial class SetupGuideViewModel : ObservableObject
             FileName        = "https://keepasspasskey.github.io/docs/user-guide/",
             UseShellExecute = true,
         });
-
-    [RelayCommand]
-    private void ShowPluginFile()
-    {
-        if (BundledPluginDll == null) return;
-        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = "explorer.exe",
-            Arguments = $"/select,\"{BundledPluginDll}\"",
-        });
-    }
 
     [RelayCommand]
     private void DismissTrayOffer()

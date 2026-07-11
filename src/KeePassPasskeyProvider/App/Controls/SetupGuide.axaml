@@ -38,10 +38,10 @@
                         <Run Text="Plugins" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
                         <Run Text=" folder and restart KeePass." />
                     </TextBlock>
-                    <Button Content="Show KeePassPasskey.dll to copy"
+                    <Button Content="Show plugin file to install"
                             Command="{Binding ShowPluginFileCommand}"
                             IsVisible="{Binding HasBundledPlugin}"
-                            ToolTip.Tip="Show KeePassPasskey.dll in File Explorer so you can copy it"
+                            ToolTip.Tip="Reveal the file in File Explorer"
                             Padding="6 2" FontSize="12" HorizontalAlignment="Left" />
                 </StackPanel>
             </Grid>
@@ -66,6 +66,7 @@
                     </TextBlock>
                     <Button Content="Advanced Passkey Options"
                             Command="{Binding OpenPasskeySettingsCommand}"
+                            ToolTip.Tip="Open advanced passkey options in Windows Settings"
                             Padding="6 2" FontSize="12" HorizontalAlignment="Left" />
                 </StackPanel>
             </Grid>

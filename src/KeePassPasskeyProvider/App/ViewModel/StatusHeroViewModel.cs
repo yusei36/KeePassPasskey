@@ -13,11 +13,13 @@ public sealed partial class StatusHeroViewModel : ObservableObject
     [ObservableProperty] public partial bool CanRegister { get; set; } = true;
     [ObservableProperty] public partial bool CanUnregister { get; set; }
     [ObservableProperty] public partial bool ShowOpenPasskeySettings { get; set; }
+    [ObservableProperty] public partial bool ShowPluginFile { get; set; }
 
     public ICommand RegisterCommand   { get; }
     public ICommand UnregisterCommand { get; }
     public ICommand RefreshCommand    { get; }
     public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
+    public ICommand ShowPluginFileCommand => ProviderCommands.ShowPluginFileCommand;
 
     internal StatusHeroViewModel(ICommand register, ICommand unregister, ICommand refresh)
     {
@@ -48,5 +50,7 @@ public sealed partial class StatusHeroViewModel : ObservableObject
             (_,     _,     _,     false, _)                          => ProviderStatus.KeePassNotConnected,
             _                                                         => ProviderStatus.Ready,
         };
+
+        ShowPluginFile = Status == ProviderStatus.KeePassNotConnected && ProviderCommands.HasBundledPlugin;
     }
 }
