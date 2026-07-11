@@ -49,6 +49,18 @@
         <ScrollViewer Grid.Row="1">
         <StackPanel Spacing="8" Margin="16 8 16 16">
 
+            <Border IsVisible="{Binding LoadFailed}"
+                    Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                    CornerRadius="4" Padding="12 8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ui:FASymbolIcon Symbol="ImportantFilled" FontSize="16"
+                                     Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                     VerticalAlignment="Center" />
+                    <TextBlock TextWrapping="Wrap" VerticalAlignment="Center"
+                               Text="Could not load the latest settings from KeePass. Showing the last known values." />
+                </StackPanel>
+            </Border>
+
             <ui:FASettingsExpander Header="Appearance"
                                  IconSource="DarkTheme"
                                  Description="Application appearance and theme"
@@ -428,6 +440,17 @@
 
         </StackPanel>
     </ScrollViewer>
+
+        <!-- Blocks interaction while settings load from KeePass on page entry. -->
+        <Border Grid.Row="0" Grid.RowSpan="2"
+                IsVisible="{Binding IsLoading}"
+                Background="{DynamicResource SmokeFillColorDefaultBrush}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                <ui:FAProgressRing IsIndeterminate="True" Width="48" Height="48"
+                                   HorizontalAlignment="Center" />
+                <TextBlock Text="Loading settings…" HorizontalAlignment="Center" />
+            </StackPanel>
+        </Border>
     </Grid>
 
 </UserControl>

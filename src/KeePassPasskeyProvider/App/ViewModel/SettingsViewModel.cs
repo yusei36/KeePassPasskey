@@ -333,21 +333,48 @@ public sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void ResetToDefaults() => LoadFrom(new KeePassPasskeySettings());
 
-    internal void ReloadFromCurrent() => LoadFromCurrent();
-
-    internal async Task SyncFromKeePassAsync()
+    // Background reload (cache file changed): never clobber unsaved edits.
+    internal void ReloadFromCurrent()
     {
+        if (HasUnsavedChanges) return;
+        LoadFromCurrent();
+    }
+
+    [ObservableProperty] public partial bool IsLoading { get; set; }
+    // Set when the on-entry pull from KeePass fails; the page shows a hint.
+    [ObservableProperty] public partial bool LoadFailed { get; set; }
+
+    // Entering the page: block the UI and reload, overriding any stale in-progress edits.
+    internal async Task LoadOnEnterAsync()
+    {
+        IsLoading = true;
+        try { LoadFailed = !await SyncFromKeePassAsync(force: true); }
+        finally { IsLoading = false; }
+    }
+
+    // Background sync (plugin reconnect): refresh but keep unsaved edits.
+    internal Task SyncFromKeePassAsync() => SyncFromKeePassAsync(force: false);
+
+    private async Task<bool> SyncFromKeePassAsync(bool force)
+    {
+        if (!force && HasUnsavedChanges) return false;
+
         var response = await Task.Run(() =>
             new PipeClient(msg => Log.Debug(msg, nameof(PipeClient))).GetSettings());
 
-        if (response == null || response.ErrorCode != null) return;
+        if (response == null || response.ErrorCode != null) return false;
 
         if (!response.Settings.Equals(KeePassPasskeySettings.Current))
         {
             KeePassPasskeySettings.Current = response.Settings;
             SettingsCache.Save(response.Settings);
         }
-        LoadFromCurrent();
+
+        // Re-check: the user may have started editing while the pipe call ran.
+        if (force || !HasUnsavedChanges)
+            LoadFromCurrent();
+        LoadFailed = false;
+        return true;
     }
 
     public SettingsViewModel() => LoadFromCurrent();

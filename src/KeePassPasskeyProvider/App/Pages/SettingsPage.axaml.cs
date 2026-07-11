@@ -24,8 +24,9 @@ public partial class SettingsPage : UserControl
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SettingsViewModel.IsSaving) && sender is SettingsViewModel vm)
-            Cursor = vm.IsSaving ? new Cursor(StandardCursorType.Wait) : Cursor.Default;
+        if (e.PropertyName is nameof(SettingsViewModel.IsSaving) or nameof(SettingsViewModel.IsLoading)
+            && sender is SettingsViewModel vm)
+            Cursor = vm.IsSaving || vm.IsLoading ? new Cursor(StandardCursorType.Wait) : Cursor.Default;
         if (e.PropertyName == nameof(SettingsViewModel.VerifyReleaseMessage))
             Dispatcher.UIThread.Post(() => ToolTip.SetIsOpen(VerifyReleaseButton, true));
     }

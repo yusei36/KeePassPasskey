@@ -96,7 +96,7 @@ public partial class MainWindow : FAAppWindow
                 break;
             case "settings":
                 _settingsPage ??= new SettingsPage(vm.Settings);
-                _ = vm.Settings.SyncFromKeePassAsync();
+                _ = vm.Settings.LoadOnEnterAsync();
                 NavView.Content = _settingsPage;
                 break;
         }
