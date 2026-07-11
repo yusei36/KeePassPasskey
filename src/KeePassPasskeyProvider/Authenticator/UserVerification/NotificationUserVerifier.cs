@@ -274,7 +274,11 @@ internal sealed class NotificationUserVerifier : IUserVerifier
         string title = string.IsNullOrEmpty(entry.Title) ? "(untitled)" : entry.Title;
         if (showDbName && !string.IsNullOrEmpty(entry.DatabaseName))
             title = $"{entry.DatabaseName}: {title}";
-        return entry.HasPasskey ? $"{title} [overwrite passkey]" : title;
+
+        var tags = new List<string>(2);
+        if (entry.IsSelected) tags.Add("selected");
+        if (entry.HasPasskey) tags.Add("overwrite passkey");
+        return tags.Count > 0 ? $"{title} [{string.Join(", ", tags)}]" : title;
     }
 
     private static int TimeoutSeconds()
@@ -317,6 +321,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
             {
                 try { await Task.Delay(1000, token).ConfigureAwait(false); }
                 catch (OperationCanceledException) { return; }
+                
+                if (token.IsCancellationRequested) return;
 
                 int elapsed = timeoutSeconds - remaining;
                 var update = new NotificationData();

@@ -338,10 +338,15 @@ namespace KeePassPasskey.Storage
         // Finds existing entries a passkey could be attached to: entries already tagged with this
         // RP id, or ordinary login entries whose URL host matches the RP id (host == rpId or a
         // subdomain). Each result carries whether it already holds a passkey so the UI can label it.
+        // Results are ranked so the most relevant survive the picker's item cap: the entry the user
+        // has selected in KeePass first, then RP-id matches, then URL-host-only matches; enumeration
+        // order is preserved within each group.
         internal List<EntryMatchInfo> FindMatchingEntries(string rpId)
         {
-            var results = new List<EntryMatchInfo>();
-            if (string.IsNullOrEmpty(rpId)) return results;
+            if (string.IsNullOrEmpty(rpId)) return new List<EntryMatchInfo>();
+
+            var selectedUuids = GetSelectedEntryUuids();
+            var ranked = new List<(int rank, EntryMatchInfo info)>();
 
             foreach (var db in GetSearchDatabases())
             {
@@ -362,17 +367,48 @@ namespace KeePassPasskey.Storage
 
                     if (!rpMatch && !urlMatch) continue;
 
-                    results.Add(new EntryMatchInfo
+                    string uuidHex = entry.Uuid.ToHexString();
+                    bool isSelected = selectedUuids.Contains(uuidHex);
+
+                    var info = new EntryMatchInfo
                     {
-                        EntryUuid = entry.Uuid.ToHexString(),
+                        EntryUuid = uuidHex,
                         DatabaseId = dbId,
                         DatabaseName = dbName,
                         Title = ResolveTitle(entry, db),
                         HasPasskey = hasPasskey,
-                    });
+                        IsSelected = isSelected,
+                    };
+
+                    int rank = isSelected ? 0 : (rpMatch ? 1 : 2);
+                    ranked.Add((rank, info));
                 }
             }
-            return results;
+
+            return ranked.OrderBy(r => r.rank).Select(r => r.info).ToList();
+        }
+
+        private HashSet<string> GetSelectedEntryUuids()
+        {
+            var set = new HashSet<string>(StringComparer.Ordinal);
+            try
+            {
+                var mw = _host.MainWindow;
+                PwEntry[] selected = null;
+                if (mw.InvokeRequired)
+                    mw.Invoke(new MethodInvoker(() => selected = mw.GetSelectedEntries()));
+                else
+                    selected = mw.GetSelectedEntries();
+
+                if (selected != null)
+                    foreach (var e in selected)
+                        set.Add(e.Uuid.ToHexString());
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("failed to read selected entries: " + ex.Message, nameof(GetSelectedEntryUuids));
+            }
+            return set;
         }
 
         // Does an excluded credential already exist for this RP within the ExcludeCredentialCheckMode scope?

@@ -299,6 +299,9 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("hasPasskey")]
         public bool HasPasskey { get; set; }
+        
+        [JsonProperty("isSelected")]
+        public bool IsSelected { get; set; }
     }
 
     // Identifies the existing entry a passkey should be written onto.
