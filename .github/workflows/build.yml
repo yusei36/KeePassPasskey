@@ -11,7 +11,7 @@ on:
       build_release:
         description: 'Also build Release (unsigned)'
         type: boolean
-        default: false
+        default: true
       build_store:
         description: 'Also build Store MSIX (unsigned, for Partner Center)'
         type: boolean
@@ -38,9 +38,8 @@ jobs:
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Configuration Release -SkipSign
 
-      # For now: build on every push/PR; on manual dispatch, respect the build_store checkbox.
       - name: Build (Store MSIX, unsigned)
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.build_store }}
+        if: inputs.build_store
         shell: pwsh
         run: .\scripts\Publish-Package.ps1 -Store
 
@@ -68,7 +67,7 @@ jobs:
             !build\KeePassPasskey-*-debug-*.zip
 
       - name: Upload artifact (Store MSIX)
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.build_store }}
+        if: inputs.build_store
         uses: actions/upload-artifact@v7
         with:
           name: KeePassPasskey-store-msix
