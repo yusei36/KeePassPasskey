@@ -15,7 +15,8 @@ namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class SettingsViewModel : ObservableObject
 {
-    [ObservableProperty] public partial UserVerificationMode RegistrationVerification { get; set; }
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsSaveToExistingEntryAvailable))]
+    public partial UserVerificationMode RegistrationVerification { get; set; }
     [ObservableProperty] public partial UserVerificationMode SignInVerification { get; set; }
     [ObservableProperty] public partial bool ShowErrorNotifications { get; set; }
     [ObservableProperty] public partial bool AddPasskeyTag { get; set; }
@@ -30,6 +31,8 @@ public sealed partial class SettingsViewModel : ObservableObject
     [ObservableProperty] public partial double StatusRefreshIntervalSeconds { get; set; }
     [ObservableProperty] public partial bool NewPasskeyBackupEligible { get; set; }
     [ObservableProperty] public partial bool NewPasskeyBackupState { get; set; }
+    public bool IsSaveToExistingEntryAvailable => RegistrationVerification.HasFlag(UserVerificationMode.Notification);
+
 
     // BS implies BE: turning eligibility off forces synced off.
     partial void OnNewPasskeyBackupEligibleChanged(bool value)
@@ -175,7 +178,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         base.OnPropertyChanged(e);
         if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme)
-                or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus)))
+                or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus) or nameof(IsSaveToExistingEntryAvailable)))
             CheckForUnsavedChanges();
     }
 

@@ -182,9 +182,10 @@
                 </ui:FASettingsExpanderItem>
 
                 <ui:FASettingsExpanderItem Content="Offer saving to an existing entry"
-                                         Description="Offer to save a passkey onto a matching entry instead of always creating a new one. Up to 5 matches are offered.">
+                                         Description="Offer to save a passkey onto a matching entry instead of always creating a new one. Up to 5 matches are offered. Requires a Registration mode that includes notifications.">
                     <ui:FASettingsExpanderItem.Footer>
                         <ToggleSwitch IsChecked="{Binding SaveToExistingEntry}"
+                                      IsEnabled="{Binding IsSaveToExistingEntryAvailable}"
                                       OnContent="On"
                                       OffContent="Off"
                                       Margin="0 0 4 0" />

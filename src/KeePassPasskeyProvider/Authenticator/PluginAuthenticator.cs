@@ -98,8 +98,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
                 var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
 
                 // 3d. Look up candidate entries to save onto, only if that feature is enabled.
+                // The offer is made on the registration toast, so it needs the Notification verifier.
                 IReadOnlyList<EntryMatchInfo> candidates = Array.Empty<EntryMatchInfo>();
-                if (KeePassPasskeySettings.Current.SaveToExistingEntry)
+                if (KeePassPasskeySettings.Current.SaveToExistingEntry &&
+                    KeePassPasskeySettings.Current.RegistrationVerification.HasFlag(UserVerificationMode.Notification))
                 {
                     var matchResponse = _pipeClient.FindMatchingEntries(new FindMatchingEntriesRequest { RpId = rpIdUtf8 });
                     if (matchResponse?.Entries != null && matchResponse.Entries.Count > 0)
