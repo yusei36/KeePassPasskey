@@ -10,6 +10,19 @@ Creating that key needs a TPM that is present and enabled. When the TPM is unava
 
 If the TPM is present and enabled but registration still fails, the question becomes whether the hardware itself is suitable. Windows 11 24H2 already requires a TPM 2.0 as a baseline, so almost all PCs have suitable hardware. Older TPMs are not automatically ruled out: the Windows component tries several key algorithms before giving up, and one user has reported KeePassPasskey working successfully on TPM 1.2. That does not guarantee it will work on every PC with TPM 1.2: registration may succeed, but you may still run into other TPM or Windows Hello issues afterwards, and a future Windows update could change which TPMs are accepted.
 
+## The download or installer is flagged as malware
+
+Microsoft Defender, SmartScreen, or your browser may flag the release `.zip` or the files inside the MSIX as a Trojan, with names such as `Trojan:Script/Wacatac.B!ml`, `Trojan:Win32/Tecabans.STV!cl`, or `Trojan:Win32/Wacatac.B!ml`. **These are false positives.** The `!ml` and `!cl` suffixes mean the verdict came from Microsoft's cloud machine-learning models ("this looks suspicious"), not from a signature match against known malware, and that kind of automated guess produces false positives far more often than a signature match.
+
+What you can do, in order:
+
+1. **Check whether it is already reported.** Search the [issues](https://github.com/yusei36/KeePassPasskey/issues) to see if the detection is already tracked (for example [issue #20](https://github.com/yusei36/KeePassPasskey/issues/20)). If it is not, please open a new issue with the exact detection name and version so it can be submitted to Microsoft as a false positive.
+2. **Wait for Microsoft to clear it.** Once a false positive is reviewed, Microsoft removes the detection and the updated definitions roll out over time, so the flag usually disappears on its own. Update your definitions and retry: **Windows Security → Virus & threat protection → Check for updates**.
+3. **Use the Microsoft Store version** (planned). Store packages are signed and vetted by Microsoft, so they avoid these false positives entirely.
+4. **Allow it manually:** only if you trust the source and need it before the detection clears:
+   - If your browser blocked the download, download it again from the release page's direct link and choose **Keep** when prompted.
+   - If Defender quarantined it, open **Windows Security → Virus & threat protection → Protection history**, select the detection, and choose **Actions → Allow** (then **Restore** if the file was removed).
+
 ## KeePassPasskey does not appear in the provider list
 
 - Open the KeePassPasskey app, go to **Advanced Passkey Options** (links to Windows Settings), and make sure **KeePassPasskey** is enabled.
@@ -38,6 +51,7 @@ After setting up the PIN again, try **Register** once more in the KeePassPasskey
 
 - When you register, the website can ask the authenticator not to create a second passkey for an account that already has one in the same place. It sends the list of credential IDs it already knows for you, and if KeePass holds a matching one, KeePassPasskey declines to create a duplicate and the operation fails. This is expected behaviour: it stops you from accumulating multiple passkeys for the same account in the same authenticator.
 - To register again, open the **Passkeys** group, delete the existing entry for that site, and retry. The website will then no longer recognise an existing passkey and will let you create a new one.
+- Alternatively, if you deliberately keep more than one passkey for the same account (for example the same account in separate databases), relax the **Allow duplicate passkeys** setting in the KeePassPasskey app so the registration is not blocked. See [Settings](user-guide.md#settings).
 
 ## Passkey prompts never show the Windows provider selection or KeePassPasskey
 

@@ -81,12 +81,13 @@ Credentials created here can be read by KeePassXC and vice versa. Three algorith
 - The KeePass plugin verifies the connecting COM server before any request is processed: in production (MSIX-installed) it checks the client's package family name and rejects non-MSIX processes.
 - The named pipe is restricted by ACL to the current user at medium integrity, so other users and lower-integrity processes cannot connect.
 
-## Identifiers
+## AAGUID
 
-| Identifier | Value |
-|---|---|
-| COM CLSID | `4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e` |
-| AAGUID | `9addb28c-b46f-4402-808f-019651441ff3` |
+The AAGUID tells relying parties which authenticator created a passkey. KeePassPasskey's is:
+
+`9addb28c-b46f-4402-808f-019651441ff3`
+
+This is the default, it can be overridden per device (see [Spoof AAGUID](docs/user-guide.md#spoof-aaguid) in the user guide).
 
 ## Project structure
 

@@ -49,9 +49,9 @@ The passkey is now stored as an entry in the **Passkeys** group in your open Kee
 
 If you already have an entry for the website (for example your username and password login), KeePassPasskey can save the new passkey **onto that existing entry** instead of creating a separate one, so the passkey lives next to your login.
 
-When matching entries are found, the creation notification shows an extra **Add to existing** button next to **Create passkey**. Choosing it opens a second notification listing the matching entries; entries that already hold a passkey are labelled **[overwrite passkey]**. Pick one and confirm to write the passkey onto it.
+When matching entries are found, the creation notification shows an extra **Add to existing** button next to **Create passkey**. Choosing it opens a second notification listing the matching entries. The entry you currently have selected in KeePass is listed first and labelled **[selected]**; entries that already hold a passkey are labelled **[overwrite passkey]** (both when applicable: **[selected, overwrite passkey]**). Pick one and confirm to write the passkey onto it.
 
-At most **5** matching entries are offered. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If more than 5 entries match, the extra ones are not shown.
+At most **5** matching entries are offered. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. When more than 5 entries match, the most relevant are shown first: your selected entry, then entries already holding a passkey for this site, then entries matched by their URL.
 
 Matching is by website: an entry qualifies when it already holds a passkey for this site, or when its **URL** field points at the same site (the same domain or a subdomain). If you overwrite an entry that already had a passkey, the previous version is kept in that entry's **History** tab so you can restore it.
 
@@ -220,7 +220,7 @@ These are the defaults for *new* passkeys. Each passkey stores its own `KPEX_PAS
 
 #### Spoof AAGUID
 
-The **AAGUID** is a fixed identifier that tells a website which model of authenticator created a passkey. By default KeePassPasskey reports its own AAGUID. This setting lets you override it, for example to report a neutral all-zero value or to match another authenticator model.
+The **AAGUID** is a fixed identifier that tells a website which authenticator created a passkey. By default KeePassPasskey reports its own AAGUID. This setting lets you override it, for example to report a neutral all-zero value or to match another authenticator model.
 
 To change it, type a GUID into the field and click **Apply**. Applying re-registers the authenticator with Windows with the new value. Leave the field empty and click **Apply** to go back to the built-in default. The value is saved on this device only; it is not stored in your database and does not follow the database to other machines.
 
