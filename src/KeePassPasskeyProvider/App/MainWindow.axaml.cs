@@ -15,7 +15,6 @@ namespace KeePassPasskeyProvider.App;
 
 public partial class MainWindow : FAAppWindow
 {
-    private HomePage? _homePage;
     private DiagnosticsPage? _diagnosticsPage;
     private SettingsPage? _settingsPage;
 
@@ -86,8 +85,7 @@ public partial class MainWindow : FAAppWindow
         switch (item.Tag?.ToString())
         {
             case "home":
-                _homePage ??= new HomePage { DataContext = vm };
-                NavView.Content = _homePage;
+                NavView.Content = new HomePage { DataContext = vm };
                 break;
             case "diagnostics":
                 vm.Diagnostics.LogPanel.IsLogVisible = true;
