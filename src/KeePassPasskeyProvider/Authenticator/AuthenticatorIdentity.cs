@@ -6,7 +6,7 @@ namespace KeePassPasskeyProvider.Authenticator;
 
 /// <summary>
 /// Resolves the authenticator identity that is advertised to Windows and to relying parties.
-/// The AAGUID can be overridden (spoofed) via <see cref="AuthenticatorIdentityStore"/>; when no
+/// The AAGUID can be overridden (spoofed) via <see cref="AuthenticatorSettingsStore"/>; when no
 /// valid override is stored, the built-in <see cref="PluginConstants"/> default is used.
 /// </summary>
 internal static class AuthenticatorIdentity
@@ -18,7 +18,7 @@ internal static class AuthenticatorIdentity
     /// The AAGUID to advertise: the stored spoof value when it is a valid GUID, otherwise the default.
     /// </summary>
     public static Guid EffectiveAaguid =>
-        TryParseStoredAaguid(AuthenticatorIdentityStore.Load().SpoofAaguid, out Guid g) ? g : DefaultAaguid;
+        TryParseStoredAaguid(AuthenticatorSettingsStore.Load().SpoofAaguid, out Guid g) ? g : DefaultAaguid;
 
     /// <summary>The effective AAGUID as 16 bytes in RFC 4122 big-endian order.</summary>
     public static byte[] EffectiveAaguidBytes => PluginConstants.AaguidToRfc4122Bytes(EffectiveAaguid);

@@ -12,32 +12,32 @@ namespace KeePassPasskeyProvider.Util;
 /// authenticator registration and must be readable at registration time even when KeePass is
 /// closed, so syncing it through the shared password database would be surprising.
 /// </summary>
-internal sealed class AuthenticatorIdentityStore
+internal sealed class AuthenticatorSettingsStore
 {
-    private static readonly string FilePath = Path.Combine(AppPaths.SettingsDir, "AuthenticatorIdentity.json");
+    private static readonly string FilePath = Path.Combine(AppPaths.SettingsDir, "AuthenticatorSettings.json");
 
     /// <summary>Spoofed AAGUID as a GUID string, or null/empty to use the built-in default.</summary>
     [JsonProperty("spoofAaguid")]
     public string? SpoofAaguid { get; set; }
 
     [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
-    public static AuthenticatorIdentityStore Load()
+    public static AuthenticatorSettingsStore Load()
     {
         try
         {
             if (!File.Exists(FilePath))
-                return new AuthenticatorIdentityStore();
-            return JsonConvert.DeserializeObject<AuthenticatorIdentityStore>(File.ReadAllText(FilePath))
-                   ?? new AuthenticatorIdentityStore();
+                return new AuthenticatorSettingsStore();
+            return JsonConvert.DeserializeObject<AuthenticatorSettingsStore>(File.ReadAllText(FilePath))
+                   ?? new AuthenticatorSettingsStore();
         }
         catch
         {
-            return new AuthenticatorIdentityStore();
+            return new AuthenticatorSettingsStore();
         }
     }
 
     [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
-    public static void Save(AuthenticatorIdentityStore store)
+    public static void Save(AuthenticatorSettingsStore store)
     {
         try
         {
@@ -48,7 +48,7 @@ internal sealed class AuthenticatorIdentityStore
         }
         catch (Exception ex)
         {
-            Log.Warn($"AuthenticatorIdentityStore.Save failed: {ex.Message}");
+            Log.Warn($"AuthenticatorSettingsStore.Save failed: {ex.Message}");
         }
     }
 }

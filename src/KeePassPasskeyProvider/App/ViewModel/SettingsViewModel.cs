@@ -40,7 +40,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         if (!value) NewPasskeyBackupState = false;
     }
 
-    // Spoofed AAGUID. Device-local (AuthenticatorIdentityStore), not part of the KeePass-synced
+    // Spoofed AAGUID. Device-local (AuthenticatorSettingsStore), not part of the KeePass-synced
     // settings, so it has its own apply-and-re-register action instead of the shared Save button.
     [ObservableProperty] public partial string SpoofAaguid { get; set; } = "";
     [ObservableProperty] public partial bool IsApplyingAaguid { get; set; }
@@ -96,7 +96,7 @@ public sealed partial class SettingsViewModel : ObservableObject
                 return;
             }
 
-            AuthenticatorIdentityStore.Save(new AuthenticatorIdentityStore { SpoofAaguid = normalized });
+            AuthenticatorSettingsStore.Save(new AuthenticatorSettingsStore { SpoofAaguid = normalized });
             _storedSpoofAaguid = normalized;
             SpoofAaguid = normalized ?? "";
             SpoofAaguidStatus = normalized == null ? "Using the default AAGUID." : "Spoofed AAGUID applied.";
@@ -111,7 +111,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     private void LoadAaguidFromStore()
     {
-        _storedSpoofAaguid = AuthenticatorIdentityStore.Load().SpoofAaguid;
+        _storedSpoofAaguid = AuthenticatorSettingsStore.Load().SpoofAaguid;
         SpoofAaguid = NormalizeAaguid(_storedSpoofAaguid);
         SpoofAaguidStatus = "";
         OnPropertyChanged(nameof(HasAaguidChanges));
