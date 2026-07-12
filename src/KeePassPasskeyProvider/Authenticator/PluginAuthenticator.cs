@@ -350,6 +350,13 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
             return HResults.E_FAIL;
         }
 
+        if (ping.Status == PingStatus.IncompatibleVersion)
+        {
+            Log.Warn($"version mismatch clientVersion={PipeConstants.Version} serverVersion={ping.Version}");
+            Notifier.ShowVersionMismatch(operation, PipeConstants.Version, ping.Version);
+            return HResults.E_FAIL;
+        }
+
         if (ping.Status != PingStatus.Ready)
         {
             Log.Warn($"KeePass not ready status={ping.Status}");

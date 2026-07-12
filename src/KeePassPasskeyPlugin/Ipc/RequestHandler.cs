@@ -66,11 +66,14 @@ namespace KeePassPasskey.Ipc
         }
 
         private PingResponse HandlePing(PingRequest req)
-        {
-            if (PipeConstants.StripBuildMetadata(req.Version) != PipeConstants.CompatibilityVersion)
-                return new PingResponse { Status = PingStatus.IncompatibleVersion };
+            => BuildPingResponse(req.ProtocolVersion, IsDatabaseOpen());
 
-            return new PingResponse { Status = IsDatabaseOpen() ? PingStatus.Ready : PingStatus.NoDatabase };
+        internal static PingResponse BuildPingResponse(int clientProtocolVersion, bool databaseOpen)
+        {
+            var status = clientProtocolVersion != PipeConstants.ProtocolVersion
+                ? PingStatus.IncompatibleVersion
+                : databaseOpen ? PingStatus.Ready : PingStatus.NoDatabase;
+            return new PingResponse { Status = status, ProtocolVersion = PipeConstants.ProtocolVersion };
         }
 
         private GetCredentialsResponse HandleGetCredentials(GetCredentialsRequest req)

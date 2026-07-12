@@ -26,7 +26,7 @@ namespace KeePassPasskeyShared.Ipc
         }
 
         public PingResponse Ping()
-            => Send<PingResponse>(new PingRequest());
+            => Send<PingResponse>(new PingRequest { ProtocolVersion = PipeConstants.ProtocolVersion });
 
         public GetCredentialsResponse GetCredentials(GetCredentialsRequest request)
             => Send<GetCredentialsResponse>(request);

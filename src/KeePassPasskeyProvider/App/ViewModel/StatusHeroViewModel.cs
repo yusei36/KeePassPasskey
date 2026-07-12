@@ -3,13 +3,15 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
 public sealed partial class StatusHeroViewModel : ObservableObject
 {
     [ObservableProperty] public partial ProviderStatus Status { get; set; }
-    [ObservableProperty] public partial PingStatus PluginStatus { get; set; }
+    [ObservableProperty] public partial string Subhead { get; set; } = "";
+    [ObservableProperty] public partial PluginPillState PluginStatus { get; set; }
     [ObservableProperty] public partial bool CanRegister { get; set; } = true;
     [ObservableProperty] public partial bool CanUnregister { get; set; }
     [ObservableProperty] public partial bool ShowOpenPasskeySettings { get; set; }
@@ -33,9 +35,18 @@ public sealed partial class StatusHeroViewModel : ObservableObject
         bool providerEnabled,
         bool isRegistered,
         bool autoregisterError,
-        PingStatus pingStatus)
+        PingStatus pingStatus,
+        string? pluginVersion)
     {
-        PluginStatus            = pingStatus;
+        PluginStatus = pingStatus switch
+        {
+            PingStatus.IncompatibleVersion => PluginPillState.IncompatibleVersion,
+            PingStatus.NoDatabase          => PluginPillState.NoDatabase,
+            PingStatus.Ready => DiagnosticsViewModel.ProductVersionsDiffer(pluginVersion)
+                ? PluginPillState.VersionMismatch
+                : PluginPillState.Running,
+            _ => PluginPillState.NotConnected,
+        };
         CanRegister             = !isRegistered;
         CanUnregister           = isRegistered;
         ShowOpenPasskeySettings = isRegistered && !providerEnabled && !autoregisterError;
@@ -45,12 +56,30 @@ public sealed partial class StatusHeroViewModel : ObservableObject
             (true,  _,     _,     _,     _)                          => ProviderStatus.AutoregisterFailed,
             (_,     false, _,     _,     _)                          => ProviderStatus.NotRegistered,
             (_,     _,     false, _,     _)                          => ProviderStatus.WaitingToBeEnabled,
-            (_,     _,     _,     _,     PingStatus.IncompatibleVersion) => ProviderStatus.VersionMismatch,
+            (_,     _,     _,     _,     PingStatus.IncompatibleVersion) => ProviderStatus.IncompatibleVersion,
             (_,     _,     _,     _,     PingStatus.NoDatabase)      => ProviderStatus.NoDatabase,
             (_,     _,     _,     false, _)                          => ProviderStatus.KeePassNotConnected,
-            _                                                         => ProviderStatus.Ready,
+            _ => DiagnosticsViewModel.ProductVersionsDiffer(pluginVersion)
+                ? ProviderStatus.VersionMismatch
+                : ProviderStatus.Ready,
         };
 
-        ShowPluginFile = Status == ProviderStatus.KeePassNotConnected && ProviderCommands.HasBundledPlugin;
+        Subhead = Status switch
+        {
+            ProviderStatus.AutoregisterFailed => "You can retry by clicking Register.",
+            ProviderStatus.NotRegistered      => "Click Register to set up KeePassPasskey as your passkey provider.",
+            ProviderStatus.WaitingToBeEnabled => "Click Advanced Passkey Options below to enable KeePassPasskey.",
+            ProviderStatus.IncompatibleVersion => Notifier.VersionMismatchBody(DiagnosticsViewModel.ClientVersion, pluginVersion),
+            ProviderStatus.VersionMismatch    => DiagnosticsViewModel.VersionDifferenceMessage(pluginVersion),
+            ProviderStatus.NoDatabase         => "Open a KeePass database to use passkeys.",
+            ProviderStatus.KeePassNotConnected => "Start KeePass with the KeePassPasskey plugin installed.",
+            _                                  => "Provider is enabled and the KeePass plugin is running.",
+        };
+
+        // On a version difference the bundled plugin only helps when the plugin is the older side.
+        ShowPluginFile = ProviderCommands.HasBundledPlugin
+            && (Status == ProviderStatus.KeePassNotConnected
+                || (Status is ProviderStatus.IncompatibleVersion or ProviderStatus.VersionMismatch
+                    && PipeConstants.CompareProductVersions(DiagnosticsViewModel.ClientVersion, pluginVersion) > 0));
     }
 }

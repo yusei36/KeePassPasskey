@@ -51,6 +51,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
     private bool _isRegistered;
     private bool _autoregisterError;
     private PingStatus _pingStatus;
+    private string? _serverVersion;
 
     private readonly PipeClient _pipeClient = new(msg => Log.Debug(msg, nameof(PipeClient)));
 
@@ -154,7 +155,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
         if (_pluginRunning && !wasRunning)
             _ = Settings.SyncFromKeePassAsync();
 
-        Diagnostics.ServerVersion = pingResponse?.Version;
+        _serverVersion = pingResponse?.Version;
+        Diagnostics.ServerVersion = _serverVersion;
         Diagnostics.PingStatus    = _pingStatus;
         UpdateChildren();
 
@@ -163,7 +165,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
     private void UpdateChildren()
     {
-        StatusHero.Update(_pluginRunning, _providerEnabled, _isRegistered, _autoregisterError, _pingStatus);
+        StatusHero.Update(_pluginRunning, _providerEnabled, _isRegistered, _autoregisterError, _pingStatus, _serverVersion);
         SetupGuide.IsReady = _pluginRunning && _providerEnabled;
     }
 

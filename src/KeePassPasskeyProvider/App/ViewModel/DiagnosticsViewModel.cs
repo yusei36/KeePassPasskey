@@ -21,7 +21,21 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
     public string ServerVersionShort => ServerVersion != null ? ShortenVersion(ServerVersion) : "";
     public bool IsServerVersionAvailable => ServerVersion != null;
     public bool IsServerVersionNotAvailable => ServerVersion is null;
-    public bool IsVersionMismatch => PingStatus == KeePassPasskeyShared.Ipc.PingStatus.IncompatibleVersion;
+    public bool IsIncompatibleVersion => PingStatus == KeePassPasskeyShared.Ipc.PingStatus.IncompatibleVersion;
+    public string IncompatibleVersionMessage =>
+        Util.Notifier.VersionMismatchBody(ClientVersion, ServerVersion) + " Passkey operations are blocked until then.";
+
+    public bool IsVersionMismatch =>
+        PingStatus == KeePassPasskeyShared.Ipc.PingStatus.Ready && ProductVersionsDiffer(ServerVersion);
+    public string VersionMismatchMessage => VersionDifferenceMessage(ServerVersion);
+
+    internal static string VersionDifferenceMessage(string? pluginVersion) =>
+        $"This app ({PipeConstants.StripBuildMetadata(ClientVersion)}) and the KeePass plugin ({PipeConstants.StripBuildMetadata(pluginVersion ?? "")}) " +
+        "have different versions but are compatible. Passkeys keep working, but new features might not be available until the older side is updated.";
+
+    internal static bool ProductVersionsDiffer(string? pluginVersion)
+        => pluginVersion != null
+           && PipeConstants.StripBuildMetadata(ClientVersion) != PipeConstants.StripBuildMetadata(pluginVersion);
 
     public static string ClientVersion      => _appVersion;
     public static string ClientVersionShort => ShortenVersion(_appVersion);
@@ -32,10 +46,14 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(ServerVersionShort));
         OnPropertyChanged(nameof(IsServerVersionAvailable));
         OnPropertyChanged(nameof(IsServerVersionNotAvailable));
+        OnPropertyChanged(nameof(IncompatibleVersionMessage));
+        OnPropertyChanged(nameof(IsVersionMismatch));
+        OnPropertyChanged(nameof(VersionMismatchMessage));
     }
 
     partial void OnPingStatusChanged(PingStatus value)
     {
+        OnPropertyChanged(nameof(IsIncompatibleVersion));
         OnPropertyChanged(nameof(IsVersionMismatch));
     }
 

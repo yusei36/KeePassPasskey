@@ -11,6 +11,7 @@ using Newtonsoft.Json.Serialization;
 namespace KeePassPasskeyShared.Ipc
 {
     // All messages use length-prefixed framing: [4-byte LE uint32 length][UTF-8 JSON]
+    // Breaking changes to these types require bumping PipeConstants.ProtocolVersion.
 
     public static class PipeMessageTypes
     {
@@ -35,6 +36,9 @@ namespace KeePassPasskeyShared.Ipc
     public sealed class PingRequest : PipeRequestBase
     {
         public override string Type => PipeMessageTypes.Ping;
+
+        [JsonProperty("protocolVersion")]
+        public int ProtocolVersion { get; set; }
 
         [JsonProperty("version")]
         public string Version { get; set; } = PipeConstants.Version;
@@ -165,6 +169,9 @@ namespace KeePassPasskeyShared.Ipc
 
         [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
         public PingStatus? Status { get; set; }
+
+        [JsonProperty("protocolVersion")]
+        public int ProtocolVersion { get; set; }
 
         [JsonProperty("version")]
         public string Version { get; set; } = PipeConstants.Version;

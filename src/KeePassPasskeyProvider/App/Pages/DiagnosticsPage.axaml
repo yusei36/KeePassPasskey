@@ -22,13 +22,21 @@
                 Margin="0 8 0 0">
             <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
 
-                    <!-- Version mismatch warning -->
-                    <ui:FAInfoBar Grid.Row="0"
-                                Title="Version mismatch"
-                                Severity="Error"
-                                IsOpen="{Binding IsVersionMismatch}"
-                                IsVisible="{Binding IsVersionMismatch}"
-                                IsClosable="False" />
+                    <!-- Version warnings -->
+                    <StackPanel Grid.Row="0" Spacing="8">
+                        <ui:FAInfoBar Title="Incompatible version"
+                                    Message="{Binding IncompatibleVersionMessage}"
+                                    Severity="Error"
+                                    IsOpen="{Binding IsIncompatibleVersion}"
+                                    IsVisible="{Binding IsIncompatibleVersion}"
+                                    IsClosable="False" />
+                        <ui:FAInfoBar Title="Version mismatch"
+                                    Message="{Binding VersionMismatchMessage}"
+                                    Severity="Warning"
+                                    IsOpen="{Binding IsVersionMismatch}"
+                                    IsVisible="{Binding IsVersionMismatch}"
+                                    IsClosable="False" />
+                    </StackPanel>
 
                     <!-- Versions strip -->
                     <Border Grid.Row="1" Padding="4 0 0 12"

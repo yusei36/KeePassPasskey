@@ -15,27 +15,17 @@ internal static class ProviderStatusConverters
         ProviderStatus.AutoregisterFailed => "Automatic registration failed",
         ProviderStatus.NotRegistered      => "Not registered",
         ProviderStatus.WaitingToBeEnabled => "Waiting to be enabled",
+        ProviderStatus.IncompatibleVersion => "Incompatible version",
         ProviderStatus.VersionMismatch    => "Version mismatch",
         ProviderStatus.NoDatabase         => "No database open",
         ProviderStatus.KeePassNotConnected   => "KeePass not connected",
         _                                  => "All systems ready",
     });
 
-    public static readonly IValueConverter Subhead = Make(v => (v as ProviderStatus? ?? ProviderStatus.NotRegistered) switch
-    {
-        ProviderStatus.AutoregisterFailed => "You can retry by clicking Register.",
-        ProviderStatus.NotRegistered      => "Click Register to set up KeePassPasskey as your passkey provider.",
-        ProviderStatus.WaitingToBeEnabled => "Click Advanced Passkey Options below to enable KeePassPasskey.",
-        ProviderStatus.VersionMismatch    => "Update the plugin or the provider so both are on the same version.",
-        ProviderStatus.NoDatabase         => "Open a KeePass database to use passkeys.",
-        ProviderStatus.KeePassNotConnected   => "Start KeePass with the KeePassPasskey plugin installed.",
-        _                                  => "Provider is enabled and the KeePass plugin is running.",
-    });
-
     public static readonly IValueConverter ProviderPillText = Make(v => (v as ProviderStatus? ?? ProviderStatus.NotRegistered) switch
     {
-        ProviderStatus.Ready or ProviderStatus.KeePassNotConnected or
-        ProviderStatus.NoDatabase or ProviderStatus.VersionMismatch => "Enabled",
+        ProviderStatus.Ready or ProviderStatus.KeePassNotConnected or ProviderStatus.NoDatabase or
+        ProviderStatus.VersionMismatch or ProviderStatus.IncompatibleVersion => "Enabled",
         ProviderStatus.WaitingToBeEnabled                            => "Registered",
         _                                                             => "Not registered",
     });
@@ -43,14 +33,15 @@ internal static class ProviderStatusConverters
     private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);
 }
 
-internal static class PingStatusConverters
+internal static class PluginPillConverters
 {
-    public static readonly IValueConverter Text = Make(v => (v as PingStatus? ?? PingStatus.NotConnected) switch
+    public static readonly IValueConverter Text = Make(v => (v as PluginPillState? ?? PluginPillState.NotConnected) switch
     {
-        PingStatus.Ready               => "Running",
-        PingStatus.NoDatabase          => "No database open",
-        PingStatus.IncompatibleVersion => "Incompatible version",
-        _                              => "Not connected",
+        PluginPillState.Running             => "Running",
+        PluginPillState.NoDatabase          => "No database open",
+        PluginPillState.VersionMismatch     => "Version mismatch",
+        PluginPillState.IncompatibleVersion => "Incompatible version",
+        _                                   => "Not connected",
     });
 
     private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);

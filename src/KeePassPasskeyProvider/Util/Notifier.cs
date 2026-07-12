@@ -20,6 +20,21 @@ internal static class Notifier
     public static void ShowPipeError(string operation) =>
         ShowError($"{operation} failed", "KeePass is not running or the database is locked.");
 
+    public static void ShowVersionMismatch(string operation, string? appVersion, string? pluginVersion) =>
+        ShowError($"{operation} failed", VersionMismatchBody(appVersion, pluginVersion));
+
+    internal static string VersionMismatchBody(string? appVersion, string? pluginVersion)
+    {
+        string app = PipeConstants.StripBuildMetadata(appVersion ?? "");
+        string plugin = PipeConstants.StripBuildMetadata(pluginVersion ?? "");
+        int cmp = PipeConstants.CompareProductVersions(appVersion, pluginVersion);
+        if (cmp > 0)
+            return $"The KeePass plugin ({plugin}) is older than this app ({app}). Update the KeePassPasskey plugin in KeePass.";
+        if (cmp < 0)
+            return $"This app ({app}) is older than the KeePass plugin ({plugin}). Update the KeePassPasskey app.";
+        return "The app and the KeePass plugin have incompatible versions. Update both to the latest version.";
+    }
+
     private static string ErrorBody(PipeErrorCode? code, string rpId, string? errorMessage, string username = "")
     {
         var detail = string.IsNullOrWhiteSpace(errorMessage) ? "" : $"\n{errorMessage}";

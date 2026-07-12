@@ -58,18 +58,18 @@
                 <Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="14" VerticalAlignment="Center">
                     <Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" BorderThickness="1.5" VerticalAlignment="Center"
                             Classes.ringSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}"
-                            Classes.ringCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected'}"
-                            Classes.ringCritical="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,VersionMismatch'}">
+                            Classes.ringCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected,VersionMismatch'}"
+                            Classes.ringCritical="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,IncompatibleVersion'}">
                         <Grid>
                             <fa:FASymbolIcon Symbol="Accept" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
                                            IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}" />
                             <fa:FASymbolIcon Symbol="Important" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected'}" />
+                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected,VersionMismatch'}" />
 							<fa:FASymbolIcon Symbol="Dismiss" FontSize="18"
                                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,VersionMismatch'}" />
+                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,IncompatibleVersion'}" />
                         </Grid>
                     </Border>
 
@@ -77,7 +77,7 @@
                         <TextBlock FontSize="18" FontWeight="SemiBold"
                                    Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Headline}}" />
                         <TextBlock FontSize="12.5" Opacity="0.6" TextWrapping="Wrap"
-                                   Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Subhead}}" />
+                                   Text="{Binding Subhead}" />
                     </StackPanel>
                 </Grid>
 
@@ -95,7 +95,7 @@
                             BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Ellipse Width="8" Height="8" VerticalAlignment="Center"
-                                     Classes.dotSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='Ready,KeePassNotConnected,NoDatabase,VersionMismatch'}"
+                                     Classes.dotSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='Ready,KeePassNotConnected,NoDatabase,VersionMismatch,IncompatibleVersion'}"
                                      Classes.dotCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='WaitingToBeEnabled'}"
                                      Classes.dotNeutral="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered'}" />
                             <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
@@ -111,12 +111,12 @@
                             BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Ellipse Width="8" Height="8" VerticalAlignment="Center"
-                                     Classes.dotSuccess="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}"
-                                     Classes.dotCaution="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='NoDatabase'}"
+                                     Classes.dotSuccess="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Running'}"
+                                     Classes.dotCaution="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='NoDatabase,VersionMismatch'}"
                                      Classes.dotCritical="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='IncompatibleVersion'}"
                                      Classes.dotNeutral="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='NotConnected'}" />
                             <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
-                                       Text="{Binding PluginStatus, Converter={x:Static conv:PingStatusConverters.Text}}" />
+                                       Text="{Binding PluginStatus, Converter={x:Static conv:PluginPillConverters.Text}}" />
                         </StackPanel>
                     </Border>
                 </Grid>

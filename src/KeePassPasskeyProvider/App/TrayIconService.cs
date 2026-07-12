@@ -126,7 +126,7 @@ internal sealed class TrayIconService : IDisposable
         {
             ProviderStatus.Ready
                 => StatusColorSuccess,
-            ProviderStatus.KeePassNotConnected or ProviderStatus.NoDatabase or ProviderStatus.WaitingToBeEnabled
+            ProviderStatus.KeePassNotConnected or ProviderStatus.NoDatabase or ProviderStatus.WaitingToBeEnabled or ProviderStatus.VersionMismatch
                 => StatusColorCaution,
             _ => StatusColorCritical,
         };
@@ -156,6 +156,7 @@ internal sealed class TrayIconService : IDisposable
         ProviderStatus.KeePassNotConnected   => "KeePass not connected",
         ProviderStatus.NoDatabase         => "No database open",
         ProviderStatus.WaitingToBeEnabled => "Waiting to be enabled",
+        ProviderStatus.IncompatibleVersion => "Incompatible version",
         ProviderStatus.VersionMismatch    => "Version mismatch",
         ProviderStatus.NotRegistered      => "Not registered",
         ProviderStatus.AutoregisterFailed => "Registration failed",
