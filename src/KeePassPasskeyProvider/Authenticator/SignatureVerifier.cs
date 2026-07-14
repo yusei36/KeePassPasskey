@@ -57,8 +57,9 @@ internal static unsafe class SignatureVerifier
         ReadOnlySpan<byte> signature)
     {
         // RSA vs EC from the key blob magic (first 4 bytes)
-        bool isRsa = keyBlob.Length >= 4 &&
-                     BitConverter.ToUInt32(keyBlob, 0) == BCRYPT_RSAPUBLIC_MAGIC;
+        uint magic = keyBlob.Length >= 4 ? BitConverter.ToUInt32(keyBlob, 0) : 0;
+        bool isRsa = magic == BCRYPT_RSAPUBLIC_MAGIC;
+        Log.Debug($"key blob magic=0x{magic:X8} len={keyBlob.Length} -> {(isRsa ? "RSA" : "EC")}");
 
         CngKey cngKey = CngKey.Import(keyBlob, CngKeyBlobFormat.GenericPublicBlob);
         byte[] hash = SHA256.HashData(data);
@@ -66,17 +67,27 @@ internal static unsafe class SignatureVerifier
         if (isRsa)
         {
             using var rsa = new RSACng(cngKey);
-            bool valid = rsa.VerifyHash(hash, signature.ToArray(),
-                HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            if (!valid) Log.Warn("RSA signature invalid");
-            else        Log.Info("RSA signature valid");
-            return valid ? HResults.S_OK : HResults.NTE_BAD_SIGNATURE;
+            byte[] sig = signature.ToArray();
+            // Windows signs RSA UV responses with PSS (verified in webauthn.dll); keep PKCS#1 as a
+            // fallback in case older/newer builds used or will use it.
+            if (rsa.VerifyHash(hash, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pss))
+            {
+                Log.Info("RSA signature valid (PSS)");
+                return HResults.S_OK;
+            }
+            if (rsa.VerifyHash(hash, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+            {
+                Log.Info("RSA signature valid (PKCS#1)");
+                return HResults.S_OK;
+            }
+            Log.Warn($"RSA signature invalid (tried PSS and PKCS#1), magic=0x{magic:X8} len={keyBlob.Length}");
+            return HResults.NTE_BAD_SIGNATURE;
         }
         else
         {
             using var ecdsa = new ECDsaCng(cngKey);
             bool valid = ecdsa.VerifyHash(hash, signature.ToArray());
-            if (!valid) Log.Warn("ECDSA signature invalid");
+            if (!valid) Log.Warn($"ECDSA signature invalid, magic=0x{magic:X8} len={keyBlob.Length}");
             else        Log.Info("ECDSA signature valid");
             return valid ? HResults.S_OK : HResults.NTE_BAD_SIGNATURE;
         }
