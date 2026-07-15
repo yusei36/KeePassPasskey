@@ -31,14 +31,16 @@ namespace KeePassPasskeyShared.Ipc
     {
         [JsonProperty("type")]
         public abstract string Type { get; }
+
+        // Null means a peer predating this field, still allowed. Make it a plain int (no initializer,
+        // absent must not read as current) at the next ProtocolVersion bump, which strands those peers anyway.
+        [JsonProperty("protocolVersion", NullValueHandling = NullValueHandling.Ignore)]
+        public int? ProtocolVersion { get; set; }
     }
 
     public sealed class PingRequest : PipeRequestBase
     {
         public override string Type => PipeMessageTypes.Ping;
-
-        [JsonProperty("protocolVersion")]
-        public int ProtocolVersion { get; set; }
 
         [JsonProperty("version")]
         public string Version { get; set; } = PipeConstants.Version;
@@ -149,6 +151,7 @@ namespace KeePassPasskeyShared.Ipc
         NotFound,
         InternalError,
         UnsupportedAlgorithm,
+        IncompatibleVersion,
     }
 
     public class PipeResponseBase

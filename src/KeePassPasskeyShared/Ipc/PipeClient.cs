@@ -19,14 +19,16 @@ namespace KeePassPasskeyShared.Ipc
         private const int MaxMessageBytes = 1024 * 1024; // 1 MB sanity limit
 
         private readonly Action<string> _logger;
+        private readonly string _pipeName;
 
-        public PipeClient(Action<string> logger = null)
+        public PipeClient(Action<string> logger = null, string pipeName = null)
         {
             _logger = logger;
+            _pipeName = pipeName ?? PipeConstants.PipeName;
         }
 
         public PingResponse Ping()
-            => Send<PingResponse>(new PingRequest { ProtocolVersion = PipeConstants.ProtocolVersion });
+            => Send<PingResponse>(new PingRequest());
 
         public GetCredentialsResponse GetCredentials(GetCredentialsRequest request)
             => Send<GetCredentialsResponse>(request);
@@ -55,11 +57,12 @@ namespace KeePassPasskeyShared.Ipc
 #if NET5_0_OR_GREATER
         [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
 #endif
-        private TResponse Send<TResponse>(PipeRequestBase request) where TResponse : PipeResponseBase
+        private TResponse Send<TResponse>(PipeRequestBase request) where TResponse : PipeResponseBase, new()
         {
+            request.ProtocolVersion = PipeConstants.ProtocolVersion;
             try
             {
-                using (var pipe = new NamedPipeClientStream(".", PipeConstants.PipeName, PipeDirection.InOut))
+                using (var pipe = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut))
                 {
                     pipe.Connect(ConnectTimeoutMs);
 
@@ -74,7 +77,16 @@ namespace KeePassPasskeyShared.Ipc
                     return JsonConvert.DeserializeObject<TResponse>(responseJson);
                 }
             }
-            catch (Exception ex) when (ex is TimeoutException || ex is IOException || ex is UnauthorizedAccessException)
+            catch (JsonException ex)
+            {
+                _logger?.Invoke($"{ex.GetType().Name}: {ex.Message}");
+                return new TResponse
+                {
+                    ErrorCode = PipeErrorCode.InternalError,
+                    ErrorMessage = $"Could not read the response from KeePass, which may mean the plugin and provider versions are incompatible: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
             {
                 _logger?.Invoke($"{ex.GetType().Name}: {ex.Message}");
                 return null;

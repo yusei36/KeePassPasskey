@@ -42,6 +42,9 @@ namespace KeePassPasskey.Ipc
                 return JsonConvert.SerializeObject(new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Failed to parse request: " + ex.Message });
             }
 
+            var versionError = CheckProtocolVersion(req);
+            if (versionError != null) return JsonConvert.SerializeObject(versionError);
+
             try
             {
                 PipeResponseBase response = req switch
@@ -65,8 +68,21 @@ namespace KeePassPasskey.Ipc
             }
         }
 
+        /// <summary>Returns null when the request may proceed. Ping is exempt so a mismatched peer still learns our version.</summary>
+        internal static PipeResponseBase CheckProtocolVersion(PipeRequestBase req)
+        {
+            if (req is PingRequest || !req.ProtocolVersion.HasValue) return null;
+            if (req.ProtocolVersion.Value == PipeConstants.ProtocolVersion) return null;
+
+            return new PipeResponseBase
+            {
+                ErrorCode = PipeErrorCode.IncompatibleVersion,
+                ErrorMessage = $"Protocol version mismatch: client {req.ProtocolVersion.Value}, plugin {PipeConstants.ProtocolVersion}. Update KeePass and the passkey provider to the same version."
+            };
+        }
+
         private PingResponse HandlePing(PingRequest req)
-            => BuildPingResponse(req.ProtocolVersion, IsDatabaseOpen());
+            => BuildPingResponse(req.ProtocolVersion ?? 0, IsDatabaseOpen());
 
         internal static PingResponse BuildPingResponse(int clientProtocolVersion, bool databaseOpen)
         {
