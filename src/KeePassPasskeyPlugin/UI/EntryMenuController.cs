@@ -10,8 +10,9 @@ using KeePassPasskey.Storage;
 namespace KeePassPasskey.UI
 {
     /// <summary>
-    /// Adds a "Passkey" cut/copy/paste submenu to the entry context menu for moving or copying a
-    /// passkey between entries (including across open databases). The source is held only in memory.
+    /// Adds a "Passkey" submenu to the entry context menu: cut/copy/paste to move or copy a passkey
+    /// between entries (including across open databases; the source is held only in memory), and
+    /// remove to strip a passkey from an entry.
     /// </summary>
     internal sealed class EntryMenuController : IDisposable
     {
@@ -22,6 +23,7 @@ namespace KeePassPasskey.UI
         private ToolStripMenuItem _cutItem;
         private ToolStripMenuItem _copyItem;
         private ToolStripMenuItem _pasteItem;
+        private ToolStripMenuItem _removeItem;
 
         private PwDatabase _sourceDb;
         private PwEntry _sourceEntry;
@@ -49,10 +51,15 @@ namespace KeePassPasskey.UI
             _pasteItem = new ToolStripMenuItem("Paste Passkey Here", KeePassIcons.Get("B16x16_EditPaste"));
             _pasteItem.Click += OnPaste;
 
+            _removeItem = new ToolStripMenuItem("Remove Passkey", KeePassIcons.Get("B16x16_DeleteEntry"));
+            _removeItem.Click += OnRemove;
+
             _rootItem = new ToolStripMenuItem("Passkey", KeePassIcons.GetEntryIcon(_host, PwIcon.MultiKeys));
             _rootItem.DropDownItems.Add(_cutItem);
             _rootItem.DropDownItems.Add(_copyItem);
             _rootItem.DropDownItems.Add(_pasteItem);
+            _rootItem.DropDownItems.Add(new ToolStripSeparator());
+            _rootItem.DropDownItems.Add(_removeItem);
 
             UpdateMenuState();
             return _rootItem;
@@ -82,7 +89,7 @@ namespace KeePassPasskey.UI
 
             if (PasskeyEntryStorage.EntryHasPasskey(target) && !MessageService.AskYesNo(
                 "This entry already contains a passkey. Replace it with the one you are pasting?\r\n\r\n" +
-                "The current passkey will be kept in this entry's history and can be restored.",
+                "The current passkey remains in the entry's history, in case you need it back.",
                 PwDefs.ShortProductName))
                 return;
 
@@ -108,6 +115,31 @@ namespace KeePassPasskey.UI
             UpdateMenuState();
         }
 
+        private void OnRemove(object sender, EventArgs e)
+        {
+            var entry = GetSingleSelectedEntry();
+            if (entry == null || !PasskeyEntryStorage.EntryHasPasskey(entry)) return;
+
+            var title = _storage.ResolveEntryTitle(entry, _host.Database);
+            if (!MessageService.AskYesNo(
+                (string.IsNullOrEmpty(title)
+                    ? "Remove the passkey from this entry?"
+                    : "Remove the passkey from “" + title + "”?") + "\r\n\r\n" +
+                "The entry itself is kept. The passkey remains in the entry's history, in case " +
+                "you need it back.",
+                PwDefs.ShortProductName, false))
+                return;
+
+            if (!_storage.RemovePasskey(_host.Database, entry))
+            {
+                MessageService.ShowWarning("The passkey could not be removed.");
+                return;
+            }
+
+            if (ReferenceEquals(entry, _sourceEntry)) ClearSource();
+            UpdateMenuState();
+        }
+
         private void OnUIStateUpdated(object sender, EventArgs e) => UpdateMenuState();
 
         private void UpdateMenuState()
@@ -124,6 +156,7 @@ namespace KeePassPasskey.UI
             _cutItem.Enabled = true;
             _copyItem.Enabled = true;
             _pasteItem.Enabled = hasSource && entry != null && !ReferenceEquals(entry, _sourceEntry);
+            _removeItem.Enabled = entry != null && PasskeyEntryStorage.EntryHasPasskey(entry);
 
             if (hasSource)
             {
@@ -160,6 +193,7 @@ namespace KeePassPasskey.UI
             if (_cutItem != null) _cutItem.Click -= OnCut;
             if (_copyItem != null) _copyItem.Click -= OnCopy;
             if (_pasteItem != null) _pasteItem.Click -= OnPaste;
+            if (_removeItem != null) _removeItem.Click -= OnRemove;
             _rootItem?.Dispose();
 
             ClearSource();

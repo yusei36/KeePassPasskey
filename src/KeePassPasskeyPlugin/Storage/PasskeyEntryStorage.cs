@@ -174,6 +174,22 @@ namespace KeePassPasskey.Storage
             return PasskeyTransferResult.Success;
         }
 
+        // Strips the passkey from an entry. The prior state is pushed onto the entry's history first,
+        // so the passkey can still be restored from there.
+        internal bool RemovePasskey(PwDatabase db, PwEntry entry)
+        {
+            if (db == null || !db.IsOpen || entry == null) return false;
+            if (db.RootGroup.FindEntry(entry.Uuid, true) == null || !EntryHasPasskey(entry)) return false;
+
+            entry.CreateBackup(db);
+            RemovePasskeyFields(entry);
+            entry.RemoveTag(PasskeyTagName);
+            entry.Touch(true);
+
+            RefreshAndSave(db);
+            return true;
+        }
+
         // Resolves an entry's title placeholders for display (e.g. the paste menu label).
         internal string ResolveEntryTitle(PwEntry entry, PwDatabase db)
         {
