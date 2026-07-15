@@ -47,8 +47,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
         if (action == RegistrationAction.AddToExisting)
         {
             var (entryAction, chosen) = ShowEntryPickerToast(
-                title: "Choose an entry",
-                body: $"Save the passkey for {site} onto an existing entry.",
+                title: "Choose an entry to save to",
+                body: $"Create a passkey for {site}.",
                 tag: tag,
                 candidates: candidateEntries!);
 

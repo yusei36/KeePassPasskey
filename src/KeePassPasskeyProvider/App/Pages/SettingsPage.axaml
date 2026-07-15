@@ -266,8 +266,8 @@
                                  Description="Advanced options for uncommon setups. Change only if you know why."
                                  IsExpanded="False">
 
-                <ui:FASettingsExpanderItem Content="Backup eligible (BE)"
-                                         Description="Advertise new passkeys as syncable multi-device credentials. Turn off to present them as device-bound (like a hardware key). This value is fixed for the life of each passkey.">
+                <ui:FASettingsExpanderItem Content="Backup Eligibility (BE)"
+                                         Description="When on, websites are told that a new passkey is allowed to be backed up and synced to your other devices. When off, they are told it is saved on a single device only.">
                     <ui:FASettingsExpanderItem.Footer>
                         <ToggleSwitch IsChecked="{Binding NewPasskeyBackupEligible}"
                                       OnContent="On"
@@ -276,8 +276,8 @@
                     </ui:FASettingsExpanderItem.Footer>
                 </ui:FASettingsExpanderItem>
 
-                <ui:FASettingsExpanderItem Content="Currently synced (BS)"
-                                         Description="Advertise new passkeys as currently backed up. Only available when &quot;Backup eligible&quot; is on.">
+                <ui:FASettingsExpanderItem Content="Backup State (BS)"
+                                         Description="When on, websites are told that a new passkey is backed up right now. Only available while &quot;Backup Eligibility&quot; is on.">
                     <ui:FASettingsExpanderItem.Footer>
                         <ToggleSwitch IsChecked="{Binding NewPasskeyBackupState}"
                                       IsEnabled="{Binding NewPasskeyBackupEligible}"

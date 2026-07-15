@@ -225,8 +225,8 @@ These control the **backup flags** (`BE`/`BS`) written to newly created passkeys
 
 | Setting | Description |
 |---|---|
-| Backup eligible (BE) | When **On** (default), new passkeys are advertised as syncable multi-device credentials. Turn it **Off** to present them as device-bound, like a hardware security key. This value is fixed for the life of each passkey, so it applies only to passkeys created afterwards. |
-| Currently synced (BS) | When **On** (default), new passkeys are advertised as currently backed up. Only available while **Backup eligible** is On; turning eligibility off automatically turns this off too. |
+| Backup Eligibility (BE) | When **On** (default), websites are told that new passkeys are allowed to be backed up and synced to your other devices. When **Off**, they are told the passkey is saved on a single device only. |
+| Backup State (BS) | When **On** (default), websites are told that new passkeys are backed up right now. Only available while **Backup Eligibility** is On; turning eligibility off automatically turns this off too. |
 
 These are the defaults for *new* passkeys. Each passkey stores its own `KPEX_PASSKEY_FLAG_BE`/`KPEX_PASSKEY_FLAG_BS` values, which are replayed on every sign-in. To change the flags on an existing passkey, edit those fields directly in the entry's **Advanced** tab in KeePass (`1` = on, `0` = off).
 
