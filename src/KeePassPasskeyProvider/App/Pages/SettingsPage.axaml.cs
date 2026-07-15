@@ -13,88 +13,88 @@ namespace KeePassPasskeyProvider.App.Pages;
 
 public partial class SettingsPage : UserControl
 {
-    public SettingsPage() : this(new SettingsViewModel()) { }
+	public SettingsPage() : this(new SettingsViewModel()) { }
 
-    public SettingsPage(SettingsViewModel viewModel)
-    {
-        InitializeComponent();
-        DataContext = viewModel;
-        viewModel.PropertyChanged += OnViewModelPropertyChanged;
-    }
+	public SettingsPage(SettingsViewModel viewModel)
+	{
+		InitializeComponent();
+		DataContext = viewModel;
+		viewModel.PropertyChanged += OnViewModelPropertyChanged;
+	}
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName is nameof(SettingsViewModel.IsSaving) or nameof(SettingsViewModel.IsLoading)
-            && sender is SettingsViewModel vm)
-            Cursor = vm.IsSaving || vm.IsLoading ? new Cursor(StandardCursorType.Wait) : Cursor.Default;
-        if (e.PropertyName == nameof(SettingsViewModel.VerifyReleaseMessage))
-            Dispatcher.UIThread.Post(() => ToolTip.SetIsOpen(VerifyReleaseButton, true));
-    }
+	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName is nameof(SettingsViewModel.IsSaving) or nameof(SettingsViewModel.IsLoading)
+			&& sender is SettingsViewModel vm)
+			Cursor = vm.IsSaving || vm.IsLoading ? new Cursor(StandardCursorType.Wait) : Cursor.Default;
+		if (e.PropertyName == nameof(SettingsViewModel.VerifyReleaseMessage))
+			Dispatcher.UIThread.Post(() => ToolTip.SetIsOpen(VerifyReleaseButton, true));
+	}
 
-    protected override void OnLoaded(RoutedEventArgs e)
-    {
-        base.OnLoaded(e);
-        this.AddHandler(GotFocusEvent, OnAnyGotFocus, RoutingStrategies.Bubble);
-        this.AddHandler(KeyDownEvent, OnAnyKeyDown, RoutingStrategies.Tunnel);
-    }
+	protected override void OnLoaded(RoutedEventArgs e)
+	{
+		base.OnLoaded(e);
+		this.AddHandler(GotFocusEvent, OnAnyGotFocus, RoutingStrategies.Bubble);
+		this.AddHandler(KeyDownEvent, OnAnyKeyDown, RoutingStrategies.Tunnel);
+	}
 
-    protected override void OnUnloaded(RoutedEventArgs e)
-    {
-        base.OnUnloaded(e);
-        this.RemoveHandler(GotFocusEvent, OnAnyGotFocus);
-        this.RemoveHandler(KeyDownEvent, OnAnyKeyDown);
-        foreach (var nb in this.GetVisualDescendants().OfType<FANumberBox>())
-            nb.ValueChanged -= NumberBox_ValueChanged;
-    }
+	protected override void OnUnloaded(RoutedEventArgs e)
+	{
+		base.OnUnloaded(e);
+		this.RemoveHandler(GotFocusEvent, OnAnyGotFocus);
+		this.RemoveHandler(KeyDownEvent, OnAnyKeyDown);
+		foreach (var nb in this.GetVisualDescendants().OfType<FANumberBox>())
+			nb.ValueChanged -= NumberBox_ValueChanged;
+	}
 
-    private static void OnAnyGotFocus(object? sender, FocusChangedEventArgs e)
-    {
-        if (e.Source is not TextBox tb) return;
-        var nb = tb.GetVisualAncestors().OfType<FANumberBox>().FirstOrDefault();
-        if (nb == null) return;
+	private static void OnAnyGotFocus(object? sender, FocusChangedEventArgs e)
+	{
+		if (e.Source is not TextBox tb) return;
+		var nb = tb.GetVisualAncestors().OfType<FANumberBox>().FirstOrDefault();
+		if (nb == null) return;
 
-        // Lazily subscribe ValueChanged so NaN is always caught, even for
-        // NumberBoxes inside collapsed SettingsExpanders not present at OnLoaded.
-        nb.ValueChanged -= NumberBox_ValueChanged;
-        nb.ValueChanged += NumberBox_ValueChanged;
+		// Lazily subscribe ValueChanged so NaN is always caught, even for
+		// NumberBoxes inside collapsed SettingsExpanders not present at OnLoaded.
+		nb.ValueChanged -= NumberBox_ValueChanged;
+		nb.ValueChanged += NumberBox_ValueChanged;
 
-        if (nb.NumberFormatter == null) return;
+		if (nb.NumberFormatter == null) return;
 
-        // Strip "s" so the user edits just the number.
-        StripSecondsSuffix(tb);
+		// Strip "s" so the user edits just the number.
+		StripSecondsSuffix(tb);
 
-        // Subscribe a one-shot LostFocus on the inner TextBox so it fires
-        // directly on the TextBox â€” BEFORE the bubbled event reaches NumberBox
-        // and triggers ValidateInput.
-        void OnLostFocus(object? s, RoutedEventArgs _)
-        {
-            if (s is TextBox t)
-            {
-                StripSecondsSuffix(t);
-                t.LostFocus -= OnLostFocus;
-            }
-        }
-        tb.LostFocus += OnLostFocus;
-    }
+		// Subscribe a one-shot LostFocus on the inner TextBox so it fires
+		// directly on the TextBox â€” BEFORE the bubbled event reaches NumberBox
+		// and triggers ValidateInput.
+		void OnLostFocus(object? s, RoutedEventArgs _)
+		{
+			if (s is TextBox t)
+			{
+				StripSecondsSuffix(t);
+				t.LostFocus -= OnLostFocus;
+			}
+		}
+		tb.LostFocus += OnLostFocus;
+	}
 
-    private static void OnAnyKeyDown(object? sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.Enter) return;
-        if (e.Source is not TextBox tb) return;
-        var nb = tb.GetVisualAncestors().OfType<FANumberBox>().FirstOrDefault();
-        if (nb?.NumberFormatter == null) return;
-        StripSecondsSuffix(tb);
-    }
+	private static void OnAnyKeyDown(object? sender, KeyEventArgs e)
+	{
+		if (e.Key != Key.Enter) return;
+		if (e.Source is not TextBox tb) return;
+		var nb = tb.GetVisualAncestors().OfType<FANumberBox>().FirstOrDefault();
+		if (nb?.NumberFormatter == null) return;
+		StripSecondsSuffix(tb);
+	}
 
-    private static void StripSecondsSuffix(TextBox tb)
-    {
-        if (tb.Text?.EndsWith("s", StringComparison.OrdinalIgnoreCase) == true)
-            tb.Text = tb.Text[..^1];
-    }
+	private static void StripSecondsSuffix(TextBox tb)
+	{
+		if (tb.Text?.EndsWith("s", StringComparison.OrdinalIgnoreCase) == true)
+			tb.Text = tb.Text[..^1];
+	}
 
-    private static void NumberBox_ValueChanged(FANumberBox sender, FANumberBoxValueChangedEventArgs e)
-    {
-        if (double.IsNaN(e.NewValue))
-            sender.Value = sender.Minimum;
-    }
+	private static void NumberBox_ValueChanged(FANumberBox sender, FANumberBoxValueChangedEventArgs e)
+	{
+		if (double.IsNaN(e.NewValue))
+			sender.Value = sender.Minimum;
+	}
 }

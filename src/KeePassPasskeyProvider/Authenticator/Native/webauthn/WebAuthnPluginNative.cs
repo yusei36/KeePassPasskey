@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Runtime.InteropServices;
 
@@ -29,26 +29,26 @@ namespace KeePassPasskeyProvider.Authenticator.Native;
 /// <summary>AUTHENTICATOR_STATE (PLUGIN_AUTHENTICATOR_STATE).</summary>
 internal enum AuthenticatorState : int
 {
-    AuthenticatorState_Disabled = 0,
-    AuthenticatorState_Enabled = 1,
+	AuthenticatorState_Disabled = 0,
+	AuthenticatorState_Enabled = 1,
 }
 
 /// <summary>WEBAUTHN_PLUGIN_PERFORM_UV_OPERATION_TYPE.</summary>
 internal enum WebAuthnPluginPerformUvOperationType : int
 {
-    PerformUserVerification = 1,
-    GetUserVerificationCount = 2,
-    GetPublicKey = 3,
+	PerformUserVerification = 1,
+	GetUserVerificationCount = 2,
+	GetPublicKey = 3,
 }
 
 /// <summary>Structure version constants from webauthnplugin.h.</summary>
 internal static class WebAuthnPluginConstants
 {
-    public const uint CtapCborAuthenticatorOptionsCurrentVersion = 1;
-    public const uint CtapCborEccPublicKeyCurrentVersion         = 1;
-    public const uint CtapCborHmacSaltExtensionCurrentVersion    = 1;
-    public const uint CtapCborMakeCredentialRequestCurrentVersion = 1;
-    public const uint CtapCborGetAssertionRequestCurrentVersion   = 1;
+	public const uint CtapCborAuthenticatorOptionsCurrentVersion = 1;
+	public const uint CtapCborEccPublicKeyCurrentVersion = 1;
+	public const uint CtapCborHmacSaltExtensionCurrentVersion = 1;
+	public const uint CtapCborMakeCredentialRequestCurrentVersion = 1;
+	public const uint CtapCborGetAssertionRequestCurrentVersion = 1;
 }
 
 #endregion
@@ -58,115 +58,115 @@ internal static class WebAuthnPluginConstants
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnCtapCborAuthenticatorOptions
 {
-    public uint dwVersion;
-    public int lUp;                 // +1 true / 0 undefined / -1 false
-    public int lUv;
-    public int lRequireResidentKey;
+	public uint dwVersion;
+	public int lUp;                 // +1 true / 0 undefined / -1 false
+	public int lUv;
+	public int lRequireResidentKey;
 }
 
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnCtapCborEccPublicKey
 {
-    public uint dwVersion;
-    public int lKty;
-    public int lAlg;
-    public int lCrv;
-    public uint cbX;
-    public byte* pbX;
-    public uint cbY;
-    public byte* pbY;
+	public uint dwVersion;
+	public int lKty;
+	public int lAlg;
+	public int lCrv;
+	public uint cbX;
+	public byte* pbX;
+	public uint cbY;
+	public byte* pbY;
 }
 
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnCtapCborHmacSaltExtension
 {
-    public uint dwVersion;
-    public WebAuthnCtapCborEccPublicKey* pKeyAgreement;
-    public uint cbEncryptedSalt;
-    public byte* pbEncryptedSalt;
-    public uint cbSaltAuth;
-    public byte* pbSaltAuth;
+	public uint dwVersion;
+	public WebAuthnCtapCborEccPublicKey* pKeyAgreement;
+	public uint cbEncryptedSalt;
+	public byte* pbEncryptedSalt;
+	public uint cbSaltAuth;
+	public byte* pbSaltAuth;
 }
 
 /// <summary>WEBAUTHN_CTAPCBOR_MAKE_CREDENTIAL_REQUEST (full declaration).</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnCtapCborMakeCredentialRequest
 {
-    public uint dwVersion;
-    public uint cbRpId;
-    public byte* pbRpId;
-    public uint cbClientDataHash;
-    public byte* pbClientDataHash;
-    public WebAuthnRpEntityInformation* pRpInformation;
-    public WebAuthnUserEntityInformation* pUserInformation;
-    public WebAuthnCoseCredentialParameters WebAuthNCredentialParameters;
-    public WebAuthnCredentialList CredentialList;
-    public uint cbCborExtensionsMap;
-    public byte* pbCborExtensionsMap;
-    public WebAuthnCtapCborAuthenticatorOptions* pAuthenticatorOptions;
-    public int fEmptyPinAuth; // BOOL
-    public uint cbPinAuth;
-    public byte* pbPinAuth;
-    public int lHmacSecretExt;
-    public WebAuthnCtapCborHmacSaltExtension* pHmacSecretMcExtension;
-    public int lPrfExt;
-    public uint cbHmacSecretSaltValues;
-    public byte* pbHmacSecretSaltValues;
-    public uint dwCredProtect;
-    public uint dwPinProtocol;
-    public uint dwEnterpriseAttestation;
-    public uint cbCredBlobExt;
-    public byte* pbCredBlobExt;
-    public int lLargeBlobKeyExt;
-    public uint dwLargeBlobSupport;
-    public int lMinPinLengthExt;
-    public uint cbJsonExt;
-    public byte* pbJsonExt;
+	public uint dwVersion;
+	public uint cbRpId;
+	public byte* pbRpId;
+	public uint cbClientDataHash;
+	public byte* pbClientDataHash;
+	public WebAuthnRpEntityInformation* pRpInformation;
+	public WebAuthnUserEntityInformation* pUserInformation;
+	public WebAuthnCoseCredentialParameters WebAuthNCredentialParameters;
+	public WebAuthnCredentialList CredentialList;
+	public uint cbCborExtensionsMap;
+	public byte* pbCborExtensionsMap;
+	public WebAuthnCtapCborAuthenticatorOptions* pAuthenticatorOptions;
+	public int fEmptyPinAuth; // BOOL
+	public uint cbPinAuth;
+	public byte* pbPinAuth;
+	public int lHmacSecretExt;
+	public WebAuthnCtapCborHmacSaltExtension* pHmacSecretMcExtension;
+	public int lPrfExt;
+	public uint cbHmacSecretSaltValues;
+	public byte* pbHmacSecretSaltValues;
+	public uint dwCredProtect;
+	public uint dwPinProtocol;
+	public uint dwEnterpriseAttestation;
+	public uint cbCredBlobExt;
+	public byte* pbCredBlobExt;
+	public int lLargeBlobKeyExt;
+	public uint dwLargeBlobSupport;
+	public int lMinPinLengthExt;
+	public uint cbJsonExt;
+	public byte* pbJsonExt;
 }
 
 /// <summary>WEBAUTHN_CTAPCBOR_GET_ASSERTION_REQUEST (full declaration).</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnCtapCborGetAssertionRequest
 {
-    public uint dwVersion;
-    public char* pwszRpId;
-    public uint cbRpId;
-    public byte* pbRpId;
-    public uint cbClientDataHash;
-    public byte* pbClientDataHash;
-    public WebAuthnCredentialList CredentialList;
-    public uint cbCborExtensionsMap;
-    public byte* pbCborExtensionsMap;
-    public WebAuthnCtapCborAuthenticatorOptions* pAuthenticatorOptions;
-    public int fEmptyPinAuth; // BOOL
-    public uint cbPinAuth;
-    public byte* pbPinAuth;
-    public WebAuthnCtapCborHmacSaltExtension* pHmacSaltExtension;
-    public uint cbHmacSecretSaltValues;
-    public byte* pbHmacSecretSaltValues;
-    public uint dwPinProtocol;
-    public int lCredBlobExt;
-    public int lLargeBlobKeyExt;
-    public uint dwCredLargeBlobOperation;
-    public uint cbCredLargeBlobCompressed;
-    public byte* pbCredLargeBlobCompressed;
-    public uint dwCredLargeBlobOriginalSize;
-    public uint cbJsonExt;
-    public byte* pbJsonExt;
+	public uint dwVersion;
+	public char* pwszRpId;
+	public uint cbRpId;
+	public byte* pbRpId;
+	public uint cbClientDataHash;
+	public byte* pbClientDataHash;
+	public WebAuthnCredentialList CredentialList;
+	public uint cbCborExtensionsMap;
+	public byte* pbCborExtensionsMap;
+	public WebAuthnCtapCborAuthenticatorOptions* pAuthenticatorOptions;
+	public int fEmptyPinAuth; // BOOL
+	public uint cbPinAuth;
+	public byte* pbPinAuth;
+	public WebAuthnCtapCborHmacSaltExtension* pHmacSaltExtension;
+	public uint cbHmacSecretSaltValues;
+	public byte* pbHmacSecretSaltValues;
+	public uint dwPinProtocol;
+	public int lCredBlobExt;
+	public int lLargeBlobKeyExt;
+	public uint dwCredLargeBlobOperation;
+	public uint cbCredLargeBlobCompressed;
+	public byte* pbCredLargeBlobCompressed;
+	public uint dwCredLargeBlobOriginalSize;
+	public uint cbJsonExt;
+	public byte* pbJsonExt;
 }
 
 /// <summary>WEBAUTHN_CTAPCBOR_GET_ASSERTION_RESPONSE.</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnCtapCborGetAssertionResponse
 {
-    public WebAuthnAssertion WebAuthNAssertion;          // 176 bytes
-    public WebAuthnUserEntityInformation* pUserInformation;
-    public uint dwNumberOfCredentials;
-    public int lUserSelected;                            // LONG
-    public uint cbLargeBlobKey;
-    public byte* pbLargeBlobKey;
-    public uint cbUnsignedExtensionOutputs;
-    public byte* pbUnsignedExtensionOutputs;
+	public WebAuthnAssertion WebAuthNAssertion;          // 176 bytes
+	public WebAuthnUserEntityInformation* pUserInformation;
+	public uint dwNumberOfCredentials;
+	public int lUserSelected;                            // LONG
+	public uint cbLargeBlobKey;
+	public byte* pbLargeBlobKey;
+	public uint cbUnsignedExtensionOutputs;
+	public byte* pbUnsignedExtensionOutputs;
 }
 
 #endregion
@@ -180,38 +180,38 @@ internal unsafe struct WebAuthnCtapCborGetAssertionResponse
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginAddAuthenticatorOptions
 {
-    public char* pwszAuthenticatorName;  // LPCWSTR
-    public Guid* rclsid;                 // REFCLSID
-    public char* pwszPluginRpId;         // LPCWSTR (required for a nested WebAuthN call originating from a plugin)
-    public char* pwszLightThemeLogoSvg;  // LPCWSTR (optional)
-    public char* pwszDarkThemeLogoSvg;   // LPCWSTR (optional)
-    public uint cbAuthenticatorInfo;
-    public byte* pbAuthenticatorInfo;    // CTAP CBOR authenticatorGetInfo
-    public uint cSupportedRpIds;         // 0 => all RPs supported
-    public char** ppwszSupportedRpIds;   // const LPCWSTR*
+	public char* pwszAuthenticatorName;  // LPCWSTR
+	public Guid* rclsid;                 // REFCLSID
+	public char* pwszPluginRpId;         // LPCWSTR (required for a nested WebAuthN call originating from a plugin)
+	public char* pwszLightThemeLogoSvg;  // LPCWSTR (optional)
+	public char* pwszDarkThemeLogoSvg;   // LPCWSTR (optional)
+	public uint cbAuthenticatorInfo;
+	public byte* pbAuthenticatorInfo;    // CTAP CBOR authenticatorGetInfo
+	public uint cSupportedRpIds;         // 0 => all RPs supported
+	public char** ppwszSupportedRpIds;   // const LPCWSTR*
 }
 
 /// <summary>WEBAUTHN_PLUGIN_ADD_AUTHENTICATOR_RESPONSE.</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginAddAuthenticatorResponse
 {
-    public uint cbOpSignPubKey;
-    public byte* pbOpSignPubKey;
+	public uint cbOpSignPubKey;
+	public byte* pbOpSignPubKey;
 }
 
 /// <summary>WEBAUTHN_PLUGIN_UPDATE_AUTHENTICATOR_DETAILS.</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginUpdateAuthenticatorDetails
 {
-    public char* pwszAuthenticatorName;
-    public Guid* rclsid;                 // REFCLSID
-    public Guid* rclsidNew;              // REFCLSID
-    public char* pwszLightThemeLogoSvg;
-    public char* pwszDarkThemeLogoSvg;
-    public uint cbAuthenticatorInfo;
-    public byte* pbAuthenticatorInfo;
-    public uint cSupportedRpIds;
-    public char** ppwszSupportedRpIds;
+	public char* pwszAuthenticatorName;
+	public Guid* rclsid;                 // REFCLSID
+	public Guid* rclsidNew;              // REFCLSID
+	public char* pwszLightThemeLogoSvg;
+	public char* pwszDarkThemeLogoSvg;
+	public uint cbAuthenticatorInfo;
+	public byte* pbAuthenticatorInfo;
+	public uint cSupportedRpIds;
+	public char** ppwszSupportedRpIds;
 }
 
 /// <summary>
@@ -220,14 +220,14 @@ internal unsafe struct WebAuthnPluginUpdateAuthenticatorDetails
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginCredentialDetails
 {
-    public uint cbCredentialId;
-    public byte* pbCredentialId;
-    public char* pwszRpId;               // LPCWSTR
-    public char* pwszRpName;             // LPCWSTR
-    public uint cbUserId;
-    public byte* pbUserId;
-    public char* pwszUserName;           // LPCWSTR
-    public char* pwszUserDisplayName;    // LPCWSTR
+	public uint cbCredentialId;
+	public byte* pbCredentialId;
+	public char* pwszRpId;               // LPCWSTR
+	public char* pwszRpName;             // LPCWSTR
+	public uint cbUserId;
+	public byte* pbUserId;
+	public char* pwszUserName;           // LPCWSTR
+	public char* pwszUserDisplayName;    // LPCWSTR
 }
 
 /// <summary>
@@ -237,10 +237,10 @@ internal unsafe struct WebAuthnPluginCredentialDetails
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginUserVerificationRequest
 {
-    public nint hwnd;                 // HWND
-    public Guid* rguidTransactionId;  // REFGUID
-    public char* pwszUsername;        // LPCWSTR (optional)
-    public char* pwszDisplayHint;     // LPCWSTR (optional)
+	public nint hwnd;                 // HWND
+	public Guid* rguidTransactionId;  // REFGUID
+	public char* pwszUsername;        // LPCWSTR (optional)
+	public char* pwszDisplayHint;     // LPCWSTR (optional)
 }
 
 #endregion
@@ -251,44 +251,44 @@ internal unsafe struct WebAuthnPluginUserVerificationRequest
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginAddAuthenticatorOptions2
 {
-    public char* pwszAuthenticatorName;
-    public Guid* pClsid;                 // const CLSID*
-    public char* pwszPluginRpId;         // required for a nested WebAuthN call originating from a plugin
-    public char* pwszLightThemeLogoSvg;
-    public char* pwszDarkThemeLogoSvg;
-    public uint cbAuthenticatorInfo;
-    public byte* pbAuthenticatorInfo;
-    public uint cSupportedRpIds;
-    public char** ppwszSupportedRpIds;
-    public char* pwszUserVerificationKeyName; // name for KeyCredentialManager.RequestCreateAsync (optional)
+	public char* pwszAuthenticatorName;
+	public Guid* pClsid;                 // const CLSID*
+	public char* pwszPluginRpId;         // required for a nested WebAuthN call originating from a plugin
+	public char* pwszLightThemeLogoSvg;
+	public char* pwszDarkThemeLogoSvg;
+	public uint cbAuthenticatorInfo;
+	public byte* pbAuthenticatorInfo;
+	public uint cSupportedRpIds;
+	public char** ppwszSupportedRpIds;
+	public char* pwszUserVerificationKeyName; // name for KeyCredentialManager.RequestCreateAsync (optional)
 }
 
 /// <summary>WEBAUTHN_PLUGIN_UPDATE_AUTHENTICATOR_DETAILS_2.</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginUpdateAuthenticatorDetails2
 {
-    public char* pwszAuthenticatorName;
-    public Guid* pClsid;                 // const CLSID*
-    public Guid* pClsidNew;              // const CLSID*
-    public char* pwszLightThemeLogoSvg;
-    public char* pwszDarkThemeLogoSvg;
-    public uint cbAuthenticatorInfo;
-    public byte* pbAuthenticatorInfo;
-    public uint cSupportedRpIds;
-    public char** ppwszSupportedRpIds;
-    public char* pwszUserVerificationKeyName; // name for KeyCredentialManager.RequestCreateAsync (optional, NULL removes this)
+	public char* pwszAuthenticatorName;
+	public Guid* pClsid;                 // const CLSID*
+	public Guid* pClsidNew;              // const CLSID*
+	public char* pwszLightThemeLogoSvg;
+	public char* pwszDarkThemeLogoSvg;
+	public uint cbAuthenticatorInfo;
+	public byte* pbAuthenticatorInfo;
+	public uint cSupportedRpIds;
+	public char** ppwszSupportedRpIds;
+	public char* pwszUserVerificationKeyName; // name for KeyCredentialManager.RequestCreateAsync (optional, NULL removes this)
 }
 
 /// <summary>WEBAUTHN_PLUGIN_USER_VERIFICATION_REQUEST_2.</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginUserVerificationRequest2
 {
-    public nint hwnd;                 // HWND
-    public Guid* pGuidTransactionId;  // const GUID*
-    public char* pwszUsername;
-    public char* pwszDisplayHint;
-    public uint cbBufferToSign;
-    public byte* pbBufferToSign;      // custom buffer signed by the UV key (optional; not hashed by the API)
+	public nint hwnd;                 // HWND
+	public Guid* pGuidTransactionId;  // const GUID*
+	public char* pwszUsername;
+	public char* pwszDisplayHint;
+	public uint cbBufferToSign;
+	public byte* pbBufferToSign;      // custom buffer signed by the UV key (optional; not hashed by the API)
 }
 
 #endregion
@@ -306,150 +306,150 @@ internal unsafe struct WebAuthnPluginUserVerificationRequest2
 /// </summary>
 internal static unsafe class WebAuthnPluginApi
 {
-    private const string WebAuthnDll = "webauthn.dll";
+	private const string WebAuthnDll = "webauthn.dll";
 
-    // --- CTAP-CBOR encode / decode ----------------------------------------
+	// --- CTAP-CBOR encode / decode ----------------------------------------
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNDecodeMakeCredentialRequest(
-        uint cbEncoded,
-        byte* pbEncoded,
-        WebAuthnCtapCborMakeCredentialRequest** ppRequest);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNDecodeMakeCredentialRequest(
+		uint cbEncoded,
+		byte* pbEncoded,
+		WebAuthnCtapCborMakeCredentialRequest** ppRequest);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern void WebAuthNFreeDecodedMakeCredentialRequest(
-        WebAuthnCtapCborMakeCredentialRequest* pRequest);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern void WebAuthNFreeDecodedMakeCredentialRequest(
+		WebAuthnCtapCborMakeCredentialRequest* pRequest);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNDecodeGetAssertionRequest(
-        uint cbEncoded,
-        byte* pbEncoded,
-        WebAuthnCtapCborGetAssertionRequest** ppRequest);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNDecodeGetAssertionRequest(
+		uint cbEncoded,
+		byte* pbEncoded,
+		WebAuthnCtapCborGetAssertionRequest** ppRequest);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern void WebAuthNFreeDecodedGetAssertionRequest(
-        WebAuthnCtapCborGetAssertionRequest* pRequest);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern void WebAuthNFreeDecodedGetAssertionRequest(
+		WebAuthnCtapCborGetAssertionRequest* pRequest);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNEncodeMakeCredentialResponse(
-        WebAuthnCredentialAttestation* pAttestation,
-        uint* pcbResp,
-        byte** ppbResp);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNEncodeMakeCredentialResponse(
+		WebAuthnCredentialAttestation* pAttestation,
+		uint* pcbResp,
+		byte** ppbResp);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNEncodeGetAssertionResponse(
-        WebAuthnCtapCborGetAssertionResponse* pResponse,
-        uint* pcbResp,
-        byte** ppbResp);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNEncodeGetAssertionResponse(
+		WebAuthnCtapCborGetAssertionResponse* pResponse,
+		uint* pcbResp,
+		byte** ppbResp);
 
-    // --- Authenticator registration ---------------------------------------
+	// --- Authenticator registration ---------------------------------------
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginGetAuthenticatorState(
-        in Guid rclsid,
-        AuthenticatorState* pluginAuthenticatorState);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginGetAuthenticatorState(
+		in Guid rclsid,
+		AuthenticatorState* pluginAuthenticatorState);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginAddAuthenticator(
-        WebAuthnPluginAddAuthenticatorOptions* pPluginAddAuthenticatorOptions,
-        WebAuthnPluginAddAuthenticatorResponse** ppPluginAddAuthenticatorResponse);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginAddAuthenticator(
+		WebAuthnPluginAddAuthenticatorOptions* pPluginAddAuthenticatorOptions,
+		WebAuthnPluginAddAuthenticatorResponse** ppPluginAddAuthenticatorResponse);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginAddAuthenticator2(
-        WebAuthnPluginAddAuthenticatorOptions2* pPluginAddAuthenticatorOptions,
-        WebAuthnPluginAddAuthenticatorResponse** ppPluginAddAuthenticatorResponse);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginAddAuthenticator2(
+		WebAuthnPluginAddAuthenticatorOptions2* pPluginAddAuthenticatorOptions,
+		WebAuthnPluginAddAuthenticatorResponse** ppPluginAddAuthenticatorResponse);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern void WebAuthNPluginFreeAddAuthenticatorResponse(
-        WebAuthnPluginAddAuthenticatorResponse* pPluginAddAuthenticatorResponse);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern void WebAuthNPluginFreeAddAuthenticatorResponse(
+		WebAuthnPluginAddAuthenticatorResponse* pPluginAddAuthenticatorResponse);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginRemoveAuthenticator(in Guid rclsid);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginRemoveAuthenticator(in Guid rclsid);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginUpdateAuthenticatorDetails(
-        WebAuthnPluginUpdateAuthenticatorDetails* pPluginUpdateAuthenticatorDetails);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginUpdateAuthenticatorDetails(
+		WebAuthnPluginUpdateAuthenticatorDetails* pPluginUpdateAuthenticatorDetails);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginUpdateAuthenticatorDetails2(
-        WebAuthnPluginUpdateAuthenticatorDetails2* pPluginUpdateAuthenticatorDetails);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginUpdateAuthenticatorDetails2(
+		WebAuthnPluginUpdateAuthenticatorDetails2* pPluginUpdateAuthenticatorDetails);
 
-    // --- Autofill credential cache ----------------------------------------
+	// --- Autofill credential cache ----------------------------------------
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginAuthenticatorAddCredentials(
-        in Guid rclsid,
-        uint cCredentialDetails,
-        WebAuthnPluginCredentialDetails* pCredentialDetails);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginAuthenticatorAddCredentials(
+		in Guid rclsid,
+		uint cCredentialDetails,
+		WebAuthnPluginCredentialDetails* pCredentialDetails);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginAuthenticatorRemoveCredentials(
-        in Guid rclsid,
-        uint cCredentialDetails,
-        WebAuthnPluginCredentialDetails* pCredentialDetails);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginAuthenticatorRemoveCredentials(
+		in Guid rclsid,
+		uint cCredentialDetails,
+		WebAuthnPluginCredentialDetails* pCredentialDetails);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginAuthenticatorRemoveAllCredentials(in Guid rclsid);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginAuthenticatorRemoveAllCredentials(in Guid rclsid);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginAuthenticatorGetAllCredentials(
-        in Guid rclsid,
-        uint* pcCredentialDetails,
-        WebAuthnPluginCredentialDetails** ppCredentialDetailsArray);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginAuthenticatorGetAllCredentials(
+		in Guid rclsid,
+		uint* pcCredentialDetails,
+		WebAuthnPluginCredentialDetails** ppCredentialDetailsArray);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern void WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(
-        uint cCredentialDetails,
-        WebAuthnPluginCredentialDetails* pCredentialDetailsArray);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern void WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(
+		uint cCredentialDetails,
+		WebAuthnPluginCredentialDetails* pCredentialDetailsArray);
 
-    // --- Windows Hello user verification ----------------------------------
+	// --- Windows Hello user verification ----------------------------------
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginPerformUserVerification(
-        WebAuthnPluginUserVerificationRequest* pPluginUserVerification,
-        uint* pcbResponse,
-        byte** ppbResponse);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginPerformUserVerification(
+		WebAuthnPluginUserVerificationRequest* pPluginUserVerification,
+		uint* pcbResponse,
+		byte** ppbResponse);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginPerformUserVerification2(
-        WebAuthnPluginUserVerificationRequest2* pPluginUserVerification,
-        uint* pcbResponse,
-        byte** ppbResponse);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginPerformUserVerification2(
+		WebAuthnPluginUserVerificationRequest2* pPluginUserVerification,
+		uint* pcbResponse,
+		byte** ppbResponse);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern void WebAuthNPluginFreeUserVerificationResponse(byte* ppbResponse);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern void WebAuthNPluginFreeUserVerificationResponse(byte* ppbResponse);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginGetUserVerificationCount(
-        in Guid rclsid,
-        uint* pdwVerificationCount);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginGetUserVerificationCount(
+		in Guid rclsid,
+		uint* pdwVerificationCount);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginGetUserVerificationPublicKey(
-        in Guid rclsid,
-        uint* pcbPublicKey,
-        byte** ppbPublicKey); // free with WebAuthNPluginFreePublicKeyResponse
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginGetUserVerificationPublicKey(
+		in Guid rclsid,
+		uint* pcbPublicKey,
+		byte** ppbPublicKey); // free with WebAuthNPluginFreePublicKeyResponse
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginGetOperationSigningPublicKey(
-        in Guid rclsid,
-        uint* pcbOpSignPubKey,
-        byte** ppbOpSignPubKey); // free with WebAuthNPluginFreePublicKeyResponse
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginGetOperationSigningPublicKey(
+		in Guid rclsid,
+		uint* pcbOpSignPubKey,
+		byte** ppbOpSignPubKey); // free with WebAuthNPluginFreePublicKeyResponse
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern void WebAuthNPluginFreePublicKeyResponse(byte* pbOpSignPubKey);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern void WebAuthNPluginFreePublicKeyResponse(byte* pbOpSignPubKey);
 
-    // --- Status-change notifications --------------------------------------
+	// --- Status-change notifications --------------------------------------
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginRegisterStatusChangeCallback(
-        delegate* unmanaged[Stdcall]<void*, void> callback,
-        void* context,
-        in Guid rclsid,
-        uint* pdwRegister);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginRegisterStatusChangeCallback(
+		delegate* unmanaged[Stdcall]<void*, void> callback,
+		void* context,
+		in Guid rclsid,
+		uint* pdwRegister);
 
-    [DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
-    internal static extern int WebAuthNPluginUnregisterStatusChangeCallback(uint* pdwRegister);
+	[DllImport(WebAuthnDll, CallingConvention = CallingConvention.Winapi)]
+	internal static extern int WebAuthNPluginUnregisterStatusChangeCallback(uint* pdwRegister);
 }
 
 #endregion

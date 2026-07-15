@@ -10,88 +10,88 @@ namespace KeePassPasskeyProvider.Util;
 internal static class Win32Native
 {
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    internal static extern int AttachConsole(uint dwProcessId);
-    internal const uint ATTACH_PARENT_PROCESS = unchecked((uint)-1);
+	[DllImport("kernel32.dll", SetLastError = true)]
+	internal static extern int AttachConsole(uint dwProcessId);
+	internal const uint ATTACH_PARENT_PROCESS = unchecked((uint)-1);
 
-    [DllImport("ole32.dll")]
-    internal static extern int CoRegisterClassObject(
-        in Guid rclsid,
-        nint pUnk,
-        uint dwClsContext,
-        uint flags,
-        out uint lpdwRegister);
+	[DllImport("ole32.dll")]
+	internal static extern int CoRegisterClassObject(
+		in Guid rclsid,
+		nint pUnk,
+		uint dwClsContext,
+		uint flags,
+		out uint lpdwRegister);
 
-    [DllImport("ole32.dll")]
-    internal static extern int CoRevokeClassObject(uint dwRegister);
+	[DllImport("ole32.dll")]
+	internal static extern int CoRevokeClassObject(uint dwRegister);
 
-    internal const uint CLSCTX_LOCAL_SERVER = 0x4;
-    internal const uint REGCLS_MULTIPLEUSE = 1;
+	internal const uint CLSCTX_LOCAL_SERVER = 0x4;
+	internal const uint REGCLS_MULTIPLEUSE = 1;
 
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct MSG
-    {
-        public nint hwnd;
-        public uint message;
-        public nuint wParam;
-        public nint lParam;
-        public uint time;
-        public int ptX;
-        public int ptY;
-    }
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct MSG
+	{
+		public nint hwnd;
+		public uint message;
+		public nuint wParam;
+		public nint lParam;
+		public uint time;
+		public int ptX;
+		public int ptY;
+	}
 
-    [DllImport("user32.dll")]
-    internal static extern int GetMessage(out MSG lpMsg, nint hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+	[DllImport("user32.dll")]
+	internal static extern int GetMessage(out MSG lpMsg, nint hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
 
-    [DllImport("user32.dll")]
-    internal static extern bool TranslateMessage(in MSG lpMsg);
+	[DllImport("user32.dll")]
+	internal static extern bool TranslateMessage(in MSG lpMsg);
 
-    [DllImport("user32.dll")]
-    internal static extern nint DispatchMessage(in MSG lpMsg);
+	[DllImport("user32.dll")]
+	internal static extern nint DispatchMessage(in MSG lpMsg);
 
-    [DllImport("user32.dll")]
-    internal static extern void PostQuitMessage(int nExitCode);
+	[DllImport("user32.dll")]
+	internal static extern void PostQuitMessage(int nExitCode);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    internal static extern bool PostThreadMessage(uint idThread, uint Msg, nuint wParam, nint lParam);
+	[DllImport("user32.dll", SetLastError = true)]
+	internal static extern bool PostThreadMessage(uint idThread, uint Msg, nuint wParam, nint lParam);
 
-    internal const uint WM_QUIT = 0x0012;
+	internal const uint WM_QUIT = 0x0012;
 
-    [DllImport("kernel32.dll")]
-    internal static extern uint GetCurrentThreadId();
+	[DllImport("kernel32.dll")]
+	internal static extern uint GetCurrentThreadId();
 
-    [DllImport("user32.dll")]
-    internal static extern nint GetForegroundWindow();
+	[DllImport("user32.dll")]
+	internal static extern nint GetForegroundWindow();
 
-    [DllImport("user32.dll")]
-    internal static extern bool SetForegroundWindow(nint hWnd);
+	[DllImport("user32.dll")]
+	internal static extern bool SetForegroundWindow(nint hWnd);
 
-    [DllImport("user32.dll")]
-    internal static extern bool ShowWindow(nint hWnd, int nCmdShow);
+	[DllImport("user32.dll")]
+	internal static extern bool ShowWindow(nint hWnd, int nCmdShow);
 
-    internal const int SW_HIDE    = 0;
-    internal const int SW_SHOW    = 5;
-    internal const int SW_RESTORE = 9;
+	internal const int SW_HIDE = 0;
+	internal const int SW_SHOW = 5;
+	internal const int SW_RESTORE = 9;
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    internal static extern nint CreateEvent(nint lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
+	[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+	internal static extern nint CreateEvent(nint lpEventAttributes, bool bManualReset, bool bInitialState, string lpName);
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    internal static extern nint OpenEvent(uint dwDesiredAccess, bool bInheritHandle, string lpName);
+	[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+	internal static extern nint OpenEvent(uint dwDesiredAccess, bool bInheritHandle, string lpName);
 
-    [DllImport("kernel32.dll")]
-    internal static extern bool SetEvent(nint hEvent);
+	[DllImport("kernel32.dll")]
+	internal static extern bool SetEvent(nint hEvent);
 
-    [DllImport("kernel32.dll")]
-    internal static extern uint WaitForSingleObject(nint hHandle, uint dwMilliseconds);
+	[DllImport("kernel32.dll")]
+	internal static extern uint WaitForSingleObject(nint hHandle, uint dwMilliseconds);
 
-    [DllImport("kernel32.dll")]
-    internal static extern bool CloseHandle(nint hObject);
+	[DllImport("kernel32.dll")]
+	internal static extern bool CloseHandle(nint hObject);
 
-    [DllImport("user32.dll")]
-    internal static extern uint GetDoubleClickTime();
+	[DllImport("user32.dll")]
+	internal static extern uint GetDoubleClickTime();
 
-    internal const uint EVENT_MODIFY_STATE = 0x0002;
-    internal const uint WAIT_OBJECT_0 = 0;
-    internal const uint INFINITE = unchecked((uint)-1);
+	internal const uint EVENT_MODIFY_STATE = 0x0002;
+	internal const uint WAIT_OBJECT_0 = 0;
+	internal const uint INFINITE = unchecked((uint)-1);
 }

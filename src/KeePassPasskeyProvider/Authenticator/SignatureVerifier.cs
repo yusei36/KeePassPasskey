@@ -10,119 +10,119 @@ namespace KeePassPasskeyProvider.Authenticator;
 /// <summary>Verifies platform signatures (op-signing, user verification) via CNG.</summary>
 internal static unsafe class SignatureVerifier
 {
-    private const uint BCRYPT_RSAPUBLIC_MAGIC = 0x31415352; // "RSA1" (bcrypt.h)
+	private const uint BCRYPT_RSAPUBLIC_MAGIC = 0x31415352; // "RSA1" (bcrypt.h)
 
-    private unsafe delegate int PublicKeyGetter(in Guid rclsid, uint* pcb, byte** ppb);
+	private unsafe delegate int PublicKeyGetter(in Guid rclsid, uint* pcb, byte** ppb);
 
-    /// <summary>
-    /// Verifies a request signature against the live op-signing key.
-    /// </summary>
-    public static int VerifyIfKeyAvailable(
-        byte* pbData, uint cbData,
-        byte* pbSignature, uint cbSignature)
-    {
-        byte[]? keyBlob = GetOperationSigningPublicKey();
-        if (keyBlob == null)
-        {
-            Log.Error("no key available, rejecting operation");
-            return HResults.NTE_BAD_SIGNATURE;
-        }
+	/// <summary>
+	/// Verifies a request signature against the live op-signing key.
+	/// </summary>
+	public static int VerifyIfKeyAvailable(
+		byte* pbData, uint cbData,
+		byte* pbSignature, uint cbSignature)
+	{
+		byte[]? keyBlob = GetOperationSigningPublicKey();
+		if (keyBlob == null)
+		{
+			Log.Error("no key available, rejecting operation");
+			return HResults.NTE_BAD_SIGNATURE;
+		}
 
-        return VerifySignature(
-            new ReadOnlySpan<byte>(pbData, (int)cbData),
-            keyBlob,
-            new ReadOnlySpan<byte>(pbSignature, (int)cbSignature));
-    }
+		return VerifySignature(
+			new ReadOnlySpan<byte>(pbData, (int)cbData),
+			keyBlob,
+			new ReadOnlySpan<byte>(pbSignature, (int)cbSignature));
+	}
 
-    /// <summary>Verifies a signature over data with a BCrypt key blob; exceptions become HRESULTs.</summary>
-    public static int VerifySignature(
-        ReadOnlySpan<byte> data,
-        byte[] keyBlob,
-        ReadOnlySpan<byte> signature)
-    {
-        try
-        {
-            return Verify(data, keyBlob, signature);
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
-            return Marshal.GetHRForException(ex);
-        }
-    }
+	/// <summary>Verifies a signature over data with a BCrypt key blob; exceptions become HRESULTs.</summary>
+	public static int VerifySignature(
+		ReadOnlySpan<byte> data,
+		byte[] keyBlob,
+		ReadOnlySpan<byte> signature)
+	{
+		try
+		{
+			return Verify(data, keyBlob, signature);
+		}
+		catch (Exception ex)
+		{
+			Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+			return Marshal.GetHRForException(ex);
+		}
+	}
 
-    private static int Verify(
-        ReadOnlySpan<byte> data,
-        byte[] keyBlob,
-        ReadOnlySpan<byte> signature)
-    {
-        // RSA vs EC from the key blob magic (first 4 bytes)
-        uint magic = keyBlob.Length >= 4 ? BitConverter.ToUInt32(keyBlob, 0) : 0;
-        bool isRsa = magic == BCRYPT_RSAPUBLIC_MAGIC;
-        Log.Debug($"key blob magic=0x{magic:X8} len={keyBlob.Length} -> {(isRsa ? "RSA" : "EC")}");
+	private static int Verify(
+		ReadOnlySpan<byte> data,
+		byte[] keyBlob,
+		ReadOnlySpan<byte> signature)
+	{
+		// RSA vs EC from the key blob magic (first 4 bytes)
+		uint magic = keyBlob.Length >= 4 ? BitConverter.ToUInt32(keyBlob, 0) : 0;
+		bool isRsa = magic == BCRYPT_RSAPUBLIC_MAGIC;
+		Log.Debug($"key blob magic=0x{magic:X8} len={keyBlob.Length} -> {(isRsa ? "RSA" : "EC")}");
 
-        CngKey cngKey = CngKey.Import(keyBlob, CngKeyBlobFormat.GenericPublicBlob);
-        byte[] hash = SHA256.HashData(data);
+		CngKey cngKey = CngKey.Import(keyBlob, CngKeyBlobFormat.GenericPublicBlob);
+		byte[] hash = SHA256.HashData(data);
 
-        if (isRsa)
-        {
-            using var rsa = new RSACng(cngKey);
-            byte[] sig = signature.ToArray();
-            // Windows signs RSA UV responses with PSS (verified in webauthn.dll); keep PKCS#1 as a
-            // fallback in case older/newer builds used or will use it.
-            if (rsa.VerifyHash(hash, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pss))
-            {
-                Log.Info("RSA signature valid (PSS)");
-                return HResults.S_OK;
-            }
-            if (rsa.VerifyHash(hash, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
-            {
-                Log.Info("RSA signature valid (PKCS#1)");
-                return HResults.S_OK;
-            }
-            Log.Warn($"RSA signature invalid (tried PSS and PKCS#1), magic=0x{magic:X8} len={keyBlob.Length}");
-            return HResults.NTE_BAD_SIGNATURE;
-        }
-        else
-        {
-            using var ecdsa = new ECDsaCng(cngKey);
-            bool valid = ecdsa.VerifyHash(hash, signature.ToArray());
-            if (!valid) Log.Warn($"ECDSA signature invalid, magic=0x{magic:X8} len={keyBlob.Length}");
-            else        Log.Info("ECDSA signature valid");
-            return valid ? HResults.S_OK : HResults.NTE_BAD_SIGNATURE;
-        }
-    }
+		if (isRsa)
+		{
+			using var rsa = new RSACng(cngKey);
+			byte[] sig = signature.ToArray();
+			// Windows signs RSA UV responses with PSS (verified in webauthn.dll); keep PKCS#1 as a
+			// fallback in case older/newer builds used or will use it.
+			if (rsa.VerifyHash(hash, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pss))
+			{
+				Log.Info("RSA signature valid (PSS)");
+				return HResults.S_OK;
+			}
+			if (rsa.VerifyHash(hash, sig, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
+			{
+				Log.Info("RSA signature valid (PKCS#1)");
+				return HResults.S_OK;
+			}
+			Log.Warn($"RSA signature invalid (tried PSS and PKCS#1), magic=0x{magic:X8} len={keyBlob.Length}");
+			return HResults.NTE_BAD_SIGNATURE;
+		}
+		else
+		{
+			using var ecdsa = new ECDsaCng(cngKey);
+			bool valid = ecdsa.VerifyHash(hash, signature.ToArray());
+			if (!valid) Log.Warn($"ECDSA signature invalid, magic=0x{magic:X8} len={keyBlob.Length}");
+			else Log.Info("ECDSA signature valid");
+			return valid ? HResults.S_OK : HResults.NTE_BAD_SIGNATURE;
+		}
+	}
 
-    /// <summary>Live op-signing public key for this CLSID; null if unavailable.</summary>
-    internal static byte[]? GetOperationSigningPublicKey()
-        => FetchPublicKey("op-signing", WebAuthnPluginApi.WebAuthNPluginGetOperationSigningPublicKey);
+	/// <summary>Live op-signing public key for this CLSID; null if unavailable.</summary>
+	internal static byte[]? GetOperationSigningPublicKey()
+		=> FetchPublicKey("op-signing", WebAuthnPluginApi.WebAuthNPluginGetOperationSigningPublicKey);
 
-    /// <summary>UV public key for this CLSID, to verify the PerformUserVerification response; null if unavailable.</summary>
-    internal static byte[]? GetUserVerificationPublicKey()
-        => FetchPublicKey("user-verification", WebAuthnPluginApi.WebAuthNPluginGetUserVerificationPublicKey);
+	/// <summary>UV public key for this CLSID, to verify the PerformUserVerification response; null if unavailable.</summary>
+	internal static byte[]? GetUserVerificationPublicKey()
+		=> FetchPublicKey("user-verification", WebAuthnPluginApi.WebAuthNPluginGetUserVerificationPublicKey);
 
-    private static byte[]? FetchPublicKey(string label, PublicKeyGetter getter)
-    {
-        Guid clsid = PluginConstants.KeePassPasskeyProviderClsid;
-        uint cb = 0;
-        byte* pb = null;
+	private static byte[]? FetchPublicKey(string label, PublicKeyGetter getter)
+	{
+		Guid clsid = PluginConstants.KeePassPasskeyProviderClsid;
+		uint cb = 0;
+		byte* pb = null;
 
-        int hr = getter(in clsid, &cb, &pb);
-        if (hr < HResults.S_OK || pb == null || cb == 0)
-        {
-            Log.Error($"{label} public key hr=0x{hr:X8} cb={cb}");
-            return null;
-        }
+		int hr = getter(in clsid, &cb, &pb);
+		if (hr < HResults.S_OK || pb == null || cb == 0)
+		{
+			Log.Error($"{label} public key hr=0x{hr:X8} cb={cb}");
+			return null;
+		}
 
-        try
-        {
-            byte[] blob = new ReadOnlySpan<byte>(pb, (int)cb).ToArray();
-            Log.Info($"fetched {label} key blob {blob.Length} bytes");
-            return blob;
-        }
-        finally
-        {
-            WebAuthnPluginApi.WebAuthNPluginFreePublicKeyResponse(pb);
-        }
-    }
+		try
+		{
+			byte[] blob = new ReadOnlySpan<byte>(pb, (int)cb).ToArray();
+			Log.Info($"fetched {label} key blob {blob.Length} bytes");
+			return blob;
+		}
+		finally
+		{
+			WebAuthnPluginApi.WebAuthNPluginFreePublicKeyResponse(pb);
+		}
+	}
 }

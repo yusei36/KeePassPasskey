@@ -2,61 +2,61 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net48</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <RootNamespace>KeePassPasskey</RootNamespace>
-    <AssemblyName>KeePassPasskey</AssemblyName>
-    <UseWindowsForms>true</UseWindowsForms>
-    <OutputPath>..\..\build\$(Configuration)\</OutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <Deterministic>true</Deterministic>
-    <Title>KeePassPasskey</Title>
-    <Description>KeePass plugin that provides native Windows 11 passkey (FIDO2/WebAuthn) support via the platform authenticator API.</Description>
-    <Product>KeePass Plugin</Product>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<RootNamespace>KeePassPasskey</RootNamespace>
+		<AssemblyName>KeePassPasskey</AssemblyName>
+		<UseWindowsForms>true</UseWindowsForms>
+		<OutputPath>..\..\build\$(Configuration)\</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<Deterministic>true</Deterministic>
+		<Title>KeePassPasskey</Title>
+		<Description>KeePass plugin that provides native Windows 11 passkey (FIDO2/WebAuthn) support via the platform authenticator API.</Description>
+		<Product>KeePass Plugin</Product>
+	</PropertyGroup>
 
-  <!-- Local dev: build\KeePass.exe (strong-named official build). CI fallback: NuGet (unsigned). -->
-  <ItemGroup Condition="Exists('..\..\build\KeePass.exe')">
-    <Reference Include="KeePass">
-      <HintPath>..\..\build\KeePass.exe</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition="!Exists('..\..\build\KeePass.exe')">
-    <PackageReference Include="KeePass" Version="2.54.0.23169">
-      <IncludeAssets>compile</IncludeAssets>
-      <ExcludeAssets>runtime;build;native;contentfiles;analyzers;buildtransitive</ExcludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<!-- Local dev: build\KeePass.exe (strong-named official build). CI fallback: NuGet (unsigned). -->
+	<ItemGroup Condition="Exists('..\..\build\KeePass.exe')">
+		<Reference Include="KeePass">
+			<HintPath>..\..\build\KeePass.exe</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup Condition="!Exists('..\..\build\KeePass.exe')">
+		<PackageReference Include="KeePass" Version="2.54.0.23169">
+			<IncludeAssets>compile</IncludeAssets>
+			<ExcludeAssets>runtime;build;native;contentfiles;analyzers;buildtransitive</ExcludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\KeePassPasskeyShared\KeePassPasskeyShared.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\KeePassPasskeyShared\KeePassPasskeyShared.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\plugin-icon.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\plugin-icon.png" />
+	</ItemGroup>
 
-  <!-- A running KeePass locks the plugin DLLs this build copies into its plugins folder; close it
-       first. The trailing "exit /b 0" keeps a build with no KeePass running from being flagged. -->
-  <Target Name="StopRunningKeePass" BeforeTargets="Build" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
-    <Exec Command="taskkill /F /IM KeePass.exe &gt;nul 2&gt;&amp;1 &amp; exit /b 0" />
-  </Target>
+	<!-- A running KeePass locks the plugin DLLs this build copies into its plugins folder; close it
+			 first. The trailing "exit /b 0" keeps a build with no KeePass running from being flagged. -->
+	<Target Name="StopRunningKeePass" BeforeTargets="Build" Condition="'$(BuildingInsideVisualStudio)' == 'true'">
+		<Exec Command="taskkill /F /IM KeePass.exe &gt;nul 2&gt;&amp;1 &amp; exit /b 0" />
+	</Target>
 
-  <Target Name="CopyToKeePassPlugins" AfterTargets="Build">
-    <MakeDir Directories="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
-    <ItemGroup>
-      <PluginOutputFiles Include="$(OutputPath)*.dll" />
-    </ItemGroup>
-    <Copy SourceFiles="@(PluginOutputFiles)" DestinationFolder="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
-  </Target>
+	<Target Name="CopyToKeePassPlugins" AfterTargets="Build">
+		<MakeDir Directories="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
+		<ItemGroup>
+			<PluginOutputFiles Include="$(OutputPath)*.dll" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PluginOutputFiles)" DestinationFolder="$(MSBuildThisFileDirectory)..\..\build\KeePass\plugins" />
+	</Target>
 
 </Project>

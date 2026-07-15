@@ -1,140 +1,140 @@
 ﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:fa="using:FluentAvalonia.UI.Controls"
-             xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
-             xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
-             x:Class="KeePassPasskeyProvider.App.Controls.StatusHero"
-             x:DataType="vm:StatusHeroViewModel">
-    <UserControl.Styles>
-        <!-- Status ring border + background -->
-        <Style Selector="Border.ringSuccess">
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
-            <Setter Property="Background"  Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
-        </Style>
-        <Style Selector="Border.ringCaution">
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCautionBrush}" />
-            <Setter Property="Background"  Value="{DynamicResource SystemFillColorCautionBackgroundBrush}" />
-        </Style>
-        <Style Selector="Border.ringCritical">
-            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
-            <Setter Property="Background"  Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
-        </Style>
-        <!-- Icon inside ring inherits ring color via descendant selector -->
-        <Style Selector="Border.ringSuccess fa|FASymbolIcon">
-            <Setter Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
-        </Style>
-        <Style Selector="Border.ringCaution fa|FASymbolIcon">
-            <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
-        </Style>
-        <Style Selector="Border.ringCritical fa|FASymbolIcon">
-            <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
-        </Style>
-        <!-- Status dots -->
-        <Style Selector="Ellipse.dotSuccess">
-            <Setter Property="Fill" Value="{DynamicResource SystemFillColorSuccessBrush}" />
-        </Style>
-        <Style Selector="Ellipse.dotCaution">
-            <Setter Property="Fill" Value="{DynamicResource SystemFillColorCautionBrush}" />
-        </Style>
-        <Style Selector="Ellipse.dotCritical">
-            <Setter Property="Fill" Value="{DynamicResource SystemFillColorCriticalBrush}" />
-        </Style>
-        <Style Selector="Ellipse.dotNeutral">
-            <Setter Property="Fill" Value="{DynamicResource SystemFillColorNeutralBrush}" />
-        </Style>
-    </UserControl.Styles>
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:fa="using:FluentAvalonia.UI.Controls"
+						 xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
+						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+						 x:Class="KeePassPasskeyProvider.App.Controls.StatusHero"
+						 x:DataType="vm:StatusHeroViewModel">
+		<UserControl.Styles>
+				<!-- Status ring border + background -->
+				<Style Selector="Border.ringSuccess">
+						<Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+						<Setter Property="Background"  Value="{DynamicResource SystemFillColorSuccessBackgroundBrush}" />
+				</Style>
+				<Style Selector="Border.ringCaution">
+						<Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCautionBrush}" />
+						<Setter Property="Background"  Value="{DynamicResource SystemFillColorCautionBackgroundBrush}" />
+				</Style>
+				<Style Selector="Border.ringCritical">
+						<Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+						<Setter Property="Background"  Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
+				</Style>
+				<!-- Icon inside ring inherits ring color via descendant selector -->
+				<Style Selector="Border.ringSuccess fa|FASymbolIcon">
+						<Setter Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+				</Style>
+				<Style Selector="Border.ringCaution fa|FASymbolIcon">
+						<Setter Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+				</Style>
+				<Style Selector="Border.ringCritical fa|FASymbolIcon">
+						<Setter Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+				</Style>
+				<!-- Status dots -->
+				<Style Selector="Ellipse.dotSuccess">
+						<Setter Property="Fill" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+				</Style>
+				<Style Selector="Ellipse.dotCaution">
+						<Setter Property="Fill" Value="{DynamicResource SystemFillColorCautionBrush}" />
+				</Style>
+				<Style Selector="Ellipse.dotCritical">
+						<Setter Property="Fill" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+				</Style>
+				<Style Selector="Ellipse.dotNeutral">
+						<Setter Property="Fill" Value="{DynamicResource SystemFillColorNeutralBrush}" />
+				</Style>
+		</UserControl.Styles>
 
-    <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
-            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-            BorderThickness="1" CornerRadius="8">
-        <StackPanel>
+		<Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+						BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+						BorderThickness="1" CornerRadius="8">
+				<StackPanel>
 
-            <!-- Summary row: ring + headline (left), pills (right) -->
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="18 16 18 14">
+						<!-- Summary row: ring + headline (left), pills (right) -->
+						<Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" Margin="18 16 18 14">
 
-                <!-- Left: ring + text -->
-                <Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="14" VerticalAlignment="Center">
-                    <Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" BorderThickness="1.5" VerticalAlignment="Center"
-                            Classes.ringSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}"
-                            Classes.ringCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected,VersionMismatch'}"
-                            Classes.ringCritical="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,IncompatibleVersion'}">
-                        <Grid>
-                            <fa:FASymbolIcon Symbol="Accept" FontSize="18"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}" />
-                            <fa:FASymbolIcon Symbol="Important" FontSize="18"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected,VersionMismatch'}" />
+								<!-- Left: ring + text -->
+								<Grid Grid.Column="0" ColumnDefinitions="Auto,*" ColumnSpacing="14" VerticalAlignment="Center">
+										<Border Grid.Column="0" Width="44" Height="44" CornerRadius="22" BorderThickness="1.5" VerticalAlignment="Center"
+														Classes.ringSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}"
+														Classes.ringCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected,VersionMismatch'}"
+														Classes.ringCritical="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,IncompatibleVersion'}">
+												<Grid>
+														<fa:FASymbolIcon Symbol="Accept" FontSize="18"
+																					 HorizontalAlignment="Center" VerticalAlignment="Center"
+																					 IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Ready'}" />
+														<fa:FASymbolIcon Symbol="Important" FontSize="18"
+																					 HorizontalAlignment="Center" VerticalAlignment="Center"
+																					 IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='WaitingToBeEnabled,NoDatabase,KeePassNotConnected,VersionMismatch'}" />
 							<fa:FASymbolIcon Symbol="Dismiss" FontSize="18"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,IncompatibleVersion'}" />
-                        </Grid>
-                    </Border>
+																					 HorizontalAlignment="Center" VerticalAlignment="Center"
+																					 IsVisible="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered,IncompatibleVersion'}" />
+												</Grid>
+										</Border>
 
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                        <TextBlock FontSize="18" FontWeight="SemiBold"
-                                   Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Headline}}" />
-                        <TextBlock FontSize="12.5" Opacity="0.6" TextWrapping="Wrap"
-                                   Text="{Binding Subhead}" />
-                    </StackPanel>
-                </Grid>
+										<StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+												<TextBlock FontSize="18" FontWeight="SemiBold"
+																	 Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Headline}}" />
+												<TextBlock FontSize="12.5" Opacity="0.6" TextWrapping="Wrap"
+																	 Text="{Binding Subhead}" />
+										</StackPanel>
+								</Grid>
 
-                <!-- Right: status pills -->
-                <Grid Grid.Column="1"
-                      ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto"
-                      ColumnSpacing="14" RowSpacing="6"
-                      VerticalAlignment="Center">
+								<!-- Right: status pills -->
+								<Grid Grid.Column="1"
+											ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto"
+											ColumnSpacing="14" RowSpacing="6"
+											VerticalAlignment="Center">
 
-                    <TextBlock Grid.Row="0" Grid.Column="0"
-                               Text="Passkey provider" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
-                    <Border Grid.Row="0" Grid.Column="1"
-                            Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                            BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" VerticalAlignment="Center"
-                                     Classes.dotSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='Ready,KeePassNotConnected,NoDatabase,VersionMismatch,IncompatibleVersion'}"
-                                     Classes.dotCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='WaitingToBeEnabled'}"
-                                     Classes.dotNeutral="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered'}" />
-                            <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
-                                       Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.ProviderPillText}}" />
-                        </StackPanel>
-                    </Border>
+										<TextBlock Grid.Row="0" Grid.Column="0"
+															 Text="Passkey provider" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
+										<Border Grid.Row="0" Grid.Column="1"
+														Background="{DynamicResource ControlFillColorSecondaryBrush}"
+														BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+														BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
+												<StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+														<Ellipse Width="8" Height="8" VerticalAlignment="Center"
+																		 Classes.dotSuccess="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='Ready,KeePassNotConnected,NoDatabase,VersionMismatch,IncompatibleVersion'}"
+																		 Classes.dotCaution="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='WaitingToBeEnabled'}"
+																		 Classes.dotNeutral="{Binding Status, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='AutoregisterFailed,NotRegistered'}" />
+														<TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
+																			 Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.ProviderPillText}}" />
+												</StackPanel>
+										</Border>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0"
-                               Text="KeePass plugin" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
-                    <Border Grid.Row="1" Grid.Column="1"
-                            Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                            BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Ellipse Width="8" Height="8" VerticalAlignment="Center"
-                                     Classes.dotSuccess="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Running'}"
-                                     Classes.dotCaution="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='NoDatabase,VersionMismatch'}"
-                                     Classes.dotCritical="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='IncompatibleVersion'}"
-                                     Classes.dotNeutral="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='NotConnected'}" />
-                            <TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
-                                       Text="{Binding PluginStatus, Converter={x:Static conv:PluginPillConverters.Text}}" />
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Grid>
+										<TextBlock Grid.Row="1" Grid.Column="0"
+															 Text="KeePass plugin" FontSize="12.5" Opacity="0.6" VerticalAlignment="Center" />
+										<Border Grid.Row="1" Grid.Column="1"
+														Background="{DynamicResource ControlFillColorSecondaryBrush}"
+														BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+														BorderThickness="1" CornerRadius="999" Padding="8 2 10 2">
+												<StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+														<Ellipse Width="8" Height="8" VerticalAlignment="Center"
+																		 Classes.dotSuccess="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='Running'}"
+																		 Classes.dotCaution="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='NoDatabase,VersionMismatch'}"
+																		 Classes.dotCritical="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance},  ConverterParameter='IncompatibleVersion'}"
+																		 Classes.dotNeutral="{Binding PluginStatus, Converter={x:Static conv:EnumEqualsAnyConverter.Instance}, ConverterParameter='NotConnected'}" />
+														<TextBlock FontSize="12" FontWeight="Medium" VerticalAlignment="Center"
+																			 Text="{Binding PluginStatus, Converter={x:Static conv:PluginPillConverters.Text}}" />
+												</StackPanel>
+										</Border>
+								</Grid>
+						</Grid>
 
-            <!-- Divider -->
-            <Border Height="1" Background="{DynamicResource ControlStrokeColorDefaultBrush}" Opacity="0.5" />
+						<!-- Divider -->
+						<Border Height="1" Background="{DynamicResource ControlStrokeColorDefaultBrush}" Opacity="0.5" />
 
-            <!-- Action row -->
-            <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8" Margin="18 12 18 14">
-                <Button Grid.Column="0" Content="Refresh status" Command="{Binding RefreshCommand}" Classes="accent" />
-                <Button Grid.Column="1" Content="Register" Command="{Binding RegisterCommand}" IsVisible="{Binding CanRegister}" />
-                <Button Grid.Column="3" Content="Show plugin file to install" Command="{Binding ShowPluginFileCommand}"
-                        IsVisible="{Binding ShowPluginFile}" ToolTip.Tip="Reveal the file in File Explorer" />
-                <Button Grid.Column="3" Content="Advanced Passkey Options" Command="{Binding OpenPasskeySettingsCommand}"
-                        IsVisible="{Binding ShowOpenPasskeySettings}" ToolTip.Tip="Open advanced passkey options in Windows Settings" />
-            </Grid>
+						<!-- Action row -->
+						<Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8" Margin="18 12 18 14">
+								<Button Grid.Column="0" Content="Refresh status" Command="{Binding RefreshCommand}" Classes="accent" />
+								<Button Grid.Column="1" Content="Register" Command="{Binding RegisterCommand}" IsVisible="{Binding CanRegister}" />
+								<Button Grid.Column="3" Content="Show plugin file to install" Command="{Binding ShowPluginFileCommand}"
+												IsVisible="{Binding ShowPluginFile}" ToolTip.Tip="Reveal the file in File Explorer" />
+								<Button Grid.Column="3" Content="Advanced Passkey Options" Command="{Binding OpenPasskeySettingsCommand}"
+												IsVisible="{Binding ShowOpenPasskeySettings}" ToolTip.Tip="Open advanced passkey options in Windows Settings" />
+						</Grid>
 
-        </StackPanel>
-    </Border>
+				</StackPanel>
+		</Border>
 </UserControl>

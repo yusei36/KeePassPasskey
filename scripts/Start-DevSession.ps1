@@ -3,30 +3,30 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Builds + installs the dev provider, starts it, then launches the development KeePass, optionally
-    attaching the running Visual Studio for debugging.
+	Builds + installs the dev provider, starts it, then launches the development KeePass, optionally
+	attaching the running Visual Studio for debugging.
 
 .DESCRIPTION
-    Used by the "KeePass + ..." launch profiles. Runs Install-Provider.ps1
-    (Debug = dev identity), starts the installed provider, then starts build\KeePass\KeePass.exe.
+	Used by the "KeePass + ..." launch profiles. Runs Install-Provider.ps1
+	(Debug = dev identity), starts the installed provider, then starts build\KeePass\KeePass.exe.
 
-    This is the process Visual Studio launches for the F5 session, so it stays alive until KeePass
-    closes; exiting earlier would end the debug session and detach the processes it attached.
+	This is the process Visual Studio launches for the F5 session, so it stays alive until KeePass
+	closes; exiting earlier would end the debug session and detach the processes it attached.
 
-    When run with no arguments (a plain terminal launch, not a VS launch profile), it also builds the
-    plugin DLL first, since no IDE build has produced it.
+	When run with no arguments (a plain terminal launch, not a VS launch profile), it also builds the
+	plugin DLL first, since no IDE build has produced it.
 
 .PARAMETER DebugProvider
-    Attach the running Visual Studio to the provider (management/tray) process so its breakpoints hit.
+	Attach the running Visual Studio to the provider (management/tray) process so its breakpoints hit.
 
 .PARAMETER DebugPlugin
-    Attach the running Visual Studio to the KeePass process so plugin breakpoints are hit.
+	Attach the running Visual Studio to the KeePass process so plugin breakpoints are hit.
 #>
 param(
-    [ValidateSet('Debug', 'Release')]
-    [string]$Configuration = 'Debug',
-    [switch]$DebugProvider,
-    [switch]$DebugPlugin
+	[ValidateSet('Debug', 'Release')]
+	[string]$Configuration = 'Debug',
+	[switch]$DebugProvider,
+	[switch]$DebugPlugin
 )
 
 Set-StrictMode -Version Latest
@@ -42,7 +42,7 @@ Write-Host "KeePassPasskey $($versions.Version) ($Configuration)" -ForegroundCol
 # Enumerates running Visual Studio (DTE) instances from the COM Running Object Table. Version-agnostic:
 # matches any "!VisualStudio.DTE..." moniker rather than probing a fixed list of version progIds.
 if (-not ([System.Management.Automation.PSTypeName]'VsRot').Type) {
-    Add-Type -TypeDefinition @'
+	Add-Type -TypeDefinition @'
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -86,22 +86,22 @@ public static class VsRot
 # Attaches a running Visual Studio to a process by id. Best-effort: retries while VS is busy or the
 # target has not yet appeared in the debugger's process list.
 function Connect-VisualStudioDebugger([int]$TargetProcessId) {
-    for ($attempt = 0; $attempt -lt 40; $attempt++) {
-        foreach ($dte in [VsRot]::GetDtes()) {
-            try {
-                foreach ($proc in $dte.Debugger.LocalProcesses) {
-                    if ($proc.ProcessID -eq $TargetProcessId) {
-                        $proc.Attach()
-                        return $true
-                    }
-                }
-            } catch {
-                # VS busy (RPC_E_CALL_REJECTED) or process list not ready yet; fall through and retry.
-            }
-        }
-        Start-Sleep -Milliseconds 250
-    }
-    return $false
+	for ($attempt = 0; $attempt -lt 40; $attempt++) {
+		foreach ($dte in [VsRot]::GetDtes()) {
+			try {
+				foreach ($proc in $dte.Debugger.LocalProcesses) {
+					if ($proc.ProcessID -eq $TargetProcessId) {
+						$proc.Attach()
+						return $true
+					}
+				}
+			} catch {
+				# VS busy (RPC_E_CALL_REJECTED) or process list not ready yet; fall through and retry.
+			}
+		}
+		Start-Sleep -Milliseconds 250
+	}
+	return $false
 }
 
 Write-Step "Building KeePassPasskey plugin DLL"
@@ -112,23 +112,23 @@ Invoke-BuildPlugin -RepoRoot $RepoRoot -Configuration $Configuration
 # Start the just-installed provider
 $subject = Get-CertSubject $Configuration
 $pkg = Get-AppxPackage -Name 'KeePassPasskeyProvider' |
-       Where-Object { $_.Publisher -eq $subject } |
-       Select-Object -First 1
+	   Where-Object { $_.Publisher -eq $subject } |
+	   Select-Object -First 1
 if ($pkg) {
-    $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
-    if (Test-Path $exe) {
-        $providerProc = Start-Process $exe -PassThru
-        if ($DebugProvider) {
-            Write-Host "Attaching Visual Studio to the provider (PID $($providerProc.Id))..."
-            if (Connect-VisualStudioDebugger -TargetProcessId $providerProc.Id) {
-                Write-Host "  Attached to provider."
-            } else {
-                Write-Warning "  Could not attach Visual Studio to the provider."
-            }
-        }
-    }
+	$exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
+	if (Test-Path $exe) {
+		$providerProc = Start-Process $exe -PassThru
+		if ($DebugProvider) {
+			Write-Host "Attaching Visual Studio to the provider (PID $($providerProc.Id))..."
+			if (Connect-VisualStudioDebugger -TargetProcessId $providerProc.Id) {
+				Write-Host "  Attached to provider."
+			} else {
+				Write-Warning "  Could not attach Visual Studio to the provider."
+			}
+		}
+	}
 } else {
-    Write-Warning "Provider package not found after install; skipping provider launch."
+	Write-Warning "Provider package not found after install; skipping provider launch."
 }
 
 # Give the provider time to start up before KeePass launches.
@@ -139,12 +139,12 @@ if (-not (Test-Path $keepass)) { throw "KeePass not found: $keepass" }
 $keepassProc = Start-Process $keepass -PassThru
 
 if ($DebugPlugin) {
-    Write-Host "Attaching Visual Studio to KeePass (PID $($keepassProc.Id))..."
-    if (Connect-VisualStudioDebugger -TargetProcessId $keepassProc.Id) {
-        Write-Host "  Attached to KeePass."
-    } else {
-        Write-Warning "  Could not attach Visual Studio to KeePass."
-    }
+	Write-Host "Attaching Visual Studio to KeePass (PID $($keepassProc.Id))..."
+	if (Connect-VisualStudioDebugger -TargetProcessId $keepassProc.Id) {
+		Write-Host "  Attached to KeePass."
+	} else {
+		Write-Warning "  Could not attach Visual Studio to KeePass."
+	}
 }
 
 # VS ends the F5 session (detaching the attached processes) when this launched script exits, so

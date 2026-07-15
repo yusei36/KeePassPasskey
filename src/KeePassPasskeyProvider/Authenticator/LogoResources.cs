@@ -12,20 +12,20 @@ namespace KeePassPasskeyProvider.Authenticator;
 internal static class LogoResources
 {
 #if STORE
-    public static string DarkThemeSvg  { get; } = Load("logo-store-dark.svg");
-    public static string LightThemeSvg { get; } = Load("logo-store-light.svg");
+	public static string DarkThemeSvg { get; } = Load("logo-store-dark.svg");
+	public static string LightThemeSvg { get; } = Load("logo-store-light.svg");
 #else
-    public static string DarkThemeSvg  { get; } = Load("logo-dark.svg");
-    public static string LightThemeSvg { get; } = Load("logo-light.svg");
+	public static string DarkThemeSvg { get; } = Load("logo-dark.svg");
+	public static string LightThemeSvg { get; } = Load("logo-light.svg");
 #endif
 
-    private static string Load(string fileName)
-    {
-        var asm = Assembly.GetExecutingAssembly();
-        using Stream stream = asm.GetManifestResourceStream(
-            $"KeePassPasskeyProvider.Resources.{fileName}")!;
-        using var ms = new MemoryStream();
-        stream.CopyTo(ms);
-        return Convert.ToBase64String(ms.ToArray());
-    }
+	private static string Load(string fileName)
+	{
+		var asm = Assembly.GetExecutingAssembly();
+		using Stream stream = asm.GetManifestResourceStream(
+			$"KeePassPasskeyProvider.Resources.{fileName}")!;
+		using var ms = new MemoryStream();
+		stream.CopyTo(ms);
+		return Convert.ToBase64String(ms.ToArray());
+	}
 }

@@ -1,18 +1,17 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
-namespace KeePassPasskey.Passkey
+namespace KeePassPasskey.Passkey;
+
+internal sealed class PublicKeyComponents
 {
-    internal sealed class PublicKeyComponents
-    {
-        // ES256 (P-256)
-        internal byte[] X { get; set; }
-        internal byte[] Y { get; set; }
+	// ES256 (P-256)
+	internal byte[] X { get; set; }
+	internal byte[] Y { get; set; }
 
-        // EdDSA (Ed25519)
-        internal byte[] EdPublicKey { get; set; }
+	// EdDSA (Ed25519)
+	internal byte[] EdPublicKey { get; set; }
 
-        // RS256 (RSA-2048)
-        internal byte[] N { get; set; }
-        internal byte[] E { get; set; }
-    }
+	// RS256 (RSA-2048)
+	internal byte[] N { get; set; }
+	internal byte[] E { get; set; }
 }

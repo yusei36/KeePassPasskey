@@ -1,62 +1,62 @@
 <!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ui="using:FluentAvalonia.UI.Controls"
-             xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
-             x:Class="KeePassPasskeyProvider.App.Controls.LogView"
-             x:DataType="vm:LogViewModel">
-    <UserControl.Styles>
-        <Style Selector="TabControl#LogTabControl > TabItem">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="Padding" Value="4 3 10 3" />
-            <Setter Property="MinHeight" Value="0" />
-        </Style>
-    </UserControl.Styles>
-    <Grid>
-        <TabControl x:Name="LogTabControl" Padding="4"
-                    SelectedIndex="{Binding SelectedLogTabIndex}">
-            <TabItem Header="{Binding ProviderLogFileName}">
-                <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                        BorderThickness="1"
-                        CornerRadius="4">
-                    <ScrollViewer x:Name="LogScrollViewer"
-                                  Padding="8 6"
-                                  HorizontalScrollBarVisibility="Visible"
-                                  VerticalScrollBarVisibility="Auto">
-                        <SelectableTextBlock x:Name="LogTextBlock"
-                                             FontFamily="Consolas,Courier New,monospace"
-                                             FontSize="11"
-                                             TextWrapping="NoWrap" />
-                    </ScrollViewer>
-                </Border>
-            </TabItem>
-            <TabItem Header="Plugin.log">
-                <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
-                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-                        BorderThickness="1"
-                        CornerRadius="4">
-                    <ScrollViewer x:Name="PluginLogScrollViewer"
-                                  Padding="8 6"
-                                  HorizontalScrollBarVisibility="Visible"
-                                  VerticalScrollBarVisibility="Auto">
-                        <SelectableTextBlock x:Name="PluginLogTextBlock"
-                                             FontFamily="Consolas,Courier New,monospace"
-                                             FontSize="11"
-                                             TextWrapping="NoWrap" />
-                    </ScrollViewer>
-                </Border>
-            </TabItem>
-        </TabControl>
-        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Orientation="Horizontal" Spacing="2" Margin="0 2 4 0">
-            <Button Padding="4" Command="{Binding CopyLogCommand}" ToolTip.Tip="Copy log to clipboard">
-                <ui:FASymbolIcon Symbol="Copy" FontSize="14" />
-            </Button>
-            <Button Padding="4" Command="{Binding OpenLogFileCommand}" ToolTip.Tip="Open log file">
-                <ui:FASymbolIcon Symbol="Document" FontSize="14" />
-            </Button>
-        </StackPanel>
-    </Grid>
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:ui="using:FluentAvalonia.UI.Controls"
+						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+						 x:Class="KeePassPasskeyProvider.App.Controls.LogView"
+						 x:DataType="vm:LogViewModel">
+		<UserControl.Styles>
+				<Style Selector="TabControl#LogTabControl > TabItem">
+						<Setter Property="FontSize" Value="16" />
+						<Setter Property="Padding" Value="4 3 10 3" />
+						<Setter Property="MinHeight" Value="0" />
+				</Style>
+		</UserControl.Styles>
+		<Grid>
+				<TabControl x:Name="LogTabControl" Padding="4"
+										SelectedIndex="{Binding SelectedLogTabIndex}">
+						<TabItem Header="{Binding ProviderLogFileName}">
+								<Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
+												BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+												BorderThickness="1"
+												CornerRadius="4">
+										<ScrollViewer x:Name="LogScrollViewer"
+																	Padding="8 6"
+																	HorizontalScrollBarVisibility="Visible"
+																	VerticalScrollBarVisibility="Auto">
+												<SelectableTextBlock x:Name="LogTextBlock"
+																						 FontFamily="Consolas,Courier New,monospace"
+																						 FontSize="11"
+																						 TextWrapping="NoWrap" />
+										</ScrollViewer>
+								</Border>
+						</TabItem>
+						<TabItem Header="Plugin.log">
+								<Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
+												BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+												BorderThickness="1"
+												CornerRadius="4">
+										<ScrollViewer x:Name="PluginLogScrollViewer"
+																	Padding="8 6"
+																	HorizontalScrollBarVisibility="Visible"
+																	VerticalScrollBarVisibility="Auto">
+												<SelectableTextBlock x:Name="PluginLogTextBlock"
+																						 FontFamily="Consolas,Courier New,monospace"
+																						 FontSize="11"
+																						 TextWrapping="NoWrap" />
+										</ScrollViewer>
+								</Border>
+						</TabItem>
+				</TabControl>
+				<StackPanel HorizontalAlignment="Right" VerticalAlignment="Top"
+										Orientation="Horizontal" Spacing="2" Margin="0 2 4 0">
+						<Button Padding="4" Command="{Binding CopyLogCommand}" ToolTip.Tip="Copy log to clipboard">
+								<ui:FASymbolIcon Symbol="Copy" FontSize="14" />
+						</Button>
+						<Button Padding="4" Command="{Binding OpenLogFileCommand}" ToolTip.Tip="Open log file">
+								<ui:FASymbolIcon Symbol="Document" FontSize="14" />
+						</Button>
+				</StackPanel>
+		</Grid>
 </UserControl>

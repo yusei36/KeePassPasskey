@@ -3,41 +3,41 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Builds, signs, and installs the KeePassPasskey MSIX package.
+	Builds, signs, and installs the KeePassPasskey MSIX package.
 
 .DESCRIPTION
-    1. Builds the provider MSIX package (msbuild wapproj).
-    2. Creates a self-signed cert if one doesn't exist (CN=KeePassPasskey Dev for Debug, CN=KeePassPasskey for Release).
-    3. Signs the MSIX with that cert.
-    4. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
-    5. Installs the MSIX package.
+	1. Builds the provider MSIX package (msbuild wapproj).
+	2. Creates a self-signed cert if one doesn't exist (CN=KeePassPasskey Dev for Debug, CN=KeePassPasskey for Release).
+	3. Signs the MSIX with that cert.
+	4. Trusts the cert in LocalMachine\TrustedPeople (requires elevation only if not already trusted).
+	5. Installs the MSIX package.
 
-    Does not build the plugin DLL - that is built by the plugin project (e.g. on F5 in Visual Studio,
-    or by Publish-Package.ps1 for release).
+	Does not build the plugin DLL - that is built by the plugin project (e.g. on F5 in Visual Studio,
+	or by Publish-Package.ps1 for release).
 
 .PARAMETER Configuration
-    Build configuration: Debug or Release. Defaults to Debug.
+	Build configuration: Debug or Release. Defaults to Debug.
 
 .PARAMETER Release
-    Shortcut for -Configuration Release (product identity).
+	Shortcut for -Configuration Release (product identity).
 
 .PARAMETER SkipBuild
-    Skip build steps; use if you already have a built MSIX.
+	Skip build steps; use if you already have a built MSIX.
 
 .PARAMETER SkipCert
-    Skip cert creation; use if the cert already exists in CurrentUser\My.
+	Skip cert creation; use if the cert already exists in CurrentUser\My.
 
 .EXAMPLE
-    .\Install-Provider.ps1
-    .\Install-Provider.ps1 -Release
-    .\Install-Provider.ps1 -SkipBuild -SkipCert
+	.\Install-Provider.ps1
+	.\Install-Provider.ps1 -Release
+	.\Install-Provider.ps1 -SkipBuild -SkipCert
 #>
 param(
-    [ValidateSet('Debug', 'Release')]
-    [string]$Configuration = 'Debug',
-    [switch]$Release,
-    [switch]$SkipBuild,
-    [switch]$SkipCert
+	[ValidateSet('Debug', 'Release')]
+	[string]$Configuration = 'Debug',
+	[switch]$Release,
+	[switch]$SkipBuild,
+	[switch]$SkipCert
 )
 
 if ($Release) { $Configuration = 'Release' }
@@ -52,9 +52,9 @@ $AppPackagesDir = "$RepoRoot\build\AppPackages"
 
 # -- 0. Build ------------------------------------------------------------------
 if (-not $SkipBuild) {
-    $msbuild = Find-MSBuild
-    Write-Step "Building provider MSIX package"
-    Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
+	$msbuild = Find-MSBuild
+	Write-Step "Building provider MSIX package"
+	Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild
 }
 
 $MsixPath = Find-MsixPath -AppPackagesDir $AppPackagesDir -Configuration $Configuration
@@ -68,10 +68,10 @@ $thumb = $cert.Thumbprint
 # -- 2. Trust -----------------------------------------------------------------
 Write-Step "Checking certificate trust"
 if (Test-CertificateTrusted -Thumbprint $thumb) {
-    Write-Host "  Already trusted in LocalMachine\TrustedPeople."
+	Write-Host "  Already trusted in LocalMachine\TrustedPeople."
 } else {
-    Assert-Elevation
-    Add-TrustedCertificate -Cert $cert
+	Assert-Elevation
+	Add-TrustedCertificate -Cert $cert
 }
 
 # -- 3. Sign ------------------------------------------------------------------
@@ -84,38 +84,38 @@ Write-Step "Installing MSIX"
 # Only replace the package with the matching publisher, so a Debug install leaves a Release
 # install (and vice versa) untouched.
 $existing = Get-AppxPackage -Name 'KeePassPasskeyProvider' |
-            Where-Object { $_.Publisher -eq $certSubject } |
-            Select-Object -First 1
+			Where-Object { $_.Publisher -eq $certSubject } |
+			Select-Object -First 1
 if ($existing) {
-    Write-Host "  Removing existing package: $($existing.PackageFullName)"
-    # Stop only the provider process running from this package, not the other build's.
-    Get-Process -Name KeePassPasskeyProvider -ErrorAction SilentlyContinue |
-        Where-Object { $_.Path -and $_.Path.StartsWith($existing.InstallLocation, [StringComparison]::OrdinalIgnoreCase) } |
-        Stop-Process -Force -ErrorAction SilentlyContinue
-    Remove-AppxPackage -Package $existing.PackageFullName
-    Write-Host "  Removed."
+	Write-Host "  Removing existing package: $($existing.PackageFullName)"
+	# Stop only the provider process running from this package, not the other build's.
+	Get-Process -Name KeePassPasskeyProvider -ErrorAction SilentlyContinue |
+		Where-Object { $_.Path -and $_.Path.StartsWith($existing.InstallLocation, [StringComparison]::OrdinalIgnoreCase) } |
+		Stop-Process -Force -ErrorAction SilentlyContinue
+	Remove-AppxPackage -Package $existing.PackageFullName
+	Write-Host "  Removed."
 }
 
 Add-AppxPackage -Path $MsixPath
 Write-Host "  Installed."
 
 $pkg = Get-AppxPackage -Name 'KeePassPasskeyProvider' |
-       Where-Object { $_.Publisher -eq $certSubject } |
-       Select-Object -First 1
+	   Where-Object { $_.Publisher -eq $certSubject } |
+	   Select-Object -First 1
 if ($pkg) {
-    $logDir         = "$env:LocalAppData\KeePassPasskeyProvider"
-    $productVersion = Get-PluginVersion -BuildDir "$RepoRoot\build\$Configuration"
+	$logDir         = "$env:LocalAppData\KeePassPasskeyProvider"
+	$productVersion = Get-PluginVersion -BuildDir "$RepoRoot\build\$Configuration"
 
-    Write-Step "Done"
-    Write-Host "  Version:   $productVersion ($Configuration)" -ForegroundColor Green
-    Write-Host "  Package:   $($pkg.PackageFullName)" -ForegroundColor Green
-    Write-Host "  Location:  $($pkg.InstallLocation)" -ForegroundColor Green
-    Write-Host "  Logs:      $logDir" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Next steps:" -ForegroundColor Yellow
-    Write-Host "  Auto-registers on first launch (or manually: KeePassPasskeyProvider.exe /register)"
-    Write-Host "  Enable in: Settings -> Accounts -> Passkeys -> Advanced Options"
-    Write-Host "  Copy DLLs from build\$Configuration\ to KeePass Plugins\KeePassPasskeyPlugin\ folder"
+	Write-Step "Done"
+	Write-Host "  Version:   $productVersion ($Configuration)" -ForegroundColor Green
+	Write-Host "  Package:   $($pkg.PackageFullName)" -ForegroundColor Green
+	Write-Host "  Location:  $($pkg.InstallLocation)" -ForegroundColor Green
+	Write-Host "  Logs:      $logDir" -ForegroundColor Green
+	Write-Host ""
+	Write-Host "Next steps:" -ForegroundColor Yellow
+	Write-Host "  Auto-registers on first launch (or manually: KeePassPasskeyProvider.exe /register)"
+	Write-Host "  Enable in: Settings -> Accounts -> Passkeys -> Advanced Options"
+	Write-Host "  Copy DLLs from build\$Configuration\ to KeePass Plugins\KeePassPasskeyPlugin\ folder"
 } else {
-    Write-Warning "Package not found after install - check above for errors."
+	Write-Warning "Package not found after install - check above for errors."
 }

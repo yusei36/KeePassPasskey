@@ -6,5 +6,5 @@ namespace KeePassPasskeyProvider.App.Controls;
 
 public partial class StatusHero : UserControl
 {
-    public StatusHero() => InitializeComponent();
+	public StatusHero() => InitializeComponent();
 }

@@ -6,129 +6,128 @@ using System.IO.Pipes;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace KeePassPasskeyShared.Ipc
+namespace KeePassPasskeyShared.Ipc;
+
+/// <summary>
+/// Synchronous named-pipe client for the KeePass passkey plugin IPC protocol.
+/// Wire format: [4-byte LE uint32 length][UTF-8 JSON body]
+/// Returns null when the pipe is unavailable (KeePass not running).
+/// </summary>
+public sealed class PipeClient
 {
-    /// <summary>
-    /// Synchronous named-pipe client for the KeePass passkey plugin IPC protocol.
-    /// Wire format: [4-byte LE uint32 length][UTF-8 JSON body]
-    /// Returns null when the pipe is unavailable (KeePass not running).
-    /// </summary>
-    public sealed class PipeClient
-    {
-        private const int ConnectTimeoutMs = 2000;
-        private const int MaxMessageBytes = 1024 * 1024; // 1 MB sanity limit
+	private const int ConnectTimeoutMs = 2000;
+	private const int MaxMessageBytes = 1024 * 1024; // 1 MB sanity limit
 
-        private readonly Action<string> _logger;
-        private readonly string _pipeName;
+	private readonly Action<string> _logger;
+	private readonly string _pipeName;
 
-        public PipeClient(Action<string> logger = null, string pipeName = null)
-        {
-            _logger = logger;
-            _pipeName = pipeName ?? PipeConstants.PipeName;
-        }
+	public PipeClient(Action<string> logger = null, string pipeName = null)
+	{
+		_logger = logger;
+		_pipeName = pipeName ?? PipeConstants.PipeName;
+	}
 
-        public PingResponse Ping()
-            => Send<PingResponse>(new PingRequest());
+	public PingResponse Ping()
+		=> Send<PingResponse>(new PingRequest());
 
-        public GetCredentialsResponse GetCredentials(GetCredentialsRequest request)
-            => Send<GetCredentialsResponse>(request);
+	public GetCredentialsResponse GetCredentials(GetCredentialsRequest request)
+		=> Send<GetCredentialsResponse>(request);
 
-        public GetDatabasesResponse GetDatabases()
-            => Send<GetDatabasesResponse>(new GetDatabasesRequest());
+	public GetDatabasesResponse GetDatabases()
+		=> Send<GetDatabasesResponse>(new GetDatabasesRequest());
 
-        public FindMatchingEntriesResponse FindMatchingEntries(FindMatchingEntriesRequest request)
-            => Send<FindMatchingEntriesResponse>(request);
+	public FindMatchingEntriesResponse FindMatchingEntries(FindMatchingEntriesRequest request)
+		=> Send<FindMatchingEntriesResponse>(request);
 
-        public MakeCredentialResponse MakeCredential(MakeCredentialRequest request)
-            => Send<MakeCredentialResponse>(request);
+	public MakeCredentialResponse MakeCredential(MakeCredentialRequest request)
+		=> Send<MakeCredentialResponse>(request);
 
-        public GetAssertionResponse GetAssertion(GetAssertionRequest request)
-            => Send<GetAssertionResponse>(request);
+	public GetAssertionResponse GetAssertion(GetAssertionRequest request)
+		=> Send<GetAssertionResponse>(request);
 
-        public CancelResponse Cancel()
-            => Send<CancelResponse>(new CancelRequest());
+	public CancelResponse Cancel()
+		=> Send<CancelResponse>(new CancelRequest());
 
-        public GetSettingsResponse GetSettings()
-            => Send<GetSettingsResponse>(new GetSettingsRequest());
+	public GetSettingsResponse GetSettings()
+		=> Send<GetSettingsResponse>(new GetSettingsRequest());
 
-        public SaveSettingsResponse SaveSettings(SaveSettingsRequest request)
-            => Send<SaveSettingsResponse>(request);
+	public SaveSettingsResponse SaveSettings(SaveSettingsRequest request)
+		=> Send<SaveSettingsResponse>(request);
 
 #if NET5_0_OR_GREATER
-        [System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
+	[System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
 #endif
-        private TResponse Send<TResponse>(PipeRequestBase request) where TResponse : PipeResponseBase, new()
-        {
-            request.ProtocolVersion = PipeConstants.ProtocolVersion;
-            try
-            {
-                using (var pipe = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut))
-                {
-                    pipe.Connect(ConnectTimeoutMs);
+	private TResponse Send<TResponse>(PipeRequestBase request) where TResponse : PipeResponseBase, new()
+	{
+		request.ProtocolVersion = PipeConstants.ProtocolVersion;
+		try
+		{
+			using (var pipe = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut))
+			{
+				pipe.Connect(ConnectTimeoutMs);
 
-                    string requestJson = JsonConvert.SerializeObject(request);
-                    byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
-                    _logger?.Invoke($">> {requestJson}");
-                    WriteMessage(pipe, requestBytes);
+				string requestJson = JsonConvert.SerializeObject(request);
+				byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
+				_logger?.Invoke($">> {requestJson}");
+				WriteMessage(pipe, requestBytes);
 
-                    byte[] responseBytes = ReadMessage(pipe);
-                    string responseJson = Encoding.UTF8.GetString(responseBytes);
-                    _logger?.Invoke($"<< {responseJson}");
-                    return JsonConvert.DeserializeObject<TResponse>(responseJson);
-                }
-            }
-            catch (JsonException ex)
-            {
-                _logger?.Invoke($"{ex.GetType().Name}: {ex.Message}");
-                return new TResponse
-                {
-                    ErrorCode = PipeErrorCode.InternalError,
-                    ErrorMessage = $"Could not read the response from KeePass, which may mean the plugin and provider versions are incompatible: {ex.Message}"
-                };
-            }
-            catch (Exception ex)
-            {
-                _logger?.Invoke($"{ex.GetType().Name}: {ex.Message}");
-                return null;
-            }
-        }
+				byte[] responseBytes = ReadMessage(pipe);
+				string responseJson = Encoding.UTF8.GetString(responseBytes);
+				_logger?.Invoke($"<< {responseJson}");
+				return JsonConvert.DeserializeObject<TResponse>(responseJson);
+			}
+		}
+		catch (JsonException ex)
+		{
+			_logger?.Invoke($"{ex.GetType().Name}: {ex.Message}");
+			return new TResponse
+			{
+				ErrorCode = PipeErrorCode.InternalError,
+				ErrorMessage = $"Could not read the response from KeePass, which may mean the plugin and provider versions are incompatible: {ex.Message}"
+			};
+		}
+		catch (Exception ex)
+		{
+			_logger?.Invoke($"{ex.GetType().Name}: {ex.Message}");
+			return null;
+		}
+	}
 
-        private static void WriteMessage(NamedPipeClientStream pipe, byte[] json)
-        {
-            uint length = (uint)json.Length;
-            byte[] lenBuf = new byte[4];
-            lenBuf[0] = (byte)(length & 0xFF);
-            lenBuf[1] = (byte)((length >> 8) & 0xFF);
-            lenBuf[2] = (byte)((length >> 16) & 0xFF);
-            lenBuf[3] = (byte)((length >> 24) & 0xFF);
-            pipe.Write(lenBuf, 0, 4);
-            pipe.Write(json, 0, json.Length);
-            pipe.Flush();
-        }
+	private static void WriteMessage(NamedPipeClientStream pipe, byte[] json)
+	{
+		uint length = (uint)json.Length;
+		byte[] lenBuf = new byte[4];
+		lenBuf[0] = (byte)(length & 0xFF);
+		lenBuf[1] = (byte)((length >> 8) & 0xFF);
+		lenBuf[2] = (byte)((length >> 16) & 0xFF);
+		lenBuf[3] = (byte)((length >> 24) & 0xFF);
+		pipe.Write(lenBuf, 0, 4);
+		pipe.Write(json, 0, json.Length);
+		pipe.Flush();
+	}
 
-        private static byte[] ReadMessage(NamedPipeClientStream pipe)
-        {
-            byte[] lenBuf = new byte[4];
-            ReadExact(pipe, lenBuf, 4);
-            uint length = (uint)(lenBuf[0] | (lenBuf[1] << 8) | (lenBuf[2] << 16) | (lenBuf[3] << 24));
+	private static byte[] ReadMessage(NamedPipeClientStream pipe)
+	{
+		byte[] lenBuf = new byte[4];
+		ReadExact(pipe, lenBuf, 4);
+		uint length = (uint)(lenBuf[0] | (lenBuf[1] << 8) | (lenBuf[2] << 16) | (lenBuf[3] << 24));
 
-            if (length == 0 || length > MaxMessageBytes)
-                throw new IOException($"PipeClient: invalid message length {length}");
+		if (length == 0 || length > MaxMessageBytes)
+			throw new IOException($"PipeClient: invalid message length {length}");
 
-            byte[] buf = new byte[length];
-            ReadExact(pipe, buf, (int)length);
-            return buf;
-        }
+		byte[] buf = new byte[length];
+		ReadExact(pipe, buf, (int)length);
+		return buf;
+	}
 
-        private static void ReadExact(NamedPipeClientStream pipe, byte[] buffer, int count)
-        {
-            int totalRead = 0;
-            while (totalRead < count)
-            {
-                int n = pipe.Read(buffer, totalRead, count - totalRead);
-                if (n == 0) throw new IOException("PipeClient: unexpected end of stream");
-                totalRead += n;
-            }
-        }
-    }
+	private static void ReadExact(NamedPipeClientStream pipe, byte[] buffer, int count)
+	{
+		int totalRead = 0;
+		while (totalRead < count)
+		{
+			int n = pipe.Read(buffer, totalRead, count - totalRead);
+			if (n == 0) throw new IOException("PipeClient: unexpected end of stream");
+			totalRead += n;
+		}
+	}
 }

@@ -1,14 +1,14 @@
 <Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-    <Platform Name="x64" />
-  </Configurations>
-  <Project Path="src/KeePassPasskeyPlugin/KeePassPasskeyPlugin.csproj" />
-  <Project Path="src/KeePassPasskeyProvider.Package/KeePassPasskeyProvider.Package.wapproj" Type="c7167f0d-bc9f-4e6a-af43-b78bc42e4f7e">
-    <!-- The wapproj only defines x64; map the solution's Any CPU platform onto it. -->
-    <Platform Solution="*|Any CPU" Project="x64" />
-  </Project>
-  <Project Path="src/KeePassPasskeyProvider/KeePassPasskeyProvider.csproj" />
-  <Project Path="src/KeePassPasskeyShared/KeePassPasskeyShared.csproj" />
-  <Project Path="src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj" />
+	<Configurations>
+		<Platform Name="Any CPU" />
+		<Platform Name="x64" />
+	</Configurations>
+	<Project Path="src/KeePassPasskeyPlugin/KeePassPasskeyPlugin.csproj" />
+	<Project Path="src/KeePassPasskeyProvider.Package/KeePassPasskeyProvider.Package.wapproj" Type="c7167f0d-bc9f-4e6a-af43-b78bc42e4f7e">
+		<!-- The wapproj only defines x64; map the solution's Any CPU platform onto it. -->
+		<Platform Solution="*|Any CPU" Project="x64" />
+	</Project>
+	<Project Path="src/KeePassPasskeyProvider/KeePassPasskeyProvider.csproj" />
+	<Project Path="src/KeePassPasskeyShared/KeePassPasskeyShared.csproj" />
+	<Project Path="src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj" />
 </Solution>

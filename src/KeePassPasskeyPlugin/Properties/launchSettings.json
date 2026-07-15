@@ -1,26 +1,26 @@
 {
-  "profiles": {
-    "KeePass": {
-      "commandName": "Executable",
-      "executablePath": "..\\..\\build\\KeePass\\KeePass.exe"
-    },
-    "KeePass + Install Provider": {
-      "commandName": "Executable",
-      "executablePath": "conhost.exe",
-      "commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Start-DevSession.ps1\" -DebugPlugin",
-      "workingDirectory": "."
-    },
-    "KeePass + Debug Provider": {
-      "commandName": "Executable",
-      "executablePath": "conhost.exe",
-      "commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Start-DevSession.ps1\" -DebugProvider -DebugPlugin",
-      "workingDirectory": "."
-    },
-    "Install Store Provider": {
-      "commandName": "Executable",
-      "executablePath": "conhost.exe",
-      "commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Install-StoreProvider.ps1\"",
-      "workingDirectory": "."
-    }
-  }
+	"profiles": {
+		"KeePass": {
+			"commandName": "Executable",
+			"executablePath": "..\\..\\build\\KeePass\\KeePass.exe"
+		},
+		"KeePass + Install Provider": {
+			"commandName": "Executable",
+			"executablePath": "conhost.exe",
+			"commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Start-DevSession.ps1\" -DebugPlugin",
+			"workingDirectory": "."
+		},
+		"KeePass + Debug Provider": {
+			"commandName": "Executable",
+			"executablePath": "conhost.exe",
+			"commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Start-DevSession.ps1\" -DebugProvider -DebugPlugin",
+			"workingDirectory": "."
+		},
+		"Install Store Provider": {
+			"commandName": "Executable",
+			"executablePath": "conhost.exe",
+			"commandLineArgs": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"..\\..\\scripts\\Install-StoreProvider.ps1\"",
+			"workingDirectory": "."
+		}
+	}
 }

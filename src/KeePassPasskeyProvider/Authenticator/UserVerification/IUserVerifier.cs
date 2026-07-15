@@ -7,9 +7,9 @@ namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal interface IUserVerifier
 {
-    UserVerificationMode Mode { get; }
-    int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
-        Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
-        out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
-    int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId);
+	UserVerificationMode Mode { get; }
+	int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
+		Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
+		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
+	int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId);
 }

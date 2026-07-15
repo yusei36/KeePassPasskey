@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Runtime.InteropServices;
 
@@ -28,14 +28,14 @@ namespace KeePassPasskeyProvider.Authenticator.Native;
 /// <summary>PLUGIN_LOCK_STATUS.</summary>
 internal enum PluginLockStatus : int
 {
-    PluginLocked = 0,
-    PluginUnlocked = 1,
+	PluginLocked = 0,
+	PluginUnlocked = 1,
 }
 
 /// <summary>WEBAUTHN_PLUGIN_REQUEST_TYPE.</summary>
 internal enum WebAuthnPluginRequestType : uint
 {
-    Ctap2Cbor = 1, // WEBAUTHN_PLUGIN_REQUEST_TYPE_CTAP2_CBOR
+	Ctap2Cbor = 1, // WEBAUTHN_PLUGIN_REQUEST_TYPE_CTAP2_CBOR
 }
 
 #endregion
@@ -49,13 +49,13 @@ internal enum WebAuthnPluginRequestType : uint
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginOperationRequest
 {
-    public nint hWnd;                              // HWND
-    public Guid transactionId;                     // 16 bytes
-    public uint cbRequestSignature;
-    public byte* pbRequestSignature;
-    public WebAuthnPluginRequestType requestType;  // enum = DWORD
-    public uint cbEncodedRequest;
-    public byte* pbEncodedRequest;
+	public nint hWnd;                              // HWND
+	public Guid transactionId;                     // 16 bytes
+	public uint cbRequestSignature;
+	public byte* pbRequestSignature;
+	public WebAuthnPluginRequestType requestType;  // enum = DWORD
+	public uint cbEncodedRequest;
+	public byte* pbEncodedRequest;
 }
 
 /// <summary>
@@ -65,17 +65,17 @@ internal unsafe struct WebAuthnPluginOperationRequest
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginOperationResponse
 {
-    public uint cbEncodedResponse;
-    public byte* pbEncodedResponse;
+	public uint cbEncodedResponse;
+	public byte* pbEncodedResponse;
 }
 
 /// <summary>WEBAUTHN_PLUGIN_CANCEL_OPERATION_REQUEST - passed in by the platform.</summary>
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct WebAuthnPluginCancelOperationRequest
 {
-    public Guid transactionId;
-    public uint cbRequestSignature;
-    public byte* pbRequestSignature;
+	public Guid transactionId;
+	public uint cbRequestSignature;
+	public byte* pbRequestSignature;
 }
 
 #endregion
@@ -85,14 +85,14 @@ internal unsafe struct WebAuthnPluginCancelOperationRequest
 /// <summary>COM interface IIDs from pluginauthenticator.h and the COM standard.</summary>
 internal static class ComIids
 {
-    /// <summary>IPluginAuthenticator IID (pluginauthenticator.h MIDL_INTERFACE).</summary>
-    public static readonly Guid IID_IPluginAuthenticator = new("d26bcf6f-b54c-43ff-9f06-d5bf148625f7");
+	/// <summary>IPluginAuthenticator IID (pluginauthenticator.h MIDL_INTERFACE).</summary>
+	public static readonly Guid IID_IPluginAuthenticator = new("d26bcf6f-b54c-43ff-9f06-d5bf148625f7");
 
-    /// <summary>IClassFactory IID (standard COM).</summary>
-    public static readonly Guid IID_IClassFactory = new("00000001-0000-0000-C000-000000000046");
+	/// <summary>IClassFactory IID (standard COM).</summary>
+	public static readonly Guid IID_IClassFactory = new("00000001-0000-0000-C000-000000000046");
 
-    /// <summary>IUnknown IID (standard COM).</summary>
-    public static readonly Guid IID_IUnknown = new("00000000-0000-0000-C000-000000000046");
+	/// <summary>IUnknown IID (standard COM).</summary>
+	public static readonly Guid IID_IUnknown = new("00000000-0000-0000-C000-000000000046");
 }
 
 #endregion
