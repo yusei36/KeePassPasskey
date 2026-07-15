@@ -1,7 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.ComponentModel;
-using Avalonia.Controls;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -210,11 +209,11 @@ public sealed partial class SettingsViewModel : ObservableObject
 		NewPasskeyBackupState = NewPasskeyBackupState && NewPasskeyBackupEligible, // BS implies BE
 	};
 
-	public static UserVerificationMode[] VerificationModes { get; } = (UserVerificationMode[])Enum.GetValues(typeof(UserVerificationMode));
-	public static PasskeyEntryGroupMode[] GroupModes { get; } = (PasskeyEntryGroupMode[])Enum.GetValues(typeof(PasskeyEntryGroupMode));
-	public static ExcludeCredentialCheckMode[] ExcludeCredentialCheckModes { get; } = (ExcludeCredentialCheckMode[])Enum.GetValues(typeof(ExcludeCredentialCheckMode));
-	public static LogLevel[] LogLevels { get; } = (LogLevel[])Enum.GetValues(typeof(LogLevel));
-	public static Theme[] Themes { get; } = (Theme[])Enum.GetValues(typeof(Theme));
+	public static UserVerificationMode[] VerificationModes { get; } = Enum.GetValues<UserVerificationMode>();
+	public static PasskeyEntryGroupMode[] GroupModes { get; } = Enum.GetValues<PasskeyEntryGroupMode>();
+	public static ExcludeCredentialCheckMode[] ExcludeCredentialCheckModes { get; } = Enum.GetValues<ExcludeCredentialCheckMode>();
+	public static LogLevel[] LogLevels { get; } = Enum.GetValues<LogLevel>();
+	public static Theme[] Themes { get; } = Enum.GetValues<Theme>();
 	public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
 	public string AppVersionFull => DiagnosticsViewModel.ClientVersion;
 	public static bool IsOfficialRelease { get; } = CheckIsOfficialRelease();

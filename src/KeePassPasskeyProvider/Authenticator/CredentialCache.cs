@@ -331,7 +331,7 @@ internal static unsafe class CredentialCache
 	}
 
 	// Managed mirror of WebAuthnPluginCredentialDetails for diffing
-	private record ManagedCredentialDetails(
+	private sealed record ManagedCredentialDetails(
 		byte[] CredentialId,
 		string RpId,
 		string RpName,
@@ -356,7 +356,7 @@ internal static unsafe class CredentialCache
 				p->pwszUserDisplayName != null ? new string(p->pwszUserDisplayName) : string.Empty);
 		}
 
-		public virtual bool Equals(ManagedCredentialDetails? other)
+		public bool Equals(ManagedCredentialDetails? other)
 		{
 			if (other is null) return false;
 			return CredentialId.AsSpan().SequenceEqual(other.CredentialId)

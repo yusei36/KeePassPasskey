@@ -1,6 +1,5 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
-using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

@@ -1,7 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Diagnostics;
-using System.IO;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 

@@ -16,6 +16,18 @@ public class PipeClientMalformedResponseTests
 	// Unique per test: the real pipe name would collide with a dev KeePass instance.
 	private static string NewPipeName() => "keepass-passkey-test-" + Guid.NewGuid().ToString("N");
 
+	// A pipe read can return short; loop until the caller's count is satisfied.
+	private static async Task ReadExactly(Stream stream, byte[] buffer, int count, CancellationToken ct)
+	{
+		int total = 0;
+		while (total < count)
+		{
+			int read = await stream.ReadAsync(buffer, total, count - total, ct).ConfigureAwait(false);
+			if (read == 0) throw new EndOfStreamException();
+			total += read;
+		}
+	}
+
 	// Serves one canned reply so PipeClient.Send can be driven end to end.
 	private static Task ServeOnce(string pipeName, string responseJson, CancellationToken ct)
 	{
@@ -27,9 +39,9 @@ public class PipeClientMalformedResponseTests
 				await server.WaitForConnectionAsync(ct);
 
 				var lenBuf = new byte[4];
-				await server.ReadAsync(lenBuf, 0, 4, ct);
+				await ReadExactly(server, lenBuf, 4, ct);
 				int len = lenBuf[0] | (lenBuf[1] << 8) | (lenBuf[2] << 16) | (lenBuf[3] << 24);
-				await server.ReadAsync(new byte[len], 0, len, ct);
+				await ReadExactly(server, new byte[len], len, ct);
 
 				var body = Encoding.UTF8.GetBytes(responseJson);
 				var outLen = BitConverter.GetBytes((uint)body.Length);

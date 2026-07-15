@@ -24,7 +24,7 @@ internal static class Program
 	internal static bool StartHidden { get; private set; }
 
 	[MTAThread]
-	static int Main(string[] args)
+	private static int Main(string[] args)
 	{
 		KeePassPasskeySettings.Current = SettingsCache.TryLoad() ?? new KeePassPasskeySettings();
 		AppSettings.Current = AppSettings.TryLoad() ?? new AppSettings();
@@ -73,7 +73,7 @@ internal static class Program
 			return RunManagementUI();
 
 		// /register | /unregister | /status - attach to parent console so output is visible
-		Win32Native.AttachConsole(Win32Native.ATTACH_PARENT_PROCESS);
+		_ = Win32Native.AttachConsole(Win32Native.ATTACH_PARENT_PROCESS);
 
 		return RunManagementCommand(args);
 	}

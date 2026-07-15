@@ -9,7 +9,7 @@ namespace KeePassPasskeyProvider.Util;
 
 internal static class Notifier
 {
-	private static bool _enabled => KeePassPasskeySettings.Current.ShowErrorNotifications;
+	private static bool Enabled => KeePassPasskeySettings.Current.ShowErrorNotifications;
 
 	public static void ShowMakeCredentialError(string rpId, PipeErrorCode? code, string? errorMessage = null) =>
 		ShowError("Passkey creation failed", ErrorBody(code, rpId, errorMessage));
@@ -51,7 +51,7 @@ internal static class Notifier
 
 	private static void ShowError(string title, string body)
 	{
-		if (!_enabled) return;
+		if (!Enabled) return;
 		try
 		{
 			new ToastContentBuilder()

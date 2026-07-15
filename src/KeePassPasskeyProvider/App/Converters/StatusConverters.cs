@@ -1,6 +1,5 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
-using System.Globalization;
 using Avalonia.Data.Converters;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
@@ -30,7 +29,7 @@ internal static class ProviderStatusConverters
 		_ => "Not registered",
 	});
 
-	private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);
+	private static LambdaConverter Make(Func<object?, object?> convert) => new(convert);
 }
 
 internal static class PluginPillConverters
@@ -44,7 +43,7 @@ internal static class PluginPillConverters
 		_ => "Not connected",
 	});
 
-	private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);
+	private static LambdaConverter Make(Func<object?, object?> convert) => new(convert);
 }
 
 internal static class UserVerificationModeConverters
@@ -57,5 +56,5 @@ internal static class UserVerificationModeConverters
 		_ => "None",
 	});
 
-	private static IValueConverter Make(Func<object?, object?> convert) => new LambdaConverter(convert);
+	private static LambdaConverter Make(Func<object?, object?> convert) => new(convert);
 }

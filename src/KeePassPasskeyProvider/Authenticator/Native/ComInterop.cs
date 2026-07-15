@@ -74,6 +74,6 @@ internal static class ComRegistration
 
 	internal static void RevokeClassFactory(uint cookie)
 	{
-		Win32Native.CoRevokeClassObject(cookie);
+		_ = Win32Native.CoRevokeClassObject(cookie);
 	}
 }

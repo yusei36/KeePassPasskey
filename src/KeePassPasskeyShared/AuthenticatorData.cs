@@ -52,6 +52,7 @@ public static class AuthenticatorData
 		}
 	}
 
+#pragma warning disable CA1850 // SHA256.HashData is net5+; this project also targets net48.
 	private static void WriteRpIdHash(MemoryStream ms, string rpId)
 	{
 		using (var sha = SHA256.Create())
@@ -60,6 +61,7 @@ public static class AuthenticatorData
 			ms.Write(hash, 0, hash.Length);
 		}
 	}
+#pragma warning restore CA1850
 
 	private static void WriteUInt32BE(MemoryStream ms, uint value)
 	{

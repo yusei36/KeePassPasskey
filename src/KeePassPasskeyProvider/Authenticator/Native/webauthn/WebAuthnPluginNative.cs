@@ -26,12 +26,16 @@ namespace KeePassPasskeyProvider.Authenticator.Native;
 
 #region Enums / constants
 
+#pragma warning disable CA1712 // Members mirror the native header names verbatim.
+
 /// <summary>AUTHENTICATOR_STATE (PLUGIN_AUTHENTICATOR_STATE).</summary>
 internal enum AuthenticatorState : int
 {
 	AuthenticatorState_Disabled = 0,
 	AuthenticatorState_Enabled = 1,
 }
+
+#pragma warning restore CA1712
 
 /// <summary>WEBAUTHN_PLUGIN_PERFORM_UV_OPERATION_TYPE.</summary>
 internal enum WebAuthnPluginPerformUvOperationType : int

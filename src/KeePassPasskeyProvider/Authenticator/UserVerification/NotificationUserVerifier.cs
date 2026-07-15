@@ -1,5 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
+using System.Globalization;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
 using KeePassPasskeyProvider.Authenticator.Native;
@@ -112,7 +113,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 		var notifier = ToastNotificationManagerCompat.CreateToastNotifier();
 		notifier.Show(toast);
-		RunCountdown(notifier, toast, tag, timeoutSeconds, cts.Token, () => tcs.TrySetResult(false));
+		RunCountdown(notifier, toast, tag, timeoutSeconds, () => tcs.TrySetResult(false), cts.Token);
 
 		return tcs.Task.GetAwaiter().GetResult();
 	}
@@ -142,7 +143,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			};
 			int dbCount = Math.Min(databases.Count, MaxToastSelectionItems);
 			for (int i = 0; i < dbCount; i++)
-				selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(), databases[i].Name));
+				selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(CultureInfo.InvariantCulture), databases[i].Name));
 			if (databases.Count > MaxToastSelectionItems)
 				Log.Warn($"Database picker truncated to {MaxToastSelectionItems} of {databases.Count} open databases", nameof(NotificationUserVerifier));
 			builder.AddToastInput(selectionBox);
@@ -170,7 +171,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			var args = ((ToastActivatedEventArgs)a).Arguments;
 			var inputs = ((ToastActivatedEventArgs)a).UserInput;
 			string? indexStr = inputs.ContainsKey(selectionBoxId) ? inputs[selectionBoxId]?.ToString() : "0";
-			int idx = int.TryParse(indexStr, out int idxParsed) && idxParsed >= 0 && idxParsed < databases.Count ? idxParsed : 0;
+			int idx = int.TryParse(indexStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out int idxParsed) && idxParsed >= 0 && idxParsed < databases.Count ? idxParsed : 0;
 			DatabaseInfo selectedDb = databases[idx];
 			var selected = new DatabaseInfo { Id = selectedDb.Id, Name = selectedDb.Name };
 
@@ -189,7 +190,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 		var notifier = ToastNotificationManagerCompat.CreateToastNotifier();
 		notifier.Show(toast);
-		RunCountdown(notifier, toast, tag, timeoutSeconds, cts.Token, () => tcs.TrySetResult((RegistrationAction.Deny, null)));
+		RunCountdown(notifier, toast, tag, timeoutSeconds, () => tcs.TrySetResult((RegistrationAction.Deny, null)), cts.Token);
 
 		return tcs.Task.GetAwaiter().GetResult();
 	}
@@ -226,7 +227,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			Title = "Save to entry"
 		};
 		for (int i = 0; i < shown; i++)
-			selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(), EntryLabel(candidates[i], showDbName)));
+			selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(CultureInfo.InvariantCulture), EntryLabel(candidates[i], showDbName)));
 		if (truncated)
 			Log.Warn($"Entry picker truncated to {MaxToastSelectionItems} of {candidates.Count} matching entries", nameof(NotificationUserVerifier));
 		builder.AddToastInput(selectionBox);
@@ -256,7 +257,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			if (action == "new") { tcs.TrySetResult((EntryPickerAction.CreateNew, null)); return; }
 
 			string? indexStr = inputs.ContainsKey(selectionBoxId) ? inputs[selectionBoxId]?.ToString() : "0";
-			int idx = int.TryParse(indexStr, out int idxParsed) && idxParsed >= 0 && idxParsed < candidates.Count ? idxParsed : 0;
+			int idx = int.TryParse(indexStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out int idxParsed) && idxParsed >= 0 && idxParsed < candidates.Count ? idxParsed : 0;
 			tcs.TrySetResult((EntryPickerAction.UseEntry, candidates[idx]));
 		};
 		toast.Dismissed += (s, a) => { cts.Cancel(); tcs.TrySetResult((EntryPickerAction.Cancel, null)); };
@@ -264,7 +265,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 		var notifier = ToastNotificationManagerCompat.CreateToastNotifier();
 		notifier.Show(toast);
-		RunCountdown(notifier, toast, tag, timeoutSeconds, cts.Token, () => tcs.TrySetResult((EntryPickerAction.Cancel, null)));
+		RunCountdown(notifier, toast, tag, timeoutSeconds, () => tcs.TrySetResult((EntryPickerAction.Cancel, null)), cts.Token);
 
 		return tcs.Task.GetAwaiter().GetResult();
 	}
@@ -313,7 +314,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 	// Drives the countdown progress bar and hides the toast + fires onTimeout when it elapses.
 	// Cancelled (via the token) as soon as the user acts on the toast.
 	private static void RunCountdown(ToastNotifierCompat notifier, ToastNotification toast, string tag,
-		int timeoutSeconds, CancellationToken token, Action onTimeout)
+		int timeoutSeconds, Action onTimeout, CancellationToken token)
 	{
 		_ = Task.Run(async () =>
 		{
@@ -332,6 +333,6 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			}
 			notifier.Hide(toast);
 			onTimeout();
-		});
+		}, token);
 	}
 }

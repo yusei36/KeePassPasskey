@@ -15,6 +15,7 @@ namespace KeePassPasskeyProvider.Authenticator;
 /// Managed implementation of IPluginAuthenticator.
 /// Each COM activation creates one instance; CancelOperation sets m_cancelled.
 /// </summary>
+#pragma warning disable CA1725 // "Raw" suffix frees the interface's name for the typed pointer cast from it.
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
 public sealed class PluginAuthenticator : IPluginAuthenticator
@@ -544,3 +545,4 @@ public sealed class ClassFactory : IClassFactory
 		return HResults.S_OK;
 	}
 }
+#pragma warning restore CA1725
