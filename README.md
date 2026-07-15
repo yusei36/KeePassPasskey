@@ -87,8 +87,6 @@ The AAGUID tells relying parties which authenticator created a passkey. KeePassP
 
 `9addb28c-b46f-4402-808f-019651441ff3`
 
-This is the default, it can be overridden per device (see [Spoof AAGUID](docs/user-guide.md#spoof-aaguid) in the user guide).
-
 ## Project structure
 
 ```

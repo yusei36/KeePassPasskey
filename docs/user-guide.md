@@ -35,6 +35,8 @@ A list of available passkey providers appears. Select **KeePassPasskey**.
 
 A notification from KeePassPasskey appears in the taskbar. Click **Create passkey** to save the passkey to your KeePass database. If more than one KeePass database is unlocked, a database picker appears first. Select the database you want to save to.
 
+At most **5** unlocked databases are offered in this picker. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If you regularly work with more than 5 databases open, keep only the ones you save passkeys to unlocked.
+
 <img src="images/passkey-creation-step3.png" width="300" alt="KeePassPasskey notification with &quot;Passkey creation requested&quot; and the Create passkey button">
 
 <img src="images/passkey-creation-select-db.png" width="300" alt="KeePassPasskey dialog for selecting which open KeePass database to save the passkey to">
@@ -58,6 +60,8 @@ Matching is by website: an entry qualifies when it already holds a passkey for t
 This is controlled by the **Offer saving to an existing entry** setting (on by default). Turn it off to always create new entries.
 
 ## Signing in with a passkey
+
+KeePassPasskey searches all open databases during sign-in, so you do not need to switch to a particular database first.
 
 ### Login with a passkey instead of a password
 
@@ -109,9 +113,13 @@ A KeePassPasskey notification appears in the taskbar. Click **Approve** to confi
 
 Passkeys are stored as standard KeePass entries in the **Passkeys** group.
 
-When creating a passkey and multiple databases are open, KeePassPasskey will ask you to choose which database to save it to (see step 3 in [Creating a passkey](#creating-a-passkey)). At most **5** open databases are offered in this picker. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If more than 5 databases are open, keep only the ones you save passkeys to unlocked. During sign-in, KeePassPasskey searches all open databases, so you do not need to switch databases before signing in. If a passkey ends up in the wrong entry or database, you can relocate it with the **Passkey** cut/copy/paste actions described in [Moving or copying a passkey between entries](#moving-or-copying-a-passkey-between-entries).
+### Organising passkey entries
 
-Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **Passkeys** group itself can also be renamed. Note that if a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey. The KeePass Recycle Bin has searching disabled by default, so restoring a deleted passkey entry from there requires moving it to another group first.
+Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **Passkeys** group itself can also be renamed.
+
+If a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey.
+
+If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **Passkeys** group before registering again on a site.
 
 ### Moving or copying a passkey between entries
 
@@ -124,11 +132,13 @@ This works across open databases: cut or copy in one database, switch to another
 
 Both entries keep their **History**. The destination entry is backed up before the passkey is written onto it, so if it already held a passkey the previous version can be restored; when moving, the source entry is backed up before its passkey is removed. Pasting onto an entry that already has a passkey asks you to confirm the replacement first. The destination's **URL** and **User name** are filled in only when empty, so any login details you already entered there are preserved.
 
+### Deleting a passkey
+
 To delete a passkey, delete its KeePass entry.
 
-If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **Passkeys** group before registering again on a site.
+Deleted entries move to the KeePass Recycle Bin, which has searching disabled by default, so KeePassPasskey stops finding the passkey as soon as it lands there. To restore a deleted passkey, move its entry out of the Recycle Bin into another group.
 
-Passkeys created by [KeePassXC](https://keepassxc.org/) are stored in the same format and are fully compatible.
+### Passkey entry format
 
 KeePassPasskey identifies an entry as a passkey by the presence of the `KPEX_PASSKEY_CREDENTIAL_ID` and `KPEX_PASSKEY_RELYING_PARTY` fields. An entry without these fields will not be recognised as a passkey, regardless of which group it is in.
 
@@ -143,6 +153,8 @@ Each passkey entry contains these custom fields:
 | `KPEX_PASSKEY_USER_HANDLE` | User identifier from the website |
 | `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag (`1`/`0`, default `1`) |
 | `KPEX_PASSKEY_FLAG_BS` | Backup State flag (`1`/`0`, default `1`) |
+
+Passkeys created by [KeePassXC](https://keepassxc.org/) are stored in the same format and are fully compatible.
 
 ## Settings
 
