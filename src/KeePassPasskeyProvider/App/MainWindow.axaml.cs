@@ -5,9 +5,11 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Windowing;
 using KeePassPasskeyProvider.App.Pages;
+using KeePassPasskeyProvider.App.Utils;
 using KeePassPasskeyProvider.App.ViewModel;
 using KeePassPasskeyProvider.Util;
 
@@ -17,6 +19,8 @@ public partial class MainWindow : FAAppWindow
 {
     private DiagnosticsPage? _diagnosticsPage;
     private SettingsPage? _settingsPage;
+    private FANavigationViewItem? _currentItem;
+    private bool _suppressSelectionChanged;
 
     public MainWindow() : this(new MainWindowViewModel()) { } // required by Avalonia XAML loader
 
@@ -80,8 +84,45 @@ public partial class MainWindow : FAAppWindow
 
     private void NavView_SelectionChanged(object? sender, FANavigationViewSelectionChangedEventArgs args)
     {
+        if (_suppressSelectionChanged) return;
         if (args.SelectedItem is not FANavigationViewItem item) return;
         var vm = (MainWindowViewModel)DataContext!;
+
+        if (_currentItem is { } current && current != item
+            && current.Tag?.ToString() == "settings" && vm.Settings.HasUnsavedChanges)
+        {
+            Dispatcher.UIThread.Post(() => _ = ConfirmLeaveSettingsAsync(current, item, vm));
+            return;
+        }
+
+        _currentItem = item;
+        Navigate(item, vm);
+    }
+
+    // SelectionChanged cannot be cancelled, so the highlight is reverted while asking.
+    private async Task ConfirmLeaveSettingsAsync(
+        FANavigationViewItem settingsItem, FANavigationViewItem target, MainWindowViewModel vm)
+    {
+        SelectWithoutNavigating(settingsItem);
+        switch (await DialogService.ShowUnsavedChangesAsync())
+        {
+            case UnsavedChangesChoice.Cancel:
+                return;
+            case UnsavedChangesChoice.Save:
+                await vm.Settings.SaveCommand.ExecuteAsync(null);
+                if (vm.Settings.HasUnsavedChanges) return; // save failed and reported itself
+                break;
+            case UnsavedChangesChoice.Discard:
+                vm.Settings.ResetCommand.Execute(null);
+                break;
+        }
+        SelectWithoutNavigating(target);
+        _currentItem = target;
+        Navigate(target, vm);
+    }
+
+    private void Navigate(FANavigationViewItem item, MainWindowViewModel vm)
+    {
         switch (item.Tag?.ToString())
         {
             case "home":
@@ -98,6 +139,13 @@ public partial class MainWindow : FAAppWindow
                 NavView.Content = _settingsPage;
                 break;
         }
+    }
+
+    private void SelectWithoutNavigating(FANavigationViewItem item)
+    {
+        _suppressSelectionChanged = true;
+        NavView.SelectedItem = item;
+        _suppressSelectionChanged = false;
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
