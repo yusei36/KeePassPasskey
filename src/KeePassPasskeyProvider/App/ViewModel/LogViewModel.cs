@@ -21,6 +21,8 @@ public sealed partial class LogViewModel : ObservableObject, IDisposable
     private readonly FileSystemWatcher? _pluginLogWatcher;
     private static readonly string _pluginLogFilePath = Path.Combine(Log.LogDir, "Plugin.log");
 
+    public string ProviderLogFileName => Path.GetFileName(Log.LogFilePath);
+
     internal LogViewModel()
     {
         string logDir = Path.GetDirectoryName(Log.LogFilePath)!;

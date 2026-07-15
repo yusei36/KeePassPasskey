@@ -16,7 +16,7 @@
     <Grid>
         <TabControl x:Name="LogTabControl" Padding="4"
                     SelectedIndex="{Binding SelectedLogTabIndex}">
-            <TabItem Header="Provider.log">
+            <TabItem Header="{Binding ProviderLogFileName}">
                 <Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
                         BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                         BorderThickness="1"

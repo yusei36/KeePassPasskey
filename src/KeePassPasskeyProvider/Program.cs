@@ -4,6 +4,7 @@ using Avalonia;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using KeePassPasskeyShared;
+using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
@@ -29,8 +30,10 @@ internal static class Program
         AppSettings.Current  = AppSettings.TryLoad() ?? new AppSettings();
 
         Log.Configure(
-            Path.Combine(AppPaths.LogDir, "Provider.log"),
+            Path.Combine(AppPaths.LogDir, PluginConstants.ProviderLogFileName),
             KeePassPasskeySettings.Current.LogLevel);
+
+        Log.Info($"Provider {PipeConstants.Version} ({PluginConstants.Channel} channel), PID {Environment.ProcessId}");
 
         if (IsToastActivation())
             return 0;

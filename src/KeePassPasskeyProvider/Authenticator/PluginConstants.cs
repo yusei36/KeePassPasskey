@@ -2,6 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 namespace KeePassPasskeyProvider.Authenticator;
 
+/// <summary>Distribution channel a build belongs to; selected at compile time.</summary>
+internal enum DistributionChannel
+{
+    /// <summary>Debug build with the dev identity (CN=KeePassPasskey Dev).</summary>
+    Dev,
+    /// <summary>Self-signed release published on GitHub.</summary>
+    GitHub,
+    /// <summary>Release published to the Microsoft Store (/p:Store=true).</summary>
+    Store,
+}
+
 internal static class PluginConstants
 {
 #if DEBUG
@@ -10,20 +21,33 @@ internal static class PluginConstants
 
     /// <summary>KeePassPasskey Provider AAGUID (dev).</summary>
     public static readonly Guid KeePassPasskeyProviderAaguid = new("56fc5580-c119-4fb8-8964-a1241f2da8ed");
+
+    /// <summary>Distribution channel of this build.</summary>
+    public const DistributionChannel Channel = DistributionChannel.Dev;
 #else
     // Two Release channels: distinct CLSID (avoids COM class collision) selected by the STORE
     // constant (/p:Store=true); shared AAGUID since it names the model, not the instance.
 #if STORE
     /// <summary>KeePassPasskey Provider COM server CLSID (Microsoft Store channel).</summary>
     public static readonly Guid KeePassPasskeyProviderClsid = new("281969eb-44a9-4577-954d-b47e72665442");
+
+    /// <summary>Distribution channel of this build.</summary>
+    public const DistributionChannel Channel = DistributionChannel.Store;
 #else
     /// <summary>KeePassPasskey Provider COM server CLSID (self-signed GitHub channel).</summary>
     public static readonly Guid KeePassPasskeyProviderClsid = new("4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e");
+
+    /// <summary>Distribution channel of this build.</summary>
+    public const DistributionChannel Channel = DistributionChannel.GitHub;
 #endif
 
     /// <summary>KeePassPasskey Provider AAGUID (shared across both Release channels).</summary>
     public static readonly Guid KeePassPasskeyProviderAaguid = new("9addb28c-b46f-4402-808f-019651441ff3");
 #endif
+
+    /// <summary>Provider log file name</summary>
+    public static readonly string ProviderLogFileName =
+        Channel == DistributionChannel.GitHub ? "Provider.log" : $"Provider-{Channel}.log";
 
     /// <summary>AAGUID as 16 bytes in RFC 4122 big-endian order, for use in authenticatorData and CBOR.</summary>
     public static readonly byte[] KeePassPasskeyProviderAaguidBytes = AaguidToRfc4122Bytes(KeePassPasskeyProviderAaguid);
