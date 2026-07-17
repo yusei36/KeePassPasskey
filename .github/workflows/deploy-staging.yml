@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: Deploy Staging Website
+name: Deploy · Staging Site
 # Deploys the staging site to yusei36.github.io/KeePassPasskey/ (GitHub Pages of this repo).
 # Shares the build step with deploy-website.yml via .github/actions/build-website.
 # When changing build behaviour, keep both workflows and the action in sync.

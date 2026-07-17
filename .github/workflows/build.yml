@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-name: Build
+name: CI · Build & Test
+run-name: >-
+  Build · ${{ github.head_ref || github.ref_name }} · ${{ github.event.head_commit.message || github.event.pull_request.title || github.event_name }}
 
 on:
   push:
