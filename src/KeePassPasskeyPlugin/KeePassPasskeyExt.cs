@@ -52,10 +52,7 @@ public sealed class KeePassPasskeyExt : Plugin
 
 		var settingsStorage = new SettingsStorage(host);
 		var initialSettings = settingsStorage.Load();
-		Log.Configure(Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-			"KeePassPasskeyProvider", "Plugin.log"),
-			initialSettings.LogLevel);
+		Log.Configure(PluginLogFile.FilePath, initialSettings.LogLevel);
 
 		// Windows 11 24H2 required (build 26100+) for the passkey provider API.
 		var buildVersion = GetRealWindowsBuildNumber();

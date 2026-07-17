@@ -4,6 +4,7 @@
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						 xmlns:ui="using:FluentAvalonia.UI.Controls"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+						 xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
 						 x:Class="KeePassPasskeyProvider.App.Controls.LogView"
 						 x:DataType="vm:LogViewModel">
 		<UserControl.Styles>
@@ -13,8 +14,8 @@
 						<Setter Property="MinHeight" Value="0" />
 				</Style>
 		</UserControl.Styles>
-		<Grid>
-				<TabControl x:Name="LogTabControl" Padding="4"
+		<Grid RowDefinitions="*,Auto">
+				<TabControl Grid.Row="0" x:Name="LogTabControl" Padding="4"
 										SelectedIndex="{Binding SelectedLogTabIndex}">
 						<TabItem Header="{Binding ProviderLogFileName}">
 								<Border Background="{DynamicResource ControlFillColorSecondaryBrush}"
@@ -49,14 +50,35 @@
 								</Border>
 						</TabItem>
 				</TabControl>
-				<StackPanel HorizontalAlignment="Right" VerticalAlignment="Top"
-										Orientation="Horizontal" Spacing="2" Margin="0 2 4 0">
-						<Button Padding="4" Command="{Binding CopyLogCommand}" ToolTip.Tip="Copy log to clipboard">
-								<ui:FASymbolIcon Symbol="Copy" FontSize="14" />
-						</Button>
-						<Button Padding="4" Command="{Binding OpenLogFileCommand}" ToolTip.Tip="Open log file">
-								<ui:FASymbolIcon Symbol="Document" FontSize="14" />
-						</Button>
-				</StackPanel>
+				<Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="4 6 4 0"
+							VerticalAlignment="Center">
+						<SelectableTextBlock Grid.Column="0"
+																 Text="{Binding CurrentLogFilePath}"
+																 FontFamily="Consolas,Courier New,monospace"
+																 FontSize="11" Opacity="0.7"
+																 TextTrimming="CharacterEllipsis"
+																 TextWrapping="NoWrap"
+																 VerticalAlignment="Center">
+								<ToolTip.Tip>
+										<ToolTip MaxWidth="360">
+												<TextBlock Text="{Binding CurrentLogFilePath, Converter={x:Static conv:CharacterWrapConverter.Instance}}"
+																	 TextWrapping="Wrap"
+																	 FontFamily="Consolas,Courier New,monospace"
+																	 FontSize="11" />
+										</ToolTip>
+								</ToolTip.Tip>
+						</SelectableTextBlock>
+						<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
+								<Button Padding="4" Command="{Binding OpenLogDirCommand}" ToolTip.Tip="Open log directory">
+										<ui:FASymbolIcon Symbol="Folder" FontSize="14" />
+								</Button>
+								<Button Padding="4" Command="{Binding OpenLogFileCommand}" ToolTip.Tip="Open log file">
+										<ui:FASymbolIcon Symbol="Document" FontSize="14" />
+								</Button>
+								<Button Padding="4" Command="{Binding CopyLogCommand}" ToolTip.Tip="Copy log to clipboard">
+										<ui:FASymbolIcon Symbol="Copy" FontSize="14" />
+								</Button>
+						</StackPanel>
+				</Grid>
 		</Grid>
 </UserControl>

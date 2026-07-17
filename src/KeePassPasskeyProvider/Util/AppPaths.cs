@@ -4,19 +4,26 @@ namespace KeePassPasskeyProvider.Util;
 
 internal static class AppPaths
 {
-	/// <summary>
-	/// Always %LOCALAPPDATA%\KeePassPasskeyProvider — used for the log file so it is
-	/// accessible outside the MSIX package container.
-	/// </summary>
-	internal static readonly string LogDir = Path.Combine(
-		Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-		"KeePassPasskeyProvider");
+	/// <summary>Where the plugin writes Plugin.log, and the provider's fallback when unpackaged (dev/CI).</summary>
+	internal static readonly string SharedLocalAppDataDir = KeePassPasskeyShared.PluginLogFile.DirectoryPath;
 
-	/// <summary>
-	/// When running as an MSIX package, the container's LocalState folder;
-	/// otherwise falls back to the same directory as LogDir.
-	/// </summary>
+	/// <summary>LocalCache when packaged, else the shared fallback.</summary>
+	internal static readonly string LogDir = GetLogDir();
+
+	/// <summary>LocalState when packaged, else the shared fallback.</summary>
 	internal static readonly string SettingsDir = GetSettingsDir();
+
+	private static string GetLogDir()
+	{
+		try
+		{
+			return Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path;
+		}
+		catch
+		{
+			return SharedLocalAppDataDir;
+		}
+	}
 
 	private static string GetSettingsDir()
 	{
@@ -26,7 +33,7 @@ internal static class AppPaths
 		}
 		catch
 		{
-			return LogDir;
+			return SharedLocalAppDataDir;
 		}
 	}
 }

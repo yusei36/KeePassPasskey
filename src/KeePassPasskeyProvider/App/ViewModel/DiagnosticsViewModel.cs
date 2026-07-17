@@ -39,7 +39,6 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 
 	public static string ClientVersion => _appVersion;
 	public static string ClientVersionShort => ShortenVersion(_appVersion);
-	public static string LogDirPath => Log.LogDir;
 
 	partial void OnServerVersionChanged(string? value)
 	{
@@ -70,16 +69,6 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 	{
 		if (text is null) return;
 		await Application.CopyToClipboardAsync(text);
-	}
-
-	[RelayCommand]
-	private void OpenLogDir()
-	{
-		System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-		{
-			FileName = LogDirPath,
-			UseShellExecute = true,
-		});
 	}
 
 	private static string ShortenVersion(string v)

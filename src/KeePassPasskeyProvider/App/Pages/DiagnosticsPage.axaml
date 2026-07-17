@@ -99,29 +99,6 @@
 																</Button>
 														</Grid>
 
-														<!-- Log directory row -->
-														<Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
-																<TextBlock Grid.Column="0"
-																					 Text="Log directory"
-																					 FontFamily="Consolas,Courier New,monospace"
-																					 FontSize="12.5" FontWeight="SemiBold"
-																					 VerticalAlignment="Center" />
-																<Border Grid.Column="1"
-																				Background="{DynamicResource ControlFillColorSecondaryBrush}"
-																				BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
-																				BorderThickness="1" CornerRadius="4" Padding="8 4">
-																		<SelectableTextBlock Text="{Binding LogDirPath}"
-																												 FontFamily="Consolas,Courier New,monospace"
-																												 FontSize="11.5" Opacity="0.7" />
-																</Border>
-																<Button Grid.Column="2"
-																				Padding="4"
-																				Command="{Binding OpenLogDirCommand}"
-																				ToolTip.Tip="Open log directory">
-																		<ui:FASymbolIcon Symbol="Folder" FontSize="14" />
-																</Button>
-														</Grid>
-
 														<!-- COM Server actions -->
 														<Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
 																<TextBlock Grid.Column="0"

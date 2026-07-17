@@ -16,28 +16,35 @@ public sealed partial class LogViewModel : ObservableObject, IDisposable
 	[ObservableProperty] public partial int SelectedLogTabIndex { get; set; }
 	[ObservableProperty] public partial bool IsLogVisible { get; set; }
 
-	private readonly FileSystemWatcher? _providerLogWatcher;
-	private readonly FileSystemWatcher? _pluginLogWatcher;
-	private static readonly string _pluginLogFilePath = Path.Combine(Log.LogDir, "Plugin.log");
+	private static readonly string _pluginLogFilePath = PluginLogFile.FilePath;
+	private readonly DispatcherTimer _pollTimer;
+	private (DateTime Time, long Length) _providerStamp;
+	private (DateTime Time, long Length) _pluginStamp;
 
 	public string ProviderLogFileName => Path.GetFileName(Log.LogFilePath);
 
+	public string CurrentLogFilePath => SelectedLogTabIndex == 0 ? Log.LogFilePath : _pluginLogFilePath;
+
 	internal LogViewModel()
 	{
-		string logDir = Path.GetDirectoryName(Log.LogFilePath)!;
-		if (Directory.Exists(logDir))
-		{
-			_providerLogWatcher = CreateWatcher(logDir, Path.GetFileName(Log.LogFilePath), ReloadProviderLog);
-			_pluginLogWatcher = CreateWatcher(logDir, Path.GetFileName(_pluginLogFilePath), ReloadPluginLog);
-		}
+		// The provider is packaged, so MSIX AppData redirection makes a FileSystemWatcher on the plugin's real-path log unreliable
+		_pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+		_pollTimer.Tick += (_, _) => PollLogs();
 	}
+
+	partial void OnSelectedLogTabIndexChanged(int value) => OnPropertyChanged(nameof(CurrentLogFilePath));
 
 	partial void OnIsLogVisibleChanged(bool value)
 	{
 		if (value)
 		{
-			ReloadProviderLog();
-			ReloadPluginLog();
+			_providerStamp = _pluginStamp = (DateTime.MinValue, -1);
+			PollLogs();
+			_pollTimer.Start();
+		}
+		else
+		{
+			_pollTimer.Stop();
 		}
 	}
 
@@ -52,39 +59,50 @@ public sealed partial class LogViewModel : ObservableObject, IDisposable
 	[RelayCommand]
 	private void OpenLogFile()
 	{
-		string path = SelectedLogTabIndex == 0 ? Log.LogFilePath : _pluginLogFilePath;
 		System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
 		{
-			FileName = path,
+			FileName = CurrentLogFilePath,
 			UseShellExecute = true,
 		});
 	}
 
-	public void Dispose()
+	[RelayCommand]
+	private void OpenLogDir()
 	{
-		_providerLogWatcher?.Dispose();
-		_pluginLogWatcher?.Dispose();
-	}
-
-	private static FileSystemWatcher CreateWatcher(string dir, string file, Action reload)
-	{
-		var watcher = new FileSystemWatcher(dir, file)
+		string? dir = Path.GetDirectoryName(CurrentLogFilePath);
+		if (dir == null) return;
+		Directory.CreateDirectory(dir);
+		System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
 		{
-			NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
-			EnableRaisingEvents = true,
-		};
-		watcher.Changed += (_, _) => Dispatcher.UIThread.Post(reload);
-		watcher.Created += (_, _) => Dispatcher.UIThread.Post(reload);
-		return watcher;
+			FileName = dir,
+			UseShellExecute = true,
+		});
 	}
 
-	private void ReloadProviderLog() => ReloadLogFile(Log.LogFilePath, lines => ProviderLogLines = lines);
+	public void Dispose() => _pollTimer.Stop();
 
-	private void ReloadPluginLog() => ReloadLogFile(_pluginLogFilePath, lines => PluginLogLines = lines);
+	private void PollLogs()
+	{
+		ReloadIfChanged(Log.LogFilePath, ref _providerStamp, lines => ProviderLogLines = lines);
+		ReloadIfChanged(_pluginLogFilePath, ref _pluginStamp, lines => PluginLogLines = lines);
+	}
+
+	private void ReloadIfChanged(string filePath, ref (DateTime Time, long Length) stamp, Action<IReadOnlyList<LogLine>> setLines)
+	{
+		(DateTime Time, long Length) current = default;
+		try
+		{
+			var info = new FileInfo(filePath);
+			if (info.Exists) current = (info.LastWriteTimeUtc, info.Length);
+		}
+		catch { /* treat as unchanged */ }
+		if (current == stamp) return;
+		stamp = current;
+		ReloadLogFile(filePath, setLines);
+	}
 
 	private void ReloadLogFile(string filePath, Action<IReadOnlyList<LogLine>> setLines)
 	{
-		if (!IsLogVisible) return;
 		try
 		{
 			if (!File.Exists(filePath))

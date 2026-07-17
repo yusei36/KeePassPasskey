@@ -123,6 +123,7 @@ public partial class MainWindow : FAAppWindow
 
 	private void Navigate(FANavigationViewItem item, MainWindowViewModel vm)
 	{
+		vm.Diagnostics.LogPanel.IsLogVisible = false;
 		switch (item.Tag?.ToString())
 		{
 			case "home":
