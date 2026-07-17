@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 name: Deploy · Staging Site
+run-name: >-
+  Staging · ${{ github.ref_name }} · ${{ github.event.head_commit.message || github.event_name }}
 # Deploys the staging site to yusei36.github.io/KeePassPasskey/ (GitHub Pages of this repo).
 # Shares the build step with deploy-website.yml via .github/actions/build-website.
 # When changing build behaviour, keep both workflows and the action in sync.
