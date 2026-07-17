@@ -66,6 +66,13 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
 				// 3. Build JSON request for KeePass
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
+
+				CtapRequestDump.LogRequest(pDecoded);
+
+				// Always return "none"; warn when a site asks for enterprise attestation so a rejection is traceable.
+				if (pDecoded->dwEnterpriseAttestation != WebAuthnConstants.EnterpriseAttestationNone)
+					Log.Warn($"Relying party {rpIdUtf8} requested enterprise attestation ({pDecoded->dwEnterpriseAttestation}); KeePassPasskey can't provide this and will return none. The site may reject the passkey if enterprise attestation is required.");
+
 				string userIdB64 = string.Empty;
 				string userNameStr = string.Empty;
 				string userDisplayStr = string.Empty;
@@ -218,6 +225,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
 				string clientDataHashB64 = Convert.ToBase64String(
 					new ReadOnlySpan<byte>(pDecoded->pbClientDataHash, (int)pDecoded->cbClientDataHash).ToArray());
+
+				CtapRequestDump.LogRequest(pDecoded);
 
 				var allowList = ExtractCredentialIds(pDecoded->CredentialList);
 
