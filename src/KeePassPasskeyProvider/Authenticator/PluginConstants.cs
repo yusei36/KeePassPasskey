@@ -46,8 +46,7 @@ internal static class PluginConstants
 #endif
 
 	/// <summary>Provider log file name</summary>
-	public static readonly string ProviderLogFileName =
-		Channel == DistributionChannel.GitHub ? "Provider.log" : $"Provider-{Channel}.log";
+	public const string ProviderLogFileName = "Provider.log";
 
 	/// <summary>AAGUID as 16 bytes in RFC 4122 big-endian order, for use in authenticatorData and CBOR.</summary>
 	public static readonly byte[] KeePassPasskeyProviderAaguidBytes = AaguidToRfc4122Bytes(KeePassPasskeyProviderAaguid);

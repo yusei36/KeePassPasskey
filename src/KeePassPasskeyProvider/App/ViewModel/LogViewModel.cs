@@ -21,8 +21,6 @@ public sealed partial class LogViewModel : ObservableObject, IDisposable
 	private (DateTime Time, long Length) _providerStamp;
 	private (DateTime Time, long Length) _pluginStamp;
 
-	public string ProviderLogFileName => Path.GetFileName(Log.LogFilePath);
-
 	public string CurrentLogFilePath => SelectedLogTabIndex == 0 ? Log.LogFilePath : _pluginLogFilePath;
 
 	internal LogViewModel()
