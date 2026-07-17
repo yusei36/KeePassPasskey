@@ -3,8 +3,8 @@ REM SPDX-License-Identifier: GPL-3.0-or-later
 @echo off
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    PowerShell -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
-    exit /b
+	PowerShell -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+	exit /b
 )
 
 set "LOG=%~dp0install_user.log"
@@ -30,22 +30,22 @@ echo Writing user install script...
 set "PS1=%~dp0install_user.ps1"
 
 (
-    echo $log = '%~dp0install_user.log'
-    echo function Log { process { Write-Host $_; $_ ^| Out-File -FilePath $log -Append -Encoding ASCII } }
-    echo function LogError { process { Write-Host $_ -ForegroundColor Red; $_ ^| Out-File -FilePath $log -Append -Encoding ASCII } }
-    echo "Installing MSIX package..." ^| Log
-    echo try {
-    echo     Add-AppxPackage -Path '%MSIX%' -ErrorAction Stop 2^>^&1 ^| Log
-    echo } catch {
-    echo     "ERROR: Install failed: $_" ^| LogError
-    echo     Read-Host "Press Enter to exit"
-    echo     exit 1
-    echo }
-    echo "Starting KeePassPasskeyProvider..." ^| Log
-    echo Start-Process KeePassPasskeyProvider.exe
-    echo "Done." ^| Log
-    echo Remove-Item $PSCommandPath
-    echo Start-Sleep -Seconds 10
+	echo $log = '%~dp0install_user.log'
+	echo function Log { process { Write-Host $_; $_ ^| Out-File -FilePath $log -Append -Encoding ASCII } }
+	echo function LogError { process { Write-Host $_ -ForegroundColor Red; $_ ^| Out-File -FilePath $log -Append -Encoding ASCII } }
+	echo "Installing MSIX package..." ^| Log
+	echo try {
+	echo     Add-AppxPackage -Path '%MSIX%' -ErrorAction Stop 2^>^&1 ^| Log
+	echo } catch {
+	echo     "ERROR: Install failed: $_" ^| LogError
+	echo     Read-Host "Press Enter to exit"
+	echo     exit 1
+	echo }
+	echo "Starting KeePassPasskeyProvider..." ^| Log
+	echo Start-Process KeePassPasskeyProvider.exe
+	echo "Done." ^| Log
+	echo Remove-Item $PSCommandPath
+	echo Start-Sleep -Seconds 10
 ) > "%PS1%"
 
 echo Creating and running scheduled task...
