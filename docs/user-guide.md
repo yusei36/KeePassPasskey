@@ -136,6 +136,8 @@ Both entries keep their **History**. The destination entry is backed up before t
 
 To delete a passkey, delete its KeePass entry.
 
+To remove the passkey but keep the entry, for example an entry that also holds your password login, right-click it and choose **Passkey → Remove Passkey**. KeePassPasskey asks you to confirm, then strips the passkey fields while leaving the rest of the entry intact. The removed passkey is saved to the entry's **History** first, so you can restore it from there if you need it back.
+
 Deleted entries move to the KeePass Recycle Bin, which has searching disabled by default, so KeePassPasskey stops finding the passkey as soon as it lands there. To restore a deleted passkey, move its entry out of the Recycle Bin into another group.
 
 ### Passkey entry format
