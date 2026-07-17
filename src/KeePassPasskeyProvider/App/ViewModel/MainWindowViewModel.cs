@@ -25,11 +25,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 
 	public bool IsNotPackaged { get; } = !IsRunningAsPackage();
 
-#if DEBUG
-	public bool IsDevBuild => true;
-#else
-	public bool IsDevBuild => false;
-#endif
+	public bool IsDevBuild => PluginConstants.Channel == DistributionChannel.Dev;
 
 	public string WindowTitle => IsDevBuild ? "KeePassPasskey Dev" : "KeePassPasskey";
 
