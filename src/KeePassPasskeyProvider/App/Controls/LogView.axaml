@@ -5,6 +5,7 @@
 						 xmlns:ui="using:FluentAvalonia.UI.Controls"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 						 xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
+						 xmlns:ctrl="using:KeePassPasskeyProvider.App.Controls"
 						 x:Class="KeePassPasskeyProvider.App.Controls.LogView"
 						 x:DataType="vm:LogViewModel">
 		<UserControl.Styles>
@@ -26,7 +27,7 @@
 																	Padding="8 6"
 																	HorizontalScrollBarVisibility="Visible"
 																	VerticalScrollBarVisibility="Auto">
-												<SelectableTextBlock x:Name="LogTextBlock"
+												<ctrl:LineSelectableTextBlock x:Name="LogTextBlock"
 																						 FontFamily="Consolas,Courier New,monospace"
 																						 FontSize="11"
 																						 TextWrapping="NoWrap" />
@@ -42,7 +43,7 @@
 																	Padding="8 6"
 																	HorizontalScrollBarVisibility="Visible"
 																	VerticalScrollBarVisibility="Auto">
-												<SelectableTextBlock x:Name="PluginLogTextBlock"
+												<ctrl:LineSelectableTextBlock x:Name="PluginLogTextBlock"
 																						 FontFamily="Consolas,Courier New,monospace"
 																						 FontSize="11"
 																						 TextWrapping="NoWrap" />
