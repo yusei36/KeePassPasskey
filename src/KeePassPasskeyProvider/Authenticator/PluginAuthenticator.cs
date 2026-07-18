@@ -266,8 +266,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
 
-				// TEMP PRF PROBE: parse the salt(s), HMAC with the fixed probe key, and forward the
-				// output to the plugin so it embeds it in the SIGNED authData extensions.
+				// TEMP PRF PROBE: parse the salt(s) and HMAC with the fixed probe key. The output goes
+				// back via the CTAP key-8 unsignedExtensionOutputs channel (built in EncodeAssertion),
+				// which RE of webauthn.dll proved is the real channel. We do NOT send it to the plugin
+				// anymore (no signed-authData embedding) so this isolates the key-8 path.
 				byte[] getExtMap = ExtractCborExtensionsMap(pDecoded->cbCborExtensionsMap, pDecoded->pbCborExtensionsMap);
 				byte[]? prfPayload = PrfProbe.ComputeHmacPayload(getExtMap);
 				Log.Info($"PRF: assertion hmacOutput={(prfPayload != null ? Convert.ToHexString(prfPayload) : "(none)")}");
@@ -278,7 +280,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 					RpId = rpIdUtf8,
 					ClientDataHash = clientDataHashB64,
 					AllowCredentials = allowList,
-					HmacSecretOutput = prfPayload != null ? Base64Url.Encode(prfPayload) : null,
+					HmacSecretOutput = null, // key-8 channel test: leave signed authData untouched
 				};
 
 				// 6. Send to KeePass plugin
@@ -298,11 +300,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 					return MapErrorCode(response.ErrorCode);
 				}
 
-				// 7. Encode assertion response (authData passes through unchanged; the plugin already
-				// embedded and signed the hmac-secret extension).
+				// 7. Encode assertion response. authData passes through unchanged; the PRF output is
+				// carried in the CTAP key-8 unsignedExtensionOutputs channel (see EncodeAssertion).
 				int hrEnc = EncodeAssertion(
 					response.AuthenticatorData, response.Signature, response.CredentialId, response.UserHandle,
-					response.UserName, response.UserDisplayName, null, out uint cbEncoded, out byte* pbEncoded);
+					response.UserName, response.UserDisplayName, prfPayload, out uint cbEncoded, out byte* pbEncoded);
 				Log.Info($"WebAuthNEncodeGetAssertionResponse hr=0x{hrEnc:X8} cb={cbEncoded}");
 				if (hrEnc < 0) return hrEnc;
 
@@ -584,11 +586,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		byte[]? hmacSecretOutput,
 		out uint cbEncoded, out byte* pbEncoded)
 	{
-		// TEMP PRF PROBE: split the raw HMAC payload into first (32) / optional second (32).
-		byte[] hmacFirst = hmacSecretOutput != null && hmacSecretOutput.Length >= 32
-			? hmacSecretOutput[..32] : Array.Empty<byte>();
-		byte[] hmacSecond = hmacSecretOutput != null && hmacSecretOutput.Length >= 64
-			? hmacSecretOutput[32..64] : Array.Empty<byte>();
+		// TEMP PRF PROBE: build the CTAP key-8 unsignedExtensionOutputs value as a bare CBOR map
+		// {"prf":{"results":{"first":<32B>[,"second":<32B>]}}}. RE of webauthn.dll proved this is
+		// the real assertion output channel; pHmacSecret / signed-authData were both dead ends.
+		byte[] prfOutputCbor = hmacSecretOutput != null && hmacSecretOutput.Length >= 32
+			? PrfProbe.BuildAssertionPrfOutput(hmacSecretOutput) : Array.Empty<byte>();
 		// Convert base64/base64url strings to byte arrays
 		byte[] authDataBytes = Convert.FromBase64String(authDataB64 ?? string.Empty);
 		byte[] signatureBytes = Convert.FromBase64String(signatureB64 ?? string.Empty);
@@ -603,8 +605,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		fixed (byte* sigPtr = signatureBytes)
 		fixed (byte* uhPtr = userHandleBytes.Length > 0 ? userHandleBytes : new byte[1])
 		fixed (byte* credPtr = credIdBytes.Length > 0 ? credIdBytes : new byte[1])
-		fixed (byte* hmacFirstPtr = hmacFirst.Length > 0 ? hmacFirst : new byte[1])
-		fixed (byte* hmacSecondPtr = hmacSecond.Length > 0 ? hmacSecond : new byte[1])
+		fixed (byte* prfOutputPtr = prfOutputCbor.Length > 0 ? prfOutputCbor : new byte[1])
 		fixed (char* typePtr = WebAuthnConstants.CredentialTypePublicKey)
 		fixed (char* namePtr = userName ?? string.Empty)
 		fixed (char* dispPtr = (userDisplayName ?? userName) ?? string.Empty)
@@ -630,18 +631,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 			assertionResp.dwNumberOfCredentials = 1;
 			assertionResp.lUserSelected = 1; // TRUE
 
-			// TEMP PRF PROBE: structured hmac-secret output via WebAuthnAssertion.pHmacSecret.
-			WebAuthnHmacSecretSalt hmacSalt = default;
-			if (hmacFirst.Length > 0)
+			// TEMP PRF PROBE: PRF output via CTAP key-8 unsignedExtensionOutputs (bare CBOR map).
+			if (prfOutputCbor.Length > 0)
 			{
-				hmacSalt.cbFirst = (uint)hmacFirst.Length;
-				hmacSalt.pbFirst = hmacFirstPtr;
-				if (hmacSecond.Length > 0)
-				{
-					hmacSalt.cbSecond = (uint)hmacSecond.Length;
-					hmacSalt.pbSecond = hmacSecondPtr;
-				}
-				assertionResp.WebAuthNAssertion.pHmacSecret = &hmacSalt;
+				assertionResp.cbUnsignedExtensionOutputs = (uint)prfOutputCbor.Length;
+				assertionResp.pbUnsignedExtensionOutputs = prfOutputPtr;
+				Log.Info($"PRF: assertion unsignedExtOutput={Convert.ToHexString(prfOutputCbor)}");
 			}
 
 			// Build user info if we have a user handle

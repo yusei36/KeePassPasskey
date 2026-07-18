@@ -45,6 +45,25 @@ internal static class PrfProbe
     }
 
     /// <summary>
+    /// Assertion extension output for the CTAP key-8 (unsignedExtensionOutputs) channel:
+    /// a BARE CBOR map <c>{"prf": {"results": {"first": &lt;32B&gt;[, "second": &lt;32B&gt;]}}}</c>.
+    /// webauthn.dll (PluginReencodeResponse) reads key 8 as a map, extracts "prf", then "results",
+    /// then "first"/"second" byte strings. The value must be a bare map (not a bstr-wrapped map),
+    /// which is exactly what PeterO.Cbor emits for a map here. <paramref name="payload"/> is the raw
+    /// HMAC output (32 bytes = first, 64 bytes = first||second).
+    /// </summary>
+    internal static byte[] BuildAssertionPrfOutput(byte[] payload)
+    {
+        var results = CBORObject.NewMap()
+            .Add("first", CBORObject.FromObject(payload[..32]));
+        if (payload.Length >= 64)
+            results.Add("second", CBORObject.FromObject(payload[32..64]));
+        var outMap = CBORObject.NewMap()
+            .Add("prf", CBORObject.NewMap().Add("results", results));
+        return outMap.EncodeToBytes();
+    }
+
+    /// <summary>
     /// Returns a copy of the registration authenticatorData with the ED (extension data) flag set
     /// and a <c>{"hmac-secret": true}</c> CBOR extensions map appended — the CTAP-canonical signal
     /// that hmac-secret was enabled for this credential. Extensions live at the very end of authData
