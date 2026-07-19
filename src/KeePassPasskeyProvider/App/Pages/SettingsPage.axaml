@@ -350,7 +350,6 @@
 																					 VerticalAlignment="Center" />
 																<Button x:Name="VerifyReleaseButton"
 																				Command="{Binding VerifyReleaseCommand}"
-																				IsVisible="{Binding IsOfficialRelease}"
 																				VerticalAlignment="Center"
 																				Padding="0"
 																				Background="Transparent"
@@ -366,8 +365,9 @@
 																						<Setter Property="Background" Value="Transparent" />
 																				</Style>
 																		</Button.Styles>
-																		<ui:FASymbolIcon Symbol="Checkmark" FontSize="10"
-																									 Foreground="{DynamicResource SystemFillColorSuccessBrush}" />
+																		<Path Data="{x:Static utils:ChannelIcon.Geometry}"
+																					Fill="{DynamicResource TextFillColorSecondaryBrush}"
+																					Stretch="Uniform" Width="11" Height="11" />
 																</Button>
 														</StackPanel>
 												</StackPanel>

@@ -215,10 +215,9 @@ public sealed partial class SettingsViewModel : ObservableObject
 	public static LogLevel[] LogLevels { get; } = Enum.GetValues<LogLevel>();
 	public static Theme[] Themes { get; } = Enum.GetValues<Theme>();
 	public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
-	public string AppVersionFull => DiagnosticsViewModel.ClientVersion;
-	public static bool IsOfficialRelease { get; } = CheckIsOfficialRelease();
+	public string AppVersionFull => DiagnosticsViewModel.ClientVersionWithChannel;
 
-	[ObservableProperty] public partial string VerifyReleaseMessage { get; set; } = "Release build";
+	[ObservableProperty] public partial string VerifyReleaseMessage { get; set; } = ChannelIcon.Description;
 	private static readonly string[] Principles = ["Its'y ywzxy. Ajwnkd.", "Xjqk-hzxyid.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjdx, sty dtzw fhhtzsyx.", "Xtajwjnls. Fqbfdx. Dtzwx."];
 	private int _verifyReleaseIndex = -1;
 
@@ -246,22 +245,6 @@ public sealed partial class SettingsViewModel : ObservableObject
 			}
 		}
 		return new string(result);
-	}
-
-	private static bool CheckIsOfficialRelease()
-	{
-		var version = DiagnosticsViewModel.ClientVersion;
-		if (version.Contains('-'))
-			return false;
-		try
-		{
-			return Authenticator.PluginConstants.IsOfficialPackageFamilyName(
-				Windows.ApplicationModel.Package.Current.Id.FamilyName);
-		}
-		catch
-		{
-			return false;
-		}
 	}
 
 	private static readonly string LicensePath =
