@@ -5,6 +5,7 @@
 						 xmlns:ui="using:FluentAvalonia.UI.Controls"
 						 xmlns:controls="using:KeePassPasskeyProvider.App.Controls"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+						 xmlns:utils="using:KeePassPasskeyProvider.App.Utils"
 						 x:Class="KeePassPasskeyProvider.App.Pages.DiagnosticsPage"
 						 x:DataType="vm:DiagnosticsViewModel">
 		<Grid RowDefinitions="Auto,*" Margin="16">
@@ -54,14 +55,24 @@
 																				Background="{DynamicResource ControlFillColorSecondaryBrush}"
 																				BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
 																				BorderThickness="1" CornerRadius="4" Padding="8 4">
-																		<SelectableTextBlock Text="{Binding ClientVersionShort}"
-																												 FontFamily="Consolas,Courier New,monospace"
-																												 FontSize="11.5" Opacity="0.7" />
+																		<StackPanel Orientation="Horizontal" Spacing="6">
+																				<SelectableTextBlock Text="{Binding ClientVersionShort}"
+																														 FontFamily="Consolas,Courier New,monospace"
+																														 FontSize="11.5" Opacity="0.7" />
+																				<Border Background="Transparent"
+																								VerticalAlignment="Center"
+																								ToolTip.Tip="{x:Static utils:ChannelIcon.Description}"
+																								ToolTip.ShowDelay="0">
+																						<Path Data="{x:Static utils:ChannelIcon.Geometry}"
+																									Fill="{DynamicResource TextFillColorSecondaryBrush}"
+																									Stretch="Uniform" Width="12" Height="12" />
+																				</Border>
+																		</StackPanel>
 																</Border>
 																<Button Grid.Column="2"
 																				Padding="4"
 																				Command="{Binding CopyToClipboardCommand}"
-																				CommandParameter="{Binding ClientVersion}"
+																				CommandParameter="{Binding ClientVersionWithChannel}"
 																				ToolTip.Tip="Copy provider version">
 																		<ui:FASymbolIcon Symbol="Copy" FontSize="14" />
 																</Button>

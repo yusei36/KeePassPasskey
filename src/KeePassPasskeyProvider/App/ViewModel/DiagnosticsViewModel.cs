@@ -39,6 +39,7 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 
 	public static string ClientVersion => _appVersion;
 	public static string ClientVersionShort => ShortenVersion(_appVersion);
+	public static string ClientVersionWithChannel => $"{ClientVersion} ({Authenticator.PluginConstants.ChannelDisplayName})";
 
 	partial void OnServerVersionChanged(string? value)
 	{

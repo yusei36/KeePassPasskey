@@ -45,6 +45,14 @@ internal static class PluginConstants
 	public static readonly Guid KeePassPasskeyProviderAaguid = new("9addb28c-b46f-4402-808f-019651441ff3");
 #endif
 
+	/// <summary>Readable channel name, appended to copied version strings.</summary>
+	public static string ChannelDisplayName => Channel switch
+	{
+		DistributionChannel.Store => "Microsoft Store",
+		DistributionChannel.Dev => "Dev",
+		_ => "GitHub",
+	};
+
 	/// <summary>Provider log file name</summary>
 	public const string ProviderLogFileName = "Provider.log";
 
