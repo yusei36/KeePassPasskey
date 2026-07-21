@@ -46,8 +46,12 @@ KeePassPasskeyProvider.exe
 
 <img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
 
-The Store keeps the app itself up to date automatically; only the plugin file needs replacing by hand after an update, see [Updates](docs/user-guide.md#updates).
-Once installed, see the [User Guide](docs/user-guide.md) to get started.
+> [!NOTE]
+> The app updates automatically, but the plugin file still needs replacing by hand if an update makes the two sides incompatible, see [Updates](docs/user-guide.md#updates).
+
+Once installed, continue with the [User Guide](docs/user-guide.md) to get started.
+
+Prefer the command line? `winget install --name "KeePassPasskey" --source msstore` installs the same package.
 
 ### Option B - GitHub install with script
 
