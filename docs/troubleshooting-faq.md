@@ -18,7 +18,7 @@ What you can do, in order:
 
 1. **Check whether it is already reported.** Search the [issues](https://github.com/yusei36/KeePassPasskey/issues) to see if the detection is already tracked (for example [issue #20](https://github.com/yusei36/KeePassPasskey/issues/20)). If it is not, please open a new issue with the exact detection name and version so it can be submitted to Microsoft as a false positive.
 2. **Wait for Microsoft to clear it.** Once a false positive is reviewed, Microsoft removes the detection and the updated definitions roll out over time, so the flag usually disappears on its own. Update your definitions and retry: **Windows Security → Virus & threat protection → Check for updates**.
-3. **Use the Microsoft Store version** (planned). Store packages are signed and vetted by Microsoft, so they avoid these false positives entirely.
+3. **Use the [Microsoft Store version](https://apps.microsoft.com/detail/9nwnfhjpspgz).** Store packages are signed and vetted by Microsoft, so they avoid these false positives entirely.
 4. **Allow it manually:** only if you trust the source and need it before the detection clears:
    - If your browser blocked the download, download it again from the release page's direct link and choose **Keep** when prompted.
    - If Defender quarantined it, open **Windows Security → Virus & threat protection → Protection history**, select the detection, and choose **Actions → Allow** (then **Restore** if the file was removed).

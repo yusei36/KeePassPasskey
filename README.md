@@ -1,8 +1,8 @@
 # KeePassPasskey
 
-[![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey) [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey?style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest)
+[![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey) [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey?style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="120" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
 
-**[Download](https://github.com/yusei36/KeePassPasskey/releases/latest)** | **[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | **[FAQ & Troubleshooting](docs/troubleshooting-faq.md)**
+**[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | **[FAQ & Troubleshooting](docs/troubleshooting-faq.md)**
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically - no browser extension required.
 
@@ -35,7 +35,21 @@ KeePassPasskeyProvider.exe
 
 ## Installation
 
-### Option A - automatic (recommended)
+### Option A - Microsoft Store (recommended)
+
+[<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
+
+1. Install [KeePassPasskey](https://apps.microsoft.com/detail/9nwnfhjpspgz) from the Microsoft Store and launch it.
+2. Follow the built-in **Setup Guide**: click **Show plugin file to install** to reveal the bundled `KeePassPasskey.dll` in Explorer, copy that file into your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
+3. Continue the Setup Guide to open Windows **Advanced passkey options** and enable **KeePassPasskey**.
+4. Both status indicators in the **KeePassPasskey** app should show green.
+
+<img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
+
+The Store keeps the app itself up to date automatically; only the plugin file needs replacing by hand after an update, see [Updates](docs/user-guide.md#updates).
+Once installed, see the [User Guide](docs/user-guide.md) to get started.
+
+### Option B - GitHub install with script
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
@@ -43,9 +57,7 @@ KeePassPasskeyProvider.exe
 4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 5. Both status indicators in the **KeePassPasskey** app should show green.
 
-<img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
-
-### Option B - manual
+### Option C - GitHub manual installation
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
@@ -54,8 +66,6 @@ KeePassPasskeyProvider.exe
 5. Launch **KeePassPasskey** from the Start menu, click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 6. Both status indicators in the **KeePassPasskey** app should show green.
 7. (Optional) Remove the certificate: open **certlm.msc** → **Trusted People** → **Certificates**, find **KeePassPasskey**, and delete it. The certificate is only needed during installation.
-
-Once installed, see the [User Guide](docs/user-guide.md) to get started.
 
 ## Credential storage
 

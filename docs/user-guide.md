@@ -13,7 +13,11 @@ See the [installation instructions in the README](../README.md#installation) for
 
 ## Updates
 
-Updates are installed the same way as a fresh installation: replace the KeePassPasskey plugin file in your KeePass plugins folder with the new version, then either run `InstallMsix.bat` as an administrator or install the MSIX package. Replacing the plugin file is a manual step, the installer only handles the MSIX and never writes to your KeePass plugins folder. The KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
+**Microsoft Store installs** update the app automatically. Only the plugin file is not handled by the Store: after an update, open the app's Setup Guide, click **Show plugin file to install**, and replace `KeePassPasskey.dll` in your KeePass plugins folder with the new one.
+
+**GitHub installs** are updated the same way as a fresh installation: replace the KeePassPasskey plugin file in your KeePass plugins folder with the new version, then either run `InstallMsix.bat` as an administrator or install the MSIX package. Replacing the plugin file is a manual step, the installer only handles the MSIX and never writes to your KeePass plugins folder.
+
+Either way, the KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
 
 ## Creating a passkey
 
