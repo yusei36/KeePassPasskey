@@ -27,6 +27,7 @@ internal sealed class TrayIconService : IDisposable
 	private volatile bool _disposed;
 	private static Bitmap? _baseIcon;
 	private DateTime _lastClickTime;
+	private ProviderStatus? _lastRenderedStatus;
 
 	// The event handle is owned by WatchShowEvent after Dispose() is called.
 	private nint _showEvent;
@@ -51,6 +52,7 @@ internal sealed class TrayIconService : IDisposable
 			Icon = BuildIcon(_statusHero.Status),
 			Menu = BuildContextMenu(),
 		};
+		_lastRenderedStatus = _statusHero.Status;
 		_trayIcon.Clicked += (_, _) =>
 		{
 			var now = DateTime.UtcNow;
@@ -86,8 +88,14 @@ internal sealed class TrayIconService : IDisposable
 	private void UpdateIcon()
 	{
 		if (_trayIcon == null) return;
-		_trayIcon.Icon = BuildIcon(_statusHero.Status);
-		_trayIcon.ToolTipText = GetTooltip(_statusHero.Status);
+		var status = _statusHero.Status;
+		if (_lastRenderedStatus == status) return;
+		_lastRenderedStatus = status;
+
+		var previousIcon = _trayIcon.Icon;
+		_trayIcon.Icon = BuildIcon(status);
+		_trayIcon.ToolTipText = GetTooltip(status);
+		(previousIcon as IDisposable)?.Dispose();
 	}
 
 	private async Task WatchShowEvent()
@@ -135,7 +143,7 @@ internal sealed class TrayIconService : IDisposable
 			new Uri("avares://KeePassPasskeyProvider/Resources/app-icon.png")));
 
 		const int size = 32;
-		var rtb = new RenderTargetBitmap(new PixelSize(size, size), new Vector(96, 96));
+		using var rtb = new RenderTargetBitmap(new PixelSize(size, size), new Vector(96, 96));
 		using (var ctx = rtb.CreateDrawingContext())
 		{
 			ctx.DrawImage(_baseIcon, new Rect(0, 0, size, size));

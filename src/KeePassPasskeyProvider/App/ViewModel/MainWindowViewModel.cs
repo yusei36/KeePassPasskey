@@ -123,20 +123,31 @@ public sealed partial class MainWindowViewModel : ObservableObject
 	private async Task RefreshAsync()
 	{
 		IsRefreshing = true;
-		RefreshProviderStatus();
+		await RefreshProviderStatusAsync();
 		ApplyPingResponse(await Task.Run(() => _pipeClient.Ping()));
 		IsRefreshing = false;
 	}
 
-	private void DoRefresh()
+	private async void DoRefresh()
 	{
-		RefreshProviderStatus();
-		ApplyPingResponse(_pipeClient.Ping());
+		try
+		{
+			await RefreshProviderStatusAsync();
+			ApplyPingResponse(await Task.Run(() => _pipeClient.Ping()));
+		}
+		catch (Exception ex)
+		{
+			Log.Warn($"status refresh failed: {ex.Message}");
+		}
 	}
 
-	private void RefreshProviderStatus()
+	private async Task RefreshProviderStatusAsync()
 	{
-		int hr = PluginRegistration.GetState(out var state);
+		var (hr, state) = await Task.Run(() =>
+		{
+			int result = PluginRegistration.GetState(out var s);
+			return (result, s);
+		});
 		_isRegistered = hr >= HResults.S_OK;
 		_providerEnabled = hr >= HResults.S_OK && state == AuthenticatorState.AuthenticatorState_Enabled;
 		UpdateChildren();
