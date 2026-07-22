@@ -35,7 +35,7 @@
 										ToolTip.Tip="Reset to defaults"
 										VerticalAlignment="Center"
 										Margin="0 0 4 0">
-								<ui:FAFontIcon Glyph="&#xE75C;" FontSize="18" FontFamily="Segoe MDL2 Assets" />
+								<ui:FAFontIcon Glyph="&#xE75C;" FontSize="18" FontFamily="Segoe Fluent Icons" />
 			</Button>
 						<Button Grid.Column="4"
 										Command="{Binding SaveCommand}"
@@ -308,7 +308,7 @@
 																				IsEnabled="{Binding !IsApplyingAaguid}"
 																				ToolTip.Tip="Clear field"
 																				VerticalAlignment="Center">
-																		<ui:FAFontIcon Glyph="&#xE75C;" FontSize="16" FontFamily="Segoe MDL2 Assets" />
+																		<ui:FAFontIcon Glyph="&#xE75C;" FontSize="16" FontFamily="Segoe Fluent Icons" />
 																</Button>
 																<Button Content="Apply"
 																				Command="{Binding ApplyAaguidCommand}"
