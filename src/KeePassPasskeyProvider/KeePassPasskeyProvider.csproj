@@ -17,7 +17,8 @@
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<OutputPath>..\..\build\$(Configuration)\KeePassPasskeyProvider\</OutputPath>
 		<SelfContained>true</SelfContained>
-		<ApplicationIcon>Resources\app-icon.ico</ApplicationIcon>
+		<ApplicationIcon Condition="'$(Store)' != 'true'">Resources\app-icon.ico</ApplicationIcon>
+		<ApplicationIcon Condition="'$(Store)' == 'true'">Resources\app-icon-store.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 
@@ -47,8 +48,11 @@
 		<EmbeddedResource Include="Resources\logo-store-light.svg" />
 	</ItemGroup>
 
+	<!-- Store builds badge the window/tray icon; Link keeps the avares path stable
+	     (avares://.../Resources/app-icon.png) so no runtime code needs to change. -->
 	<ItemGroup>
-		<AvaloniaResource Include="Resources\app-icon.png" />
+		<AvaloniaResource Include="Resources\app-icon.png" Condition="'$(Store)' != 'true'" />
+		<AvaloniaResource Include="Resources\app-icon-store.png" Link="Resources\app-icon.png" Condition="'$(Store)' == 'true'" />
 	</ItemGroup>
 
 	<ItemGroup>

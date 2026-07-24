@@ -123,6 +123,23 @@ function Invoke-BuildWapproj {
 	}
 	[IO.File]::WriteAllText($manifest, $patchedContent)
 
+	# Store builds swap the badged tile/logo assets in over the GitHub-channel ones for the
+	# duration of the build (restored in finally, mirroring the manifest patch above). The badged
+	# PNGs live in Assets.Store, alongside the plain ones.
+	$assetsDir      = "$RepoRoot\src\KeePassPasskeyProvider.Package\Assets"
+	$storeAssetsDir = "$RepoRoot\src\KeePassPasskeyProvider.Package\Assets.Store"
+	$assetBackup    = $null
+	if ($Store) {
+		if (-not (Test-Path $storeAssetsDir)) { throw "Store assets not found: $storeAssetsDir" }
+		$assetBackup = Join-Path ([IO.Path]::GetTempPath()) ("kpp-assets-" + [Guid]::NewGuid().ToString('N'))
+		New-Item $assetBackup -ItemType Directory | Out-Null
+		foreach ($png in Get-ChildItem $storeAssetsDir -Filter *.png) {
+			$target = Join-Path $assetsDir $png.Name
+			if (Test-Path $target) { Copy-Item $target (Join-Path $assetBackup $png.Name) -Force }
+			Copy-Item $png.FullName $target -Force
+		}
+	}
+
 	$wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
 	# Build the arg list as an array. Only add /p:Optimized when set, so that when it is omitted the
 	# props default (Release => Optimized=true) still applies.
@@ -147,6 +164,12 @@ function Invoke-BuildWapproj {
 		Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
 	} finally {
 		[IO.File]::WriteAllText($manifest, $originalContent)
+		if ($assetBackup) {
+			foreach ($png in Get-ChildItem $assetBackup -Filter *.png) {
+				Copy-Item $png.FullName (Join-Path $assetsDir $png.Name) -Force
+			}
+			Remove-Item $assetBackup -Recurse -Force -ErrorAction SilentlyContinue
+		}
 	}
 }
 
