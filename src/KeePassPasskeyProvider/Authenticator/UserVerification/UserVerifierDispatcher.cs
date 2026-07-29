@@ -1,54 +1,43 @@
-﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
-using Microsoft.Toolkit.Uwp.Notifications;
-using Windows.UI.Notifications;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal static class UserVerifierDispatcher
 {
+	// The Notification flag means "confirmation prompt", now rendered as a dialog.
+	// NotificationUserVerifier is kept unwired for the upcoming presentation setting.
 	private static readonly IUserVerifier[] _verifiers =
 	[
 		new WindowsHelloUserVerifier(),
-		new NotificationUserVerifier(),
+		new DialogUserVerifier(),
 	];
 
 	public static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) VerifyForRegistration(
 		nint pRequest, Guid transactionId,
 		string rpId, string rpName, string uvUsername, string uvDisplayHint,
-		IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries)
+		IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
+		CancellationToken cancellation)
 		=> DispatchRegistration(KeePassPasskeySettings.Current.RegistrationVerification,
 			(IUserVerifier v, out DatabaseInfo? sel, out EntryTargetInfo? selEntry) =>
-				v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, candidateEntries, out sel, out selEntry));
+				v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, candidateEntries, cancellation, out sel, out selEntry));
 
 	public static int VerifyForSignIn(
 		nint pRequest, Guid transactionId,
-		string rpId, string uvUsername, string uvDisplayHint)
+		string rpId, string uvUsername, string uvDisplayHint,
+		CancellationToken cancellation)
 		=> DispatchSignIn(KeePassPasskeySettings.Current.SignInVerification,
-			v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId));
+			v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId, cancellation));
 
 	private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
-
-	private static bool AreNotificationsDisabled(UserVerificationMode mode)
-	{
-		if (!mode.HasFlag(UserVerificationMode.Notification)) return false;
-
-		var setting = ToastNotificationManagerCompat.CreateToastNotifier().Setting;
-		if (setting == NotificationSetting.Enabled) return false;
-
-		Log.Warn($"Notifications disabled ({setting}); verification failed", nameof(UserVerifierDispatcher));
-		return true;
-	}
 
 	private static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) DispatchRegistration(
 		UserVerificationMode mode, VerifyRegistrationFunc call)
 	{
-		if (AreNotificationsDisabled(mode)) return (HResults.E_FAIL, null, null);
-
 		DatabaseInfo? selected = null;
 		EntryTargetInfo? selectedEntry = null;
 		foreach (var verifier in _verifiers)
@@ -65,8 +54,6 @@ internal static class UserVerifierDispatcher
 
 	private static int DispatchSignIn(UserVerificationMode mode, Func<IUserVerifier, int> call)
 	{
-		if (AreNotificationsDisabled(mode)) return HResults.E_FAIL;
-
 		foreach (var verifier in _verifiers)
 		{
 			if (!mode.HasFlag(verifier.Mode)) continue;

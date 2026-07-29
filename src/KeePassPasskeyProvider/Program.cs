@@ -23,6 +23,9 @@ internal static class Program
 	/// <summary>Set before starting the Avalonia app; tells the main window to hide itself on first open.</summary>
 	internal static bool StartHidden { get; private set; }
 
+	/// <summary>Avalonia hosts prompt windows only (COM server mode): no main window, no tray icon.</summary>
+	internal static bool PromptHostOnly { get; set; }
+
 	[MTAThread]
 	private static int Main(string[] args)
 	{
@@ -61,6 +64,11 @@ internal static class Program
 			Log.Info($"-ActivateAuthenticator received (log level: {Log.MinLevel})");
 			return ComServer.RunComServer();
 		}
+
+#if DEBUG
+		if (args.Any(a => string.Equals(a, "/promptdemo", StringComparison.OrdinalIgnoreCase)))
+			return App.Prompts.PromptDemo.Run();
+#endif
 
 		bool syncCredential = args.Any(a =>
 			string.Equals(a, "/synccredential", StringComparison.OrdinalIgnoreCase));
@@ -202,7 +210,7 @@ internal static class Program
 		}
 	}
 
-	private static AppBuilder BuildAvaloniaApp()
+	internal static AppBuilder BuildAvaloniaApp()
 		=> AppBuilder.Configure<Application>()
 			.UsePlatformDetect()
 			.LogToTrace();

@@ -1,4 +1,4 @@
-﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
@@ -10,6 +10,7 @@ internal interface IUserVerifier
 	UserVerificationMode Mode { get; }
 	int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
 		Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
-		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
-	int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId);
+		CancellationToken cancellation, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
+	int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId,
+		CancellationToken cancellation);
 }

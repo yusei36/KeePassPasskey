@@ -16,12 +16,15 @@ namespace KeePassPasskeyProvider.Authenticator;
 /// Each COM activation creates one instance; CancelOperation sets m_cancelled.
 /// </summary>
 #pragma warning disable CA1725 // "Raw" suffix frees the interface's name for the typed pointer cast from it.
+#pragma warning disable CA1001 // The COM runtime owns this object's lifetime; _operationCts is disposed per operation.
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
 public sealed class PluginAuthenticator : IPluginAuthenticator
 {
 	private volatile bool _cancelled;
 	private Guid _currentTransactionId;
+	// Cancels a prompt that is already on screen when the platform aborts the ceremony.
+	private CancellationTokenSource? _operationCts;
 	private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
 
 	// null = unknown (first call), true = last ping succeeded, false = last ping failed
@@ -44,8 +47,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		ComActivity.EnterOperation();
 		try
 		{
-			_cancelled = false;
-			_currentTransactionId = pRequest->transactionId;
+			BeginOperation(pRequest->transactionId);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -106,7 +108,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
 
 				// 3d. Look up candidate entries to save onto, only if that feature is enabled.
-				// The offer is made on the registration toast, so it needs the Notification verifier.
+				// The offer lives on the registration prompt, so it needs the confirmation prompt enabled.
 				IReadOnlyList<EntryMatchInfo> candidates = Array.Empty<EntryMatchInfo>();
 				if (KeePassPasskeySettings.Current.SaveToExistingEntry &&
 					KeePassPasskeySettings.Current.RegistrationVerification.HasFlag(UserVerificationMode.Notification))
@@ -118,7 +120,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
 				// 4. User verification
 				var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
-					(nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases, candidates);
+					(nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases, candidates,
+					_operationCts!.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");
 				if (hrUv < 0) return hrUv;
 
@@ -180,6 +183,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		finally
 		{
+			EndOperation();
 			ComActivity.ExitOperation();
 		}
 	}
@@ -201,8 +205,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		ComActivity.EnterOperation();
 		try
 		{
-			_cancelled = false;
-			_currentTransactionId = pRequest->transactionId;
+			BeginOperation(pRequest->transactionId);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -237,7 +240,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				// 4. User verification
 				CredentialCache.LookupWindowsCache(rpIdUtf8, allowList, out string uvUsername, out string uvDisplayHint);
 				Log.Info($"UV cache lookup userName={uvUsername} displayHint={uvDisplayHint}");
-				int hrUv = UserVerifierDispatcher.VerifyForSignIn((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint);
+				int hrUv = UserVerifierDispatcher.VerifyForSignIn(
+					(nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint, _operationCts!.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
 
@@ -291,6 +295,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		finally
 		{
+			EndOperation();
 			ComActivity.ExitOperation();
 		}
 	}
@@ -312,7 +317,23 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		if (sigResult < 0) return sigResult;
 
 		_cancelled = true;
+		// The operation thread may have finished and disposed the source in the meantime.
+		try { _operationCts?.Cancel(); } catch (ObjectDisposedException) { }
 		return HResults.S_OK;
+	}
+
+	private void BeginOperation(Guid transactionId)
+	{
+		_cancelled = false;
+		_currentTransactionId = transactionId;
+		_operationCts?.Dispose();
+		_operationCts = new CancellationTokenSource();
+	}
+
+	private void EndOperation()
+	{
+		_operationCts?.Dispose();
+		_operationCts = null;
 	}
 
 	/// <summary>
@@ -554,4 +575,5 @@ public sealed class ClassFactory : IClassFactory
 		return HResults.S_OK;
 	}
 }
+#pragma warning restore CA1001
 #pragma warning restore CA1725

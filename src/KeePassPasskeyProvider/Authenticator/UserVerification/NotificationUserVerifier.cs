@@ -26,7 +26,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 	public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
 		Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
-		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
+		CancellationToken cancellation, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
 	{
 		selectedDatabase = null;
 		selectedEntry = null;
@@ -69,7 +69,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		return HResults.S_OK;
 	}
 
-	public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId)
+	public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId,
+		CancellationToken cancellation)
 	{
 		string user = username.Length > 0 ? $" as {username}" : "";
 		string hint = displayHint.Length > 0 && displayHint != rpId ? $"KeePass entry: {displayHint}" : "";

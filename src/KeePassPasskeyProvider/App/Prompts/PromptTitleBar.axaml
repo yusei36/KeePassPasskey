@@ -1,0 +1,33 @@
+﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<UserControl xmlns="https://github.com/avaloniaui"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:fa="using:FluentAvalonia.UI.Controls"
+						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+						 x:Class="KeePassPasskeyProvider.App.Prompts.PromptTitleBar"
+						 x:DataType="vm:PromptViewModelBase">
+
+	<Grid Height="40" ColumnDefinitions="Auto,*,Auto,Auto">
+		<Image Grid.Column="0" Margin="12 0 0 0" Width="22" Height="22"
+					 VerticalAlignment="Center"
+					 Source="avares://KeePassPasskeyProvider/Resources/app-icon.png" />
+
+		<TextBlock Grid.Column="1" Margin="10 0 8 0" VerticalAlignment="Center"
+							 Text="{Binding WindowTitle}" FontSize="12" FontWeight="SemiBold"
+							 TextTrimming="CharacterEllipsis" />
+
+		<StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" Margin="0 0 8 0"
+								VerticalAlignment="Center"
+								ToolTip.Tip="The request is cancelled when this runs out">
+			<fa:FAProgressRing Width="18" Height="18" IsIndeterminate="False"
+												 Value="{Binding CountdownValue}" />
+			<TextBlock Text="{Binding CountdownText}" FontSize="11" VerticalAlignment="Center"
+								 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+		</StackPanel>
+
+		<Button Grid.Column="3" Classes="caption" Command="{Binding CancelCommand}"
+						ToolTip.Tip="Cancel">
+			<fa:FAFontIcon Glyph="&#xE8BB;" FontSize="11" FontFamily="Segoe Fluent Icons" />
+		</Button>
+	</Grid>
+</UserControl>

@@ -14,14 +14,16 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
 
 	public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
 		Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
-		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
+		CancellationToken cancellation, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
 	{
 		selectedDatabase = null;
 		selectedEntry = null;
 		return Verify(pRequest, username, displayHint, transactionId);
 	}
 
-	public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId)
+	// The platform owns the Hello prompt and tears it down on its own cancel, so the token is unused.
+	public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId,
+		CancellationToken cancellation)
 		=> Verify(pRequest, username, displayHint, transactionId);
 
 	private static unsafe int Verify(nint pRequest, string username, string displayHint, Guid transactionId)

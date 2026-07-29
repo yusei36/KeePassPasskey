@@ -1,0 +1,79 @@
+﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<prompts:PromptWindow xmlns="https://github.com/avaloniaui"
+											xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+											xmlns:fa="using:FluentAvalonia.UI.Controls"
+											xmlns:prompts="using:KeePassPasskeyProvider.App.Prompts"
+											xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
+											x:Class="KeePassPasskeyProvider.App.Prompts.SignInPromptWindow"
+											x:DataType="vm:SignInPromptViewModel"
+											Title="{Binding WindowTitle}"
+											Icon="avares://KeePassPasskeyProvider/Resources/app-icon.png"
+											Width="380"
+											SizeToContent="Height"
+											CanResize="False"
+											ShowInTaskbar="False"
+											WindowDecorations="None"
+											WindowStartupLocation="CenterScreen">
+
+	<prompts:PromptWindow.Styles>
+		<StyleInclude Source="avares://KeePassPasskeyProvider/App/Prompts/PromptStyles.axaml" />
+	</prompts:PromptWindow.Styles>
+
+	<Grid RowDefinitions="Auto,Auto,Auto,Auto">
+
+		<prompts:PromptTitleBar Grid.Row="0" />
+
+		<!-- Site header -->
+		<Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="18 6 18 14">
+			<Border Grid.Column="0" Width="36" Height="36" CornerRadius="8"
+							Background="{Binding SiteTileBrush}">
+				<TextBlock Text="{Binding SiteLetter}" Foreground="White"
+									 FontSize="16" FontWeight="SemiBold"
+									 HorizontalAlignment="Center" VerticalAlignment="Center" />
+			</Border>
+
+			<TextBlock Grid.Column="1" Margin="12 0 0 0" VerticalAlignment="Center"
+								 Text="{Binding SiteHeadline}" FontSize="14" FontWeight="SemiBold"
+								 TextWrapping="Wrap" />
+		</Grid>
+
+		<!-- The credential Windows picked -->
+		<Border Grid.Row="2" Margin="18 0 18 4" Padding="12 10" CornerRadius="6"
+						BorderThickness="1"
+						BorderBrush="{DynamicResource AccentFillColorDefaultBrush}"
+						Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+			<Grid ColumnDefinitions="Auto,*">
+				<Border Grid.Column="0" Width="28" Height="28" CornerRadius="6"
+								Background="{Binding CredentialTileBrush}">
+					<TextBlock Text="{Binding CredentialLetter}" Foreground="White"
+										 FontSize="12" FontWeight="SemiBold"
+										 HorizontalAlignment="Center" VerticalAlignment="Center" />
+				</Border>
+				<StackPanel Grid.Column="1" Margin="10 0 0 0" VerticalAlignment="Center" Spacing="2">
+					<TextBlock Text="{Binding CredentialTitle}" FontSize="13" FontWeight="SemiBold"
+										 TextTrimming="CharacterEllipsis" />
+					<TextBlock Text="{Binding CredentialSubtitle}" FontSize="11.5"
+										 IsVisible="{Binding HasCredentialSubtitle}"
+										 TextTrimming="CharacterEllipsis"
+										 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+				</StackPanel>
+			</Grid>
+		</Border>
+
+		<!-- Footer -->
+		<Border Grid.Row="3" Margin="0 14 0 0" Padding="18"
+						Background="{DynamicResource SolidBackgroundFillColorSecondaryBrush}">
+			<Grid ColumnDefinitions="*,10,*">
+				<Button Grid.Column="0" Classes="accent" HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								Content="{Binding ConfirmText}"
+								Command="{Binding ConfirmCommand}" />
+				<Button Grid.Column="2" HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Center"
+								Content="Cancel"
+								Command="{Binding CancelCommand}" />
+			</Grid>
+		</Border>
+	</Grid>
+</prompts:PromptWindow>
