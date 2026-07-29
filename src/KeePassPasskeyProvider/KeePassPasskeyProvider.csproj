@@ -28,6 +28,7 @@
 	<PropertyGroup Condition="'$(Optimized)' == 'true'">
 		<PublishTrimmed>true</PublishTrimmed>
 		<TrimMode>partial</TrimMode>
+		<PublishReadyToRun>true</PublishReadyToRun>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<NoWarn>$(NoWarn);IL2026;IL2104</NoWarn>
 	</PropertyGroup>
