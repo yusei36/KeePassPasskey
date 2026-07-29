@@ -16,10 +16,6 @@
 											WindowDecorations="None"
 											WindowStartupLocation="CenterScreen">
 
-	<prompts:PromptWindow.Styles>
-		<StyleInclude Source="avares://KeePassPasskeyProvider/App/Prompts/PromptStyles.axaml" />
-	</prompts:PromptWindow.Styles>
-
 	<Grid RowDefinitions="Auto,Auto,Auto,Auto">
 
 		<prompts:PromptTitleBar Grid.Row="0" />

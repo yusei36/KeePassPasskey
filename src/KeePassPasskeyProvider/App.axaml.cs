@@ -34,16 +34,6 @@ public class Application : Avalonia.Application
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
 			SettingsViewModel.ApplyTheme(AppSettings.Current.Theme);
-
-			// COM server mode: Avalonia exists only to host prompt windows on demand.
-			if (Program.PromptHostOnly)
-			{
-				desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-				PromptHost.SignalReady();
-				base.OnFrameworkInitializationCompleted();
-				return;
-			}
-
 			bool autoRegisterSucceeded = PluginRegistration.EnsureRegistered();
 			var vm = new MainWindowViewModel(autoRegisterSucceeded);
 			_window = new MainWindow(vm);

@@ -24,12 +24,6 @@ internal static class PromptHost
 	private static Thread? _uiThread;
 	private static TaskCompletionSource? _ready;
 
-	internal static void SignalReady()
-	{
-		_ready?.TrySetResult();
-		Dispatcher.UIThread.Post(PrewarmPromptWindow, DispatcherPriority.Background);
-	}
-
 	/// <summary>
 	/// Windows runs a fresh COM server per ceremony and the UI stack takes seconds to come up, which
 	/// the user would otherwise wait for.
@@ -156,14 +150,22 @@ internal static class PromptHost
 
 			var ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 			_ready = ready;
-			Program.PromptHostOnly = true;
 
 			_uiThread = new Thread(() =>
 			{
 				try
 				{
-					Program.BuildAvaloniaApp().StartWithClassicDesktopLifetime([]);
-					Log.Info("Avalonia lifetime exited", nameof(PromptHost));
+					// No application lifetime: nothing may shut the framework down between ceremonies,
+					// and the prompts have no main window to be the last one closed.
+					AppBuilder.Configure<PromptApplication>()
+						.UsePlatformDetect()
+						.LogToTrace()
+						.SetupWithoutStarting();
+
+					ready.TrySetResult();
+					Dispatcher.UIThread.Post(PrewarmPromptWindow, DispatcherPriority.Background);
+					Dispatcher.UIThread.MainLoop(CancellationToken.None);
+					Log.Info("Avalonia dispatcher exited", nameof(PromptHost));
 				}
 				catch (Exception ex)
 				{

@@ -23,9 +23,6 @@ internal static class Program
 	/// <summary>Set before starting the Avalonia app; tells the main window to hide itself on first open.</summary>
 	internal static bool StartHidden { get; private set; }
 
-	/// <summary>Avalonia hosts prompt windows only (COM server mode): no main window, no tray icon.</summary>
-	internal static bool PromptHostOnly { get; set; }
-
 	[MTAThread]
 	private static int Main(string[] args)
 	{
@@ -210,7 +207,7 @@ internal static class Program
 		}
 	}
 
-	internal static AppBuilder BuildAvaloniaApp()
+	private static AppBuilder BuildAvaloniaApp()
 		=> AppBuilder.Configure<Application>()
 			.UsePlatformDetect()
 			.LogToTrace();
