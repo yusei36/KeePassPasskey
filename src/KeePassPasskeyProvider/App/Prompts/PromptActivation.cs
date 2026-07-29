@@ -13,9 +13,7 @@ namespace KeePassPasskeyProvider.App.Prompts;
 /// </summary>
 /// <remarks>
 /// The owner must be set before Show: afterwards the activation chain stays inconsistent and closing
-/// the prompt promotes whatever is next in the z-order instead of the caller. SetForegroundWindow and
-/// AttachThreadInput are deliberately not used; from a background process they are unreliable and
-/// reshuffle other applications' z-order.
+/// the prompt promotes an arbitrary window instead of the caller.
 /// </remarks>
 internal static class PromptActivation
 {
@@ -37,8 +35,7 @@ internal static class PromptActivation
 				hwnd, Win32Native.DWMWA_WINDOW_CORNER_PREFERENCE, in cornerPreference, sizeof(int));
 		}
 
-		// A process that has never received input is denied the foreground, so without this the first
-		// prompt of a COM server opens behind the platform's ceremony UI.
+		// Keeps the prompt visible even when the foreground handoff below does not apply.
 		window.Topmost = true;
 
 		var shown = Stopwatch.StartNew();
@@ -57,10 +54,72 @@ internal static class PromptActivation
 		Log.Debug(
 			$"window shown in {shown.ElapsedMilliseconds} ms (ownerSet={ownerSet} foreground={foreground})",
 			nameof(PromptActivation));
+
+		if (!foreground && hwnd != 0 && ownerValid && TryTakeForeground(hwnd, ownerHwnd))
+			RestoreForegroundOnClose(window, hwnd, ownerHwnd);
+	}
+
+	/// <summary>
+	/// Closing, not Closed: once the window is destroyed the process no longer owns the foreground and
+	/// the system promotes an arbitrary window.
+	/// </summary>
+	private static void RestoreForegroundOnClose(Window window, nint hwnd, nint ownerHwnd)
+	{
+		window.Closing += (_, _) =>
+		{
+			if (Win32Native.GetForegroundWindow() != hwnd || !Win32Native.IsWindow(ownerHwnd)) return;
+
+			bool restored = Win32Native.SetForegroundWindow(ownerHwnd);
+			Log.Debug($"returning foreground to {Describe(ownerHwnd)}: {restored}", nameof(PromptActivation));
+		};
+	}
+
+	/// <summary>
+	/// A COM server is refused the foreground (the platform never calls CoAllowSetForegroundWindow), so
+	/// the prompt opens unfocused and ignores Enter and Escape. Only when the owner is in front, so the
+	/// focus always comes from the window that asked for the passkey.
+	/// </summary>
+	private static bool TryTakeForeground(nint hwnd, nint ownerHwnd)
+	{
+		nint foregroundHwnd = Win32Native.GetForegroundWindow();
+		if (foregroundHwnd != ownerHwnd)
+		{
+			Log.Debug($"foreground is {Describe(foregroundHwnd)}, not the ceremony owner; leaving it alone", nameof(PromptActivation));
+			return false;
+		}
+
+		uint ownerThread = Win32Native.GetWindowThreadProcessId(ownerHwnd, out _);
+		uint ourThread = Win32Native.GetCurrentThreadId();
+		if (ownerThread == 0 || ownerThread == ourThread) return false;
+
+		bool attached = Win32Native.AttachThreadInput(ourThread, ownerThread, true);
+		try
+		{
+			_ = Win32Native.SetForegroundWindow(hwnd);
+		}
+		finally
+		{
+			if (attached) _ = Win32Native.AttachThreadInput(ourThread, ownerThread, false);
+		}
+
+		bool ours = Win32Native.GetForegroundWindow() == hwnd;
+		Log.Info($"foreground handoff from {Describe(ownerHwnd)}: attached={attached} ours={ours}", nameof(PromptActivation));
+		return ours;
+	}
+
+	private static string Describe(nint hwnd)
+	{
+		if (hwnd == 0) return "none";
+		_ = Win32Native.GetWindowThreadProcessId(hwnd, out uint pid);
+		string name;
+		try { name = Process.GetProcessById((int)pid).ProcessName; }
+		catch { name = "?"; }
+		return $"0x{hwnd:X}/{name}({pid})";
 	}
 
 	private static bool SetOwner(nint hwnd, nint ownerHwnd)
 	{
+		// 0 comes back both on failure and when there was no previous owner, so only the error tells.
 		Marshal.SetLastSystemError(0);
 		nint previous = Win32Native.SetWindowLongPtr(hwnd, Win32Native.GWLP_HWNDPARENT, ownerHwnd);
 		if (previous != 0 || Marshal.GetLastWin32Error() == 0) return true;

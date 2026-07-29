@@ -67,6 +67,12 @@ internal static class Win32Native
 	internal static extern bool SetForegroundWindow(nint hWnd);
 
 	[DllImport("user32.dll")]
+	internal static extern uint GetWindowThreadProcessId(nint hWnd, out uint lpdwProcessId);
+
+	[DllImport("user32.dll")]
+	internal static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
+	[DllImport("user32.dll")]
 	internal static extern bool ShowWindow(nint hWnd, int nCmdShow);
 
 	internal const int SW_HIDE = 0;
