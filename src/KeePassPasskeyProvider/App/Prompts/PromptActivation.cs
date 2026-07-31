@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
 using KeePassPasskeyProvider.Util;
 using KeePassPasskeyShared;
@@ -38,6 +39,8 @@ internal static class PromptActivation
 		// Keeps the prompt visible even when the foreground handoff below does not apply.
 		window.Topmost = true;
 
+		SeedScreen(window, ownerValid ? ownerHwnd : 0);
+
 		var shown = Stopwatch.StartNew();
 		window.Show();
 
@@ -57,6 +60,33 @@ internal static class PromptActivation
 
 		if (!foreground && hwnd != 0 && ownerValid && TryTakeForeground(hwnd, ownerHwnd))
 			RestoreForegroundOnClose(window, hwnd, ownerHwnd);
+	}
+
+	/// <summary>
+	/// CenterScreen centres on the screen holding the window's position, which starts at the primary
+	/// monitor's origin. Seeding it puts the prompt on the caller's monitor instead.
+	/// </summary>
+	private static void SeedScreen(Window window, nint ownerHwnd)
+	{
+		nint monitor = ownerHwnd != 0
+			? Win32Native.MonitorFromWindow(ownerHwnd, Win32Native.MONITOR_DEFAULTTONEAREST)
+			: 0;
+
+		if (monitor != 0)
+		{
+			var info = new Win32Native.MONITORINFO { cbSize = Marshal.SizeOf<Win32Native.MONITORINFO>() };
+			if (Win32Native.GetMonitorInfo(monitor, ref info))
+			{
+				window.Position = new PixelPoint(
+					(info.rcWork.Left + info.rcWork.Right) / 2,
+					(info.rcWork.Top + info.rcWork.Bottom) / 2);
+				return;
+			}
+		}
+
+		// No usable caller window, so fall back to wherever the user's pointer is.
+		if (Win32Native.GetCursorPos(out Win32Native.POINT cursor))
+			window.Position = new PixelPoint(cursor.X, cursor.Y);
 	}
 
 	/// <summary>

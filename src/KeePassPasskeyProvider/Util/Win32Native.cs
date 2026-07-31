@@ -60,6 +60,42 @@ internal static class Win32Native
 	[DllImport("kernel32.dll")]
 	internal static extern uint GetCurrentThreadId();
 
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct POINT
+	{
+		public int X;
+		public int Y;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct RECT
+	{
+		public int Left;
+		public int Top;
+		public int Right;
+		public int Bottom;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct MONITORINFO
+	{
+		public int cbSize;
+		public RECT rcMonitor;
+		public RECT rcWork;
+		public uint dwFlags;
+	}
+
+	[DllImport("user32.dll")]
+	internal static extern bool GetCursorPos(out POINT lpPoint);
+
+	[DllImport("user32.dll")]
+	internal static extern nint MonitorFromWindow(nint hWnd, uint dwFlags);
+
+	[DllImport("user32.dll", EntryPoint = "GetMonitorInfoW")]
+	internal static extern bool GetMonitorInfo(nint hMonitor, ref MONITORINFO lpmi);
+
+	internal const uint MONITOR_DEFAULTTONEAREST = 2;
+
 	[DllImport("user32.dll")]
 	internal static extern nint GetForegroundWindow();
 
