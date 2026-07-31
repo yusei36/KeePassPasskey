@@ -69,7 +69,7 @@ After setting up the PIN again, try **Register** once more in the KeePassPasskey
 - A browser extension from another password manager (such as KeePassXC-Browser or any extension with passkey support) may be intercepting passkey requests before they reach Windows. When such an extension is active, the browser hands the passkey operation directly to that extension and Windows never gets involved, so KeePassPasskey is never called.
 - Disable or remove any passkey-capable browser extensions and try again. If the Windows provider selection appears afterwards, the extension was the cause.
 
-## The notification appears but clicking Create passkey does nothing
+## Passkey creation fails without showing the KeePassPasskey dialog
 
-- Make sure a KeePass database is open. KeePassPasskey cannot save a passkey if no database is unlocked. KeePass only needs to be open during the passkey operation itself.
+- Make sure a KeePass database is open. KeePassPasskey cannot save a passkey if no database is unlocked, and it fails before the dialog is shown. KeePass only needs to be open during the passkey operation itself.
 - If a database is open and the problem persists, check the log files for error messages.

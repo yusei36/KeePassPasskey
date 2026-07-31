@@ -95,7 +95,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				int hrReady = CheckKeePassReady("Passkey creation");
 				if (hrReady < HResults.S_OK) return hrReady;
 
-				// 3c. Fetch the open databases for the registration toast's database picker.
+				// 3c. Fetch the open databases for the registration prompt's database picker.
 				var dbResponse = _pipeClient.GetDatabases();
 				var databases = dbResponse?.Databases ?? new List<DatabaseInfo>();
 				if (databases.Count == 0)

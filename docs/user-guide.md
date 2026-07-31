@@ -35,15 +35,14 @@ A list of available passkey providers appears. Select **KeePassPasskey**.
 
 <img src="images/passkey-creation-step2.png" width="450" alt="Windows passkey provider list with KeePassPasskey selected">
 
-**Step 3: Confirm in the KeePassPasskey notification**
+**Step 3: Confirm in the KeePassPasskey dialog**
 
-A notification from KeePassPasskey appears in the taskbar. Click **Create passkey** to save the passkey to your KeePass database. If more than one KeePass database is unlocked, a database picker appears first. Select the database you want to save to.
+A KeePassPasskey dialog appears, headed with the site that asked, for example **"GitHub wants to save a passkey"**. Pick the database you want to save to from the **Database** dropdown, then click **Save**. Every unlocked database is listed. **Cancel** declines the request, and so does the close button or the Escape key.
 
-At most **5** unlocked databases are offered in this picker. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If you regularly work with more than 5 databases open, keep only the ones you save passkeys to unlocked.
+The dialog counts down in its title bar and cancels the request when it runs out (see [Approval timeout](#notifications--user-verification)).
 
-<img src="images/passkey-creation-step3.png" width="300" alt="KeePassPasskey notification with &quot;Passkey creation requested&quot; and the Create passkey button">
-
-<img src="images/passkey-creation-select-db.png" width="300" alt="KeePassPasskey dialog for selecting which open KeePass database to save the passkey to">
+<!-- TODO: retake against the dialog before release; this still shows the old notification -->
+<img src="images/passkey-creation-step3.png" width="300" alt="KeePassPasskey dialog asking to save a passkey, with the database dropdown and the Save button">
 
 **Step 4: Passkey saved in KeePass**
 
@@ -55,9 +54,11 @@ The passkey is now stored as an entry in the **Passkeys** group in your open Kee
 
 If you already have an entry for the website (for example your username and password login), KeePassPasskey can save the new passkey **onto that existing entry** instead of creating a separate one, so the passkey lives next to your login.
 
-When matching entries are found, the creation notification shows an extra **Add to existing** button next to **Create passkey**. Choosing it opens a second notification listing the matching entries. The entry you currently have selected in KeePass is listed first and labelled **[selected]**; entries that already hold a passkey are labelled **[overwrite passkey]** (both when applicable: **[selected, overwrite passkey]**). Pick one and confirm to write the passkey onto it.
+When matching entries are found, the creation dialog shows a **Create new** / **Add to existing** switch above the database dropdown. It starts on **Create new**, so nothing changes unless you choose otherwise. Switch to **Add to existing** to see the matching entries, grouped by the database they live in, then pick one and click **Save** to write the passkey onto it.
 
-At most **5** matching entries are offered. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. When more than 5 entries match, the most relevant are shown first: your selected entry, then entries already holding a passkey for this site, then entries matched by their URL.
+Every matching entry is listed, however many there are. Type in the search box to narrow the list, or use the key button beside it to show only entries that already hold a passkey. Collapse a database group by clicking its name. The entry you currently have selected in KeePass is listed first and tagged **selected in KeePass**; entries that already hold a passkey are tagged **has passkey**, and saving onto one replaces the passkey it already has.
+
+<!-- TODO: add a screenshot of the Add to existing view before release -->
 
 Matching is by website: an entry qualifies when it already holds a passkey for this site, or when its **URL** field points at the same site (the same domain or a subdomain). If you overwrite an entry that already had a passkey, the previous version is kept in that entry's **History** tab so you can restore it.
 
@@ -83,11 +84,12 @@ If you did not use autofill and have multiple passkeys for this site, Windows sh
 
 <img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
-**Step 3: Approve in the KeePassPasskey notification**
+**Step 3: Approve in the KeePassPasskey dialog**
 
-A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
+A KeePassPasskey dialog appears, headed with the site that asked, for example **"github.com wants you to sign in"**, and showing the passkey Windows picked. Click **Sign in** to confirm, or **Cancel** to decline.
 
-<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey notification with &quot;Authentication requested&quot; and the Approve button">
+<!-- TODO: retake against the dialog before release; this still shows the old notification -->
+<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
 
 ### Login with a password and passkey as a second factor
 
@@ -107,11 +109,11 @@ If you have multiple passkeys for this site, Windows shows a list. Select the on
 
 <img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
-**Step 4: Approve in the KeePassPasskey notification**
+**Step 4: Approve in the KeePassPasskey dialog**
 
-A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
+A KeePassPasskey dialog appears, showing the passkey Windows picked. Click **Sign in** to confirm.
 
-<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey notification with &quot;Authentication requested&quot; and the Approve button">
+<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
 
 ## Managing passkeys in KeePass
 
@@ -178,12 +180,12 @@ Controls how KeePassPasskey confirms your identity before completing a passkey o
 
 | Option | Behavior |
 |---|---|
-| Notification | Shows a notification you must approve |
+| Notification | Shows a confirmation dialog you must approve |
 | Windows Hello | Requires Windows Hello (PIN, fingerprint, or face) |
-| Both | Requires both a notification approval and Windows Hello (default) |
+| Both | Requires both the confirmation dialog and Windows Hello (default) |
 | None | No confirmation required: passkey operations complete silently |
 
-Separate settings exist for **Registration** (creating a passkey) and **Sign-in** (using a passkey). The **Approval timeout** controls how long the notification stays open before the operation is cancelled (default: 30 seconds). This timeout only applies when the approval mode includes **Notification**.
+Separate settings exist for **Registration** (creating a passkey) and **Sign-in** (using a passkey). The **Approval timeout** controls how long the dialog stays open before the operation is cancelled (default: 30 seconds). This timeout only applies when the approval mode includes **Notification**.
 
 **Show error notifications**: when enabled, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
 
