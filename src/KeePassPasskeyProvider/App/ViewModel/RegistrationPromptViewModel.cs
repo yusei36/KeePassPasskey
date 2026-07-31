@@ -123,7 +123,7 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 		var visible = _allRows.Where(r => (!OnlyWithPasskey || r.HasPasskey) && r.Matches(search)).ToList();
 
 		// Enumeration order is the plugin's ranking, so groups and rows both stay ranked.
-		foreach (var group in visible.GroupBy(r => r.Subtitle, StringComparer.Ordinal))
+		foreach (var group in visible.GroupBy(r => r.DatabaseName, StringComparer.Ordinal))
 			Groups.Add(new EntryGroupViewModel(group.Key, group, _expanded.GetValueOrDefault(group.Key, true), OnGroupSelectionChanged));
 
 		HasVisibleEntries = visible.Count > 0;

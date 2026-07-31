@@ -98,6 +98,7 @@ internal sealed class RequestHandler
 
 		var all = _passkeyStorage.GetAllCredentials();
 		var infos = new List<CredentialInfo>(all.Count);
+		bool nameDatabases = OpenDatabaseCount() > 1;
 		foreach (var c in all)
 		{
 			if (!string.IsNullOrEmpty(req.RpId) && c.RelyingParty != req.RpId)
@@ -112,11 +113,23 @@ internal sealed class RequestHandler
 				RpId = c.RelyingParty,
 				UserHandle = c.UserHandle,
 				UserName = c.Username,
-				Title = c.Title
+				Title = c.Title,
+				DatabaseName = nameDatabases ? c.DatabaseName : null,
+				Icon = c.Icon
 			});
 		}
 
 		return new GetCredentialsResponse { Credentials = infos };
+	}
+
+	private int OpenDatabaseCount()
+	{
+		int count = 0;
+		foreach (var doc in _host.MainWindow.DocumentManager.Documents)
+		{
+			if (doc.Database?.IsOpen == true) count++;
+		}
+		return count;
 	}
 
 	private GetDatabasesResponse HandleGetDatabases(GetDatabasesRequest req)

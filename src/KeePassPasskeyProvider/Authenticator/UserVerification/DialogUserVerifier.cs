@@ -53,7 +53,7 @@ internal sealed class DialogUserVerifier : IUserVerifier
 		bool approved = PromptHost.Show(
 			tcs =>
 			{
-				var viewModel = new SignInPromptViewModel(request.RpId, request.UserName, request.DisplayHint);
+				var viewModel = new SignInPromptViewModel(request);
 				var window = new SignInPromptWindow(viewModel);
 				window.Closed += (_, _) => tcs.TrySetResult(viewModel.Approved);
 				return window;

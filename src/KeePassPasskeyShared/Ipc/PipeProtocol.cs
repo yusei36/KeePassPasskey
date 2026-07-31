@@ -267,6 +267,13 @@ public sealed class CredentialInfo
 
 	[JsonProperty("title")]
 	public string Title { get; set; }
+
+	[JsonProperty("databaseName", NullValueHandling = NullValueHandling.Ignore)]
+	public string DatabaseName { get; set; }
+
+	// Base64 PNG of the KeePass entry icon.
+	[JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
+	public string Icon { get; set; }
 }
 
 public sealed class DatabaseInfo
@@ -298,6 +305,13 @@ public sealed class EntryMatchInfo
 
 	[JsonProperty("isSelected")]
 	public bool IsSelected { get; set; }
+
+	[JsonProperty("userName", NullValueHandling = NullValueHandling.Ignore)]
+	public string UserName { get; set; }
+
+	// Base64 PNG of the KeePass entry icon.
+	[JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
+	public string Icon { get; set; }
 }
 
 // Identifies the existing entry a passkey should be written onto.

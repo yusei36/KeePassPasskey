@@ -54,7 +54,9 @@ internal static class PromptDemo
 		bool signedIn = PromptHost.Show(
 			tcs =>
 			{
-				var viewModel = new SignInPromptViewModel("example.com", "jordan@example.com", "Personal Email");
+				var viewModel = new SignInPromptViewModel(new Authenticator.UserVerification.SignInVerification(
+					owner, Guid.NewGuid(), "example.com", "jordan@example.com", "Personal Email",
+					EntryTitle: "Personal Email", DatabaseName: "Personal.kdbx"));
 				var window = new SignInPromptWindow(viewModel);
 				window.Closed += (_, _) => tcs.TrySetResult(viewModel.Approved);
 				return window;

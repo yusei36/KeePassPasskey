@@ -12,6 +12,8 @@ internal sealed class PasskeyCredential
 	internal string UserHandle { get; set; }
 	internal string Username { get; set; }
 	internal string Title { get; set; }
+	internal string DatabaseName { get; set; }
+	internal string Icon { get; set; }
 	internal string RpName { get; set; }
 	internal string Origin { get; set; }
 	internal PasskeyAlgorithm Algorithm { get; set; }

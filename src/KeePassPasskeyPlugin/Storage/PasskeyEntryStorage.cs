@@ -394,6 +394,8 @@ internal sealed class PasskeyEntryStorage
 					Title = ResolveTitle(entry, db),
 					HasPasskey = hasPasskey,
 					IsSelected = isSelected,
+					UserName = entry.Strings.ReadSafe(PwDefs.UserNameField),
+					Icon = UI.KeePassIcons.EncodeEntryIcon(_host, db, entry),
 				};
 
 				int rank = isSelected ? 0 : (rpMatch ? 1 : 2);
@@ -481,11 +483,16 @@ internal sealed class PasskeyEntryStorage
 		var results = new List<PasskeyCredential>();
 		foreach (var db in GetSearchDatabases())
 		{
+			string dbName = string.IsNullOrEmpty(db.Name) ? "(unnamed)" : db.Name;
 			foreach (var entry in db.RootGroup.GetEntries(true))
 			{
 				if (!IsSearchable(entry)) continue;
-				if (entry.Strings.Exists(FieldCredentialId) && entry.Strings.Exists(FieldRelyingParty))
-					results.Add(ExtractCredentialMetadata(entry, db));
+				if (!entry.Strings.Exists(FieldCredentialId) || !entry.Strings.Exists(FieldRelyingParty)) continue;
+
+				var credential = ExtractCredentialMetadata(entry, db);
+				credential.DatabaseName = dbName;
+				credential.Icon = UI.KeePassIcons.EncodeEntryIcon(_host, db, entry);
+				results.Add(credential);
 			}
 		}
 		return results;
