@@ -24,11 +24,22 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 	// What the user chose on the entry-picker toast.
 	private enum EntryPickerAction { Cancel, CreateNew, UseEntry }
 
+	private static bool NotificationsDisabled()
+	{
+		var setting = ToastNotificationManagerCompat.CreateToastNotifier().Setting;
+		if (setting == NotificationSetting.Enabled) return false;
+
+		Log.Warn($"Notifications disabled ({setting}); use the dialog prompts instead", nameof(NotificationUserVerifier));
+		return true;
+	}
+
 	public int VerifyForRegistration(RegistrationVerification request, CancellationToken cancellation,
 		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
 	{
 		selectedDatabase = null;
 		selectedEntry = null;
+		if (NotificationsDisabled()) return HResults.E_FAIL;
+
 		string site = request.RpName.Length > 0 ? request.RpName : request.RpId;
 		string user = request.UserName.Length > 0 ? $" for {request.UserName}" : "";
 		var candidateEntries = request.CandidateEntries;
@@ -71,6 +82,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 	public int VerifyForSignIn(SignInVerification request, CancellationToken cancellation)
 	{
+		if (NotificationsDisabled()) return HResults.E_FAIL;
+
 		string user = request.UserName.Length > 0 ? $" as {request.UserName}" : "";
 		string hint = request.DisplayHint.Length > 0 && request.DisplayHint != request.RpId
 			? $"KeePass entry: {request.DisplayHint}" : "";
