@@ -248,6 +248,26 @@ To change it, type a GUID into the field and click **Apply**. Applying re-regist
 
 The AAGUID is only sent when a passkey is **created**; it is never sent during sign-in, so changing it has no effect on passkeys you already have. **A few websites that enforce attestation may reject a passkey whose AAGUID they do not recognise**, so change this only if you know why you need to.
 
+## Diagnostics
+
+The **Diagnostics** page shows the app and plugin versions, the provider registration state, and a live view of both log files. You normally never need it; it is there for when something is not working.
+
+### Provider registration
+
+**Register** and **Unregister** add or remove KeePassPasskey as a passkey provider in Windows. Use them only if the app is missing from **Settings → Accounts → Passkeys → Advanced options**, or if support asks you to.
+
+### Credential cache
+
+To offer your passkeys in the sign-in prompt, Windows keeps its own copy of them. It is refreshed automatically whenever you open, save or close a database, or add or change a passkey, so these buttons are only needed when something looks wrong.
+
+| Button | Description |
+|---|---|
+| Sync now | Refreshes the Windows copy from the databases currently open in KeePass. |
+| Write to log | Writes the Windows copy and your KeePass passkeys to the log, side by side, for troubleshooting and bug reports. Usernames are not written in full. |
+| Clear | Removes every passkey from the Windows copy. They come back on the next sync, so use this together with **Sync now** to rebuild it from scratch. |
+
+If your passkeys are not offered at sign-in, see [The website says there are no passkeys on this device](troubleshooting-faq.md#the-website-says-there-are-no-passkeys-on-this-device).
+
 ## FAQ & Troubleshooting
 
 If something is not working, the [FAQ & Troubleshooting](troubleshooting-faq.md) page covers the most common questions and fixes, such as [why a TPM is required](troubleshooting-faq.md#why-is-a-tpm-required) and [KeePassPasskey not appearing in the provider list](troubleshooting-faq.md#keepasspasskey-does-not-appear-in-the-provider-list).

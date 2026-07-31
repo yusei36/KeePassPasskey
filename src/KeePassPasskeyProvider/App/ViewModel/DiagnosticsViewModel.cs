@@ -72,6 +72,33 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 		await Application.CopyToClipboardAsync(text);
 	}
 
+	/// <summary>
+	/// Registration is deliberately left alone: this page has its own Register button, so syncing
+	/// must not quietly undo an Unregister.
+	/// </summary>
+	[RelayCommand]
+	private async Task SyncCredentials()
+	{
+		await Task.Run(() => Authenticator.CredentialCache.SyncToWindowsCache(
+			Authenticator.PluginConstants.KeePassPasskeyProviderClsid));
+	}
+
+	[RelayCommand]
+	private async Task DumpCredentials()
+	{
+		// Off the UI thread: this talks to KeePass over the pipe and can sit on its timeout.
+		await Task.Run(() => Authenticator.CredentialCache.DumpCredentials(
+			Authenticator.PluginConstants.KeePassPasskeyProviderClsid,
+			line => Log.Info(line, nameof(DumpCredentials))));
+	}
+
+	[RelayCommand]
+	private async Task ClearCredentials()
+	{
+		await Task.Run(() => Authenticator.CredentialCache.ClearWindowsCache(
+			Authenticator.PluginConstants.KeePassPasskeyProviderClsid));
+	}
+
 	private static string ShortenVersion(string v)
 		=> Regex.Replace(v, @"\+([0-9a-f]{8})[0-9a-f]+", "+$1", RegexOptions.IgnoreCase);
 

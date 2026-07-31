@@ -55,6 +55,15 @@ After setting up the PIN again, try **Register** once more in the KeePassPasskey
 - To register again, open the **Passkeys** group, delete the existing entry for that site, and retry. The website will then no longer recognise an existing passkey and will let you create a new one.
 - Alternatively, if you deliberately keep more than one passkey for the same account (for example the same account in separate databases), relax the **Allow duplicate passkeys** setting in the KeePassPasskey app so the registration is not blocked. See [Settings](user-guide.md#settings).
 
+## The website says there are no passkeys on this device
+
+- Windows keeps its own copy of your passkeys so it can offer them in the sign-in prompt. When that copy is empty or out of date, Windows never asks KeePassPasskey for anything: you get no Windows Hello prompt, no notification, and the browser reports that no passkey exists for the site.
+- Check that **Sync passkeys to Windows** is on in **Settings → Advanced**. With it off, passkeys never reach the sign-in prompt at all.
+- Make sure KeePass is running with your database open, then open the KeePassPasskey app, go to **Diagnostics** and click **Sync now**.
+- If that does not help, click **Clear** and then **Sync now** to rebuild the copy from scratch.
+- Older versions could get this copy permanently stuck when two entries held the same passkey, for example after duplicating an entry, after copying a passkey to another entry, or with the same database open twice. Once stuck, newly created passkeys never reached Windows, so sign-in kept failing even though registration still worked. Update to the latest version, then click **Sync now**.
+- To report the problem, click **Write to log** in **Diagnostics** and attach the provider log. Usernames are not written to the log in full.
+
 ## Passkey prompts never show the Windows provider selection or KeePassPasskey
 
 - A browser extension from another password manager (such as KeePassXC-Browser or any extension with passkey support) may be intercepting passkey requests before they reach Windows. When such an extension is active, the browser hands the passkey operation directly to that extension and Windows never gets involved, so KeePassPasskey is never called.

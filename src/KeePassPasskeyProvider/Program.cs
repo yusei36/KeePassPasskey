@@ -253,9 +253,25 @@ internal static class Program
 				return hr >= HResults.S_OK ? 0 : 1;
 			}
 
+			case "/dumpcredentials":
+			{
+				CredentialCache.DumpCredentials(
+					PluginConstants.KeePassPasskeyProviderClsid, Console.WriteLine);
+				return 0;
+			}
+
+			case "/clearcredentials":
+			{
+				bool cleared = CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+				Console.WriteLine(cleared
+					? "Windows credential cache cleared. It repopulates on the next database open or save."
+					: "Could not clear the Windows credential cache; see the provider log.");
+				return cleared ? 0 : 1;
+			}
+
 			default:
 				Console.WriteLine("KeePassPasskey Provider");
-				Console.WriteLine("Usage: KeePassPasskeyProvider.exe /register | /unregister | /status");
+				Console.WriteLine("Usage: KeePassPasskeyProvider.exe /register | /unregister | /status | /dumpcredentials | /clearcredentials");
 				return 0;
 		}
 	}

@@ -126,6 +126,29 @@
 																						Padding="8 3" FontSize="12" />
 																</StackPanel>
 														</Grid>
+
+														<!-- Credential cache actions -->
+														<Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+																<TextBlock Grid.Column="0"
+																					 Text="Credential cache"
+																					 FontFamily="Consolas,Courier New,monospace"
+																					 FontSize="12.5" FontWeight="SemiBold"
+																					 VerticalAlignment="Center" />
+																<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+																		<Button Content="Sync now"
+																						Command="{Binding SyncCredentialsCommand}"
+																						ToolTip.Tip="Refresh the Windows cache from the open KeePass databases now"
+																						Padding="8 3" FontSize="12" />
+																		<Button Content="Write to log"
+																						Command="{Binding DumpCredentialsCommand}"
+																						ToolTip.Tip="Write the Windows cache and the KeePass passkeys to the log"
+																						Padding="8 3" FontSize="12" />
+																		<Button Content="Clear"
+																						Command="{Binding ClearCredentialsCommand}"
+																						ToolTip.Tip="Remove every passkey from the Windows cache. They return on the next database open or save."
+																						Padding="8 3" FontSize="12" />
+																</StackPanel>
+														</Grid>
 												</StackPanel>
 										</Border>
 
