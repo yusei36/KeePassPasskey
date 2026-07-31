@@ -45,16 +45,3 @@ internal static class PluginPillConverters
 
 	private static LambdaConverter Make(Func<object?, object?> convert) => new(convert);
 }
-
-internal static class UserVerificationModeConverters
-{
-	public static readonly IValueConverter Text = Make(v => (v as UserVerificationMode?) switch
-	{
-		UserVerificationMode.WindowsHello => "Windows Hello",
-		UserVerificationMode.Notification => "Notification",
-		UserVerificationMode.Both => "Both",
-		_ => "None",
-	});
-
-	private static LambdaConverter Make(Func<object?, object?> convert) => new(convert);
-}

@@ -176,16 +176,16 @@ Open the KeePassPasskey app from the Start menu and navigate to **Settings**.
 
 ### Notifications & User Verification
 
-Controls how KeePassPasskey confirms your identity before completing a passkey operation.
+Controls how KeePassPasskey confirms your identity before completing a passkey operation. **Registration** (creating a passkey) and **Sign-in** (using a passkey) are configured separately, and each has two independent switches:
 
-| Option | Behavior |
+| Switch | Behavior |
 |---|---|
-| Notification | Shows a confirmation dialog you must approve |
 | Windows Hello | Requires Windows Hello (PIN, fingerprint, or face) |
-| Both | Requires both the confirmation dialog and Windows Hello (default) |
-| None | No confirmation required: passkey operations complete silently |
+| Confirmation prompt | Shows a KeePassPasskey dialog you must approve |
 
-Separate settings exist for **Registration** (creating a passkey) and **Sign-in** (using a passkey). The **Approval timeout** controls how long the dialog stays open before the operation is cancelled (default: 30 seconds). This timeout only applies when the approval mode includes **Notification**.
+Both are on by default. Turning both off for an operation lets it complete silently, without asking you at all; a warning icon appears beside the switches while that is the case.
+
+The **Approval timeout** controls how long the confirmation prompt stays open before the operation is cancelled (default: 30 seconds). It only applies when the confirmation prompt is on.
 
 **Show error notifications**: when enabled, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
 
@@ -200,8 +200,6 @@ Controls how new passkey entries are created in your database.
 **Resolve title placeholders**: when enabled (default), placeholders are resolved when the passkey is created and the resulting text is stored as the title. When disabled, the placeholders are stored as-is so KeePass resolves them each time the entry is shown (useful if you later edit a referenced field). `{RP_NAME}` is always resolved, because it has no underlying entry field.
 
 **Tag new passkeys**: when enabled (default), a `Passkey` tag is added to each entry created when a new passkey is registered.
-
-**Offer saving to an existing entry**: when enabled (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History.
 
 **Allow duplicate passkeys**: a website can ask not to register a second passkey for an account it already has one for. This setting controls where that request is enforced:
 
@@ -221,6 +219,8 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 |---|---|
 | Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
 | Status refresh interval | How often the app polls for connection status. |
+| Offer saving to an existing entry | When on (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History. Requires the registration confirmation prompt. |
+| Use legacy notification prompts | Show confirmation prompts as Windows notifications instead of dialogs, the way earlier versions did. Off by default. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their database and entry pickers are limited to 5 items, so only turn this on if the dialogs cause you trouble. |
 
 ### Expert
 

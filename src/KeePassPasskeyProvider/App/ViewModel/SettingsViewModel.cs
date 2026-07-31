@@ -16,8 +16,16 @@ public sealed partial class SettingsViewModel : ObservableObject
 {
 	[ObservableProperty]
 	[NotifyPropertyChangedFor(nameof(IsSaveToExistingEntryAvailable))]
+	[NotifyPropertyChangedFor(nameof(RegistrationWindowsHello))]
+	[NotifyPropertyChangedFor(nameof(RegistrationPrompt))]
+	[NotifyPropertyChangedFor(nameof(IsRegistrationSilent))]
 	public partial UserVerificationMode RegistrationVerification { get; set; }
-	[ObservableProperty] public partial UserVerificationMode SignInVerification { get; set; }
+	[ObservableProperty]
+	[NotifyPropertyChangedFor(nameof(SignInWindowsHello))]
+	[NotifyPropertyChangedFor(nameof(SignInPrompt))]
+	[NotifyPropertyChangedFor(nameof(IsSignInSilent))]
+	public partial UserVerificationMode SignInVerification { get; set; }
+	[ObservableProperty] public partial bool UseLegacyNotificationPrompts { get; set; }
 	[ObservableProperty] public partial bool ShowErrorNotifications { get; set; }
 	[ObservableProperty] public partial bool AddPasskeyTag { get; set; }
 	[ObservableProperty] public partial bool SaveToExistingEntry { get; set; }
@@ -33,6 +41,39 @@ public sealed partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] public partial bool NewPasskeyBackupState { get; set; }
 	public bool IsSaveToExistingEntryAvailable => RegistrationVerification.HasFlag(UserVerificationMode.Notification);
 
+	// One toggle per flag, with the enum staying the stored value.
+	public bool RegistrationWindowsHello
+	{
+		get => RegistrationVerification.HasFlag(UserVerificationMode.WindowsHello);
+		set => RegistrationVerification = WithFlag(RegistrationVerification, UserVerificationMode.WindowsHello, value);
+	}
+
+	public bool RegistrationPrompt
+	{
+		get => RegistrationVerification.HasFlag(UserVerificationMode.Notification);
+		set => RegistrationVerification = WithFlag(RegistrationVerification, UserVerificationMode.Notification, value);
+	}
+
+	public bool SignInWindowsHello
+	{
+		get => SignInVerification.HasFlag(UserVerificationMode.WindowsHello);
+		set => SignInVerification = WithFlag(SignInVerification, UserVerificationMode.WindowsHello, value);
+	}
+
+	public bool SignInPrompt
+	{
+		get => SignInVerification.HasFlag(UserVerificationMode.Notification);
+		set => SignInVerification = WithFlag(SignInVerification, UserVerificationMode.Notification, value);
+	}
+
+	public bool IsRegistrationSilent => RegistrationVerification == UserVerificationMode.None;
+	public bool IsSignInSilent => SignInVerification == UserVerificationMode.None;
+
+	public const string SilentVerificationWarning =
+		"Both are off, so passkey operations will complete without asking you.";
+
+	private static UserVerificationMode WithFlag(UserVerificationMode mode, UserVerificationMode flag, bool on)
+		=> on ? mode | flag : mode & ~flag;
 
 	// BS implies BE: turning eligibility off forces synced off.
 	partial void OnNewPasskeyBackupEligibleChanged(bool value)
@@ -178,7 +219,9 @@ public sealed partial class SettingsViewModel : ObservableObject
 	{
 		base.OnPropertyChanged(e);
 		if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme)
-				or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus) or nameof(IsSaveToExistingEntryAvailable)))
+				or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus) or nameof(IsSaveToExistingEntryAvailable)
+				or nameof(RegistrationWindowsHello) or nameof(RegistrationPrompt) or nameof(IsRegistrationSilent)
+				or nameof(SignInWindowsHello) or nameof(SignInPrompt) or nameof(IsSignInSilent)))
 			CheckForUnsavedChanges();
 	}
 
@@ -194,6 +237,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 	{
 		RegistrationVerification = RegistrationVerification,
 		SignInVerification = SignInVerification,
+		UseLegacyNotificationPrompts = UseLegacyNotificationPrompts,
 		ShowErrorNotifications = ShowErrorNotifications,
 		AddPasskeyTag = AddPasskeyTag,
 		SaveToExistingEntry = SaveToExistingEntry,
@@ -209,7 +253,6 @@ public sealed partial class SettingsViewModel : ObservableObject
 		NewPasskeyBackupState = NewPasskeyBackupState && NewPasskeyBackupEligible, // BS implies BE
 	};
 
-	public static UserVerificationMode[] VerificationModes { get; } = Enum.GetValues<UserVerificationMode>();
 	public static PasskeyEntryGroupMode[] GroupModes { get; } = Enum.GetValues<PasskeyEntryGroupMode>();
 	public static ExcludeCredentialCheckMode[] ExcludeCredentialCheckModes { get; } = Enum.GetValues<ExcludeCredentialCheckMode>();
 	public static LogLevel[] LogLevels { get; } = Enum.GetValues<LogLevel>();
@@ -373,6 +416,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 		_isLoading = true;
 		RegistrationVerification = c.RegistrationVerification;
 		SignInVerification = c.SignInVerification;
+		UseLegacyNotificationPrompts = c.UseLegacyNotificationPrompts;
 		ShowErrorNotifications = c.ShowErrorNotifications;
 		AddPasskeyTag = c.AddPasskeyTag;
 		SaveToExistingEntry = c.SaveToExistingEntry;

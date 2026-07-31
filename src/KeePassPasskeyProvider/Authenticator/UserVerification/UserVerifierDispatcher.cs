@@ -9,12 +9,15 @@ namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal static class UserVerifierDispatcher
 {
-	// The Notification flag means "confirmation prompt", now rendered as a dialog.
-	// NotificationUserVerifier is kept unwired for the upcoming presentation setting.
-	private static readonly IUserVerifier[] _verifiers =
+	private static readonly IUserVerifier _windowsHello = new WindowsHelloUserVerifier();
+	private static readonly IUserVerifier _dialog = new DialogUserVerifier();
+	private static readonly IUserVerifier _notification = new NotificationUserVerifier();
+
+	// The Notification flag means "confirmation prompt"; the setting only picks how it is presented.
+	private static IUserVerifier[] Verifiers =>
 	[
-		new WindowsHelloUserVerifier(),
-		new DialogUserVerifier(),
+		_windowsHello,
+		KeePassPasskeySettings.Current.UseLegacyNotificationPrompts ? _notification : _dialog,
 	];
 
 	public static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) VerifyForRegistration(
@@ -40,7 +43,7 @@ internal static class UserVerifierDispatcher
 	{
 		DatabaseInfo? selected = null;
 		EntryTargetInfo? selectedEntry = null;
-		foreach (var verifier in _verifiers)
+		foreach (var verifier in Verifiers)
 		{
 			if (!mode.HasFlag(verifier.Mode)) continue;
 			int hr = call(verifier, out DatabaseInfo? sel, out EntryTargetInfo? selEntry);
@@ -54,7 +57,7 @@ internal static class UserVerifierDispatcher
 
 	private static int DispatchSignIn(UserVerificationMode mode, Func<IUserVerifier, int> call)
 	{
-		foreach (var verifier in _verifiers)
+		foreach (var verifier in Verifiers)
 		{
 			if (!mode.HasFlag(verifier.Mode)) continue;
 			int hr = call(verifier);

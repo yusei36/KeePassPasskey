@@ -85,7 +85,7 @@
 
 						<ui:FASettingsExpander Header="Notifications &amp; User Verification"
 																 IconSource="OtherUser"
-																 Description="Notification behavior and user verification for passkey operations"
+																 Description="Confirmation prompts and user verification for passkey operations"
 																 IsExpanded="True">
 
 								<ui:FASettingsExpanderItem Content="Error notifications"
@@ -98,38 +98,8 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Registration"
-																				 Description="Behaviour when creating a passkey">
-										<ui:FASettingsExpanderItem.Footer>
-												<ComboBox SelectedItem="{Binding RegistrationVerification}"
-																	ItemsSource="{Binding VerificationModes}"
-																	MinWidth="140">
-														<ComboBox.ItemTemplate>
-																<DataTemplate>
-																		<TextBlock Text="{Binding Converter={x:Static conv:UserVerificationModeConverters.Text}}" />
-																</DataTemplate>
-														</ComboBox.ItemTemplate>
-												</ComboBox>
-										</ui:FASettingsExpanderItem.Footer>
-								</ui:FASettingsExpanderItem>
-
-								<ui:FASettingsExpanderItem Content="Sign-in"
-																				 Description="Behaviour when using a passkey">
-										<ui:FASettingsExpanderItem.Footer>
-												<ComboBox SelectedItem="{Binding SignInVerification}"
-																	ItemsSource="{Binding VerificationModes}"
-																	MinWidth="140">
-														<ComboBox.ItemTemplate>
-																<DataTemplate>
-																		<TextBlock Text="{Binding Converter={x:Static conv:UserVerificationModeConverters.Text}}" />
-																</DataTemplate>
-														</ComboBox.ItemTemplate>
-												</ComboBox>
-										</ui:FASettingsExpanderItem.Footer>
-								</ui:FASettingsExpanderItem>
-
 								<ui:FASettingsExpanderItem Content="Approval timeout"
-																				 Description="How long the approval notification stays open">
+																				 Description="How long the confirmation prompt stays open">
 										<ui:FASettingsExpanderItem.Footer>
 												<ui:FANumberBox Value="{Binding NotificationTimeoutSeconds}"
 																			Minimum="5"
@@ -140,6 +110,70 @@
 																			MinWidth="120"
 									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
 										</ui:FASettingsExpanderItem.Footer>
+								</ui:FASettingsExpanderItem>
+
+								<ui:FASettingsExpanderItem>
+										<ui:FASettingsExpanderItem.Content>
+												<StackPanel Spacing="8" Margin="0 4">
+														<StackPanel Spacing="2">
+																<StackPanel Orientation="Horizontal" Spacing="8">
+																		<TextBlock Text="Registration" VerticalAlignment="Center" />
+																		<ui:FASymbolIcon Symbol="ImportantFilled" FontSize="16"
+																				VerticalAlignment="Center"
+																				IsVisible="{Binding IsRegistrationSilent}"
+																				Foreground="{DynamicResource SystemFillColorCautionBrush}"
+																				ToolTip.Tip="{x:Static vm:SettingsViewModel.SilentVerificationWarning}" />
+																</StackPanel>
+																<TextBlock Text="How you approve saving a new passkey"
+																		Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+																		FontSize="12" />
+														</StackPanel>
+														<Grid ColumnDefinitions="*,Auto">
+																<TextBlock Text="Windows Hello (PIN, fingerprint, or face)" VerticalAlignment="Center" />
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationWindowsHello}"
+																		OnContent="On"
+																		OffContent="Off" />
+														</Grid>
+														<Grid ColumnDefinitions="*,Auto">
+																<TextBlock Text="Confirmation prompt" VerticalAlignment="Center" />
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationPrompt}"
+																		OnContent="On"
+																		OffContent="Off" />
+														</Grid>
+												</StackPanel>
+										</ui:FASettingsExpanderItem.Content>
+								</ui:FASettingsExpanderItem>
+
+								<ui:FASettingsExpanderItem>
+										<ui:FASettingsExpanderItem.Content>
+												<StackPanel Spacing="8" Margin="0 4">
+														<StackPanel Spacing="2">
+																<StackPanel Orientation="Horizontal" Spacing="8">
+																		<TextBlock Text="Sign-in" VerticalAlignment="Center" />
+																		<ui:FASymbolIcon Symbol="ImportantFilled" FontSize="16"
+																				VerticalAlignment="Center"
+																				IsVisible="{Binding IsSignInSilent}"
+																				Foreground="{DynamicResource SystemFillColorCautionBrush}"
+																				ToolTip.Tip="{x:Static vm:SettingsViewModel.SilentVerificationWarning}" />
+																</StackPanel>
+																<TextBlock Text="How you approve signing in"
+																		Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+																		FontSize="12" />
+														</StackPanel>
+														<Grid ColumnDefinitions="*,Auto">
+																<TextBlock Text="Windows Hello (PIN, fingerprint, or face)" VerticalAlignment="Center" />
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInWindowsHello}"
+																		OnContent="On"
+																		OffContent="Off" />
+														</Grid>
+														<Grid ColumnDefinitions="*,Auto">
+																<TextBlock Text="Confirmation prompt" VerticalAlignment="Center" />
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInPrompt}"
+																		OnContent="On"
+																		OffContent="Off" />
+														</Grid>
+												</StackPanel>
+										</ui:FASettingsExpanderItem.Content>
 								</ui:FASettingsExpanderItem>
 
 						</ui:FASettingsExpander>
@@ -193,17 +227,6 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Offer saving to an existing entry"
-																				 Description="Offer to save a passkey onto a matching entry instead of always creating a new one. Up to 5 matches are offered. Requires a Registration mode that includes notifications.">
-										<ui:FASettingsExpanderItem.Footer>
-												<ToggleSwitch IsChecked="{Binding SaveToExistingEntry}"
-																			IsEnabled="{Binding IsSaveToExistingEntryAvailable}"
-																			OnContent="On"
-																			OffContent="Off"
-																			Margin="0 0 4 0" />
-										</ui:FASettingsExpanderItem.Footer>
-								</ui:FASettingsExpanderItem>
-
 								<ui:FASettingsExpanderItem Content="Allow duplicate passkeys"
 																				 Description="Where to enforce a website's request not to add a second passkey for an account it already has one for.">
 										<ui:FASettingsExpanderItem.Footer>
@@ -223,7 +246,7 @@
 
 						<ui:FASettingsExpander Header="Advanced"
 																 IconSource="Setting"
-																 Description="Timing, resilience and logging settings"
+																 Description="Behaviour, timing and logging settings that are rarely changed"
 																 IsExpanded="False">
 
 								<ui:FASettingsExpanderItem Content="Log level"
@@ -246,6 +269,27 @@
 																			SpinButtonPlacementMode="Inline"
 																			MinWidth="120"
 									  NumberFormatter="{x:Static utils:NumberFormatters.Seconds}" />
+										</ui:FASettingsExpanderItem.Footer>
+								</ui:FASettingsExpanderItem>
+
+								<ui:FASettingsExpanderItem Content="Offer saving to an existing entry"
+																				 Description="Offer to save a passkey onto a matching entry instead of always creating a new one. Requires the registration confirmation prompt.">
+										<ui:FASettingsExpanderItem.Footer>
+												<ToggleSwitch IsChecked="{Binding SaveToExistingEntry}"
+																			IsEnabled="{Binding IsSaveToExistingEntryAvailable}"
+																			OnContent="On"
+																			OffContent="Off"
+																			Margin="0 0 4 0" />
+										</ui:FASettingsExpanderItem.Footer>
+								</ui:FASettingsExpanderItem>
+
+								<ui:FASettingsExpanderItem Content="Use legacy notification prompts"
+																				 Description="Show confirmation prompts as Windows notifications instead of dialogs. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their pickers are limited to 5 items.">
+										<ui:FASettingsExpanderItem.Footer>
+												<ToggleSwitch IsChecked="{Binding UseLegacyNotificationPrompts}"
+																			OnContent="On"
+																			OffContent="Off"
+																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 

@@ -31,6 +31,12 @@ internal static class PromptHost
 	internal static void WarmUp()
 	{
 		var settings = KeePassPasskeySettings.Current;
+		if (settings.UseLegacyNotificationPrompts)
+		{
+			Log.Debug("legacy notification prompts selected, not starting the UI host", nameof(PromptHost));
+			return;
+		}
+
 		if (!settings.RegistrationVerification.HasFlag(UserVerificationMode.Notification)
 			&& !settings.SignInVerification.HasFlag(UserVerificationMode.Notification))
 		{
