@@ -24,23 +24,23 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 	// What the user chose on the entry-picker toast.
 	private enum EntryPickerAction { Cancel, CreateNew, UseEntry }
 
-	public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
-		Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
-		CancellationToken cancellation, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
+	public int VerifyForRegistration(RegistrationVerification request, CancellationToken cancellation,
+		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
 	{
 		selectedDatabase = null;
 		selectedEntry = null;
-		string site = rpName.Length > 0 ? rpName : rpId;
-		string user = username.Length > 0 ? $" for {username}" : "";
+		string site = request.RpName.Length > 0 ? request.RpName : request.RpId;
+		string user = request.UserName.Length > 0 ? $" for {request.UserName}" : "";
+		var candidateEntries = request.CandidateEntries;
 		bool hasCandidates = candidateEntries != null && candidateEntries.Count > 0;
-		string tag = transactionId.ToString("N");
+		string tag = request.TransactionId.ToString("N");
 
 		var (action, sel) = ShowRegistrationToast(
 			title: "Passkey creation requested",
 			body: $"Create a passkey{user} on {site}.",
 			confirmText: "Create passkey",
 			tag: tag,
-			databases: databases,
+			databases: request.Databases,
 			offerAddToExisting: hasCandidates);
 
 		if (action == RegistrationAction.Deny) return HResults.NTE_USER_CANCELLED;
@@ -69,17 +69,17 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		return HResults.S_OK;
 	}
 
-	public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId,
-		CancellationToken cancellation)
+	public int VerifyForSignIn(SignInVerification request, CancellationToken cancellation)
 	{
-		string user = username.Length > 0 ? $" as {username}" : "";
-		string hint = displayHint.Length > 0 && displayHint != rpId ? $"KeePass entry: {displayHint}" : "";
+		string user = request.UserName.Length > 0 ? $" as {request.UserName}" : "";
+		string hint = request.DisplayHint.Length > 0 && request.DisplayHint != request.RpId
+			? $"KeePass entry: {request.DisplayHint}" : "";
 		return ShowToast(
 			title: "Authentication requested",
-			body: $"Sign in{user} on {rpId}.",
+			body: $"Sign in{user} on {request.RpId}.",
 			hint: hint,
 			confirmText: "Approve",
-			tag: transactionId.ToString("N")) ? HResults.S_OK : HResults.NTE_USER_CANCELLED;
+			tag: request.TransactionId.ToString("N")) ? HResults.S_OK : HResults.NTE_USER_CANCELLED;
 	}
 
 	private static bool ShowToast(string title, string body, string confirmText, string tag, string hint = "")

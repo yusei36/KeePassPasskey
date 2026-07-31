@@ -23,9 +23,8 @@ internal sealed class DialogUserVerifier : IUserVerifier
 		internal static readonly RegistrationChoice Cancelled = new(false, null, null);
 	}
 
-	public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
-		Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
-		CancellationToken cancellation, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
+	public int VerifyForRegistration(RegistrationVerification request, CancellationToken cancellation,
+		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
 	{
 		selectedDatabase = null;
 		selectedEntry = null;
@@ -33,14 +32,14 @@ internal sealed class DialogUserVerifier : IUserVerifier
 		var choice = PromptHost.Show(
 			tcs =>
 			{
-				var viewModel = new RegistrationPromptViewModel(rpId, rpName, username, databases, candidateEntries);
+				var viewModel = new RegistrationPromptViewModel(request);
 				var window = new RegistrationPromptWindow(viewModel);
 				window.Closed += (_, _) => tcs.TrySetResult(viewModel.Approved
 					? new RegistrationChoice(true, viewModel.TargetDatabase, viewModel.TargetEntry)
 					: RegistrationChoice.Cancelled);
 				return window;
 			},
-			OwnerWindow(pRequest), RegistrationChoice.Cancelled, cancellation);
+			OwnerWindow(request.RequestPtr), RegistrationChoice.Cancelled, cancellation);
 
 		if (!choice.Approved) return HResults.NTE_USER_CANCELLED;
 
@@ -49,18 +48,17 @@ internal sealed class DialogUserVerifier : IUserVerifier
 		return HResults.S_OK;
 	}
 
-	public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId,
-		CancellationToken cancellation)
+	public int VerifyForSignIn(SignInVerification request, CancellationToken cancellation)
 	{
 		bool approved = PromptHost.Show(
 			tcs =>
 			{
-				var viewModel = new SignInPromptViewModel(rpId, username, displayHint);
+				var viewModel = new SignInPromptViewModel(request.RpId, request.UserName, request.DisplayHint);
 				var window = new SignInPromptWindow(viewModel);
 				window.Closed += (_, _) => tcs.TrySetResult(viewModel.Approved);
 				return window;
 			},
-			OwnerWindow(pRequest), false, cancellation);
+			OwnerWindow(request.RequestPtr), false, cancellation);
 
 		return approved ? HResults.S_OK : HResults.NTE_USER_CANCELLED;
 	}

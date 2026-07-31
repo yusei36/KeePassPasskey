@@ -72,7 +72,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				CtapRequestDump.LogRequest(pDecoded);
 
 				// Always return "none"; warn when a site asks for enterprise attestation so a rejection is traceable.
-				if (pDecoded->dwEnterpriseAttestation != WebAuthnConstants.EnterpriseAttestationNone)
+				bool enterpriseAttestation = pDecoded->dwEnterpriseAttestation != WebAuthnConstants.EnterpriseAttestationNone;
+				if (enterpriseAttestation)
 					Log.Warn($"Relying party {rpIdUtf8} requested enterprise attestation ({pDecoded->dwEnterpriseAttestation}); KeePassPasskey can't provide this and will return none. The site may reject the passkey if enterprise attestation is required.");
 
 				string userIdB64 = string.Empty;
@@ -120,7 +121,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
 				// 4. User verification
 				var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
-					(nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases, candidates,
+					new RegistrationVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr,
+						userNameStr, rpNameStr, databases, candidates, enterpriseAttestation),
 					_operationCts!.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");
 				if (hrUv < 0) return hrUv;
@@ -241,7 +243,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				CredentialCache.LookupWindowsCache(rpIdUtf8, allowList, out string uvUsername, out string uvDisplayHint);
 				Log.Info($"UV cache lookup userName={uvUsername} displayHint={uvDisplayHint}");
 				int hrUv = UserVerifierDispatcher.VerifyForSignIn(
-					(nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint, _operationCts!.Token);
+					new SignInVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint),
+					_operationCts!.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
 

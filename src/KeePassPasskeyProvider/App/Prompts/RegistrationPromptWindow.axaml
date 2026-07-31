@@ -17,7 +17,7 @@
 											WindowDecorations="None"
 											WindowStartupLocation="CenterScreen">
 
-	<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+	<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
 
 		<prompts:PromptTitleBar Grid.Row="0" />
 
@@ -39,8 +39,23 @@
 			</StackPanel>
 		</Grid>
 
+		<!-- The site asked for enterprise attestation; it may still accept a passkey without it. -->
+		<Border Grid.Row="2" Margin="18 0 18 12" Padding="10 8" CornerRadius="6"
+						IsVisible="{Binding ShowAttestationHint}"
+						Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}">
+			<Grid ColumnDefinitions="Auto,*">
+				<fa:FAFontIcon Grid.Column="0" Glyph="&#xE946;" FontSize="14"
+											 FontFamily="Segoe Fluent Icons" VerticalAlignment="Top" Margin="0 1 0 0"
+											 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+				<TextBlock Grid.Column="1" Margin="8 0 0 0"
+									 Text="This site asked for enterprise attestation, which KeePassPasskey cannot provide. It may still accept the passkey."
+									 FontSize="11.5" TextWrapping="Wrap"
+									 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+			</Grid>
+		</Border>
+
 		<!-- Create new / Add to existing -->
-		<Border Grid.Row="2" Margin="18 0 18 0" Padding="3" CornerRadius="6"
+		<Border Grid.Row="3" Margin="18 0 18 0" Padding="3" CornerRadius="6"
 						IsVisible="{Binding HasCandidates}"
 						Background="{DynamicResource ControlFillColorSecondaryBrush}">
 			<Grid ColumnDefinitions="*,*">
@@ -52,7 +67,7 @@
 		</Border>
 
 		<!-- Create a new entry -->
-		<StackPanel Grid.Row="3" Margin="18 16 18 4" Spacing="6"
+		<StackPanel Grid.Row="4" Margin="18 16 18 4" Spacing="6"
 								IsVisible="{Binding IsCreateNew}">
 			<TextBlock Text="Database" FontSize="12"
 								 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
@@ -70,7 +85,7 @@
 		</StackPanel>
 
 		<!-- Save onto an existing entry -->
-		<StackPanel Grid.Row="3" Margin="18 14 18 4" Spacing="8"
+		<StackPanel Grid.Row="4" Margin="18 14 18 4" Spacing="8"
 								IsVisible="{Binding IsAddToExisting}">
 			<Grid ColumnDefinitions="*,6,Auto">
 				<TextBox Grid.Column="0" PlaceholderText="Search entries…"
@@ -164,7 +179,7 @@
 		</StackPanel>
 
 		<!-- Footer -->
-		<Border Grid.Row="4" Margin="0 12 0 0" Padding="18"
+		<Border Grid.Row="5" Margin="0 12 0 0" Padding="18"
 						Background="{DynamicResource SolidBackgroundFillColorSecondaryBrush}">
 			<Grid ColumnDefinitions="*,10,*">
 				<Button Grid.Column="0" Classes="accent" HorizontalAlignment="Stretch"

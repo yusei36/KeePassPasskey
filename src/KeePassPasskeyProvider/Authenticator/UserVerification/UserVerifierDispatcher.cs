@@ -21,20 +21,14 @@ internal static class UserVerifierDispatcher
 	];
 
 	public static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) VerifyForRegistration(
-		nint pRequest, Guid transactionId,
-		string rpId, string rpName, string uvUsername, string uvDisplayHint,
-		IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
-		CancellationToken cancellation)
+		RegistrationVerification request, CancellationToken cancellation)
 		=> DispatchRegistration(KeePassPasskeySettings.Current.RegistrationVerification,
 			(IUserVerifier v, out DatabaseInfo? sel, out EntryTargetInfo? selEntry) =>
-				v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, candidateEntries, cancellation, out sel, out selEntry));
+				v.VerifyForRegistration(request, cancellation, out sel, out selEntry));
 
-	public static int VerifyForSignIn(
-		nint pRequest, Guid transactionId,
-		string rpId, string uvUsername, string uvDisplayHint,
-		CancellationToken cancellation)
+	public static int VerifyForSignIn(SignInVerification request, CancellationToken cancellation)
 		=> DispatchSignIn(KeePassPasskeySettings.Current.SignInVerification,
-			v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId, cancellation));
+			v => v.VerifyForSignIn(request, cancellation));
 
 	private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
 

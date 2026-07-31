@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using KeePassPasskeyProvider.Authenticator.UserVerification;
 using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
@@ -29,25 +30,22 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 	public IReadOnlyList<DatabaseInfo> Databases { get; }
 	public ObservableCollection<EntryGroupViewModel> Groups { get; } = [];
 	public bool HasCandidates { get; }
+	public bool ShowAttestationHint { get; }
 
 	public override bool CanConfirm => IsAddToExisting ? SelectedEntry != null : SelectedDatabase != null;
 
-	internal RegistrationPromptViewModel(
-		string rpId,
-		string rpName,
-		string userName,
-		IReadOnlyList<DatabaseInfo> databases,
-		IReadOnlyList<EntryMatchInfo> candidates)
+	internal RegistrationPromptViewModel(RegistrationVerification request)
 	{
-		string site = rpName.Length > 0 ? rpName : rpId;
+		string site = request.RpName.Length > 0 ? request.RpName : request.RpId;
 		WindowTitle = "Save passkey";
 		ConfirmText = "Save";
-		SetSite($"{site} wants to save a passkey", userName.Length > 0 ? $"as {userName}" : "", site);
+		ShowAttestationHint = request.EnterpriseAttestationRequested;
+		SetSite($"{site} wants to save a passkey", request.UserName.Length > 0 ? $"as {request.UserName}" : "", site);
 
-		Databases = databases;
-		SelectedDatabase = databases.Count > 0 ? databases[0] : null;
+		Databases = request.Databases;
+		SelectedDatabase = request.Databases.Count > 0 ? request.Databases[0] : null;
 
-		_allRows = [.. candidates.Select(c => new EntryRowViewModel(c))];
+		_allRows = [.. request.CandidateEntries.Select(c => new EntryRowViewModel(c))];
 		HasCandidates = _allRows.Count > 0;
 
 		RebuildGroups();

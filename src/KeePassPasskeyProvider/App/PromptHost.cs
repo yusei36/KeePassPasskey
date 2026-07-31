@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using KeePassPasskeyProvider.App.Prompts;
 using KeePassPasskeyProvider.App.ViewModel;
+using KeePassPasskeyProvider.Authenticator.UserVerification;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using Microsoft.Win32;
@@ -114,7 +115,8 @@ internal static class PromptHost
 		try
 		{
 			var window = new RegistrationPromptWindow(
-				new RegistrationPromptViewModel(string.Empty, string.Empty, string.Empty, [], []));
+				new RegistrationPromptViewModel(new RegistrationVerification(
+					0, Guid.Empty, string.Empty, string.Empty, string.Empty, string.Empty, [], [], false)));
 			window.Close();
 			Log.Debug($"prompt window prewarmed in {warmed.ElapsedMilliseconds} ms", nameof(PromptHost));
 		}
