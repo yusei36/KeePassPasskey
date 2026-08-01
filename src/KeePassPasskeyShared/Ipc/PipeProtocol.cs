@@ -21,7 +21,6 @@ public static class PipeMessageTypes
 	public const string FindMatchingEntries = "find_matching_entries";
 	public const string MakeCredential = "make_credential";
 	public const string GetAssertion = "get_assertion";
-	public const string Cancel = "cancel";
 	public const string GetSettings = "get_settings";
 	public const string SaveSettings = "save_settings";
 }
@@ -114,11 +113,6 @@ public sealed class GetAssertionRequest : PipeRequestBase
 
 	[JsonProperty("allowCredentials", NullValueHandling = NullValueHandling.Ignore)]
 	public List<string> AllowCredentials { get; set; }
-}
-
-public sealed class CancelRequest : PipeRequestBase
-{
-	public override string Type => PipeMessageTypes.Cancel;
 }
 
 public sealed class GetSettingsRequest : PipeRequestBase
@@ -244,14 +238,6 @@ public sealed class GetAssertionResponse : PipeResponseBase
 	public string UserDisplayName { get; set; }
 }
 
-public sealed class CancelResponse : PipeResponseBase
-{
-	public CancelResponse() { Type = PipeMessageTypes.Cancel; }
-
-	[JsonProperty("status")]
-	public string Status { get; set; }
-}
-
 public sealed class GetSettingsResponse : PipeResponseBase
 {
 	public GetSettingsResponse() { Type = PipeMessageTypes.GetSettings; }
@@ -342,7 +328,6 @@ internal sealed class PipeRequestConverter : JsonConverter
 			PipeMessageTypes.FindMatchingEntries => new FindMatchingEntriesRequest(),
 			PipeMessageTypes.MakeCredential => new MakeCredentialRequest(),
 			PipeMessageTypes.GetAssertion => new GetAssertionRequest(),
-			PipeMessageTypes.Cancel => new CancelRequest(),
 			PipeMessageTypes.GetSettings => new GetSettingsRequest(),
 			PipeMessageTypes.SaveSettings => new SaveSettingsRequest(),
 			_ => throw new JsonSerializationException($"Unknown request type: {type}")

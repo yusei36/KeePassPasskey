@@ -45,9 +45,6 @@ public sealed class PipeClient
 	public GetAssertionResponse GetAssertion(GetAssertionRequest request)
 		=> Send<GetAssertionResponse>(request);
 
-	public CancelResponse Cancel()
-		=> Send<CancelResponse>(new CancelRequest());
-
 	public GetSettingsResponse GetSettings()
 		=> Send<GetSettingsResponse>(new GetSettingsRequest());
 

@@ -55,7 +55,6 @@ internal sealed class RequestHandler
 				FindMatchingEntriesRequest r => HandleFindMatchingEntries(r),
 				MakeCredentialRequest r => HandleMakeCredential(r),
 				GetAssertionRequest r => HandleGetAssertion(r),
-				CancelRequest r => HandleCancel(r),
 				GetSettingsRequest r => HandleGetSettings(r),
 				SaveSettingsRequest r => HandleSaveSettings(r),
 				_ => new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Unknown request type: " + req.Type }
@@ -264,11 +263,6 @@ internal sealed class RequestHandler
 			UserName = credential.Username ?? "",
 			UserDisplayName = string.IsNullOrEmpty(credential.Title) ? (credential.Username ?? "") : credential.Title
 		};
-	}
-
-	private CancelResponse HandleCancel(CancelRequest req)
-	{
-		return new CancelResponse { Status = "acknowledged" };
 	}
 
 	private GetSettingsResponse HandleGetSettings(GetSettingsRequest req)
