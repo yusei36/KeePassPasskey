@@ -16,6 +16,9 @@ internal static class PromptDemo
 		nint owner = Util.Win32Native.GetForegroundWindow();
 		Log.Info($"demo owner window 0x{owner:X}", nameof(PromptDemo));
 
+		// Mirrors ComServer, so the demo warms up the way a ceremony does.
+		PromptHost.WarmUp();
+
 		var databases = new List<DatabaseInfo>
 		{
 			new() { Id = "db1", Name = "Personal.kdbx" },

@@ -24,6 +24,8 @@ internal static class PromptHost
 
 	private static Thread? _uiThread;
 	private static TaskCompletionSource? _ready;
+	private static readonly ManualResetEventSlim _prewarmed = new(false);
+	private static readonly TimeSpan PrewarmTimeout = TimeSpan.FromSeconds(5);
 
 	/// <summary>
 	/// Windows runs a fresh COM server per ceremony and the UI stack takes seconds to come up, which
@@ -35,6 +37,7 @@ internal static class PromptHost
 		if (settings.UseLegacyNotificationPrompts)
 		{
 			Log.Debug("legacy notification prompts selected, not starting the UI host", nameof(PromptHost));
+			_prewarmed.Set();
 			return;
 		}
 
@@ -42,6 +45,7 @@ internal static class PromptHost
 			&& !settings.SignInVerification.HasFlag(UserVerificationMode.Notification))
 		{
 			Log.Debug("confirmation prompts disabled, not starting the UI host", nameof(PromptHost));
+			_prewarmed.Set();
 			return;
 		}
 
@@ -60,6 +64,19 @@ internal static class PromptHost
 	{
 		if (!EnsureStarted())
 			return cancelledResult;
+
+		// Windows cold-starts the COM server for the ceremony itself, so the prewarm is usually still
+		// running when the first operation arrives. Waiting costs nothing: the same initialisation
+		// happens either way, and letting it finish first keeps it off the critical path.
+		try
+		{
+			if (!_prewarmed.Wait(PrewarmTimeout, cancellation))
+				Log.Debug("prewarm did not finish in time, showing anyway", nameof(PromptHost));
+		}
+		catch (OperationCanceledException)
+		{
+			return cancelledResult;
+		}
 
 		var tcs = new TaskCompletionSource<TResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -117,13 +134,32 @@ internal static class PromptHost
 			var window = new RegistrationPromptWindow(
 				new RegistrationPromptViewModel(new RegistrationVerification(
 					0, Guid.Empty, string.Empty, string.Empty, string.Empty, [], [], false)));
-			window.Close();
-			Log.Debug($"prompt window prewarmed in {warmed.ElapsedMilliseconds} ms", nameof(PromptHost));
+
+			// It has to be shown, not just built: the native surface, GPU swapchain and glyph caches are
+			// created lazily on the first Show, and that is most of the first prompt's cost.
+			var offScreen = new PixelPoint(-32000, -32000);
+			window.WindowStartupLocation = WindowStartupLocation.Manual;
+			window.Position = offScreen;
+			window.ShowActivated = false;
+			window.Show();
+			// The pre-Show position does not always survive, and this window renders real content.
+			window.Position = offScreen;
+
+			// Kept up briefly so the render thread composites a frame before it goes away.
+			DispatcherTimer.RunOnce(
+				() =>
+				{
+					try { window.Close(); } catch (Exception ex) { Log.Debug($"prewarm close failed: {ex.Message}", nameof(PromptHost)); }
+					_prewarmed.Set();
+					Log.Debug($"prompt window prewarmed in {warmed.ElapsedMilliseconds} ms", nameof(PromptHost));
+				},
+				TimeSpan.FromMilliseconds(200));
 		}
 		catch (Exception ex)
 		{
 			// Only an optimisation; the real prompt builds its own window either way.
 			Log.Debug($"prompt prewarm failed: {ex.GetType().Name}: {ex.Message}", nameof(PromptHost));
+			_prewarmed.Set();
 		}
 	}
 
