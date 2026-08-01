@@ -23,15 +23,11 @@
 		<!-- Site header -->
 		<Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="18 6 18 14">
 			<Border Grid.Column="0" Width="36" Height="36" CornerRadius="8"
-							IsVisible="{Binding !HasCredentialIcon}"
 							Background="{Binding SiteTileBrush}">
 				<TextBlock Text="{Binding SiteLetter}" Foreground="White"
 									 FontSize="16" FontWeight="SemiBold"
 									 HorizontalAlignment="Center" VerticalAlignment="Center" />
 			</Border>
-			<Image Grid.Column="0" Width="36" Height="36"
-						 IsVisible="{Binding HasCredentialIcon}"
-						 Source="{Binding CredentialIcon}" />
 
 			<TextBlock Grid.Column="1" Margin="12 0 0 0" VerticalAlignment="Center"
 								 Text="{Binding SiteHeadline}" FontSize="14" FontWeight="SemiBold"

@@ -10,7 +10,6 @@ internal sealed record RegistrationVerification(
 	nint RequestPtr,
 	Guid TransactionId,
 	string RpId,
-	string RpName,
 	string UserName,
 	string DisplayHint,
 	IReadOnlyList<DatabaseInfo> Databases,

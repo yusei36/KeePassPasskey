@@ -116,7 +116,7 @@ internal static class PromptHost
 		{
 			var window = new RegistrationPromptWindow(
 				new RegistrationPromptViewModel(new RegistrationVerification(
-					0, Guid.Empty, string.Empty, string.Empty, string.Empty, string.Empty, [], [], false)));
+					0, Guid.Empty, string.Empty, string.Empty, string.Empty, [], [], false)));
 			window.Close();
 			Log.Debug($"prompt window prewarmed in {warmed.ElapsedMilliseconds} ms", nameof(PromptHost));
 		}

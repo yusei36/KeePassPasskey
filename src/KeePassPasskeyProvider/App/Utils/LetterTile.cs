@@ -6,8 +6,8 @@ using Avalonia.Media;
 namespace KeePassPasskeyProvider.App.Utils;
 
 /// <summary>
-/// Placeholder site/entry icon until real favicons land: first letter on a colour derived from the
-/// text, so the same site or entry always looks the same.
+/// Site and entry tile: first letter on a colour derived from the text, so the same site or entry
+/// always looks the same.
 /// </summary>
 internal static class LetterTile
 {

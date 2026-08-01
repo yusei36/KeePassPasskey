@@ -121,7 +121,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
 				// 4. User verification
 				var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
-					new RegistrationVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr,
+					new RegistrationVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8,
 						userNameStr, rpNameStr, databases, candidates, enterpriseAttestation),
 					_operationCts!.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");

@@ -40,7 +40,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		selectedEntry = null;
 		if (NotificationsDisabled()) return HResults.E_FAIL;
 
-		string site = request.RpName.Length > 0 ? request.RpName : request.RpId;
+		string site = request.RpId;
 		string user = request.UserName.Length > 0 ? $" for {request.UserName}" : "";
 		var candidateEntries = request.CandidateEntries;
 		bool hasCandidates = candidateEntries != null && candidateEntries.Count > 0;

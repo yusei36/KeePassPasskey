@@ -36,11 +36,12 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 
 	internal RegistrationPromptViewModel(RegistrationVerification request)
 	{
-		string site = request.RpName.Length > 0 ? request.RpName : request.RpId;
+		// rpId, not rpName: rpName is site-supplied and unverified.
 		WindowTitle = "Save passkey";
 		ConfirmText = "Save";
 		ShowAttestationHint = request.EnterpriseAttestationRequested;
-		SetSite($"{site} wants to save a passkey", request.UserName.Length > 0 ? $"as {request.UserName}" : "", site);
+		SetSite($"{request.RpId} wants to save a passkey",
+			request.UserName.Length > 0 ? $"as {request.UserName}" : "", request.RpId);
 
 		Databases = request.Databases;
 		SelectedDatabase = request.Databases.Count > 0 ? request.Databases[0] : null;
