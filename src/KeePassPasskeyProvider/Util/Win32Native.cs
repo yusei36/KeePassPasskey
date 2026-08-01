@@ -138,12 +138,6 @@ internal static class Win32Native
 
 	internal const int GWLP_HWNDPARENT = -8;
 
-	[DllImport("dwmapi.dll")]
-	internal static extern int DwmSetWindowAttribute(nint hWnd, int dwAttribute, in int pvAttribute, int cbAttribute);
-
-	internal const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
-	internal const int DWMWCP_ROUND = 2;
-
 	[DllImport("user32.dll")]
 	internal static extern bool IsWindow(nint hWnd);
 

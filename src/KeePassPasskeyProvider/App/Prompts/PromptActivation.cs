@@ -28,14 +28,6 @@ internal static class PromptActivation
 		nint hwnd = window.TryGetPlatformHandle()?.Handle ?? 0;
 		bool ownerSet = ownerValid && hwnd != 0 && SetOwner(hwnd, ownerHwnd);
 
-		// Restores the rounded frame the undecorated window loses. No-op before Windows 11.
-		if (hwnd != 0)
-		{
-			int cornerPreference = Win32Native.DWMWCP_ROUND;
-			_ = Win32Native.DwmSetWindowAttribute(
-				hwnd, Win32Native.DWMWA_WINDOW_CORNER_PREFERENCE, in cornerPreference, sizeof(int));
-		}
-
 		// Keeps the prompt visible even when the foreground handoff below does not apply.
 		window.Topmost = true;
 
