@@ -1,5 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Text;
 using KeePassPasskeyShared;
@@ -13,18 +14,16 @@ namespace KeePassPasskeyProvider.Authenticator;
 
 /// <summary>
 /// Managed implementation of IPluginAuthenticator.
-/// Each COM activation creates one instance; CancelOperation sets m_cancelled.
 /// </summary>
 #pragma warning disable CA1725 // "Raw" suffix frees the interface's name for the typed pointer cast from it.
-#pragma warning disable CA1001 // The COM runtime owns this object's lifetime; _operationCts is disposed per operation.
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
 public sealed class PluginAuthenticator : IPluginAuthenticator
 {
-	private volatile bool _cancelled;
-	private Guid _currentTransactionId;
-	// Cancels a prompt that is already on screen when the platform aborts the ceremony.
-	private CancellationTokenSource? _operationCts;
+	// Every COM activation creates its own instance, so a cancel can land on a different one than the
+	// operation it aborts. Keyed per process by transaction id, any instance can reach any operation.
+	private static readonly ConcurrentDictionary<Guid, CancellationTokenSource> _operations = new();
+
 	private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
 
 	// null = unknown (first call), true = last ping succeeded, false = last ping failed
@@ -44,10 +43,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
 		*pResponse = default;
 
+		Guid transactionId = pRequest->transactionId;
+
 		ComActivity.EnterOperation();
 		try
 		{
-			BeginOperation(pRequest->transactionId);
+			var cts = BeginOperation(transactionId);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -64,7 +65,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
 				if (sigResult < 0) return sigResult;
 
-				if (_cancelled) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
+				if (cts.IsCancellationRequested) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
 
 				// 3. Build JSON request for KeePass
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -123,7 +124,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
 					new RegistrationVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8,
 						userNameStr, rpNameStr, databases, candidates, enterpriseAttestation),
-					_operationCts!.Token);
+					cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");
 				if (hrUv < 0) return hrUv;
 
@@ -185,7 +186,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		finally
 		{
-			EndOperation();
+			EndOperation(transactionId);
 			ComActivity.ExitOperation();
 		}
 	}
@@ -204,10 +205,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
 		*pResponse = default;
 
+		Guid transactionId = pRequest->transactionId;
+
 		ComActivity.EnterOperation();
 		try
 		{
-			BeginOperation(pRequest->transactionId);
+			var cts = BeginOperation(transactionId);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -224,7 +227,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
 				if (sigResult < 0) return sigResult;
 
-				if (_cancelled) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
+				if (cts.IsCancellationRequested) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
 
 				// 3. Extract fields
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -247,7 +250,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				int hrUv = UserVerifierDispatcher.VerifyForSignIn(
 					new SignInVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint,
 						entry?.Title, entry?.DatabaseName, entry?.Icon),
-					_operationCts!.Token);
+					cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
 
@@ -301,19 +304,19 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		finally
 		{
-			EndOperation();
+			EndOperation(transactionId);
 			ComActivity.ExitOperation();
 		}
 	}
 
-	/// <summary>IPluginAuthenticator.CancelOperation implementation. Verifies the cancel signature and sets the cancellation flag.</summary>
+	/// <summary>IPluginAuthenticator.CancelOperation implementation. Verifies the cancel signature and cancels the named operation.</summary>
 	public unsafe int CancelOperation(nint pCancelRequest)
 	{
 		ComActivity.MarkActivity();
 		if (pCancelRequest == 0) return HResults.E_INVALIDARG;
 
 		var pCancel = (WebAuthnPluginCancelOperationRequest*)pCancelRequest;
-		if (pCancel->transactionId != _currentTransactionId)
+		if (!_operations.TryGetValue(pCancel->transactionId, out var cts))
 			return HResults.NTE_NOT_FOUND;
 
 		int sigResult = SignatureVerifier.VerifyIfKeyAvailable(
@@ -322,24 +325,22 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		Log.Info($"CancelOperation signature hr=0x{sigResult:X8}");
 		if (sigResult < 0) return sigResult;
 
-		_cancelled = true;
 		// The operation thread may have finished and disposed the source in the meantime.
-		try { _operationCts?.Cancel(); } catch (ObjectDisposedException) { }
+		try { cts.Cancel(); } catch (ObjectDisposedException) { }
 		return HResults.S_OK;
 	}
 
-	private void BeginOperation(Guid transactionId)
+	private static CancellationTokenSource BeginOperation(Guid transactionId)
 	{
-		_cancelled = false;
-		_currentTransactionId = transactionId;
-		_operationCts?.Dispose();
-		_operationCts = new CancellationTokenSource();
+		var cts = new CancellationTokenSource();
+		if (_operations.TryRemove(transactionId, out var stale)) stale.Dispose();
+		_operations[transactionId] = cts;
+		return cts;
 	}
 
-	private void EndOperation()
+	private static void EndOperation(Guid transactionId)
 	{
-		_operationCts?.Dispose();
-		_operationCts = null;
+		if (_operations.TryRemove(transactionId, out var cts)) cts.Dispose();
 	}
 
 	/// <summary>
