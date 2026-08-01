@@ -93,7 +93,7 @@
 				<ToggleButton Grid.Column="2" Width="32" Height="32" Padding="0"
 											IsChecked="{Binding OnlyWithPasskey, Mode=TwoWay}"
 											ToolTip.Tip="Show only entries that already have a passkey">
-					<fa:FAFontIcon Glyph="&#xE192;" FontSize="16" FontFamily="Segoe Fluent Icons" />
+					<fa:FAFontIcon Glyph="&#xE8D7;" FontSize="16" FontFamily="Segoe Fluent Icons" />
 				</ToggleButton>
 			</Grid>
 
@@ -154,18 +154,16 @@
 													<StackPanel Orientation="Horizontal" Spacing="5">
 														<TextBlock Text="{Binding Title}" FontSize="12.5"
 																			 TextTrimming="CharacterEllipsis" />
-														<Border CornerRadius="999" Padding="6 1"
-																		IsVisible="{Binding IsKeePassSelected}"
-																		Background="{DynamicResource AccentFillColorSelectedTextBackgroundBrush}">
-															<TextBlock Text="selected in KeePass" FontSize="10"
-																				 Foreground="White" />
-														</Border>
-														<Border CornerRadius="999" Padding="6 1"
-																		IsVisible="{Binding HasPasskey}"
-																		Background="{DynamicResource SystemFillColorCautionBackgroundBrush}">
-															<TextBlock Text="has passkey" FontSize="10"
-																				 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
-														</Border>
+														<fa:FAFontIcon Glyph="&#xE915;" FontSize="11" VerticalAlignment="Center"
+																					 FontFamily="Segoe Fluent Icons"
+																					 IsVisible="{Binding IsKeePassSelected}"
+																					 ToolTip.Tip="Selected in KeePass"
+																					 Foreground="{DynamicResource AccentFillColorDefaultBrush}" />
+														<fa:FAFontIcon Glyph="&#xE8D7;" FontSize="12" VerticalAlignment="Center"
+																					 FontFamily="Segoe Fluent Icons"
+																					 IsVisible="{Binding HasPasskey}"
+																					 ToolTip.Tip="This entry already has a passkey"
+																					 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
 													</StackPanel>
 													<TextBlock Text="{Binding Subtitle}" FontSize="11"
 																		 TextTrimming="CharacterEllipsis"
@@ -180,6 +178,19 @@
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
 			</ScrollViewer>
+
+			<Border Padding="10 8" CornerRadius="6"
+							IsVisible="{Binding ShowsReplaceWarning}"
+							Background="{DynamicResource SystemFillColorCautionBackgroundBrush}">
+				<Grid ColumnDefinitions="Auto,*">
+					<fa:FAFontIcon Grid.Column="0" Glyph="&#xE7BA;" FontSize="14"
+												 FontFamily="Segoe Fluent Icons" VerticalAlignment="Top" Margin="0 1 0 0"
+												 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+					<TextBlock Grid.Column="1" Margin="8 0 0 0"
+										 Text="This entry already has a passkey. Saving replaces it."
+										 FontSize="11.5" TextWrapping="Wrap" />
+				</Grid>
+			</Border>
 		</StackPanel>
 
 		<!-- Footer -->

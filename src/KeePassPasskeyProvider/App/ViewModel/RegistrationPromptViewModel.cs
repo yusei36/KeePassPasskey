@@ -31,6 +31,7 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 	public ObservableCollection<EntryGroupViewModel> Groups { get; } = [];
 	public bool HasCandidates { get; }
 	public bool ShowAttestationHint { get; }
+	public bool ShowsReplaceWarning => IsAddToExisting && SelectedEntry?.HasPasskey == true;
 
 	public override bool CanConfirm => IsAddToExisting ? SelectedEntry != null : SelectedDatabase != null;
 
@@ -74,10 +75,15 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 	{
 		if (IsCreateNew != !value) IsCreateNew = !value;
 		OnPropertyChanged(nameof(CanConfirm));
+		OnPropertyChanged(nameof(ShowsReplaceWarning));
 	}
 
 	partial void OnSelectedDatabaseChanged(DatabaseInfo? value) => OnPropertyChanged(nameof(CanConfirm));
-	partial void OnSelectedEntryChanged(EntryRowViewModel? value) => OnPropertyChanged(nameof(CanConfirm));
+	partial void OnSelectedEntryChanged(EntryRowViewModel? value)
+	{
+		OnPropertyChanged(nameof(CanConfirm));
+		OnPropertyChanged(nameof(ShowsReplaceWarning));
+	}
 	partial void OnSearchTextChanged(string value) => RebuildGroups();
 	partial void OnOnlyWithPasskeyChanged(bool value) => RebuildGroups();
 
