@@ -22,7 +22,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 {
 	// Every COM activation creates its own instance, so a cancel can land on a different one than the
 	// operation it aborts. Keyed per process by transaction id, any instance can reach any operation.
-	private static readonly ConcurrentDictionary<Guid, CancellationTokenSource> _operations = new();
+	private static readonly ConcurrentDictionary<Guid, InFlightOperation> _operations = new();
+
+	/// <param name="EncodedRequest">Kept because the platform signs a cancel over it, not over the transaction id.</param>
+	private sealed record InFlightOperation(CancellationTokenSource Cancellation, byte[] EncodedRequest);
 
 	private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
 
@@ -48,7 +51,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		ComActivity.EnterOperation();
 		try
 		{
-			var cts = BeginOperation(transactionId);
+			var cts = BeginOperation(transactionId, pRequest->pbEncodedRequest, pRequest->cbEncodedRequest);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -210,7 +213,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		ComActivity.EnterOperation();
 		try
 		{
-			var cts = BeginOperation(transactionId);
+			var cts = BeginOperation(transactionId, pRequest->pbEncodedRequest, pRequest->cbEncodedRequest);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -316,31 +319,40 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		if (pCancelRequest == 0) return HResults.E_INVALIDARG;
 
 		var pCancel = (WebAuthnPluginCancelOperationRequest*)pCancelRequest;
-		if (!_operations.TryGetValue(pCancel->transactionId, out var cts))
+		if (!_operations.TryGetValue(pCancel->transactionId, out var operation))
 			return HResults.NTE_NOT_FOUND;
 
-		int sigResult = SignatureVerifier.VerifyIfKeyAvailable(
-			(byte*)&pCancel->transactionId, (uint)sizeof(Guid),
-			pCancel->pbRequestSignature, pCancel->cbRequestSignature);
+		// The platform signs a cancel over the encoded request of the operation being cancelled, not
+		// over the transaction id, which only says which operation to stop. Undocumented; established
+		// by trying candidate payloads against a real cancel.
+		int sigResult;
+		fixed (byte* pbRequest = operation.EncodedRequest)
+		{
+			sigResult = SignatureVerifier.VerifyIfKeyAvailable(
+				pbRequest, (uint)operation.EncodedRequest.Length,
+				pCancel->pbRequestSignature, pCancel->cbRequestSignature);
+		}
 		Log.Info($"CancelOperation signature hr=0x{sigResult:X8}");
 		if (sigResult < 0) return sigResult;
 
 		// The operation thread may have finished and disposed the source in the meantime.
-		try { cts.Cancel(); } catch (ObjectDisposedException) { }
+		try { operation.Cancellation.Cancel(); } catch (ObjectDisposedException) { }
 		return HResults.S_OK;
 	}
 
-	private static CancellationTokenSource BeginOperation(Guid transactionId)
+	private static unsafe CancellationTokenSource BeginOperation(
+		Guid transactionId, byte* pbEncodedRequest, uint cbEncodedRequest)
 	{
 		var cts = new CancellationTokenSource();
-		if (_operations.TryRemove(transactionId, out var stale)) stale.Dispose();
-		_operations[transactionId] = cts;
+		if (_operations.TryRemove(transactionId, out var stale)) stale.Cancellation.Dispose();
+		_operations[transactionId] = new InFlightOperation(
+			cts, new ReadOnlySpan<byte>(pbEncodedRequest, (int)cbEncodedRequest).ToArray());
 		return cts;
 	}
 
 	private static void EndOperation(Guid transactionId)
 	{
-		if (_operations.TryRemove(transactionId, out var cts)) cts.Dispose();
+		if (_operations.TryRemove(transactionId, out var operation)) operation.Cancellation.Dispose();
 	}
 
 	/// <summary>
