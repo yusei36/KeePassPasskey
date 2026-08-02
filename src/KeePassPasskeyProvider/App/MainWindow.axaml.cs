@@ -42,13 +42,13 @@ public partial class MainWindow : FAAppWindow
 		base.OnApplyTemplate(e);
 		if (e.NameScope.Find<Image>("Icon") is { } icon)
 		{
-			icon.Width = 20;
-			icon.Height = 20;
+			icon.Width = 22;
+			icon.Height = 22;
 			icon.Margin = new Avalonia.Thickness(12, 0, 0, 0);
 		}
 		if (e.NameScope.Find<TextBlock>("TitleText") is { } title)
 		{
-			title.Margin = new Avalonia.Thickness(36, 0, 0, 0);
+			title.Margin = new Avalonia.Thickness(38, 0, 0, 0);
 		}
 	}
 
