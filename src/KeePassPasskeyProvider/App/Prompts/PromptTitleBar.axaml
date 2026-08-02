@@ -7,7 +7,8 @@
 						 x:Class="KeePassPasskeyProvider.App.Prompts.PromptTitleBar"
 						 x:DataType="vm:PromptViewModelBase">
 
-	<Grid Height="40" ColumnDefinitions="Auto,*,Auto,Auto">
+	<!-- Transparent, not unset: an unset background is not hit-testable, so the gaps would not drag. -->
+	<Grid Height="40" ColumnDefinitions="Auto,*,Auto,Auto" Background="Transparent">
 		<Image Grid.Column="0" Margin="12 0 0 0" Width="22" Height="22"
 					 VerticalAlignment="Center"
 					 Source="avares://KeePassPasskeyProvider/Resources/app-icon.png" />
