@@ -42,7 +42,7 @@ public class KeePassPasskeySettings
 	public ExcludeCredentialCheckMode ExcludeCredentialCheckMode { get; set; } = ExcludeCredentialCheckMode.TargetDatabase;
 
 	[JsonProperty("notificationVerificationTimeoutMilliseconds")]
-	public int NotificationVerificationTimeoutMilliseconds { get; set; } = 30_000;
+	public int NotificationVerificationTimeoutMilliseconds { get; set; } = 60_000;
 
 	[JsonProperty("logLevel")]
 	[JsonConverter(typeof(StringEnumConverter))]

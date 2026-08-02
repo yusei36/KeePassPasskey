@@ -185,7 +185,7 @@ Controls how KeePassPasskey confirms your identity before completing a passkey o
 
 Both are on by default. Turning both off for an operation lets it complete silently, without asking you at all; a warning icon appears beside the switches while that is the case.
 
-The **Approval timeout** controls how long the confirmation prompt stays open before the operation is cancelled (default: 30 seconds). It only applies when the confirmation prompt is on.
+The **Approval timeout** controls how long the confirmation prompt stays open before the operation is cancelled (default: 60 seconds). It only applies when the confirmation prompt is on.
 
 **Show error notifications**: when enabled, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
 
