@@ -42,7 +42,7 @@ internal static class PromptDemo
 			tcs =>
 			{
 				var viewModel = new RegistrationPromptViewModel(new Authenticator.UserVerification.RegistrationVerification(
-					owner, Guid.NewGuid(), "example.com", "jordan@example.com", "Example",
+					owner, Guid.NewGuid(), "example.com", "jordan@example.com",
 					databases, candidates, EnterpriseAttestationRequested: true));
 				var window = new RegistrationPromptWindow(viewModel);
 				window.Closed += (_, _) => tcs.TrySetResult((
@@ -58,7 +58,7 @@ internal static class PromptDemo
 			tcs =>
 			{
 				var viewModel = new SignInPromptViewModel(new Authenticator.UserVerification.SignInVerification(
-					owner, Guid.NewGuid(), "example.com", "jordan@example.com", "Personal Email",
+					owner, Guid.NewGuid(), "example.com", "jordan@example.com",
 					EntryTitle: "Personal Email", DatabaseName: "Personal.kdbx"));
 				var window = new SignInPromptWindow(viewModel);
 				window.Closed += (_, _) => tcs.TrySetResult(viewModel.Approved);

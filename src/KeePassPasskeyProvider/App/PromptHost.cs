@@ -133,7 +133,7 @@ internal static class PromptHost
 		{
 			var window = new RegistrationPromptWindow(
 				new RegistrationPromptViewModel(new RegistrationVerification(
-					0, Guid.Empty, string.Empty, string.Empty, string.Empty, [], [], false)));
+					0, Guid.Empty, string.Empty, string.Empty, [], [], false)));
 
 			// It has to be shown, not just built: the native surface, GPU swapchain and glyph caches are
 			// created lazily on the first Show, and that is most of the first prompt's cost.

@@ -126,7 +126,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				// 4. User verification
 				var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
 					new RegistrationVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8,
-						userNameStr, rpNameStr, databases, candidates, enterpriseAttestation),
+						userNameStr, databases, candidates, enterpriseAttestation),
 					cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");
 				if (hrUv < 0) return hrUv;
@@ -246,13 +246,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				if (hrReady < HResults.S_OK) return hrReady;
 
 				// 4. User verification
-				CredentialCache.LookupWindowsCache(rpIdUtf8, allowList, out string uvUsername, out string uvDisplayHint);
-				Log.Info($"UV cache lookup userName={uvUsername} displayHint={uvDisplayHint}");
+				var entry = LookupCredential(rpIdUtf8, allowList);
+				string uvUsername = entry?.UserName ?? string.Empty;
+				Log.Info($"credential lookup userName={uvUsername} title={entry?.Title ?? "(none)"}");
 
-				var entry = LookupPromptEntry(rpIdUtf8, allowList, uvUsername);
 				int hrUv = UserVerifierDispatcher.VerifyForSignIn(
-					new SignInVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint,
-						entry?.Title, entry?.DatabaseName, entry?.Icon),
+					new SignInVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername,
+						// Null only when there is no entry, so a titleless one stays tellable from none.
+						entry == null ? null : entry.Title ?? "", entry?.DatabaseName, entry?.Icon),
 					cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
@@ -421,21 +422,15 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 	/// The KeePass entry behind the credential, for the sign-in prompt's card. The Windows cache only
 	/// carries the user name, and it is a mirror that can lag behind a renamed entry.
 	/// </summary>
-	private CredentialInfo? LookupPromptEntry(string rpId, List<string> allowList, string userName)
+	private CredentialInfo? LookupCredential(string rpId, List<string> allowList)
 	{
-		var settings = KeePassPasskeySettings.Current;
-		if (!settings.SignInVerification.HasFlag(UserVerificationMode.Notification)
-			|| settings.UseLegacyNotificationPrompts)
-			return null;
-
 		var response = _pipeClient.GetCredentials(new GetCredentialsRequest { RpId = rpId, AllowCredentials = allowList });
 		var credentials = response?.Credentials;
 		if (credentials == null || credentials.Count == 0) return null;
 
-		// With no allow list the platform picked a credential it does not name, so the user name from
-		// the Windows cache is the only thing that can tell two of them apart.
-		return credentials.FirstOrDefault(c => string.Equals(c.UserName, userName, StringComparison.Ordinal))
-			?? credentials[0];
+		// With no allow list the platform picked a credential it does not name, so there is nothing to
+		// match on and the first is as good a guess as any. The plugin picks the one it signs with.
+		return credentials[0];
 	}
 
 	/// <summary>

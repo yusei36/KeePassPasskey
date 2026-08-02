@@ -85,8 +85,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		if (NotificationsDisabled()) return HResults.E_FAIL;
 
 		string user = request.UserName.Length > 0 ? $" as {request.UserName}" : "";
-		string hint = request.DisplayHint.Length > 0 && request.DisplayHint != request.RpId
-			? $"KeePass entry: {request.DisplayHint}" : "";
+		string hint = !string.IsNullOrEmpty(request.EntryTitle) && request.EntryTitle != request.RpId
+			? $"KeePass entry: {request.EntryTitle}" : "";
 		return ShowToast(
 			title: "Authentication requested",
 			body: $"Sign in{user} on {request.RpId}.",

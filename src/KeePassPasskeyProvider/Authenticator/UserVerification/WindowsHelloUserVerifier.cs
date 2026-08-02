@@ -17,12 +17,22 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
 	{
 		selectedDatabase = null;
 		selectedEntry = null;
-		return Verify(request.RequestPtr, request.UserName, request.DisplayHint, request.TransactionId);
+		// rpId, not the site-supplied rp.name: this is rendered by Windows' own dialog, and in
+		// WindowsHello-only mode it is the only site identification the user ever sees.
+		return Verify(request.RequestPtr, request.UserName, request.RpId, request.TransactionId);
 	}
 
 	// The platform owns the Hello prompt and tears it down on its own cancel, so the token is unused.
 	public int VerifyForSignIn(SignInVerification request, CancellationToken cancellation)
-		=> Verify(request.RequestPtr, request.UserName, request.DisplayHint, request.TransactionId);
+		=> Verify(request.RequestPtr, request.UserName, SignInHint(request), request.TransactionId);
+
+	// Null means no entry was found, blank means the entry has one and it says nothing.
+	private static string SignInHint(SignInVerification request) => request.EntryTitle switch
+	{
+		null => request.RpId,
+		var title when string.IsNullOrWhiteSpace(title) => "(no title)",
+		var title => title,
+	};
 
 	private static unsafe int Verify(nint pRequest, string username, string displayHint, Guid transactionId)
 	{

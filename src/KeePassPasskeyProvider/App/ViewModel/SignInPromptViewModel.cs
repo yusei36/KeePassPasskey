@@ -29,7 +29,7 @@ public sealed partial class SignInPromptViewModel : PromptViewModelBase
 		ConfirmText = "Sign in";
 		SetSite($"{request.RpId} wants you to sign in", "", request.RpId);
 
-		CredentialTitle = FirstNonEmpty(request.EntryTitle, request.DisplayHint, request.UserName, request.RpId);
+		CredentialTitle = FirstNonEmpty(request.EntryTitle, request.UserName, request.RpId);
 		CredentialSubtitle = string.Equals(CredentialTitle, request.UserName, StringComparison.Ordinal)
 			? "" : request.UserName;
 		CredentialDatabase = request.DatabaseName ?? "";
