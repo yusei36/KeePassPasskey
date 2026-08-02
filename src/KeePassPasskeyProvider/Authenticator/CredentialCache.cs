@@ -133,7 +133,7 @@ internal static unsafe class CredentialCache
 	public static void DumpCredentials(Guid pluginClsid, Action<string> write)
 	{
 		var pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
-		var response = pipeClient.GetCredentials(new GetCredentialsRequest());
+		var response = pipeClient.GetCredentials(new GetCredentialsRequest { OmitIcons = true });
 		if (response == null)
 			write("KeePass unavailable (is it running with a database open?)");
 		else if (response.ErrorCode != null)
@@ -176,7 +176,8 @@ internal static unsafe class CredentialCache
 	{
 		// 1. Query credentials from KeePass
 		var pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
-		var response = pipeClient.GetCredentials(new GetCredentialsRequest());
+		// The Windows cache has no icon field, so asking for them would only cost pipe traffic.
+		var response = pipeClient.GetCredentials(new GetCredentialsRequest { OmitIcons = true });
 		if (response == null)
 		{
 			Log.Info("KeePass unavailable or error, skipping credential sync");

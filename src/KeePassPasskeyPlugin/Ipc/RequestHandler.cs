@@ -115,7 +115,7 @@ internal sealed class RequestHandler
 				UserName = c.Username,
 				Title = c.Title,
 				DatabaseName = nameDatabases ? c.DatabaseName : null,
-				Icon = c.Icon
+				Icon = req.OmitIcons ? null : c.Icon
 			});
 		}
 

@@ -54,6 +54,10 @@ public sealed class GetCredentialsRequest : PipeRequestBase
 
 	[JsonProperty("allowCredentials", NullValueHandling = NullValueHandling.Ignore)]
 	public List<string> AllowCredentials { get; set; }
+
+	// Negative so that absent, which is what an older provider sends, still means icons.
+	[JsonProperty("omitIcons")]
+	public bool OmitIcons { get; set; }
 }
 
 public sealed class GetDatabasesRequest : PipeRequestBase
