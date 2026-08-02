@@ -141,6 +141,13 @@ internal static class Win32Native
 	[DllImport("user32.dll")]
 	internal static extern bool IsWindow(nint hWnd);
 
+	[DllImport("dwmapi.dll")]
+	internal static extern int DwmSetWindowAttribute(nint hwnd, uint dwAttribute, in uint pvAttribute, uint cbAttribute);
+
+	internal const uint DWMWA_CLOAK = 13;
+	internal const uint DWMWA_BORDER_COLOR = 34;
+	internal const uint DWMWA_COLOR_NONE = 0xFFFFFFFE;
+
 	internal const uint EVENT_MODIFY_STATE = 0x0002;
 	internal const uint WAIT_OBJECT_0 = 0;
 	internal const uint INFINITE = unchecked((uint)-1);

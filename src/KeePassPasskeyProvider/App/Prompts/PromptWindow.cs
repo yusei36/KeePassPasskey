@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
+using KeePassPasskeyProvider.App.Utils;
 using KeePassPasskeyProvider.App.ViewModel;
 
 namespace KeePassPasskeyProvider.App.Prompts;
@@ -14,6 +16,11 @@ public abstract class PromptWindow : Window
 {
 	private PromptViewModelBase? _viewModel;
 
+	protected PromptWindow() => WindowChrome.SetCloaked(this, true);
+
+	/// <summary>The prewarm window has to composite, so it opts out.</summary>
+	internal void Uncloak() => WindowChrome.SetCloaked(this, false);
+
 	protected void Attach(PromptViewModelBase viewModel)
 	{
 		_viewModel = viewModel;
@@ -25,6 +32,7 @@ public abstract class PromptWindow : Window
 	{
 		base.OnOpened(e);
 		_viewModel?.StartCountdown();
+		DispatcherTimer.RunOnce(Uncloak, WindowChrome.UncloakDelay);
 	}
 
 	protected override void OnKeyDown(KeyEventArgs e)

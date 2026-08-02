@@ -137,6 +137,9 @@ internal static class PromptHost
 
 			// It has to be shown, not just built: the native surface, GPU swapchain and glyph caches are
 			// created lazily on the first Show, and that is most of the first prompt's cost.
+			// It is off screen anyway, and a cloaked window would defeat the point of showing it.
+			window.Uncloak();
+
 			var offScreen = new PixelPoint(-32000, -32000);
 			window.WindowStartupLocation = WindowStartupLocation.Manual;
 			window.Position = offScreen;

@@ -35,6 +35,9 @@ public partial class MainWindow : FAAppWindow
 			if (e.NameScope.Find<Grid>("ItemsContainerGrid") is { } grid)
 				grid.Margin = new Avalonia.Thickness(0);
 		};
+
+		WindowChrome.RemoveBorder(this);
+		WindowChrome.SetCloaked(this, true);
 	}
 
 	protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -50,6 +53,13 @@ public partial class MainWindow : FAAppWindow
 		{
 			title.Margin = new Avalonia.Thickness(38, 0, 0, 0);
 		}
+	}
+
+	protected override void OnOpened(EventArgs e)
+	{
+		base.OnOpened(e);
+		WindowChrome.RemoveBorder(this); // again, in case the handle did not exist yet in the constructor
+		DispatcherTimer.RunOnce(() => WindowChrome.SetCloaked(this, false), WindowChrome.UncloakDelay);
 	}
 
 	protected override void OnLoaded(RoutedEventArgs e)
