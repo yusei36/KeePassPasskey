@@ -1,11 +1,21 @@
 // SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Collections.ObjectModel;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using KeePassPasskeyProvider.App.Utils;
 using KeePassPasskeyProvider.Authenticator.UserVerification;
 using KeePassPasskeyShared.Ipc;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
+
+public enum PasskeyFilter
+{
+	All,
+	WithPasskey,
+	WithoutPasskey,
+}
 
 /// <summary>
 /// Registration prompt: confirm the ceremony and pick where the passkey goes, a new entry in a
@@ -23,7 +33,7 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 	[ObservableProperty] public partial bool IsAddToExisting { get; set; }
 	[ObservableProperty] public partial DatabaseInfo? SelectedDatabase { get; set; }
 	[ObservableProperty] public partial string SearchText { get; set; } = "";
-	[ObservableProperty] public partial bool OnlyWithPasskey { get; set; }
+	[ObservableProperty] public partial PasskeyFilter Filter { get; set; }
 	[ObservableProperty] public partial EntryRowViewModel? SelectedEntry { get; set; }
 	[ObservableProperty] public partial bool HasVisibleEntries { get; set; } = true;
 
@@ -32,6 +42,22 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 	public bool HasCandidates { get; }
 	public bool ShowAttestationHint { get; }
 	public bool ShowsReplaceWarning => IsAddToExisting && SelectedEntry?.HasPasskey == true;
+
+	public bool IsFiltered => Filter != PasskeyFilter.All;
+
+	public Geometry FilterIcon => Filter switch
+	{
+		PasskeyFilter.WithPasskey => PromptIcons.KeyFilled,
+		PasskeyFilter.WithoutPasskey => PromptIcons.KeyOutline,
+		_ => PromptIcons.Funnel,
+	};
+
+	public string FilterTooltip => Filter switch
+	{
+		PasskeyFilter.WithPasskey => "Showing only entries that already have a passkey",
+		PasskeyFilter.WithoutPasskey => "Showing only entries without a passkey",
+		_ => "Showing all entries",
+	};
 
 	public override bool CanConfirm => IsAddToExisting ? SelectedEntry != null : SelectedDatabase != null;
 
@@ -85,7 +111,23 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 		OnPropertyChanged(nameof(ShowsReplaceWarning));
 	}
 	partial void OnSearchTextChanged(string value) => RebuildGroups();
-	partial void OnOnlyWithPasskeyChanged(bool value) => RebuildGroups();
+
+	partial void OnFilterChanged(PasskeyFilter value)
+	{
+		OnPropertyChanged(nameof(FilterIcon));
+		OnPropertyChanged(nameof(FilterTooltip));
+		// Raised even when unchanged, so the button's own toggle on click is overwritten either way.
+		OnPropertyChanged(nameof(IsFiltered));
+		RebuildGroups();
+	}
+
+	[RelayCommand]
+	private void CycleFilter() => Filter = Filter switch
+	{
+		PasskeyFilter.All => PasskeyFilter.WithPasskey,
+		PasskeyFilter.WithPasskey => PasskeyFilter.WithoutPasskey,
+		_ => PasskeyFilter.All,
+	};
 
 	// One ListBox per database group, so selecting in one has to clear the others.
 	private void OnGroupSelectionChanged(EntryGroupViewModel group)
@@ -115,6 +157,13 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 		}
 	}
 
+	private bool MatchesFilter(EntryRowViewModel row) => Filter switch
+	{
+		PasskeyFilter.WithPasskey => row.HasPasskey,
+		PasskeyFilter.WithoutPasskey => !row.HasPasskey,
+		_ => true,
+	};
+
 	private void RebuildGroups()
 	{
 		foreach (var group in Groups)
@@ -127,7 +176,7 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 		_syncingSelection = false;
 
 		string search = SearchText.Trim();
-		var visible = _allRows.Where(r => (!OnlyWithPasskey || r.HasPasskey) && r.Matches(search)).ToList();
+		var visible = _allRows.Where(r => MatchesFilter(r) && r.Matches(search)).ToList();
 
 		// Enumeration order is the plugin's ranking, so groups and rows both stay ranked.
 		foreach (var group in visible.GroupBy(r => r.DatabaseName, StringComparer.Ordinal))

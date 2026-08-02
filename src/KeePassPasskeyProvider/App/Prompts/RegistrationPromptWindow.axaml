@@ -6,6 +6,7 @@
 											xmlns:prompts="using:KeePassPasskeyProvider.App.Prompts"
 											xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 											xmlns:ipc="using:KeePassPasskeyShared.Ipc"
+											xmlns:utils="using:KeePassPasskeyProvider.App.Utils"
 											x:Class="KeePassPasskeyProvider.App.Prompts.RegistrationPromptWindow"
 											x:DataType="vm:RegistrationPromptViewModel"
 											Title="{Binding WindowTitle}"
@@ -96,9 +97,10 @@
 					<TextBox Grid.Column="0" PlaceholderText="Search entries…"
 									 Text="{Binding SearchText, Mode=TwoWay}" />
 					<ToggleButton Grid.Column="2" Width="32" Height="32" Padding="0"
-												IsChecked="{Binding OnlyWithPasskey, Mode=TwoWay}"
-												ToolTip.Tip="Show only entries that already have a passkey">
-						<fa:FAFontIcon Glyph="&#xE8D7;" FontSize="16" FontFamily="Segoe Fluent Icons" />
+												IsChecked="{Binding IsFiltered, Mode=OneWay}"
+												Command="{Binding CycleFilterCommand}"
+												ToolTip.Tip="{Binding FilterTooltip}">
+						<PathIcon Data="{Binding FilterIcon}" Width="16" Height="16" />
 					</ToggleButton>
 				</Grid>
 
@@ -159,16 +161,15 @@
 														<StackPanel Orientation="Horizontal" Spacing="5">
 															<TextBlock Text="{Binding Title}" FontSize="12.5"
 																				 TextTrimming="CharacterEllipsis" />
-															<fa:FAFontIcon Glyph="&#xE915;" FontSize="11" VerticalAlignment="Center"
-																						 FontFamily="Segoe Fluent Icons"
-																						 IsVisible="{Binding IsKeePassSelected}"
-																						 ToolTip.Tip="Selected in KeePass"
-																						 Foreground="{DynamicResource AccentFillColorDefaultBrush}" />
-															<fa:FAFontIcon Glyph="&#xE8D7;" FontSize="12" VerticalAlignment="Center"
-																						 FontFamily="Segoe Fluent Icons"
-																						 IsVisible="{Binding HasPasskey}"
-																						 ToolTip.Tip="This entry already has a passkey"
-																						 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+															<Ellipse Width="6" Height="6" VerticalAlignment="Center"
+																			 IsVisible="{Binding IsKeePassSelected}"
+																			 ToolTip.Tip="Selected in KeePass"
+																			 Fill="{DynamicResource AccentFillColorDefaultBrush}" />
+															<PathIcon Data="{x:Static utils:PromptIcons.KeyFilled}"
+																				Width="12" Height="12" VerticalAlignment="Center"
+																				IsVisible="{Binding HasPasskey}"
+																				ToolTip.Tip="This entry already has a passkey"
+																				Foreground="{DynamicResource SystemFillColorCautionBrush}" />
 														</StackPanel>
 														<TextBlock Text="{Binding Subtitle}" FontSize="11"
 																			 TextTrimming="CharacterEllipsis"
