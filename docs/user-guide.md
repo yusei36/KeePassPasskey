@@ -219,11 +219,18 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 |---|---|
 | Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
 | Status refresh interval | How often the app polls for connection status. |
-| Sync passkeys to Windows | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
 
 ### Expert
 
 Advanced options for uncommon setups. Leave them at their defaults unless you specifically need a different value.
+
+#### Windows credential cache
+
+| Setting | Description |
+|---|---|
+| Windows credential cache | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
+
+Leave this **On**. It is the switch that puts your passkeys in front of Windows at all, so turning it off disables passkey sign-in almost everywhere. It is here for the rare case where you want KeePassPasskey installed but invisible to Windows.
 
 #### Backup flags
 

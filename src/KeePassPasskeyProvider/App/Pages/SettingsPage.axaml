@@ -249,22 +249,22 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-				<ui:FASettingsExpanderItem Content="Windows credential cache"
-																				 Description="Lets your passkeys appear in the Windows sign-in prompt and autofill. Turning this off prevents passkey sign-in on most sites.">
-					<ui:FASettingsExpanderItem.Footer>
-						<ToggleSwitch IsChecked="{Binding SyncCredentialsToWindows}"
-																			OnContent="On"
-																			OffContent="Off"
-																			Margin="0 0 4 0" />
-					</ui:FASettingsExpanderItem.Footer>
-				</ui:FASettingsExpanderItem>
-
 						</ui:FASettingsExpander>
 
 						<ui:FASettingsExpander Header="Expert"
 																 IconSource="Important"
 																 Description="Advanced options for uncommon setups. Change only if you know why."
 																 IsExpanded="False">
+
+								<ui:FASettingsExpanderItem Content="Windows credential cache"
+																				 Description="Lets your passkeys appear in the Windows sign-in prompt and autofill. Turning this off prevents passkey sign-in on most sites.">
+										<ui:FASettingsExpanderItem.Footer>
+												<ToggleSwitch IsChecked="{Binding SyncCredentialsToWindows}"
+																			OnContent="On"
+																			OffContent="Off"
+																			Margin="0 0 4 0" />
+										</ui:FASettingsExpanderItem.Footer>
+								</ui:FASettingsExpanderItem>
 
 								<ui:FASettingsExpanderItem Content="Backup Eligibility (BE)"
 																				 Description="When on, websites are told that a new passkey is allowed to be backed up and synced to your other devices. When off, they are told it is saved on a single device only.">
