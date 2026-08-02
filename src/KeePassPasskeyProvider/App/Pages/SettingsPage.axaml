@@ -114,8 +114,8 @@
 
 								<ui:FASettingsExpanderItem>
 										<ui:FASettingsExpanderItem.Content>
-												<StackPanel Spacing="8" Margin="0 4">
-														<StackPanel Spacing="2">
+												<StackPanel Spacing="0" Margin="0 4">
+														<StackPanel Spacing="2" Margin="0 0 0 6">
 																<StackPanel Orientation="Horizontal" Spacing="8">
 																		<TextBlock Text="Registration" VerticalAlignment="Center" />
 																		<ui:FASymbolIcon Symbol="ImportantFilled" FontSize="16"
@@ -130,13 +130,13 @@
 														</StackPanel>
 														<Grid ColumnDefinitions="*,Auto">
 																<TextBlock Text="Windows Hello (PIN, fingerprint, or face)" VerticalAlignment="Center" />
-																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationWindowsHello}"
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationWindowsHello}" MinHeight="0"
 																		OnContent="On"
 																		OffContent="Off" />
 														</Grid>
 														<Grid ColumnDefinitions="*,Auto">
 																<TextBlock Text="Confirmation prompt" VerticalAlignment="Center" />
-																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationPrompt}"
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationPrompt}" MinHeight="0"
 																		OnContent="On"
 																		OffContent="Off" />
 														</Grid>
@@ -146,8 +146,8 @@
 
 								<ui:FASettingsExpanderItem>
 										<ui:FASettingsExpanderItem.Content>
-												<StackPanel Spacing="8" Margin="0 4">
-														<StackPanel Spacing="2">
+												<StackPanel Spacing="0" Margin="0 4">
+														<StackPanel Spacing="2" Margin="0 0 0 6">
 																<StackPanel Orientation="Horizontal" Spacing="8">
 																		<TextBlock Text="Sign-in" VerticalAlignment="Center" />
 																		<ui:FASymbolIcon Symbol="ImportantFilled" FontSize="16"
@@ -162,13 +162,13 @@
 														</StackPanel>
 														<Grid ColumnDefinitions="*,Auto">
 																<TextBlock Text="Windows Hello (PIN, fingerprint, or face)" VerticalAlignment="Center" />
-																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInWindowsHello}"
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInWindowsHello}" MinHeight="0"
 																		OnContent="On"
 																		OffContent="Off" />
 														</Grid>
 														<Grid ColumnDefinitions="*,Auto">
 																<TextBlock Text="Confirmation prompt" VerticalAlignment="Center" />
-																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInPrompt}"
+																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInPrompt}" MinHeight="0"
 																		OnContent="On"
 																		OffContent="Off" />
 														</Grid>
