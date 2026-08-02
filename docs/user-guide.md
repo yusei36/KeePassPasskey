@@ -37,7 +37,7 @@ A list of available passkey providers appears. Select **KeePassPasskey**.
 
 **Step 3: Confirm in the KeePassPasskey dialog**
 
-A KeePassPasskey dialog appears, headed with the site that asked, for example **"GitHub wants to save a passkey"**. Pick the database you want to save to from the **Database** dropdown, then click **Save**. Every unlocked database is listed. **Cancel** declines the request, and so does the close button or the Escape key.
+A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants to save a passkey"**. Pick the database you want to save to from the **Database** dropdown, then click **Save**. Every unlocked database is listed. **Cancel** declines the request, and so does the close button or the Escape key.
 
 The dialog counts down in its title bar and cancels the request when it runs out (see [Approval timeout](#notifications--user-verification)).
 
@@ -56,7 +56,9 @@ If you already have an entry for the website (for example your username and pass
 
 When matching entries are found, the creation dialog shows a **Create new** / **Add to existing** switch above the database dropdown. It starts on **Create new**, so nothing changes unless you choose otherwise. Switch to **Add to existing** to see the matching entries, grouped by the database they live in, then pick one and click **Save** to write the passkey onto it.
 
-Every matching entry is listed, however many there are. Type in the search box to narrow the list, or use the key button beside it to show only entries that already hold a passkey. Collapse a database group by clicking its name. The entry you currently have selected in KeePass is listed first and tagged **selected in KeePass**; entries that already hold a passkey are tagged **has passkey**, and saving onto one replaces the passkey it already has.
+Every matching entry is listed, however many there are. Type in the search box to narrow the list by title, username or database. The key button beside it cycles through three filters: all entries, only entries that already hold a passkey, and only entries that do not. Collapse a database group by clicking its name.
+
+Each entry shows its KeePass icon, title and username. The entry you currently have selected in KeePass is listed first and marked with a dot; entries that already hold a passkey are marked with a key. Selecting an entry that already holds a passkey shows a warning, because saving replaces the passkey it already has.
 
 <!-- TODO: add a screenshot of the Add to existing view before release -->
 
@@ -86,7 +88,7 @@ If you did not use autofill and have multiple passkeys for this site, Windows sh
 
 **Step 3: Approve in the KeePassPasskey dialog**
 
-A KeePassPasskey dialog appears, headed with the site that asked, for example **"github.com wants you to sign in"**, and showing the passkey Windows picked. Click **Sign in** to confirm, or **Cancel** to decline.
+A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants you to sign in"**, and showing the KeePass entry Windows picked with its icon, title, username and database. Click **Sign in** to confirm, or **Cancel** to decline.
 
 <!-- TODO: retake against the dialog before release; this still shows the old notification -->
 <img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
@@ -111,7 +113,7 @@ If you have multiple passkeys for this site, Windows shows a list. Select the on
 
 **Step 4: Approve in the KeePassPasskey dialog**
 
-A KeePassPasskey dialog appears, showing the passkey Windows picked. Click **Sign in** to confirm.
+A KeePassPasskey dialog appears, showing the KeePass entry Windows picked. Click **Sign in** to confirm.
 
 <img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
 

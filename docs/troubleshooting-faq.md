@@ -55,9 +55,15 @@ After setting up the PIN again, try **Register** once more in the KeePassPasskey
 - To register again, open the **Passkeys** group, delete the existing entry for that site, and retry. The website will then no longer recognise an existing passkey and will let you create a new one.
 - Alternatively, if you deliberately keep more than one passkey for the same account (for example the same account in separate databases), relax the **Allow duplicate passkeys** setting in the KeePassPasskey app so the registration is not blocked. See [Settings](user-guide.md#settings).
 
+## A site asks for enterprise attestation
+
+- Some sites, usually workplace or government logins, ask for **enterprise attestation**: cryptographic proof of exactly which authenticator holds the passkey, so the site can insist on approved hardware. KeePassPasskey notes this in the creation dialog and creates the passkey without it.
+- It cannot provide that proof, and this is by design rather than a gap. Attestation relies on a private key built into a security key or TPM during manufacture and signed by its vendor, which the authenticator can prove it holds but never reveal. KeePassPasskey is software, and your passkeys live in your KeePass database so you can back them up, sync them and move them between machines. There is nowhere to put such a key, and no honest claim to make about which device a passkey sits on. That portability is the reason to keep passkeys in KeePass, and it is exactly what enterprise attestation exists to rule out.
+- Asking for it does not mean a site requires it, so the passkey may well be accepted anyway. If a site does refuse, you need a hardware security key for that site. No setting changes this.
+
 ## The website says there are no passkeys on this device
 
-- Windows keeps its own copy of your passkeys so it can offer them in the sign-in prompt. When that copy is empty or out of date, Windows never asks KeePassPasskey for anything: you get no Windows Hello prompt, no notification, and the browser reports that no passkey exists for the site.
+- Windows keeps its own copy of your passkeys so it can offer them in the sign-in prompt. When that copy is empty or out of date, Windows never asks KeePassPasskey for anything: you get no Windows Hello prompt, no confirmation prompt, and the browser reports that no passkey exists for the site.
 - Check that **Sync passkeys to Windows** is on in **Settings → Advanced**. With it off, passkeys never reach the sign-in prompt at all.
 - Make sure KeePass is running with your database open, then open the KeePassPasskey app, go to **Diagnostics** and click **Sync now**.
 - If that does not help, click **Clear** and then **Sync now** to rebuild the copy from scratch.
