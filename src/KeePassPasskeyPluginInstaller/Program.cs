@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System;
 using System.IO;
-using KeePassPasskey.Update;
+using KeePassPasskeyShared.Update;
 
 namespace KeePassPasskey.Installer;
 

@@ -22,7 +22,7 @@
 	<!-- Linked rather than referenced: this exe has to stay a single dependency-free file. -->
 	<ItemGroup>
 		<Compile Include="..\KeePassPasskeyPlugin\ProviderPackageLocator.cs" Link="Shared\ProviderPackageLocator.cs" />
-		<Compile Include="..\KeePassPasskeyPlugin\Update\PluginInstaller.cs" Link="Shared\PluginInstaller.cs" />
+		<Compile Include="..\KeePassPasskeyShared\Update\PluginInstaller.cs" Link="Shared\PluginInstaller.cs" />
 		<Compile Include="..\KeePassPasskeyShared\Ipc\PipeConstants.cs" Link="Shared\PipeConstants.cs" />
 	</ItemGroup>
 

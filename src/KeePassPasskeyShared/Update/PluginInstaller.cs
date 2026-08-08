@@ -4,9 +4,9 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace KeePassPasskey.Update;
+namespace KeePassPasskeyShared.Update;
 
-internal enum PluginInstallResult
+public enum PluginInstallResult
 {
 	Success = 0,
 	AccessDenied = 2,
@@ -23,12 +23,12 @@ internal enum PluginInstallResult
 /// <c>.old</c> and writes the new one under the original name; KeePass runs on the old image until
 /// it restarts, and the leftover is deleted at the next plugin start.
 /// </summary>
-internal static class PluginInstaller
+public static class PluginInstaller
 {
-	internal const string PluginDllName = "KeePassPasskey.dll";
-	internal const string BackupSuffix = ".old";
+	public const string PluginDllName = "KeePassPasskey.dll";
+	public const string BackupSuffix = ".old";
 
-	internal static PluginInstallResult Install(string sourceDll, string targetDirectory, out string error)
+	public static PluginInstallResult Install(string sourceDll, string targetDirectory, out string error)
 	{
 		error = null;
 
@@ -72,7 +72,7 @@ internal static class PluginInstaller
 		}
 	}
 
-	internal static PluginInstallResult Remove(string targetDirectory, out string error)
+	public static PluginInstallResult Remove(string targetDirectory, out string error)
 	{
 		error = null;
 
@@ -117,14 +117,14 @@ internal static class PluginInstaller
 		}
 	}
 
-	internal static void CleanUpBackup(string targetDirectory)
+	public static void CleanUpBackup(string targetDirectory)
 	{
 		if (string.IsNullOrEmpty(targetDirectory)) return;
 		try { DeleteIfPresent(Path.Combine(targetDirectory, PluginDllName + BackupSuffix)); }
 		catch { }
 	}
 
-	internal static bool CanWriteTo(string targetDirectory)
+	public static bool CanWriteTo(string targetDirectory)
 	{
 		try
 		{
