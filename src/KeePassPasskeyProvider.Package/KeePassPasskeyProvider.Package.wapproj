@@ -76,6 +76,10 @@
 						 Condition="Exists('..\..\build\$(Configuration)\KeePassPasskey.dll')">
 			<Link>KeePassPasskeyPlugin\KeePassPasskey.dll</Link>
 		</Content>
+		<Content Include="..\..\build\$(Configuration)\PluginInstaller\KeePassPasskeyPluginInstaller.exe"
+						 Condition="Exists('..\..\build\$(Configuration)\PluginInstaller\KeePassPasskeyPluginInstaller.exe')">
+			<Link>KeePassPasskeyPlugin\KeePassPasskeyPluginInstaller.exe</Link>
+		</Content>
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj">

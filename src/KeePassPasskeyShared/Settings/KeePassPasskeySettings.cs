@@ -61,6 +61,11 @@ public class KeePassPasskeySettings
 	[JsonProperty("statusRefreshIntervalMilliseconds")]
 	public int StatusRefreshIntervalMilliseconds { get; set; } = 30_000;
 
+	// Whether the plugin offers to update itself from the DLL bundled in the installed provider
+	// package. Only controls the check: every update is still confirmed in a dialog.
+	[JsonProperty("checkForPluginUpdates")]
+	public bool CheckForPluginUpdates { get; set; } = true;
+
 	[JsonProperty("newPasskeyBackupEligible")]
 	public bool NewPasskeyBackupEligible { get; set; } = true;
 

@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using KeePass.Plugins;
 using KeePassPasskey.Passkey;
 using KeePassPasskey.Storage;
+using KeePassPasskey.Update;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Passkey;
@@ -88,7 +89,12 @@ internal sealed class RequestHandler
 		var status = clientProtocolVersion != PipeConstants.ProtocolVersion
 			? PingStatus.IncompatibleVersion
 			: databaseOpen ? PingStatus.Ready : PingStatus.NoDatabase;
-		return new PingResponse { Status = status, ProtocolVersion = PipeConstants.ProtocolVersion };
+		return new PingResponse
+		{
+			Status = status,
+			ProtocolVersion = PipeConstants.ProtocolVersion,
+			PluginPath = PluginLocation.DirectoryPath,
+		};
 	}
 
 	private GetCredentialsResponse HandleGetCredentials(GetCredentialsRequest req)

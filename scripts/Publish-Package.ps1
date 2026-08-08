@@ -123,6 +123,11 @@ if (-not $SkipBuild) {
 	Write-Step "Merging plugin DLLs with ILRepack"
 	Invoke-ILRepack -BuildDir "$RepoRoot\build\$Configuration" -Configuration $Configuration
 
+	# Bundled by the wapproj, so it has to exist before the MSIX is built. Not shipped loose in the
+	# zip: it is only ever run out of the installed package, where it is not user-writable.
+	Write-Step "Building plugin installer helper"
+	Invoke-BuildPluginInstaller -RepoRoot $RepoRoot -Configuration $Configuration
+
 	Write-Step "Building MSIX package"
 	Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized -Store:$Store
 }

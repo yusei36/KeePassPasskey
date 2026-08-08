@@ -9,6 +9,11 @@ namespace KeePassPasskey.Storage;
 internal sealed class SettingsStorage
 {
 	private const string ConfigKey = "KeePassPasskey.Settings";
+
+	// Kept out of KeePassPasskeySettings on purpose: this is state, not a setting, and the settings
+	// object is compared wholesale to drive the app's unsaved-changes prompt.
+	private const string SkippedPluginVersionKey = "KeePassPasskey.SkippedPluginVersion";
+
 	private readonly KeePass.App.Configuration.AceCustomConfig _customConfig;
 
 	internal SettingsStorage(IPluginHost host)
@@ -28,4 +33,9 @@ internal sealed class SettingsStorage
 	{
 		_customConfig.SetString(ConfigKey, JsonConvert.SerializeObject(settings));
 	}
+
+	internal string LoadSkippedPluginVersion() => _customConfig.GetString(SkippedPluginVersionKey, null);
+
+	internal void SaveSkippedPluginVersion(string version) =>
+		_customConfig.SetString(SkippedPluginVersionKey, version);
 }

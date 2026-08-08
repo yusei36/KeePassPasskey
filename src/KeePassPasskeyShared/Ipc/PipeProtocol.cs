@@ -176,6 +176,10 @@ public sealed class PingResponse : PipeResponseBase
 
 	[JsonProperty("version")]
 	public string Version { get; set; } = PipeConstants.Version;
+
+	/// <summary>Folder the plugin DLL was loaded from, so the app can offer to install/update it there.</summary>
+	[JsonProperty("pluginPath", NullValueHandling = NullValueHandling.Ignore)]
+	public string PluginPath { get; set; }
 }
 
 public sealed class GetCredentialsResponse : PipeResponseBase
