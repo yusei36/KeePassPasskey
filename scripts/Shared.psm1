@@ -191,19 +191,6 @@ function Invoke-BuildPlugin {
 	Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
 }
 
-# Elevation helper that installs the plugin DLL into the KeePass plugins folder.
-function Invoke-BuildPluginInstaller {
-	param(
-		[string]$RepoRoot,
-		[string]$Configuration
-	)
-	$csproj = "$RepoRoot\src\KeePassPasskeyPluginInstaller\KeePassPasskeyPluginInstaller.csproj"
-	$sw = [System.Diagnostics.Stopwatch]::StartNew()
-	& dotnet build $csproj -c $Configuration /p:SolutionDir="$RepoRoot\" --nologo
-	if ($LASTEXITCODE -ne 0) { throw "dotnet build failed with exit code $LASTEXITCODE" }
-	Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
-}
-
 # Returns the path to the .msix file for the given configuration.
 function Find-MsixPath([string]$AppPackagesDir, [string]$Configuration) {
 	$configSuffix = if ($Configuration -eq 'Debug') { '_Debug' } else { '' }
@@ -518,8 +505,7 @@ function Invoke-ILRepack {
 
 Export-ModuleMember -Function Write-Step, Assert-Elevation, Find-MSBuild, Get-BuildVersions, Get-CertSubject,
 							   Get-StorePublisher, Get-StoreIdentityName,
-							   Invoke-PublishProvider, Invoke-BuildWapproj, Invoke-BuildPlugin,
-							   Invoke-BuildPluginInstaller, Find-MsixPath,
+							   Invoke-PublishProvider, Invoke-BuildWapproj, Invoke-BuildPlugin, Find-MsixPath,
 							   Get-OrCreateCertificate, Test-CertificateTrusted, Add-TrustedCertificate,
 							   Invoke-SignFile, Invoke-SignMsix, Invoke-Wack,
 							   Invoke-GenerateLicenseNotices, Get-PluginVersion, Invoke-ILRepack

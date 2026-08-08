@@ -1,4 +1,4 @@
-﻿<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
+<!-- SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -38,10 +38,10 @@
 												<Run Text="Plugins" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
 												<Run Text=" folder and restart KeePass." />
 										</TextBlock>
-										<Button Content="Show plugin file to install"
-														Command="{Binding ShowPluginFileCommand}"
+										<Button Content="Install plugin..."
+														Command="{Binding InstallPluginCommand}"
 														IsVisible="{Binding HasBundledPlugin}"
-														ToolTip.Tip="Reveal the file in File Explorer"
+														ToolTip.Tip="Install or update the KeePass plugin"
 														Padding="6 2" FontSize="12" HorizontalAlignment="Left" />
 								</StackPanel>
 						</Grid>

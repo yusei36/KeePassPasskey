@@ -36,6 +36,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] public partial double NotificationTimeoutSeconds { get; set; }
 	[ObservableProperty] public partial LogLevel LogLevel { get; set; }
 	[ObservableProperty] public partial bool SyncCredentialsToWindows { get; set; }
+	[ObservableProperty] public partial bool CheckForPluginUpdates { get; set; }
 	[ObservableProperty] public partial double StatusRefreshIntervalSeconds { get; set; }
 	[ObservableProperty] public partial bool NewPasskeyBackupEligible { get; set; }
 	[ObservableProperty] public partial bool NewPasskeyBackupState { get; set; }
@@ -248,6 +249,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 		NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
 		LogLevel = LogLevel,
 		IsCredentialSyncEnabled = SyncCredentialsToWindows,
+		CheckForPluginUpdates = CheckForPluginUpdates,
 		StatusRefreshIntervalMilliseconds = (int)StatusRefreshIntervalSeconds * 1000,
 		NewPasskeyBackupEligible = NewPasskeyBackupEligible,
 		NewPasskeyBackupState = NewPasskeyBackupState && NewPasskeyBackupEligible, // BS implies BE
@@ -427,6 +429,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 		NotificationTimeoutSeconds = c.NotificationVerificationTimeoutMilliseconds / 1000;
 		LogLevel = c.LogLevel;
 		SyncCredentialsToWindows = c.IsCredentialSyncEnabled;
+		CheckForPluginUpdates = c.CheckForPluginUpdates;
 		StatusRefreshIntervalSeconds = c.StatusRefreshIntervalMilliseconds / 1000;
 		NewPasskeyBackupEligible = c.NewPasskeyBackupEligible;
 		NewPasskeyBackupState = c.NewPasskeyBackupState && c.NewPasskeyBackupEligible;

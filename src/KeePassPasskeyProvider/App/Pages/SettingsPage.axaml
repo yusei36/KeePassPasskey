@@ -283,7 +283,17 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Use legacy notification prompts"
+								<ui:FASettingsExpanderItem Content="Check for plugin updates"
+																			 Description="When KeePass starts, offer to update the plugin if this app ships a newer one. Every update is confirmed in a dialog.">
+									<ui:FASettingsExpanderItem.Footer>
+											<ToggleSwitch IsChecked="{Binding CheckForPluginUpdates}"
+																OnContent="On"
+																OffContent="Off"
+																Margin="0 0 4 0" />
+									</ui:FASettingsExpanderItem.Footer>
+							</ui:FASettingsExpanderItem>
+
+							<ui:FASettingsExpanderItem Content="Use legacy notification prompts"
 																				 Description="Show confirmation prompts as Windows notifications instead of dialogs. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their pickers are limited to 5 items.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding UseLegacyNotificationPrompts}"

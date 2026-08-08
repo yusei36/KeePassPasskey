@@ -21,7 +21,8 @@ public enum PluginInstallResult
 ///
 /// A loaded DLL cannot be deleted but can be renamed, so an update moves the old file aside to
 /// <c>.old</c> and writes the new one under the original name; KeePass runs on the old image until
-/// it restarts, and the leftover is deleted at the next plugin start.
+/// it restarts. The backup is deleted by the install that created it, or failing that by the next
+/// install, so at most one ever exists.
 /// </summary>
 public static class PluginInstaller
 {
@@ -61,6 +62,12 @@ public static class PluginInstaller
 			}
 
 			File.Copy(sourceDll, target, true);
+
+			// Only chance to remove it: this runs with the install's rights, while the plugin inside
+			// KeePass cannot delete from an admin-only folder. Failure leaves it for the next install.
+			if (movedAside)
+				try { DeleteIfPresent(backup); } catch { }
+
 			return PluginInstallResult.Success;
 		}
 		catch (Exception ex)
@@ -115,13 +122,6 @@ public static class PluginInstaller
 			error = ex.Message;
 			return Classify(ex);
 		}
-	}
-
-	public static void CleanUpBackup(string targetDirectory)
-	{
-		if (string.IsNullOrEmpty(targetDirectory)) return;
-		try { DeleteIfPresent(Path.Combine(targetDirectory, PluginDllName + BackupSuffix)); }
-		catch { }
 	}
 
 	public static bool CanWriteTo(string targetDirectory)

@@ -23,39 +23,42 @@ public sealed class PluginInstallOutcome
 /// <summary>
 /// Runs an install or removal, elevating only when the direct write is denied, so portable and
 /// per-user KeePass installs never see a UAC prompt.
+///
+/// Elevation runs <c>install-plugin.cmd</c> from the package through <c>cmd.exe</c>, because Windows
+/// cannot run a packaged executable elevated at all. System32 and the package are the only locations
+/// here that are not user-writable, so a staged copy of our own exe would be an escalation hole.
 /// </summary>
 public static class PluginInstallLauncher
 {
-	public static PluginInstallOutcome Install(string sourceDll, string targetDirectory,
-		string helperExePath, string packageFamilyName)
+	/// <summary>Where the script sits inside the provider package, relative to the install root.</summary>
+	public const string ScriptRelativePath = @"KeePassPasskeyProvider\install-plugin.cmd";
+
+	public static PluginInstallOutcome Install(string sourceDll, string targetDirectory, string scriptPath)
 	{
 		var result = PluginInstaller.Install(sourceDll, targetDirectory, out string error);
 		if (result != PluginInstallResult.AccessDenied)
 			return new PluginInstallOutcome { Result = result, Error = error };
 
-		string args = "--install --target \"" + targetDirectory + "\"";
-		if (!string.IsNullOrEmpty(packageFamilyName))
-			args += " --package \"" + packageFamilyName + "\"";
-		return RunElevated(helperExePath, args);
+		return RunElevated(scriptPath, "install", targetDirectory);
 	}
 
-	public static PluginInstallOutcome Remove(string targetDirectory, string helperExePath)
+	public static PluginInstallOutcome Remove(string targetDirectory, string scriptPath)
 	{
 		var result = PluginInstaller.Remove(targetDirectory, out string error);
 		if (result != PluginInstallResult.AccessDenied)
 			return new PluginInstallOutcome { Result = result, Error = error };
 
-		return RunElevated(helperExePath, "--remove --target \"" + targetDirectory + "\"");
+		return RunElevated(scriptPath, "remove", targetDirectory);
 	}
 
-	private static PluginInstallOutcome RunElevated(string helperExePath, string arguments)
+	private static PluginInstallOutcome RunElevated(string scriptPath, string action, string targetDirectory)
 	{
-		if (string.IsNullOrEmpty(helperExePath) || !File.Exists(helperExePath))
+		if (string.IsNullOrEmpty(scriptPath) || !File.Exists(scriptPath))
 		{
 			return new PluginInstallOutcome
 			{
 				Result = PluginInstallResult.SourceMissing,
-				Error = "Installer helper not found: " + helperExePath,
+				Error = "Installer script not found: " + scriptPath,
 			};
 		}
 
@@ -63,8 +66,8 @@ public static class PluginInstallLauncher
 		{
 			var process = Process.Start(new ProcessStartInfo
 			{
-				FileName = helperExePath,
-				Arguments = arguments,
+				FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
+				Arguments = "/c \"\"" + scriptPath + "\" " + action + " \"" + targetDirectory + "\"\"",
 				UseShellExecute = true,
 				Verb = "runas",
 				WindowStyle = ProcessWindowStyle.Hidden,
@@ -76,9 +79,7 @@ public static class PluginInstallLauncher
 			{
 				Result = result,
 				Elevated = true,
-				Error = result == PluginInstallResult.Success
-					? null
-					: DescribeExitCode(result),
+				Error = result == PluginInstallResult.Success ? null : DescribeExitCode(result),
 			};
 		}
 		catch (Win32Exception ex) when (ex.NativeErrorCode == ERROR_CANCELLED)
@@ -112,7 +113,7 @@ public static class PluginInstallLauncher
 			case PluginInstallResult.TargetInvalid:
 				return "The chosen folder is not part of a KeePass installation.";
 			default:
-				return "The plugin could not be written. See KeePassPasskeyPluginInstaller.log in the temp folder.";
+				return "The plugin could not be written.";
 		}
 	}
 

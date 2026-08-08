@@ -40,14 +40,14 @@ KeePassPasskeyProvider.exe
 [<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
 
 1. Install [KeePassPasskey](https://apps.microsoft.com/detail/9nwnfhjpspgz) from the Microsoft Store and launch it.
-2. Follow the built-in **Setup Guide**: click **Show plugin file to install** to reveal the bundled `KeePassPasskey.dll` in Explorer, copy that file into your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
+2. Follow the built-in **Setup Guide**: click **Install plugin...**, check the detected KeePass folder, and click **Install**. Installing into `C:\Program Files\...` asks for administrator rights once. If KeePass is running, restart it afterwards. The same dialog can reveal `KeePassPasskey.dll` in Explorer if you would rather copy it yourself.
 3. Continue the Setup Guide to open Windows **Advanced passkey options** and enable **KeePassPasskey**.
 4. Both status indicators in the **KeePassPasskey** app should show green.
 
 <img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
 
 > [!NOTE]
-> The app updates automatically, but the plugin file still needs replacing by hand if an update makes the two sides incompatible, see [Updates](docs/user-guide.md#updates).
+> The app updates automatically. When it ships a newer plugin, KeePass offers to update it at the next start, see [Updates](docs/user-guide.md#updates).
 
 Once installed, continue with the [User Guide](docs/user-guide.md) to get started.
 

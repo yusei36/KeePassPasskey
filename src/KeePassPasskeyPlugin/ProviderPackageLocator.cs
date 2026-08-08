@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Update;
 
 namespace KeePassPasskey;
 
@@ -18,7 +19,7 @@ internal sealed class ProviderPackage
 
 	internal string ProviderExePath => Path.Combine(InstallPath, ProviderPackageLocator.ProviderExeRelativePath);
 	internal string BundledPluginDllPath => Path.Combine(InstallPath, ProviderPackageLocator.PluginDllRelativePath);
-	internal string InstallerExePath => Path.Combine(InstallPath, ProviderPackageLocator.InstallerExeRelativePath);
+	internal string InstallScriptPath => Path.Combine(InstallPath, PluginInstallLauncher.ScriptRelativePath);
 
 	internal string BundledPluginVersion
 	{
@@ -36,15 +37,13 @@ internal sealed class ProviderPackage
 }
 
 /// <summary>
-/// Finds the installed provider packages and the files they ship. Kept free of dependencies beyond
-/// <see cref="PipeConstants"/> so the elevation helper can link this source file instead of
-/// duplicating the package lookup.
+/// Finds the installed provider packages and the files they ship. The plugin has no package identity
+/// of its own, so it enumerates by Package Family Name instead of asking for its own location.
 /// </summary>
 internal static class ProviderPackageLocator
 {
 	internal const string ProviderExeRelativePath = @"KeePassPasskeyProvider\KeePassPasskeyProvider.exe";
 	internal const string PluginDllRelativePath = @"KeePassPasskeyPlugin\KeePassPasskey.dll";
-	internal const string InstallerExeRelativePath = @"KeePassPasskeyPlugin\KeePassPasskeyPluginInstaller.exe";
 
 	// PFNs are deterministic from the manifest Name + Publisher, so these are stable (including the
 	// Debug one). Keep in sync with ClientVerifier and PluginConstants.OfficialPackageFamilyNames.

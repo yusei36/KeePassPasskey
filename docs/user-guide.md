@@ -13,9 +13,24 @@ See the [installation instructions in the README](../README.md#installation) for
 
 ## Updates
 
-**Microsoft Store installs** update the app automatically. Only the plugin file is not handled by the Store: after an update, open the app's Setup Guide, click **Show plugin file to install**, and replace `KeePassPasskey.dll` in your KeePass plugins folder with the new one.
+The app and the plugin are two separate pieces and are updated separately. The app knows which plugin version it ships, so once it has been updated, KeePass takes care of the rest.
 
-**GitHub installs** are updated the same way as a fresh installation: replace the KeePassPasskey plugin file in your KeePass plugins folder with the new version, then either run `InstallMsix.bat` as an administrator or install the MSIX package. Replacing the plugin file is a manual step, the installer only handles the MSIX and never writes to your KeePass plugins folder.
+**The plugin update prompt.** When KeePass starts and the installed KeePassPasskey app contains a newer plugin than the one loaded, a dialog offers four choices:
+
+| Choice | What it does |
+|---|---|
+| Update now | Replaces the plugin file, then offers to restart KeePass so the new version is loaded |
+| Later | Asks again the next time KeePass starts |
+| Skip version *x.y.z* | Stays quiet until a version newer than that one appears |
+| Never check for plugin updates | Turns the check off; re-enable it under [Advanced](#advanced) settings |
+
+The dialog names the version you have, the version on offer, which installed app it comes from and the folder it will be written to. Updating a KeePass installed under `C:\Program Files\` asks for administrator rights once; portable and per-user installations update with no prompt at all. That prompt names **Windows Command Processor**, because Windows does not allow a Store app to request administrator rights for itself, so the copy is carried out by a script that ships inside the app. Expanding the prompt's details shows the script path inside the KeePassPasskey app folder. You can also trigger the check yourself from **Tools -> Check for plugin update** in KeePass.
+
+**Microsoft Store installs** update the app automatically in the background, so the plugin prompt is usually the first sign of a new version.
+
+**GitHub installs** update the app by running `InstallMsix.bat` as an administrator or installing the MSIX package. The plugin is then offered by the prompt above at the next KeePass start; the installer itself never writes to your KeePass plugins folder.
+
+**Installing or removing the plugin from the app.** The app's **Install plugin...** button opens a dialog that detects your KeePass folder (you can correct it or browse for it, and its `Plugins` folder, or any folder inside it, is accepted just as well), shows exactly which file will be written where, and offers **Install**, **Update** and **Remove**. This is the route for a first installation, when no plugin is loaded yet to prompt anything.
 
 Either way, the KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
 
@@ -219,6 +234,7 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 |---|---|
 | Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
 | Status refresh interval | How often the app polls for connection status. |
+| Check for plugin updates | When on (default), KeePass offers to update the plugin at startup if the installed app ships a newer one. Every update is still confirmed in a dialog, nothing is replaced without your click. Turn this off to never be asked; see [Updates](#updates). |
 | Offer saving to an existing entry | When on (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History. Requires the registration confirmation prompt. |
 | Use legacy notification prompts | Show confirmation prompts as Windows notifications instead of dialogs, the way earlier versions did. Off by default. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their database and entry pickers are limited to 5 items, so only turn this on if the dialogs cause you trouble. |
 

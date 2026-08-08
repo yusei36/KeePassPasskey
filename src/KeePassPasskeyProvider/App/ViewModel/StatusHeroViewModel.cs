@@ -22,6 +22,7 @@ public sealed partial class StatusHeroViewModel : ObservableObject
 	public ICommand RefreshCommand { get; }
 	public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
 	public ICommand ShowPluginFileCommand => ProviderCommands.ShowPluginFileCommand;
+	public ICommand InstallPluginCommand => ProviderCommands.InstallPluginCommand;
 
 	internal StatusHeroViewModel(ICommand register, ICommand unregister, ICommand refresh)
 	{

@@ -163,6 +163,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 			_ = Settings.SyncFromKeePassAsync();
 
 		_serverVersion = pingResponse?.Version;
+		KeePassLocator.ReportedPluginPath = pingResponse?.PluginPath;
 		Diagnostics.ServerVersion = _serverVersion;
 		Diagnostics.PingStatus = _pingStatus;
 		UpdateChildren();

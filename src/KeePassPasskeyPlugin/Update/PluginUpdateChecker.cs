@@ -12,8 +12,8 @@ namespace KeePassPasskey.Update;
 
 /// <summary>
 /// Offers to replace the loaded plugin DLL with the newer one bundled in the installed provider
-/// package. The provider updates itself (silently, on the Store channel) while the plugin does not,
-/// so without this the two halves drift apart until a passkey operation fails.
+/// package. The provider updates itself while the plugin does not, so without this the two halves
+/// drift apart until a passkey operation fails.
 /// </summary>
 internal sealed class PluginUpdateChecker : IDisposable
 {
@@ -25,8 +25,6 @@ internal sealed class PluginUpdateChecker : IDisposable
 	{
 		_host = host;
 		_settingsStorage = settingsStorage;
-
-		PluginInstaller.CleanUpBackup(PluginLocation.DirectoryPath);
 
 		if (_host.MainWindow != null)
 			_host.MainWindow.Shown += OnMainWindowShown;
@@ -42,8 +40,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 	{
 		_host.MainWindow.Shown -= OnMainWindowShown;
 
-		// Queued so the prompt lands after KeePass's own startup work, in particular the master key
-		// dialog of an automatically opened database.
+		// Queued so the prompt lands after KeePass's own startup work, master key dialog included.
 		_host.MainWindow.BeginInvoke(new Action(() => Check(false)));
 	}
 
@@ -52,10 +49,6 @@ internal sealed class PluginUpdateChecker : IDisposable
 	{
 		try
 		{
-			// Retried here because "Restart now" starts the new process while the old one is still
-			// shutting down, so at construction time the backup can still be mapped by it.
-			PluginInstaller.CleanUpBackup(PluginLocation.DirectoryPath);
-
 			if (_checked && !force) return;
 			_checked = true;
 
@@ -117,8 +110,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 		PluginUpdateChoice choice;
 		bool restart;
 		using (var form = new PluginUpdateForm(info, () => PluginInstallLauncher.Install(
-			package.BundledPluginDllPath, info.TargetDirectory,
-			package.InstallerExePath, package.PackageFamilyName)))
+			package.BundledPluginDllPath, info.TargetDirectory, package.InstallScriptPath)))
 		{
 			form.ShowDialog(_host.MainWindow);
 			choice = form.Choice;

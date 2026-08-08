@@ -3,6 +3,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
+using KeePassPasskeyShared.Update;
 
 namespace KeePassPasskeyProvider.App.ViewModel;
 
@@ -14,8 +15,13 @@ internal static class ProviderCommands
 	internal static ICommand ShowPluginFileCommand { get; } =
 		new RelayCommand(ShowPluginFile);
 
-	// Full path to the bundled plugin DLL, or null if not running packaged / not present.
-	private static readonly string? BundledPluginDll = ResolveBundledPluginDll();
+	internal static ICommand InstallPluginCommand { get; } =
+		new AsyncRelayCommand(Utils.DialogService.ShowPluginInstallAsync);
+
+	/// <summary>Full path to the bundled plugin DLL, or null if not running packaged / not present.</summary>
+	internal static string? BundledPluginDll { get; } = ResolveBundledFile(@"KeePassPasskeyPlugin\KeePassPasskey.dll");
+
+	internal static string? InstallScript { get; } = ResolveBundledFile(PluginInstallLauncher.ScriptRelativePath);
 
 	/// <summary>True when the bundled plugin DLL exists (gates the "Show KeePassPasskey.dll" buttons).</summary>
 	internal static bool HasBundledPlugin { get; } = BundledPluginDll != null && File.Exists(BundledPluginDll);
@@ -33,12 +39,12 @@ internal static class ProviderCommands
 		});
 	}
 
-	private static string? ResolveBundledPluginDll()
+	private static string? ResolveBundledFile(string relativePath)
 	{
 		try
 		{
 			var installPath = Windows.ApplicationModel.Package.Current.InstalledLocation.Path;
-			return Path.Combine(installPath, "KeePassPasskeyPlugin", "KeePassPasskey.dll");
+			return Path.Combine(installPath, relativePath);
 		}
 		catch
 		{
