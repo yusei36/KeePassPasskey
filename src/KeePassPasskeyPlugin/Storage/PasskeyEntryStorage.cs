@@ -74,12 +74,11 @@ internal sealed class PasskeyEntryStorage
 	// the user can restore it; Title/URL/UserName the user already set are preserved.
 	internal bool AddPasskeyToExistingEntry(PasskeyCredential credential, EntryTargetInfo target)
 	{
-		if (target == null || string.IsNullOrEmpty(target.EntryUuid))
-			return false;
+		var uuid = ParseEntryUuid(target?.EntryUuid);
+		if (uuid == null) return false;
 
 		var settings = _settingsStorage.Load();
 
-		var uuid = new PwUuid(MemUtil.HexStringToByteArray(target.EntryUuid));
 		PwDatabase db = null;
 		PwEntry entry = null;
 		foreach (var candidate in GetSearchDatabases())
@@ -443,12 +442,16 @@ internal sealed class PasskeyEntryStorage
 
 		var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
 
+		// The entry being overwritten is replaced, not duplicated, so its own passkey cannot exclude it.
+		var overwrittenUuid = ParseEntryUuid(targetEntry?.EntryUuid);
+
 		foreach (var db in databases)
 		{
 			if (db == null || !db.IsOpen) continue;
 			foreach (var entry in db.RootGroup.GetEntries(true))
 			{
 				if (!IsSearchable(entry)) continue;
+				if (overwrittenUuid != null && entry.Uuid.Equals(overwrittenUuid)) continue;
 				if (!entry.Strings.Exists(FieldCredentialId)) continue;
 				if (!credIdSet.Contains(entry.Strings.ReadSafe(FieldCredentialId))) continue;
 				if (!entry.Strings.Exists(FieldRelyingParty)) continue;
@@ -457,6 +460,20 @@ internal sealed class PasskeyEntryStorage
 			}
 		}
 		return false;
+	}
+
+	private static PwUuid ParseEntryUuid(string hex)
+	{
+		if (string.IsNullOrEmpty(hex)) return null;
+		try
+		{
+			return new PwUuid(MemUtil.HexStringToByteArray(hex));
+		}
+		catch (Exception ex)
+		{
+			Log.Warn($"Could not parse entry uuid '{hex}': {ex.Message}", nameof(ParseEntryUuid));
+			return null;
+		}
 	}
 
 	internal bool HasCredentialForRpId(string rpId, string credentialIdBase64Url)
