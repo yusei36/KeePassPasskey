@@ -41,8 +41,7 @@ A KeePassPasskey dialog appears, headed with the website's address, for example 
 
 The dialog counts down in its title bar and cancels the request when it runs out (see [Approval timeout](#notifications--user-verification)).
 
-<!-- TODO: retake against the dialog before release; this still shows the old notification -->
-<img src="images/passkey-creation-step3.png" width="300" alt="KeePassPasskey dialog asking to save a passkey, with the database dropdown and the Save button">
+<img src="images/passkey-creation-step3.png" width="400" alt="KeePassPasskey dialog asking to save a passkey, with the database dropdown and the Save button">
 
 **Step 4: Passkey saved in KeePass**
 
@@ -60,7 +59,7 @@ Every matching entry is listed, however many there are. Type in the search box t
 
 Each entry shows its KeePass icon, title and username. The entry you currently have selected in KeePass is listed first and marked with a dot; entries that already hold a passkey are marked with a key. Selecting an entry that already holds a passkey shows a warning, because saving replaces the passkey it already has.
 
-<!-- TODO: add a screenshot of the Add to existing view before release -->
+<img src="images/passkey-creation-add-existing.png" width="400" alt="KeePassPasskey dialog on Add to existing, listing matching entries with the search box, the filter button and the replace warning">
 
 Matching is by website: an entry qualifies when it already holds a passkey for this site, or when its **URL** field points at the same site (the same domain or a subdomain). If you overwrite an entry that already had a passkey, the previous version is kept in that entry's **History** tab so you can restore it.
 
@@ -90,8 +89,7 @@ If you did not use autofill and have multiple passkeys for this site, Windows sh
 
 A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants you to sign in"**, and showing the KeePass entry Windows picked with its icon, title, username and database. Click **Sign in** to confirm, or **Cancel** to decline.
 
-<!-- TODO: retake against the dialog before release; this still shows the old notification -->
-<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
+<img src="images/passkey-signin-approve.png" width="400" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
 
 ### Login with a password and passkey as a second factor
 
