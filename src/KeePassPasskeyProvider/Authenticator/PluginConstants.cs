@@ -99,6 +99,8 @@ internal static class PluginConstants
 	public static readonly string CacheSyncMutexName = SyncObjectBase + "_CacheSync";
 	/// <summary>Event signalling the running management app to show its window.</summary>
 	public static readonly string ShowEventName = SyncObjectBase + "_Show";
+	/// <summary>Same, but landing on the Settings page (KeePass's Tools menu opens it there).</summary>
+	public static readonly string ShowSettingsEventName = SyncObjectBase + "_ShowSettings";
 
 	public const string PluginRpId = "keepasspasskey.github.io";
 

@@ -112,9 +112,23 @@ public sealed class KeePassPasskeyExt : Plugin
 	{
 		if (_updateChecker == null) return null;
 
-		var item = new ToolStripMenuItem("Check for plugin update") { Image = _smallIcon };
-		item.Click += (s, e) => _updateChecker.Check(true);
-		return item;
+		var settings = new ToolStripMenuItem("Passkey settings...");
+		settings.Click += (s, e) => OpenProviderSettings();
+
+		var update = new ToolStripMenuItem("Check for plugin update");
+		update.Click += (s, e) => _updateChecker.Check(true);
+
+		var root = new ToolStripMenuItem("KeePassPasskey") { Image = _smallIcon };
+		root.DropDownItems.Add(settings);
+		root.DropDownItems.Add(update);
+		return root;
+	}
+
+	private static void OpenProviderSettings()
+	{
+		if (!ProviderLauncher.LaunchSettings())
+			KeePassLib.Utility.MessageService.ShowWarning("KeePassPasskey",
+				"The KeePassPasskey app could not be opened. It does not seem to be installed.");
 	}
 
 	public override void Terminate()

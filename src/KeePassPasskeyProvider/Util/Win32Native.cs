@@ -103,6 +103,9 @@ internal static class Win32Native
 	internal static extern bool SetForegroundWindow(nint hWnd);
 
 	[DllImport("user32.dll")]
+	internal static extern bool AllowSetForegroundWindow(int dwProcessId);
+
+	[DllImport("user32.dll")]
 	internal static extern uint GetWindowThreadProcessId(nint hWnd, out uint lpdwProcessId);
 
 	[DllImport("user32.dll")]

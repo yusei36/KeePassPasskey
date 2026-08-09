@@ -5,16 +5,19 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
 using Avalonia.Markup.Xaml;
 using KeePassPasskeyProvider.App;
+using KeePassPasskeyProvider.App.Utils;
 using KeePassPasskeyProvider.App.ViewModel;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
 
-public class Application : Avalonia.Application
+public class Application : Avalonia.Application, IDisposable
 {
 	private TrayIconService? _trayIconService;
 	private MainWindow? _window;
+	private NamedEventWatcher? _showWatcher;
+	private NamedEventWatcher? _showSettingsWatcher;
 
 	internal static Window? AppWindow => (Avalonia.Application.Current as Application)?._window;
 
@@ -51,8 +54,26 @@ public class Application : Avalonia.Application
 
 			ApplyTrayState(desktop, vm);
 			vm.TrayStateChanged += (_, _) => ApplyTrayState(desktop, vm);
+
+			_showWatcher = new NamedEventWatcher(
+				PluginConstants.ShowEventName, () => _window?.ShowOnPage(settings: false));
+			_showSettingsWatcher = new NamedEventWatcher(
+				PluginConstants.ShowSettingsEventName, () => _window?.ShowOnPage(settings: true));
+
+			desktop.Exit += (_, _) => Dispose();
 		}
 		base.OnFrameworkInitializationCompleted();
+	}
+
+	public void Dispose()
+	{
+		_showWatcher?.Dispose();
+		_showWatcher = null;
+		_showSettingsWatcher?.Dispose();
+		_showSettingsWatcher = null;
+		_trayIconService?.Dispose();
+		_trayIconService = null;
+		GC.SuppressFinalize(this);
 	}
 
 	private void ApplyTrayState(IClassicDesktopStyleApplicationLifetime desktop, MainWindowViewModel vm)

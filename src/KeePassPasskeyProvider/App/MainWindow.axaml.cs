@@ -65,7 +65,10 @@ public partial class MainWindow : FAAppWindow
 	protected override void OnLoaded(RoutedEventArgs e)
 	{
 		base.OnLoaded(e);
-		NavView.SelectedItem = NavView.MenuItems.OfType<FANavigationViewItem>().First();
+		if (Program.StartOnSettings)
+			NavigateToSettings();
+		else
+			NavigateToHome();
 	}
 
 	internal void NavigateToHome()
@@ -79,6 +82,19 @@ public partial class MainWindow : FAAppWindow
 			.FirstOrDefault(i => i.Tag?.ToString() == "settings");
 		if (settings != null)
 			NavView.SelectedItem = settings;
+	}
+
+	/// <summary>Brings the window back from the tray or from behind other windows, on the given page.
+	/// Reached from the tray menu and from a second launch of the app.</summary>
+	internal void ShowOnPage(bool settings)
+	{
+		Show();
+		WindowState = WindowState.Normal;
+		Activate();
+		if (settings)
+			NavigateToSettings();
+		else
+			NavigateToHome();
 	}
 
 	protected override void OnClosing(WindowClosingEventArgs e)
