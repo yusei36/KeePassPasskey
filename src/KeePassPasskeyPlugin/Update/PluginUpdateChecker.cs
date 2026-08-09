@@ -74,10 +74,13 @@ internal sealed class PluginUpdateChecker : IDisposable
 				return;
 			}
 
-			if (PipeConstants.CompareProductVersions(availableVersion, installedVersion) <= 0)
+			int order = PipeConstants.CompareProductVersions(availableVersion, installedVersion);
+			if (order <= 0)
 			{
-				if (force) ReportNoUpdate("Version " + PipeConstants.StripBuildMetadata(installedVersion)
-					+ " is the newest version the installed KeePassPasskey app provides.");
+				if (force) ReportNoUpdate(order == 0
+					? "Version " + Short(installedVersion) + " is the newest version the installed KeePassPasskey app provides."
+					: "Version " + Short(installedVersion) + " is installed, which is newer than the "
+						+ Short(availableVersion) + " the KeePassPasskey app provides. Update the app so both halves match.");
 				return;
 			}
 
@@ -159,6 +162,8 @@ internal sealed class PluginUpdateChecker : IDisposable
 
 	private static void ReportNoUpdate(string message) =>
 		KeePassLib.Utility.MessageService.ShowInfo("KeePassPasskey plugin", message);
+
+	private static string Short(string version) => PipeConstants.StripBuildMetadata(version);
 
 	private static bool SameVersion(string a, string b) =>
 		!string.IsNullOrEmpty(b) &&
