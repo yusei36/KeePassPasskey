@@ -22,7 +22,7 @@ public enum PluginInstallResult
 /// A loaded DLL cannot be deleted but can be renamed, so an update moves the old file aside to
 /// <c>.old</c> and writes the new one under the original name; KeePass runs on the old image until
 /// it restarts. The backup is deleted by the install that created it, or failing that by the next
-/// install, so at most one ever exists.
+/// install or removal, so at most one ever exists.
 /// </summary>
 public static class PluginInstaller
 {
@@ -90,13 +90,18 @@ public static class PluginInstaller
 		}
 
 		string target = Path.Combine(targetDirectory, PluginDllName);
+		string backup = target + BackupSuffix;
+
+		// A backup still mapped by a running KeePass cannot be deleted, and that must not be reported
+		// as a failed removal of the plugin itself.
+		try { DeleteIfPresent(backup); } catch { }
+
 		if (!File.Exists(target))
 			return PluginInstallResult.Success;
 
 		try
 		{
 			DeleteIfPresent(target);
-			DeleteIfPresent(target + BackupSuffix);
 			return PluginInstallResult.Success;
 		}
 		catch (Exception ex) when (ex is UnauthorizedAccessException || ex is IOException)
@@ -105,7 +110,6 @@ public static class PluginInstaller
 			// and let the reboot finish the deletion.
 			try
 			{
-				string backup = target + BackupSuffix;
 				DeleteIfPresent(backup);
 				File.Move(target, backup);
 				MoveFileEx(backup, null, MOVEFILE_DELAY_UNTIL_REBOOT);
