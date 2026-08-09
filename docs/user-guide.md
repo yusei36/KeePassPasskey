@@ -19,12 +19,14 @@ The app and the plugin are two separate pieces and are updated separately. The a
 
 | Choice | What it does |
 |---|---|
-| Update now | Replaces the plugin file, then offers to restart KeePass so the new version is loaded |
+| Update now | Replaces the plugin file, then offers to restart KeePass so the new version is loaded. Declining that restart is fine: the version you were already running stays loaded until the next start |
 | Later | Asks again the next time KeePass starts |
 | Skip version *x.y.z* | Stays quiet until a version newer than that one appears |
 | Never check for plugin updates | Turns the check off; re-enable it under [Advanced](#advanced) settings |
 
-The dialog names the version you have, the version on offer, which installed app it comes from and the folder it will be written to. Updating a KeePass installed under `C:\Program Files\` asks for administrator rights once; portable and per-user installations update with no prompt at all. That prompt names **Windows Command Processor**, because Windows does not allow a Store app to request administrator rights for itself, so the copy is carried out by a script that ships inside the app. Expanding the prompt's details shows the script path inside the KeePassPasskey app folder. You can also trigger the check yourself from **Tools -> Check for plugin update** in KeePass.
+The dialog names the version you have, the version on offer, which installed app it comes from and the folder it will be written to. Updating a KeePass installed under `C:\Program Files\` asks for administrator rights once; portable and per-user installations update with no prompt at all. That prompt names **Windows Command Processor**, because Windows does not allow a Store app to request administrator rights for itself, so the copy is carried out by a script that ships inside the app. Expanding the prompt's details shows the script path inside the KeePassPasskey app folder.
+
+If you dismiss the administrator prompt, or the copy fails for some other reason, the dialog reports it and offers **Try again**. Nothing is changed, your current plugin keeps running, and you are asked again at the next KeePass start. You can also trigger the check yourself at any time from **Tools -> Check for plugin update** in KeePass, which asks even if you chose Skip or Never earlier.
 
 **Microsoft Store installs** update the app automatically in the background, so the plugin prompt is usually the first sign of a new version.
 
