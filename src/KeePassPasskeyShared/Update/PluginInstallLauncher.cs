@@ -33,6 +33,9 @@ public static class PluginInstallLauncher
 	/// <summary>Where the script sits inside the provider package, relative to the install root.</summary>
 	public const string ScriptRelativePath = @"KeePassPasskeyProvider\install-plugin.cmd";
 
+	/// <summary>Where the plugin sits inside the provider package, relative to the install root.</summary>
+	public const string PluginFolderRelativePath = "KeePassPasskeyPlugin";
+
 	public static PluginInstallOutcome Install(string sourceDll, string targetDirectory, string scriptPath)
 	{
 		var result = PluginInstaller.Install(sourceDll, targetDirectory, out string error);

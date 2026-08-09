@@ -19,7 +19,8 @@ internal static class ProviderCommands
 		new AsyncRelayCommand(Utils.DialogService.ShowPluginInstallAsync);
 
 	/// <summary>Full path to the bundled plugin DLL, or null if not running packaged / not present.</summary>
-	internal static string? BundledPluginDll { get; } = ResolveBundledFile(@"KeePassPasskeyPlugin\KeePassPasskey.dll");
+	internal static string? BundledPluginDll { get; } = ResolveBundledFile(
+		Path.Combine(PluginInstallLauncher.PluginFolderRelativePath, PluginInstaller.PluginDllName));
 
 	internal static string? InstallScript { get; } = ResolveBundledFile(PluginInstallLauncher.ScriptRelativePath);
 

@@ -18,7 +18,8 @@ internal sealed class ProviderPackage
 	internal string InstallPath;
 
 	internal string ProviderExePath => Path.Combine(InstallPath, ProviderPackageLocator.ProviderExeRelativePath);
-	internal string BundledPluginDllPath => Path.Combine(InstallPath, ProviderPackageLocator.PluginDllRelativePath);
+	internal string BundledPluginDllPath => Path.Combine(InstallPath,
+		PluginInstallLauncher.PluginFolderRelativePath, PluginInstaller.PluginDllName);
 	internal string InstallScriptPath => Path.Combine(InstallPath, PluginInstallLauncher.ScriptRelativePath);
 
 	internal string BundledPluginVersion
@@ -43,7 +44,6 @@ internal sealed class ProviderPackage
 internal static class ProviderPackageLocator
 {
 	internal const string ProviderExeRelativePath = @"KeePassPasskeyProvider\KeePassPasskeyProvider.exe";
-	internal const string PluginDllRelativePath = @"KeePassPasskeyPlugin\KeePassPasskey.dll";
 
 	// PFNs are deterministic from the manifest Name + Publisher, so these are stable (including the
 	// Debug one). Keep in sync with ClientVerifier and PluginConstants.OfficialPackageFamilyNames.
