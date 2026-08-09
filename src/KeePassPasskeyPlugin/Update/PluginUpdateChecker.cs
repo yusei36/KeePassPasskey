@@ -143,8 +143,18 @@ internal sealed class PluginUpdateChecker : IDisposable
 	// only be started once this one is on its way out.
 	private void Restart()
 	{
-		_host.MainWindow.FormClosed += (s, e) => KeePass.Util.WinUtil.Restart();
+		System.Windows.Forms.FormClosedEventHandler handler = null;
+		handler = (s, e) =>
+		{
+			_host.MainWindow.FormClosed -= handler;
+			KeePass.Util.WinUtil.Restart();
+		};
+		_host.MainWindow.FormClosed += handler;
 		_host.MainWindow.Close();
+
+		// A refused close (unsaved changes, minimize to tray) must not leave a later exit restarting.
+		if (!_host.MainWindow.IsDisposed)
+			_host.MainWindow.FormClosed -= handler;
 	}
 
 	private static void ReportNoUpdate(string message) =>
