@@ -14,6 +14,7 @@ internal sealed class CommandLinkButton : Button
 {
 	private const int BS_COMMANDLINK = 0x0000000E;
 	private const int BCM_SETNOTE = 0x1609;
+	private const int BCM_GETIDEALSIZE = 0x1601;
 
 	private string _note;
 
@@ -46,14 +47,36 @@ internal sealed class CommandLinkButton : Button
 	{
 		base.OnHandleCreated(e);
 		ApplyNote();
+		ApplyIdealHeight();
 	}
 
 	private void ApplyNote()
 	{
 		if (!string.IsNullOrEmpty(_note))
+		{
 			SendMessage(Handle, BCM_SETNOTE, IntPtr.Zero, _note);
+			if (IsHandleCreated) ApplyIdealHeight();
+		}
+	}
+
+	/// <summary>Asks the control how tall it wants to be at its current width, so the note decides
+	/// the height instead of a guessed constant.</summary>
+	private void ApplyIdealHeight()
+	{
+		var ideal = new SIZE { cx = Width };
+		if (SendMessage(Handle, BCM_GETIDEALSIZE, IntPtr.Zero, ref ideal) != IntPtr.Zero && ideal.cy > 0)
+			Height = ideal.cy;
+	}
+
+	private struct SIZE
+	{
+		internal int cx;
+		internal int cy;
 	}
 
 	[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 	private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, string lParam);
+
+	[DllImport("user32.dll")]
+	private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, ref SIZE lParam);
 }
