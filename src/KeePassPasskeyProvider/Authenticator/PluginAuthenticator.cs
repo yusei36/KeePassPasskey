@@ -610,5 +610,4 @@ public sealed class ClassFactory : IClassFactory
 		return HResults.S_OK;
 	}
 }
-#pragma warning restore CA1001
 #pragma warning restore CA1725
