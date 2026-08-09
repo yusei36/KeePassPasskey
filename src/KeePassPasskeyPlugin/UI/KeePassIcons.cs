@@ -1,6 +1,7 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -46,7 +47,15 @@ internal static class KeePassIcons
 	{
 		try
 		{
-			var images = host?.MainWindow?.ClientIcons?.Images;
+			var mw = host?.MainWindow;
+			if (mw == null) return null;
+
+			// Pipe requests run on thread-pool threads, and the image list belongs to the main window.
+			// The indexer hands back a fresh bitmap, so encoding it afterwards needs no marshalling.
+			if (mw.InvokeRequired)
+				return (Image)mw.Invoke(new Func<Image>(() => GetEntryIcon(host, icon)));
+
+			var images = mw.ClientIcons?.Images;
 			int i = (int)icon;
 			if (images != null && i >= 0 && i < images.Count) return images[i];
 		}
@@ -57,7 +66,9 @@ internal static class KeePassIcons
 	// KeePass custom icons keep their original size, which can be far larger than any prompt shows them.
 	private const int MaxIconPixels = 64;
 
-	private static readonly Dictionary<int, string> StandardIconData = new Dictionary<int, string>();
+	// Concurrent: several ceremonies can be encoding icons on their own pipe threads at once.
+	private static readonly ConcurrentDictionary<int, string> StandardIconData =
+		new ConcurrentDictionary<int, string>();
 
 	/// <summary>The entry's icon as a base64 PNG for the pipe, or null when it cannot be resolved.</summary>
 	internal static string EncodeEntryIcon(IPluginHost host, PwDatabase db, PwEntry entry)
@@ -68,12 +79,8 @@ internal static class KeePassIcons
 				return Encode(db?.GetCustomIcon(entry.CustomIconUuid, MaxIconPixels, MaxIconPixels));
 
 			// Standard icons are shared by many entries, so encoding them once is worth caching.
-			int id = (int)entry.IconId;
-			if (StandardIconData.TryGetValue(id, out string cached)) return cached;
-
-			string encoded = Encode(GetEntryIcon(host, entry.IconId));
-			StandardIconData[id] = encoded;
-			return encoded;
+			var iconId = entry.IconId;
+			return StandardIconData.GetOrAdd((int)iconId, _ => Encode(GetEntryIcon(host, iconId)));
 		}
 		catch (Exception ex)
 		{
