@@ -15,14 +15,15 @@ See the [installation instructions in the README](../README.md#installation) for
 
 The app and the plugin are two separate pieces and are updated separately. The app knows which plugin version it ships, so once it has been updated, KeePass takes care of the rest.
 
-**The plugin update prompt.** When KeePass starts and the installed KeePassPasskey app contains a newer plugin than the one loaded, a dialog offers four choices:
+**The plugin update prompt.** When KeePass starts and the installed KeePassPasskey app contains a newer plugin than the one loaded, a dialog offers three choices:
 
 | Choice | What it does |
 |---|---|
 | Update now | Replaces the plugin file, then offers to restart KeePass so the new version is loaded. Declining that restart is fine: the version you were already running stays loaded until the next start |
 | Later | Asks again the next time KeePass starts |
 | Skip version *x.y.z* | Stays quiet until a version newer than that one appears |
-| Never check for plugin updates | Turns the check off; re-enable it under [Advanced](#advanced) settings |
+
+Below them sits a **Don't check for plugin updates again** checkbox. It applies alongside whichever choice you make, so you can tick it and still install this update, and the check can be turned back on under [Advanced](#advanced) settings. Closing the dialog without choosing counts as Later.
 
 The dialog names the version you have, the version on offer, which installed app it comes from and the folder it will be written to. Updating a KeePass installed under `C:\Program Files\` asks for administrator rights once; portable and per-user installations update with no prompt at all. That prompt names **Windows Command Processor**, because Windows does not allow a Store app to request administrator rights for itself, so the copy is carried out by a script that ships inside the app. Expanding the prompt's details shows the script path inside the KeePassPasskey app folder.
 

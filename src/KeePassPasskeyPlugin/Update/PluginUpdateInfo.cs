@@ -7,7 +7,6 @@ internal enum PluginUpdateChoice
 	Later,
 	Update,
 	SkipThisVersion,
-	NeverCheck,
 }
 
 internal sealed class PluginUpdateInfo

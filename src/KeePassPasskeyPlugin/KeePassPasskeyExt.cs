@@ -46,8 +46,6 @@ public sealed class KeePassPasskeyExt : Plugin
 
 	public override Image SmallIcon => _smallIcon;
 
-	internal static Image PluginImage => _smallIcon;
-
 	public override string UpdateUrl => "https://keepasspasskey.github.io/version.txt";
 
 	public override bool Initialize(IPluginHost host)

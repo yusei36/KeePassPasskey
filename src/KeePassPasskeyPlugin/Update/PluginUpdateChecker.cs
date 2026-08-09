@@ -110,36 +110,54 @@ internal sealed class PluginUpdateChecker : IDisposable
 		Log.Info("offering plugin update " + info.InstalledVersion + " -> " + info.AvailableVersion
 			+ " from " + package.PackageFamilyName);
 
-		PluginUpdateChoice choice;
-		bool restart;
-		using (var form = new PluginUpdateForm(info, () => PluginInstallLauncher.Install(
-			package.BundledPluginDllPath, info.TargetDirectory, package.InstallScriptPath)))
+		var choice = PluginUpdatePrompt.ShowUpdate(info, _host.MainWindow, out bool neverCheck);
+
+		// The checkbox rides along with whichever button was pressed, so it is answered on its own.
+		if (neverCheck)
 		{
-			form.ShowDialog(_host.MainWindow);
-			choice = form.Choice;
-			restart = form.RestartRequested;
-			if (form.InstallOutcome != null)
+			var settings = _settingsStorage.Load();
+			settings.CheckForPluginUpdates = false;
+			_settingsStorage.Save(settings);
+		}
+
+		if (choice == PluginUpdateChoice.SkipThisVersion)
+			_settingsStorage.SaveSkippedPluginVersion(info.AvailableVersion);
+
+		if (choice != PluginUpdateChoice.Update)
+			return;
+
+		while (true)
+		{
+			var outcome = Install(package, info);
+			Log.Info("plugin update result: " + outcome.Result
+				+ (outcome.Elevated ? " (elevated)" : "")
+				+ (outcome.Error != null ? " - " + outcome.Error : ""));
+
+			if (outcome.Success)
 			{
-				Log.Info("plugin update result: " + form.InstallOutcome.Result
-					+ (form.InstallOutcome.Elevated ? " (elevated)" : "")
-					+ (form.InstallOutcome.Error != null ? " - " + form.InstallOutcome.Error : ""));
+				if (PluginUpdatePrompt.ShowRestart(info, _host.MainWindow))
+					Restart();
+				return;
 			}
-		}
 
-		switch (choice)
+			if (!PluginUpdatePrompt.ShowFailure(outcome, info, _host.MainWindow))
+				return;
+		}
+	}
+
+	// No dialog is on screen while this runs, so the wait cursor is the only sign of progress.
+	private PluginInstallOutcome Install(ProviderPackage package, PluginUpdateInfo info)
+	{
+		_host.MainWindow.UseWaitCursor = true;
+		try
 		{
-			case PluginUpdateChoice.SkipThisVersion:
-				_settingsStorage.SaveSkippedPluginVersion(info.AvailableVersion);
-				break;
-			case PluginUpdateChoice.NeverCheck:
-				var settings = _settingsStorage.Load();
-				settings.CheckForPluginUpdates = false;
-				_settingsStorage.Save(settings);
-				break;
+			return PluginInstallLauncher.Install(
+				package.BundledPluginDllPath, info.TargetDirectory, package.InstallScriptPath);
 		}
-
-		if (restart)
-			Restart();
+		finally
+		{
+			_host.MainWindow.UseWaitCursor = false;
+		}
 	}
 
 	// KeePass forwards a second instance to the running one and exits it, so the new process can
