@@ -60,8 +60,8 @@ Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePa
 
 Under the hood, Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project is both sides of that:
 
-- **KeePassPasskeyProvider.exe** - the MSIX-packaged provider. Windows cold-starts it as an out-of-process COM server for each request and it self-exits when idle; the same binary hosts the app window and keeps the Windows credential cache in sync
-- **KeePassPasskey.dll** - the KeePass plugin. Generates and uses the keys, and stores them in the open database
+- **KeePassPasskeyProvider.exe**: the MSIX-packaged provider. Windows cold-starts it as an out-of-process COM server for each request and it self-exits when idle; the same binary hosts the app window and keeps the Windows credential cache in sync
+- **KeePassPasskey.dll**: the KeePass plugin. Generates and uses the keys, and stores them in the open database
 
 ## Installation
 
