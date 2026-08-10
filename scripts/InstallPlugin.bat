@@ -1,5 +1,5 @@
 @echo off
-rem Elevated half of installing the KeePass plugin: cmd.exe /c "install-plugin.cmd <install|remove> <pluginsFolder>"
+rem Elevated half of installing the KeePass plugin: cmd.exe /c "InstallPlugin.bat <install|remove> <pluginsFolder>"
 rem Exists because Windows cannot run a packaged executable elevated; see PluginInstallLauncher.
 rem Exit codes match PluginInstallResult: 0 ok, 2 access denied, 3 source missing, 4 target invalid.
 setlocal

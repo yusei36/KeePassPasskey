@@ -24,14 +24,14 @@ public sealed class PluginInstallOutcome
 /// Runs an install or removal, elevating only when the direct write is denied, so portable and
 /// per-user KeePass installs never see a UAC prompt.
 ///
-/// Elevation runs <c>install-plugin.cmd</c> from the package through <c>cmd.exe</c>, because Windows
+/// Elevation runs <c>InstallPlugin.bat</c> from the package through <c>cmd.exe</c>, because Windows
 /// cannot run a packaged executable elevated at all. System32 and the package are the only locations
 /// here that are not user-writable, so a staged copy of our own exe would be an escalation hole.
 /// </summary>
 public static class PluginInstallLauncher
 {
 	/// <summary>Where the script sits inside the provider package, relative to the install root.</summary>
-	public const string ScriptRelativePath = @"KeePassPasskeyProvider\install-plugin.cmd";
+	public const string ScriptRelativePath = @"KeePassPasskeyProvider\InstallPlugin.bat";
 
 	/// <summary>Where the plugin sits inside the provider package, relative to the install root.</summary>
 	public const string PluginFolderRelativePath = "KeePassPasskeyPlugin";
