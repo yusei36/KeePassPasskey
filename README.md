@@ -65,6 +65,8 @@ Under the hood, Windows 11 routes passkey operations through a COM server regist
 
 ## Installation
 
+All three options end the same way, with both indicators green in the app. From there the [User Guide](docs/user-guide.md) walks you through creating and using your first passkey.
+
 ### Option A - Microsoft Store (recommended)
 
 [<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
@@ -78,8 +80,6 @@ Under the hood, Windows 11 routes passkey operations through a COM server regist
 
 > [!NOTE]
 > The app updates automatically. When it ships a newer plugin, KeePass offers to update it at the next start, see [Updates](docs/user-guide.md#updates).
-
-Once installed, continue with the [User Guide](docs/user-guide.md) to get started.
 
 Prefer the command line? `winget install --name "KeePassPasskey" --source msstore` installs the same package.
 
