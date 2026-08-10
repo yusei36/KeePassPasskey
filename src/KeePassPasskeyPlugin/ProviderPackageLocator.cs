@@ -16,6 +16,7 @@ internal sealed class ProviderPackage
 	internal string PackageFamilyName;
 	internal string ChannelDisplayName;
 	internal string InstallPath;
+	internal bool SelfUpdating;
 
 	internal string ProviderExePath => Path.Combine(InstallPath, ProviderPackageLocator.ProviderExeRelativePath);
 	internal string BundledPluginDllPath => Path.Combine(InstallPath,
@@ -45,22 +46,31 @@ internal static class ProviderPackageLocator
 {
 	internal const string ProviderExeRelativePath = @"KeePassPasskeyProvider\KeePassPasskeyProvider.exe";
 
+	private sealed class Channel
+	{
+		internal string PackageFamilyName;
+		internal string DisplayName;
+		// The Store installs its own updates; a GitHub package is only ever as current as the last
+		// download the user did by hand.
+		internal bool SelfUpdating;
+	}
+
 	// PFNs are deterministic from the manifest Name + Publisher, so these are stable (including the
 	// Debug one). Keep in sync with ClientVerifier and PluginConstants.OfficialPackageFamilyNames.
-	private static readonly KeyValuePair<string, string>[] KnownChannels =
+	private static readonly Channel[] KnownChannels =
 	{
 #if DEBUG
-		new KeyValuePair<string, string>("KeePassPasskeyProvider_hdweypz22wfyt", "Dev"),
+		new Channel { PackageFamilyName = "KeePassPasskeyProvider_hdweypz22wfyt", DisplayName = "Dev", SelfUpdating = false },
 #else
-		new KeyValuePair<string, string>("KeePassPasskeyProvider_rcm79ea08mqe4", "GitHub"),
-		new KeyValuePair<string, string>("51133UweKgel.KeePassPasskey_2xyhjw5z6d8g4", "Microsoft Store"),
+		new Channel { PackageFamilyName = "KeePassPasskeyProvider_rcm79ea08mqe4", DisplayName = "GitHub", SelfUpdating = false },
+		new Channel { PackageFamilyName = "51133UweKgel.KeePassPasskey_2xyhjw5z6d8g4", DisplayName = "Microsoft Store", SelfUpdating = true },
 #endif
 	};
 
 	internal static bool IsOfficialPackageFamilyName(string packageFamilyName)
 	{
 		foreach (var channel in KnownChannels)
-			if (string.Equals(channel.Key, packageFamilyName, StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(channel.PackageFamilyName, packageFamilyName, StringComparison.OrdinalIgnoreCase))
 				return true;
 		return false;
 	}
@@ -70,7 +80,7 @@ internal static class ProviderPackageLocator
 		var packages = new List<ProviderPackage>();
 		foreach (var channel in KnownChannels)
 		{
-			foreach (string fullName in FindPackageFullNames(channel.Key, onWarn))
+			foreach (string fullName in FindPackageFullNames(channel.PackageFamilyName, onWarn))
 			{
 				string installPath = GetPackagePath(fullName, onWarn);
 				if (string.IsNullOrEmpty(installPath))
@@ -78,9 +88,10 @@ internal static class ProviderPackageLocator
 
 				packages.Add(new ProviderPackage
 				{
-					PackageFamilyName = channel.Key,
-					ChannelDisplayName = channel.Value,
+					PackageFamilyName = channel.PackageFamilyName,
+					ChannelDisplayName = channel.DisplayName,
 					InstallPath = installPath,
+					SelfUpdating = channel.SelfUpdating,
 				});
 			}
 		}
@@ -98,7 +109,7 @@ internal static class ProviderPackageLocator
 			string version = package.BundledPluginVersion;
 			if (version == null)
 				continue;
-			if (best == null || PipeConstants.CompareProductVersions(version, bestVersion) > 0)
+			if (best == null || Prefer(package, version, best, bestVersion))
 			{
 				best = package;
 				bestVersion = version;
@@ -106,6 +117,28 @@ internal static class ProviderPackageLocator
 		}
 		return best;
 	}
+
+	/// <summary>The package to act on when none of them bundles a plugin to compare.</summary>
+	internal static ProviderPackage FindPreferredPackage(Action<string> onWarn = null)
+	{
+		ProviderPackage best = null;
+		foreach (var package in FindInstalledPackages(onWarn))
+			if (best == null || BeatsOnChannel(package, best))
+				best = package;
+		return best;
+	}
+
+	private static bool Prefer(ProviderPackage candidate, string candidateVersion,
+		ProviderPackage best, string bestVersion)
+	{
+		int order = PipeConstants.CompareProductVersions(candidateVersion, bestVersion);
+		return order > 0 || (order == 0 && BeatsOnChannel(candidate, best));
+	}
+
+	// Equal versions go to the self-updating channel: same files either way, but the Store keeps
+	// itself current while the GitHub package waits for the user to download the next one.
+	private static bool BeatsOnChannel(ProviderPackage candidate, ProviderPackage best) =>
+		candidate.SelfUpdating && !best.SelfUpdating;
 
 	internal static ProviderPackage FindByPackageFamilyName(string packageFamilyName, Action<string> onWarn = null)
 	{

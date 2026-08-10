@@ -4,7 +4,6 @@ using System;
 using System.Diagnostics;
 #if !DEBUG
 using System.IO;
-using System.Linq;
 #endif
 using KeePassPasskeyShared;
 
@@ -38,14 +37,15 @@ internal static class ProviderLauncher
 
 	/// <summary>Opens the app on its Settings page. Unlike the cache sync this targets one package:
 	/// two windows would be no more useful than one, and the provider itself brings a running
-	/// instance forward rather than starting a second.</summary>
+	/// instance forward rather than starting a second. The newest one wins, and an even match goes
+	/// to the Store package, which is the half that updates itself.</summary>
 	internal static bool LaunchSettings()
 	{
 #if DEBUG
 		return LaunchViaAlias("/settings");
 #else
 		var package = ProviderPackageLocator.FindNewestBundledPlugin(m => Log.Warn(m))
-			?? ProviderPackageLocator.FindInstalledPackages(m => Log.Warn(m)).FirstOrDefault();
+			?? ProviderPackageLocator.FindPreferredPackage(m => Log.Warn(m));
 		return package != null && Launch(package.ProviderExePath, "/settings", package.PackageFamilyName);
 #endif
 	}
