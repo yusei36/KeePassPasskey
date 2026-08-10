@@ -18,6 +18,7 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry.
 
 ```mermaid
+%%{init: {'flowchart': {'nodeSpacing': 25, 'rankSpacing': 35, 'useMaxWidth': true}, 'themeVariables': {'fontSize': '13px'}}}%%
 flowchart TB
     You(["You"])
     Site["<b>Website or app</b><br/>asks for a passkey"]
@@ -25,7 +26,7 @@ flowchart TB
 
     subgraph KPP ["KeePassPasskey"]
         direction TB
-        Prompt["<b>Passkey prompts</b><br/>the create and sign-in windows,<br/>started by Windows for each request"]
+        Prompt["<b>Passkey prompts</b><br/>the create and sign-in windows"]
         UI["<b>App window</b><br/>status, settings, plugin install"]
         Plug["<b>KeePass plugin</b><br/>creates the key and signs with it"]
     end
