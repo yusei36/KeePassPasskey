@@ -25,20 +25,25 @@ flowchart TB
 
     subgraph KPP ["KeePassPasskey"]
         direction TB
-        App["<b>Provider app</b><br/>shows the prompt you approve"]
+        Prompt["<b>Passkey prompts</b><br/>started by Windows for each request"]
+        UI["<b>App window</b><br/>status, settings, plugin install"]
         Plug["<b>KeePass plugin</b><br/>creates the key and signs with it"]
     end
 
     DB[("<b>Your KeePass database</b><br/>the passkey is a normal entry")]
 
     Site -->|Windows WebAuthn API| Win
-    Win -->|COM| App
-    App -->|named pipe| Plug
+    Win -->|COM| Prompt
+    Prompt -->|named pipe| Plug
+    UI -->|named pipe| Plug
     Plug -->|KPEX_PASSKEY_* fields| DB
 
     You -.->|"pick a provider"| Win
-    You -.->|"approve"| App
+    You -.->|"approve"| Prompt
+    You -.->|"check status, change settings"| UI
 ```
+
+The prompts and the app window are the same installed app, started two different ways: Windows starts it in the background for a passkey request, you start it from the Start menu.
 
 Signing in takes the same path, except that the entry already exists: Windows offers your saved passkeys, you approve, and the key in your database signs the challenge. Every key stays inside your database file, and all cryptography runs locally.
 
@@ -49,7 +54,7 @@ Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePa
 
 Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project implements that COM server and a KeePass plugin that handles the actual cryptography. The two boxes above are:
 
-- **KeePassPasskeyProvider.exe** - COM server, MSIX-packaged, handles the Windows WebAuthn API surface and credential cache sync
+- **KeePassPasskeyProvider.exe** - MSIX-packaged, and both boxes at once: Windows cold-starts it as an out-of-process COM server per request (it self-exits when idle), and the same binary hosts the app window. It also keeps the Windows credential cache in sync
 - **KeePassPasskey.dll** - KeePass plugin, handles key generation and signing, stores credentials in the open database
 
 </details>
