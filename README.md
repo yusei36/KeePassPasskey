@@ -18,37 +18,35 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry.
 
 ```mermaid
-%%{init: {'flowchart': {'nodeSpacing': 25, 'rankSpacing': 35, 'useMaxWidth': true}, 'themeVariables': {'fontSize': '13px'}}}%%
 flowchart TB
-    You(["You"])
-    Site["<b>Website or app</b><br/>asks for a passkey"]
-    Win["<b>Windows</b><br/>offers your passkey providers"]
+    Site["`**Website or app**
+you ask it for a passkey`"]
+    Win["`**Windows**
+offers your passkey providers`"]
 
     subgraph KPP ["KeePassPasskey"]
-        direction TB
-        Prompt["<b>Passkey prompts</b><br/>the create and sign-in windows"]
-        UI["<b>App window</b><br/>status, settings, plugin install"]
-        Plug["<b>KeePass plugin</b><br/>creates the key and signs with it"]
+        Prompt["`**Passkey prompts**
+the create and sign-in windows you approve`"]
+        UI["`**App window**
+status, settings, plugin install`"]
+        Plug["`**KeePass plugin**
+creates the key and signs with it`"]
     end
 
-    DB[("<b>Your KeePass database</b><br/>the passkey is a normal entry")]
+    DB[("`**Your KeePass database**
+the passkey is a normal entry`")]
 
     Site -->|Windows WebAuthn API| Win
     Win -->|COM| Prompt
     Prompt -->|named pipe| Plug
     UI -->|named pipe| Plug
     Plug -->|KPEX_PASSKEY_* fields| DB
-
-    You -.->|"pick a provider"| Win
-    You -.->|"approve"| Prompt
-    You -.->|"check status, change settings"| UI
-
-    Plug ==>|"Windows credential cache:<br/>passkey metadata"| Win
+    Plug ==>|Windows credential cache| Win
 ```
 
 The prompts and the app window are the same installed app, started two different ways: Windows starts it in the background for a passkey request, you start it from the Start menu.
 
-The thick arrow is what makes your passkeys show up in Windows sign-in dialogs at all: as you open or save your database, the passkey metadata (site and user name, never the keys themselves) is written to the Windows credential cache.
+The thick arrow is what makes your passkeys show up in Windows sign-in dialogs at all: as you open or save your database, the passkey metadata (site and user name, never the keys themselves) is written to the Windows credential cache. You meet only two of these boxes yourself, the prompt during a request and the app window when you want it.
 
 Signing in takes the same path, except that the entry already exists: Windows offers your saved passkeys, you approve, and the key in your database signs the challenge. Every key stays inside your database file, and all cryptography runs locally.
 
