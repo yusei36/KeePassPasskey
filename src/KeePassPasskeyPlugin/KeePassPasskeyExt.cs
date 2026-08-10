@@ -110,10 +110,11 @@ public sealed class KeePassPasskeyExt : Plugin
 	{
 		if (_updateChecker == null) return null;
 
-		var settings = new ToolStripMenuItem("Passkey settings...");
+		var settings = new ToolStripMenuItem("Passkey settings", KeePassIcons.Get("B16x16_Misc"));
 		settings.Click += (s, e) => OpenProviderSettings();
 
-		var update = new ToolStripMenuItem("Check for plugin update");
+		var update = new ToolStripMenuItem("Update plugin from installed app",
+			KeePassIcons.Get("B16x16_2UpArrow"));
 		update.Click += (s, e) => _updateChecker.Check(true);
 
 		var root = new ToolStripMenuItem("KeePassPasskey") { Image = _smallIcon };
