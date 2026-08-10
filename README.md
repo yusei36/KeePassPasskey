@@ -50,23 +50,18 @@ the passkey is a normal entry`")]
 
 </details>
 
-The prompts and the app window are the same installed app, started two different ways: Windows starts it in the background for a passkey request, you start it from the Start menu.
-
-The thick arrow is what makes your passkeys show up in Windows sign-in dialogs at all: as you open or save your database, the passkey metadata (site and user name, never the keys themselves) is written to the Windows credential cache. You meet only two of these boxes yourself, the prompt during a request and the app window when you want it.
+You meet KeePassPasskey twice: as the prompt you approve during a request, and as the app window you open yourself for status, settings and installing the plugin. Both are the same installed app, started two different ways, and neither runs permanently.
 
 Signing in takes the same path, except that the entry already exists: Windows offers your saved passkeys, you approve, and the key in your database signs the challenge. Every key stays inside your database file, and all cryptography runs locally.
 
+So that Windows can offer your passkeys in its sign-in dialogs, the passkey metadata (site and user name, never the keys themselves) is written to the Windows credential cache as you open or save your database.
+
 Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePassXC can read them and vice versa.
 
-<details>
-<summary><b>Under the hood</b></summary>
+Under the hood, Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project is both sides of that:
 
-Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project implements that COM server and a KeePass plugin that handles the actual cryptography. The two boxes above are:
-
-- **KeePassPasskeyProvider.exe** - MSIX-packaged, and both boxes at once: Windows cold-starts it as an out-of-process COM server per request (it self-exits when idle), and the same binary hosts the app window. It also keeps the Windows credential cache in sync
-- **KeePassPasskey.dll** - KeePass plugin, handles key generation and signing, stores credentials in the open database
-
-</details>
+- **KeePassPasskeyProvider.exe** - the MSIX-packaged provider. Windows cold-starts it as an out-of-process COM server for each request and it self-exits when idle; the same binary hosts the app window and keeps the Windows credential cache in sync
+- **KeePassPasskey.dll** - the KeePass plugin. Generates and uses the keys, and stores them in the open database
 
 ## Installation
 
