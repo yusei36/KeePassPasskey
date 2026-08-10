@@ -42,12 +42,12 @@ flowchart TB
     You -.->|"approve"| Prompt
     You -.->|"check status, change settings"| UI
 
-    Plug ==>|"in the background: your passkey list,<br/>so Windows can offer them"| Win
+    Plug ==>|"in the background: passkey metadata,<br/>so Windows can offer them"| Win
 ```
 
 The prompts and the app window are the same installed app, started two different ways: Windows starts it in the background for a passkey request, you start it from the Start menu.
 
-The thick arrow is what makes your passkeys show up in Windows sign-in dialogs at all: as you open or save your database, the list of passkeys (site and user name, never keys) is handed to Windows. That is why the database has to be unlocked, and why [no passkeys on this device](docs/troubleshooting-faq.md#the-website-says-there-are-no-passkeys-on-this-device) is usually a locked database.
+The thick arrow is what makes your passkeys show up in Windows sign-in dialogs at all: as you open or save your database, the passkey metadata (site and user name, never the keys themselves) is handed to Windows. That is why the database has to be unlocked, and why [no passkeys on this device](docs/troubleshooting-faq.md#the-website-says-there-are-no-passkeys-on-this-device) is usually a locked database.
 
 Signing in takes the same path, except that the entry already exists: Windows offers your saved passkeys, you approve, and the key in your database signs the challenge. Every key stays inside your database file, and all cryptography runs locally.
 
