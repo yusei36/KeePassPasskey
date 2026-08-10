@@ -33,7 +33,7 @@ If you dismiss the administrator prompt, or the copy fails for some other reason
 
 **GitHub installs** update the app by running `InstallMsix.bat` as an administrator or installing the MSIX package. The plugin is then offered by the prompt above at the next KeePass start; the installer itself never writes to your KeePass plugins folder.
 
-**Installing or removing the plugin from the app.** The app's **Install plugin...** button opens a dialog that detects your KeePass folder (you can correct it or browse for it, and its `Plugins` folder, or any folder inside it, is accepted just as well), shows exactly which file will be written where, and offers **Install**, **Update** and **Remove**. This is the route for a first installation, when no plugin is loaded yet to prompt anything.
+**Installing or removing the plugin from the app.** The app can install, update and remove the plugin for you. It detects your KeePass folder (you can correct it or browse for it, and its `Plugins` folder, or any folder inside it, is accepted just as well) and shows exactly which file will be written where before anything happens. If you would rather do it yourself, it can instead reveal that file in Explorer for you to copy into the `Plugins` folder by hand. This is the route for a first installation, when no plugin is loaded yet to prompt anything.
 
 Either way, the KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
 

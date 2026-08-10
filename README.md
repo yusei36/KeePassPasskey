@@ -40,7 +40,7 @@ KeePassPasskeyProvider.exe
 [<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
 
 1. Install [KeePassPasskey](https://apps.microsoft.com/detail/9nwnfhjpspgz) from the Microsoft Store and launch it.
-2. Follow the built-in **Setup Guide**: click **Install plugin...**, check the detected KeePass folder, and click **Install**. Installing into `C:\Program Files\...` asks for administrator rights once. If KeePass is running, restart it afterwards. The same dialog can reveal `KeePassPasskey.dll` in Explorer if you would rather copy it yourself.
+2. Follow the built-in **Setup Guide**: click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
 3. Continue the Setup Guide to open Windows **Advanced passkey options** and enable **KeePassPasskey**.
 4. Both status indicators in the **KeePassPasskey** app should show green.
 
@@ -56,18 +56,18 @@ Prefer the command line? `winget install --name "KeePassPasskey" --source msstor
 ### Option B - GitHub install with script
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
-2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
-3. Run `InstallMsix.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
+2. Run `InstallMsix.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
+3. In the app, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
 4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 5. Both status indicators in the **KeePassPasskey** app should show green.
 
 ### Option C - GitHub manual installation
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
-2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
-3. Trust the certificate: right-click `KeePassPasskey.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
-4. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
-5. Launch **KeePassPasskey** from the Start menu, click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+2. Trust the certificate: right-click `KeePassPasskey.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
+3. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
+4. Launch **KeePassPasskey** from the Start menu, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
+5. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 6. Both status indicators in the **KeePassPasskey** app should show green.
 7. (Optional) Remove the certificate: open **certlm.msc** → **Trusted People** → **Certificates**, find **KeePassPasskey**, and delete it. The certificate is only needed during installation.
 

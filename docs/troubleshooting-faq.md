@@ -46,8 +46,10 @@ After setting up the PIN again, try **Register** once more in the KeePassPasskey
 - Make sure KeePass is running with a database open.
 - Check that the KeePassPasskey plugin is installed: in KeePass, go to **Tools → Plugins** and verify `KeePassPasskey` appears in the list.
 - If the plugin is listed but the indicator is still red, restart KeePass.
-- If it shows **Version mismatch** (yellow), the app and the KeePass plugin are on different but compatible versions. Passkeys keep working, but update the older side to get the latest features. The **Diagnostics** section shows both versions and, when the plugin is the older one, offers to reveal the bundled plugin file so you can drop it into your KeePass plugins folder.
-- If it shows **Incompatible version** (red), passkey operations are blocked until both sides are updated to matching versions. The app tells you which side is older: update that one by replacing the plugin file in your KeePass plugins folder, or by updating the KeePassPasskey app.
+- If it shows **Version mismatch** (yellow), the app and the KeePass plugin are on different but compatible versions. Passkeys keep working, but update the older side to get the latest features. The **Diagnostics** section shows both versions.
+- If it shows **Incompatible version** (red), passkey operations are blocked until both sides are updated to matching versions. The app tells you which side is older.
+- **When the plugin is the older side**, KeePass offers the update itself at its next start. You can also ask for it at any time with **Tools → KeePassPasskey → Update plugin from installed app** in KeePass, or with **Install plugin** in the KeePassPasskey app. The new plugin comes out of the installed app, so nothing is downloaded. See [Updates](user-guide.md#updates).
+- **When the app is the older side**, update it: Microsoft Store installs update themselves in the background, and GitHub installs are updated by installing the newest release. KeePass then offers the matching plugin at its next start.
 
 ## I tried creating a passkey but it failed saying one already exists
 

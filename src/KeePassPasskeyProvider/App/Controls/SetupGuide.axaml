@@ -32,17 +32,24 @@
 								<StackPanel Grid.Column="1" Spacing="4">
 										<TextBlock Text="Install the plugin" FontWeight="SemiBold" FontSize="13" />
 										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-												<Run Text="Copy " />
+												<Run Text="Put " />
 												<Run Text="KeePassPasskey.dll" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text=" into your KeePass " />
+												<Run Text=" in your KeePass " />
 												<Run Text="Plugins" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text=" folder and restart KeePass." />
+												<Run Text=" folder, by hand or with the button below, then restart KeePass." />
 										</TextBlock>
-										<Button Content="Install plugin..."
-														Command="{Binding InstallPluginCommand}"
-														IsVisible="{Binding HasBundledPlugin}"
-														ToolTip.Tip="Install or update the KeePass plugin"
-														Padding="6 2" FontSize="12" HorizontalAlignment="Left" />
+										<StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left">
+												<Button Content="Install plugin"
+																Command="{Binding InstallPluginCommand}"
+																IsVisible="{Binding HasBundledPlugin}"
+																ToolTip.Tip="Install or update the KeePass plugin"
+																Padding="6 2" FontSize="12" />
+												<Button Content="Show plugin file"
+																Command="{Binding ShowPluginFileCommand}"
+																IsVisible="{Binding HasBundledPlugin}"
+																ToolTip.Tip="Reveal KeePassPasskey.dll in Explorer to copy it yourself"
+																Padding="6 2" FontSize="12" />
+										</StackPanel>
 								</StackPanel>
 						</Grid>
 
