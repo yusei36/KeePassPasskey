@@ -65,7 +65,7 @@ Under the hood, Windows 11 routes passkey operations through a COM server regist
 
 ## Installation
 
-All three options end the same way, with both indicators green in the app. From there the [User Guide](docs/user-guide.md) walks you through creating and using your first passkey.
+Install the app, add the plugin to KeePass, enable the provider in Windows. Each option below does those three things a different way, so choose the one you like most. Afterwards the [User Guide](docs/user-guide.md) walks you through creating and using your first passkey.
 
 ### Option A - Microsoft Store (recommended)
 
