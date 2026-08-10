@@ -388,7 +388,7 @@ function Invoke-Wack {
 	$installed = Get-AppxPackage -Name (Get-StoreIdentityName) | Select-Object -First 1
 	if ($installed) {
 		Write-Host "  Removing installed Store package so WACK can deploy its own copy."
-		Write-Host "  Reinstall afterwards with: scripts\Install-StoreProvider.ps1 -SkipBuild" -ForegroundColor Yellow
+		Write-Host "  Reinstall afterwards with: scripts\Test-StoreProvider.ps1 -SkipBuild" -ForegroundColor Yellow
 		Get-Process -Name KeePassPasskeyProvider -ErrorAction SilentlyContinue |
 			Where-Object { $_.Path -and $_.Path.StartsWith($installed.InstallLocation, [StringComparison]::OrdinalIgnoreCase) } |
 			Stop-Process -Force -ErrorAction SilentlyContinue
