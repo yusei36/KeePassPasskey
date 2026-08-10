@@ -15,6 +15,35 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 
 ## How it works
 
+When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor You
+    participant Site as Website or app
+    participant Windows
+    participant App as KeePassPasskey
+    participant DB as Your KeePass database
+
+    You->>Site: Create a passkey
+    Site->>Windows: Asks Windows for a passkey
+    Windows->>You: Which provider?
+    You->>Windows: KeePassPasskey
+    Windows->>App: Hands over the request
+    App->>You: Shows the site and your entries
+    You->>App: Approve
+    App->>DB: Creates the key and saves it as an entry
+    App-->>Site: Passkey created
+```
+
+Signing in takes the same path, except that the entry already exists: Windows offers your saved passkeys, you approve, and the key in your database signs the challenge. Every key stays inside your database file, and all cryptography runs locally.
+
+Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePassXC can read them and vice versa.
+
+<details>
+<summary><b>Under the hood</b></summary>
+
 Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project implements that COM server and a KeePass plugin that handles the actual cryptography:
 
 ```
@@ -31,7 +60,8 @@ KeePassPasskeyProvider.exe
 
 - **KeePassPasskeyProvider.exe** - COM server, MSIX-packaged, handles the Windows WebAuthn API surface and credential cache sync
 - **KeePassPasskey.dll** - KeePass plugin, handles key generation and signing, stores credentials in the open database
-- Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so they are readable by KeePassXC and vice versa
+
+</details>
 
 ## Installation
 
