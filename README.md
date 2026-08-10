@@ -79,7 +79,7 @@ Install the app, add the plugin to KeePass, enable the provider in Windows. Each
 <img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
 
 > [!NOTE]
-> The app updates automatically. When it ships a newer plugin, KeePass offers to update it at the next start, see [Updates](docs/user-guide.md#updates).
+> The app updates automatically, the plugin does not. After the app moves to a newer version, KeePass offers to update the plugin at its next start so both halves match, see [Updates](docs/user-guide.md#updates).
 
 Prefer the command line? `winget install --name "KeePassPasskey" --source msstore` installs the same package.
 
