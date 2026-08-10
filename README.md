@@ -25,7 +25,7 @@ flowchart TB
 
     subgraph KPP ["KeePassPasskey"]
         direction TB
-        Prompt["<b>Passkey prompts</b><br/>started by Windows for each request"]
+        Prompt["<b>Passkey prompts</b><br/>the create and sign-in windows,<br/>started by Windows for each request"]
         UI["<b>App window</b><br/>status, settings, plugin install"]
         Plug["<b>KeePass plugin</b><br/>creates the key and signs with it"]
     end
