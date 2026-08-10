@@ -17,6 +17,9 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 
 When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry.
 
+<details>
+<summary><b>Diagram: where a passkey request goes</b></summary>
+
 ```mermaid
 %%{init: {'flowchart': {'useMaxWidth': false}}}%%
 flowchart TB
@@ -44,6 +47,8 @@ the passkey is a normal entry`")]
     Plug -->|KPEX_PASSKEY_* fields| DB
     Plug ==>|Windows credential cache| Win
 ```
+
+</details>
 
 The prompts and the app window are the same installed app, started two different ways: Windows starts it in the background for a passkey request, you start it from the Start menu.
 
