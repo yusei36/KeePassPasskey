@@ -15,7 +15,7 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 
 ## How it works
 
-When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry.
+When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry. Signing in takes the same path, with the entry already there. Keys never leave your database file, and all cryptography runs locally.
 
 <details>
 <summary><b>Diagram: where a passkey request goes</b></summary>
@@ -52,15 +52,13 @@ the passkey is a normal entry`")]
 
 You meet KeePassPasskey twice: as the prompt you approve during a request, and as the app window you open yourself for status, settings and installing the plugin. Both are the same installed app, started two different ways, and neither runs permanently.
 
-Signing in takes the same path, except that the entry already exists: Windows offers your saved passkeys, you approve, and the key in your database signs the challenge. Every key stays inside your database file, and all cryptography runs locally.
-
 So that Windows can offer your passkeys in its sign-in dialogs, the passkey metadata (site and user name, never the keys themselves) is written to the Windows credential cache as you open or save your database.
 
-Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePassXC can read them and vice versa.
+Entries use KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePassXC can read them and vice versa.
 
 Under the hood, Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project is both sides of that:
 
-- **KeePassPasskeyProvider.exe**: the MSIX-packaged provider. Windows cold-starts it as an out-of-process COM server for each request and it self-exits when idle; the same binary hosts the app window and keeps the Windows credential cache in sync
+- **KeePassPasskeyProvider.exe**: the MSIX-packaged provider. Windows cold-starts it per request and it self-exits when idle; the same binary hosts the app window and keeps the Windows credential cache in sync
 - **KeePassPasskey.dll**: the KeePass plugin. Generates and uses the keys, and stores them in the open database
 
 ## Installation
