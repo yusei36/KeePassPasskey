@@ -102,6 +102,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 		}
 		else
 		{
+			AuthenticatorStatusWatcher.Restart();
 			DoRefresh();
 		}
 	}
@@ -116,6 +117,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 		}
 		else
 		{
+			AuthenticatorStatusWatcher.Stop();
 			DoRefresh();
 		}
 	}

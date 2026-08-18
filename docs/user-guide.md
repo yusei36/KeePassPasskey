@@ -288,6 +288,8 @@ The **Diagnostics** page shows the app and plugin versions, the provider registr
 
 To offer your passkeys in the sign-in prompt, Windows keeps its own copy of them. It is refreshed automatically whenever you open, save or close a database, or add or change a passkey, so these buttons are only needed when something looks wrong.
 
+The copy exists only while KeePassPasskey is switched on in **Settings → Accounts → Passkeys → Advanced options**. Switching the provider off there empties it, and switching it back on fills it again. That happens straight away while the KeePassPasskey app is running, whether its window is open or it sits in the system tray; with the app closed, the change is picked up the next time you open or save a database in KeePass, or use **Sync now**.
+
 | Button | Description |
 |---|---|
 | Sync now | Refreshes the Windows copy from the databases currently open in KeePass. |

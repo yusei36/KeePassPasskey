@@ -55,6 +55,8 @@ public class Application : Avalonia.Application, IDisposable
 			ApplyTrayState(desktop, vm);
 			vm.TrayStateChanged += (_, _) => ApplyTrayState(desktop, vm);
 
+			AuthenticatorStatusWatcher.Start();
+
 			_showWatcher = new NamedEventWatcher(
 				PluginConstants.ShowEventName, () => _window?.ShowOnPage(settings: false));
 			_showSettingsWatcher = new NamedEventWatcher(
@@ -67,6 +69,7 @@ public class Application : Avalonia.Application, IDisposable
 
 	public void Dispose()
 	{
+		AuthenticatorStatusWatcher.Stop();
 		_showWatcher?.Dispose();
 		_showWatcher = null;
 		_showSettingsWatcher?.Dispose();

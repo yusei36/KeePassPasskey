@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Settings;
 
 namespace KeePassPasskeyProvider.Authenticator;
 
@@ -44,22 +45,67 @@ internal static unsafe class CredentialCache
 	}
 
 	/// <summary>
+	/// The one place the cache policy lives: the sync setting decides whether the cache is wanted
+	/// at all, the Windows switch then decides between filling and emptying it.
+	/// </summary>
+	public static void Refresh(Guid pluginClsid)
+	{
+		if (!KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
+		{
+			Log.Info("credential sync disabled, clearing Windows cache");
+			ClearWindowsCache(pluginClsid);
+			return;
+		}
+
+		SyncToWindowsCache(pluginClsid);
+	}
+
+	/// <summary>
 	/// Query KeePass for all passkeys and push changes to the Windows cache.
 	/// Returns true if KeePass was reached (sync applied), false otherwise.
+	/// A provider switched off in Windows Settings is emptied instead of refreshed.
 	/// </summary>
 	public static bool SyncToWindowsCache(Guid pluginClsid)
+	{
+		return WithCacheLock("sync", () =>
+		{
+			int hrState = PluginRegistration.GetState(out var state);
+			if (hrState < HResults.S_OK)
+			{
+				Log.Warn($"authenticator state unavailable hr=0x{hrState:X8}, skipping credential sync");
+				return false;
+			}
+
+			if (state != AuthenticatorState.AuthenticatorState_Enabled)
+			{
+				Log.Info("provider disabled in Windows, clearing the credential cache instead of syncing");
+				return ClearCredentialCache(pluginClsid);
+			}
+
+			return SyncToCredentialCache(pluginClsid);
+		});
+	}
+
+	/// <summary>
+	/// Removes every credential from the Windows autofill cache. Returns false if the platform
+	/// refused. The cache repopulates on the next sync (database open/save or a passkey change).
+	/// </summary>
+	public static bool ClearWindowsCache(Guid pluginClsid)
+		=> WithCacheLock("clear", () => ClearCredentialCache(pluginClsid));
+
+	private static bool WithCacheLock(string operation, Func<bool> write)
 	{
 		_syncGate.Wait();
 		Mutex? crossProcess = AcquireCrossProcessLock();
 		if (crossProcess == null)
 		{
 			_syncGate.Release();
-			Log.Warn("could not acquire cross-process cache lock, skipping sync");
+			Log.Warn($"could not acquire cross-process cache lock, skipping {operation}");
 			return false;
 		}
 		try
 		{
-			return SyncToCredentialCache(pluginClsid);
+			return write();
 		}
 		catch (Exception ex)
 		{
@@ -73,60 +119,35 @@ internal static unsafe class CredentialCache
 		}
 	}
 
-	/// <summary>
-	/// Removes every credential from the Windows autofill cache. Returns false if the platform
-	/// refused. The cache repopulates on the next sync (database open/save or a passkey change).
-	/// </summary>
-	public static bool ClearWindowsCache(Guid pluginClsid)
+	private static bool ClearCredentialCache(Guid pluginClsid)
 	{
-		_syncGate.Wait();
-		Mutex? crossProcess = AcquireCrossProcessLock();
-		if (crossProcess == null)
+		int hrGet = ReadCache(pluginClsid, out var entries);
+		if (hrGet < HResults.S_OK) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
+
+		int listed = entries.Count;
+		if (listed > 0) ApplyRemove(pluginClsid, entries);
+
+		// Verify: a per-credential remove only reaches rows GetAllCredentials can address.
+		ReadCache(pluginClsid, out var remaining);
+		if (remaining.Count == 0)
 		{
-			_syncGate.Release();
-			Log.Warn("could not acquire cross-process cache lock, skipping clear");
-			return false;
-		}
-		try
-		{
-			int hrGet = ReadCache(pluginClsid, out var entries);
-			if (hrGet < HResults.S_OK) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
-
-			int listed = entries.Count;
-			if (listed > 0) ApplyRemove(pluginClsid, entries);
-
-			// Verify: a per-credential remove only reaches rows GetAllCredentials can address.
-			ReadCache(pluginClsid, out var remaining);
-			if (remaining.Count == 0)
-			{
-				Log.Info($"cleared={listed}");
-				return true;
-			}
-
-			// Fallback only: RemoveAllCredentials did not work in the original native implementation.
-			int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveAllCredentials(pluginClsid);
-			Log.Warn($"{remaining.Count} credential(s) left after per-credential remove, RemoveAllCredentials hr=0x{hr:X8}");
-
-			ReadCache(pluginClsid, out var afterFallback);
-			if (afterFallback.Count > 0)
-			{
-				Log.Error($"cache still holds {afterFallback.Count} credential(s) after RemoveAllCredentials");
-				return false;
-			}
-
 			Log.Info($"cleared={listed}");
 			return true;
 		}
-		catch (Exception ex)
+
+		// Fallback only: RemoveAllCredentials did not work in the original native implementation.
+		int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveAllCredentials(pluginClsid);
+		Log.Warn($"{remaining.Count} credential(s) left after per-credential remove, RemoveAllCredentials hr=0x{hr:X8}");
+
+		ReadCache(pluginClsid, out var afterFallback);
+		if (afterFallback.Count > 0)
 		{
-			Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+			Log.Error($"cache still holds {afterFallback.Count} credential(s) after RemoveAllCredentials");
 			return false;
 		}
-		finally
-		{
-			ReleaseCrossProcessLock(crossProcess);
-			_syncGate.Release();
-		}
+
+		Log.Info($"cleared={listed}");
+		return true;
 	}
 
 	/// <summary>Writes both sides of the sync comparison; read-only. Backs /dumpcredentials.</summary>

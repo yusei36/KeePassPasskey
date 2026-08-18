@@ -99,17 +99,10 @@ internal static class Program
 	{
 		Log.Info($"/synccredential received (log level: {Log.MinLevel})");
 
-		if (!KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
-		{
-			Log.Info("credential sync disabled, clearing Windows cache");
-			CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
-			return 0;
-		}
-
 		// EnsureRegistered is a cheap no-op when already registered; the cache APIs require the
 		// authenticator to be known to the platform.
 		PluginRegistration.EnsureRegistered();
-		CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+		CredentialCache.Refresh(PluginConstants.KeePassPasskeyProviderClsid);
 		return 0;
 	}
 

@@ -460,17 +460,10 @@ public sealed partial class SettingsViewModel : ObservableObject
 			SettingsCache.Save(settings);
 			HasUnsavedChanges = false;
 
-			// Reflect the sync toggle in the Windows cache immediately: enabling reconciles it
-			// against the open databases, disabling clears it. The app is the packaged process, so
-			// it can call the WebAuthn cache APIs directly.
-			var clsid = Authenticator.PluginConstants.KeePassPasskeyProviderClsid;
-			await Task.Run(() =>
-			{
-				if (settings.IsCredentialSyncEnabled)
-					Authenticator.CredentialCache.SyncToWindowsCache(clsid);
-				else
-					Authenticator.CredentialCache.ClearWindowsCache(clsid);
-			});
+			// Reflect the change in the Windows cache immediately. The app is the packaged
+			// process, so it can call the WebAuthn cache APIs directly.
+			await Task.Run(() => Authenticator.CredentialCache.Refresh(
+				Authenticator.PluginConstants.KeePassPasskeyProviderClsid));
 		}
 		finally
 		{
