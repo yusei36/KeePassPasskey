@@ -100,6 +100,24 @@ function Invoke-BuildWapproj {
 		[switch]$Optimized,
 		[switch]$Store
 	)
+	# Optimized and plain builds share one output dir and the publish step never overwrites what is
+	# staged there, so a stale trimmed runtime otherwise survives into the MSIX.
+	Remove-Item "$RepoRoot\build\$Configuration\KeePassPasskeyProvider\win-x64\msixpublish" `
+		-Recurse -Force -ErrorAction SilentlyContinue
+
+	# Release defaults to Optimized in the props, so the switch alone under-reports a trimmed build.
+	if ($Optimized -or $Configuration -eq 'Release') {
+		# The restore re-records the trim/R2R packs, which a plain build in between drops from the
+		# shared nuget props (NETSDK1094); msbuild on the wapproj does not restore the provider.
+		Remove-Item "$RepoRoot\src\KeePassPasskeyProvider\obj\x64\$Configuration" `
+			-Recurse -Force -ErrorAction SilentlyContinue
+		$restoreArgs = @('restore', "$RepoRoot\src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj",
+			"/p:Configuration=$Configuration", '/p:Optimized=true', '--nologo')
+		if ($Store) { $restoreArgs += '/p:Store=true' }
+		& dotnet $restoreArgs
+		if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
+	}
+
 	$versions = Get-BuildVersions $RepoRoot
 	$manifest         = "$RepoRoot\src\KeePassPasskeyProvider.Package\Package.appxmanifest"
 	$originalContent  = [IO.File]::ReadAllText($manifest)
