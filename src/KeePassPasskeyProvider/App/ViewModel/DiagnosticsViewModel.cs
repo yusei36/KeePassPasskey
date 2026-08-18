@@ -16,6 +16,7 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 	[ObservableProperty] public partial PingStatus PingStatus { get; set; }
 	public ICommand RegisterCommand { get; }
 	public ICommand UnregisterCommand { get; }
+	public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
 	public LogViewModel LogPanel { get; } = new LogViewModel();
 
 	public string ServerVersionShort => ServerVersion != null ? ShortenVersion(ServerVersion) : "";

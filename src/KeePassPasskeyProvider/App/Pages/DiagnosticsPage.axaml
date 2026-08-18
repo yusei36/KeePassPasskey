@@ -124,6 +124,10 @@
 																		<Button Content="Unregister"
 																						Command="{Binding UnregisterCommand}"
 																						Padding="8 3" FontSize="12" />
+																		<Button Content="Advanced passkey settings"
+																						Command="{Binding OpenPasskeySettingsCommand}"
+																						ToolTip.Tip="Open the passkey provider switch in Windows Settings"
+																						Padding="8 3" FontSize="12" />
 																</StackPanel>
 														</Grid>
 

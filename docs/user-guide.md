@@ -282,7 +282,7 @@ The **Diagnostics** page shows the app and plugin versions, the provider registr
 
 ### Provider registration
 
-**Register** and **Unregister** add or remove KeePassPasskey as a passkey provider in Windows. Use them only if the app is missing from **Settings → Accounts → Passkeys → Advanced options**, or if support asks you to.
+**Register** and **Unregister** add or remove KeePassPasskey as a passkey provider in Windows. Use them only if the app is missing from **Settings → Accounts → Passkeys → Advanced options**, or if support asks you to. **Advanced passkey settings** opens that Windows page, which also holds the switch that turns KeePassPasskey on or off.
 
 ### Credential cache
 
