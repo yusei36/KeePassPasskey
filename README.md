@@ -4,7 +4,7 @@
 
 **[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | **[FAQ & Troubleshooting](docs/troubleshooting-faq.md)**
 
-A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically - no browser extension required.
+A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically, no browser extension required.
 
 <img src="docs/images/passkey-creation-step2.png" width="450" alt="Windows passkey provider list with KeePassPasskey selected">
 
@@ -77,7 +77,7 @@ Install the app, add the plugin to KeePass, enable the provider in Windows. Each
 <img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
 
 > [!NOTE]
-> The app updates automatically, the plugin does not. After the app moves to a newer version, KeePass offers to update the plugin at its next start so both halves match, see [Updates](docs/user-guide.md#updates).
+> The app updates automatically, the plugin does not. After the app moves to a newer version, KeePass offers to update the plugin at its next start, see [Updates](docs/user-guide.md#updates).
 
 Prefer the command line? `winget install --name "KeePassPasskey" --source msstore` installs the same package.
 
