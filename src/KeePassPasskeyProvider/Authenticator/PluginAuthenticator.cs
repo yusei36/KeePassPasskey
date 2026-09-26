@@ -97,7 +97,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 					rpNameStr = new string(pDecoded->pRpInformation->pwszName);
 
 				// 3b. Check KeePass reachability before prompting for verification.
-				int hrReady = CheckKeePassReady("Passkey creation");
+				int hrReady = CheckKeePassReady("Passkey creation", cts.Token, out bool unlockedNow);
 				if (hrReady < HResults.S_OK) return hrReady;
 
 				// 3c. Fetch the open databases for the registration prompt's database picker.
@@ -127,7 +127,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
 					new RegistrationVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8,
 						userNameStr, databases, candidates, enterpriseAttestation),
-					cts.Token);
+					unlockedNow, cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");
 				if (hrUv < 0) return hrUv;
 
@@ -242,7 +242,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var allowList = ExtractCredentialIds(pDecoded->CredentialList);
 
 				// 3b. Check KeePass reachability before prompting for verification.
-				int hrReady = CheckKeePassReady("Sign-in");
+				int hrReady = CheckKeePassReady("Sign-in", cts.Token, out bool unlockedNow);
 				if (hrReady < HResults.S_OK) return hrReady;
 
 				// 4. User verification
@@ -254,7 +254,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 					new SignInVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername,
 						// Null only when there is no entry, so a titleless one stays tellable from none.
 						entry == null ? null : entry.Title ?? "", entry?.DatabaseName, entry?.Icon),
-					cts.Token);
+					unlockedNow, cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
 
@@ -388,11 +388,15 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 	/// Pings KeePass to confirm it is reachable with an open database before the user is prompted
 	/// for verification, so both MakeCredential and GetAssertion fail fast (with a notification
 	/// already shown) instead of verifying first and only then discovering KeePass cannot proceed.
-	/// Returns S_OK when ready, otherwise the appropriate failure HRESULT.
+	/// A locked database is offered for unlocking first; <paramref name="unlockedNow"/> tells whether
+	/// that happened, since the user has then just verified themselves to KeePass.
+	/// Returns S_OK when ready, NTE_USER_CANCELLED when the operation was cancelled meanwhile (without a
+	/// notification, since nobody waits for it any more), otherwise the appropriate failure HRESULT.
 	/// </summary>
 	/// <param name="operation">Operation name used in the failure notification.</param>
-	private int CheckKeePassReady(string operation)
+	private int CheckKeePassReady(string operation, CancellationToken cancellation, out bool unlockedNow)
 	{
+		unlockedNow = false;
 		var ping = _pipeClient.Ping();
 		if (ping == null)
 		{
@@ -408,6 +412,17 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 			return HResults.E_FAIL;
 		}
 
+		if (ping.Status == PingStatus.NoDatabase)
+		{
+			int hrUnlock = UnlockDatabase(cancellation, out bool unlocked);
+			if (hrUnlock < HResults.S_OK) return hrUnlock;
+			if (unlocked)
+			{
+				unlockedNow = true;
+				return HResults.S_OK;
+			}
+		}
+
 		if (ping.Status != PingStatus.Ready)
 		{
 			Log.Warn($"KeePass not ready status={ping.Status}");
@@ -417,6 +432,61 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
 		return HResults.S_OK;
 	}
+
+	/// <summary>
+	/// Asks KeePass to show its unlock prompt and waits until the user closes it. While KeePass shows
+	/// another dialog, possibly its own key prompt opened by the user, asks again until that has closed.
+	/// Stops waiting as soon as the operation is cancelled (browser cancel or timeout) and returns
+	/// NTE_USER_CANCELLED, so a late unlock does not continue a finished ceremony; the prompt itself
+	/// stays with KeePass. Otherwise S_OK, with <paramref name="unlocked"/> false when the database stays
+	/// locked, including with an older plugin that does not know the request.
+	/// </summary>
+	private int UnlockDatabase(CancellationToken cancellation, out bool unlocked)
+	{
+		unlocked = false;
+		Log.Info("database locked, asking KeePass to unlock");
+		bool loggedBusy = false;
+		while (true)
+		{
+			var request = Task.Run(() => _pipeClient.UnlockDatabase());
+			try
+			{
+				request.Wait(cancellation);
+			}
+			catch (OperationCanceledException)
+			{
+				Log.Info("cancelled while waiting for the unlock");
+				return HResults.NTE_USER_CANCELLED;
+			}
+
+			var response = request.Result;
+			bool answered = response != null && response.ErrorCode == null;
+			unlocked = answered && response!.Unlocked;
+			if (!(answered && response!.Busy))
+			{
+				Log.Info($"unlocked={unlocked} error={response?.ErrorCode}");
+				break;
+			}
+
+			if (!loggedBusy)
+			{
+				Log.Info("KeePass is busy with a dialog, waiting for it to close");
+				loggedBusy = true;
+			}
+			if (cancellation.WaitHandle.WaitOne(BusyRetryIntervalMs))
+				break;
+		}
+
+		if (cancellation.IsCancellationRequested)
+		{
+			Log.Info("cancelled while waiting for the unlock");
+			unlocked = false;
+			return HResults.NTE_USER_CANCELLED;
+		}
+		return HResults.S_OK;
+	}
+
+	private const int BusyRetryIntervalMs = 500;
 
 	/// <summary>
 	/// The KeePass entry behind the credential, for the sign-in prompt's card. The Windows cache only

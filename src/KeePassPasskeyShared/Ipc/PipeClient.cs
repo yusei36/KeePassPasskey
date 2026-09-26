@@ -51,6 +51,10 @@ public sealed class PipeClient
 	public SaveSettingsResponse SaveSettings(SaveSettingsRequest request)
 		=> Send<SaveSettingsResponse>(request);
 
+	/// <summary>Blocks until the user closes KeePass's unlock prompt.</summary>
+	public UnlockDatabaseResponse UnlockDatabase()
+		=> Send<UnlockDatabaseResponse>(new UnlockDatabaseRequest());
+
 #if NET5_0_OR_GREATER
 	[System.Diagnostics.CodeAnalysis.UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
 #endif

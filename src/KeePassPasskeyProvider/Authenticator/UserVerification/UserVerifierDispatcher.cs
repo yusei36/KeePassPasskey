@@ -21,14 +21,28 @@ internal static class UserVerifierDispatcher
 	];
 
 	public static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) VerifyForRegistration(
-		RegistrationVerification request, CancellationToken cancellation)
-		=> DispatchRegistration(KeePassPasskeySettings.Current.RegistrationVerification,
+		RegistrationVerification request, bool unlockedNow, CancellationToken cancellation)
+		=> DispatchRegistration(EffectiveMode(KeePassPasskeySettings.Current.RegistrationVerification, unlockedNow),
 			(IUserVerifier v, out DatabaseInfo? sel, out EntryTargetInfo? selEntry) =>
 				v.VerifyForRegistration(request, cancellation, out sel, out selEntry));
 
-	public static int VerifyForSignIn(SignInVerification request, CancellationToken cancellation)
-		=> DispatchSignIn(KeePassPasskeySettings.Current.SignInVerification,
+	public static int VerifyForSignIn(SignInVerification request, bool unlockedNow, CancellationToken cancellation)
+		=> DispatchSignIn(EffectiveMode(KeePassPasskeySettings.Current.SignInVerification, unlockedNow),
 			v => v.VerifyForSignIn(request, cancellation));
+
+	/// <summary>
+	/// Unlocking KeePass for this very request already verified the user, often with Windows Hello
+	/// itself, so a second Windows Hello prompt right after it is dropped. Only while the confirmation
+	/// prompt stays on: it names the site and, on registration, picks the target database. Without it,
+	/// Windows Hello is the only step that shows which site asked, so it is kept.
+	/// </summary>
+	private static UserVerificationMode EffectiveMode(UserVerificationMode mode, bool unlockedNow)
+	{
+		if (!unlockedNow || !mode.HasFlag(UserVerificationMode.WindowsHello)
+			|| !mode.HasFlag(UserVerificationMode.Notification)) return mode;
+		Log.Info("database was just unlocked, skipping Windows Hello");
+		return mode & ~UserVerificationMode.WindowsHello;
+	}
 
 	private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
 

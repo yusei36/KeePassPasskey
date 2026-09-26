@@ -79,5 +79,5 @@ After setting up the PIN again, try **Register** once more in the KeePassPasskey
 
 ## Passkey creation fails without showing the KeePassPasskey dialog
 
-- Make sure a KeePass database is open. KeePassPasskey cannot save a passkey if no database is unlocked, and it fails before the dialog is shown. KeePass only needs to be open during the passkey operation itself.
+- Make sure KeePass is running with a database. If the database is locked, KeePass comes to the front and asks you to unlock it first (see [When KeePass is locked](user-guide.md#when-keepass-is-locked)). If you cancel that, or no database was opened in KeePass at all, KeePassPasskey cannot save the passkey and fails before the dialog is shown. KeePass only needs to be open during the passkey operation itself.
 - If a database is open and the problem persists, check the log files for error messages.

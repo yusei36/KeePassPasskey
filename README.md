@@ -15,7 +15,7 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 
 ## How it works
 
-When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry. Signing in takes the same path, with the entry already there. Keys never leave your database file, and all cryptography runs locally.
+When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry. If KeePass is locked, it asks you to unlock it first. Signing in takes the same path, with the entry already there. Keys never leave your database file, and all cryptography runs locally.
 
 <details>
 <summary><b>Diagram: where a passkey request goes</b></summary>

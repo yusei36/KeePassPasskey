@@ -133,6 +133,16 @@ A KeePassPasskey dialog appears, showing the KeePass entry Windows picked. Click
 
 <img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
 
+## When KeePass is locked
+
+If a passkey is requested while your KeePass database is locked, KeePass comes to the front and asks you to unlock it, the same prompt its own unlock command shows. With a quick unlock plugin such as KeePassWinHello, that is its Windows Hello prompt. Once the database is open, the passkey operation continues and the focus returns to the window that asked for the passkey, usually your browser.
+
+Because unlocking KeePass has just verified you, KeePassPasskey skips its own Windows Hello step for this request, as long as the confirmation prompt is turned on. With Windows Hello as the only verification, it is kept, since it is then the step that shows which site asked.
+
+If KeePass already shows a dialog when the request arrives, for example its unlock prompt that you opened yourself, KeePassPasskey waits until that dialog closes and continues once the database is open.
+
+If you cancel the unlock, the operation fails with the usual "database is locked" notification. If the website or browser cancels the request while KeePass is still waiting to be unlocked, KeePassPasskey stops right away; unlocking afterwards only unlocks KeePass. KeePass itself must be running; KeePassPasskey does not start it.
+
 ## Managing passkeys in KeePass
 
 Passkeys are stored as standard KeePass entries in the **Passkeys** group.
@@ -202,6 +212,8 @@ Controls how KeePassPasskey confirms your identity before completing a passkey o
 | Confirmation prompt | Shows a KeePassPasskey dialog you must approve |
 
 Both are on by default. Turning both off for an operation lets it complete silently, without asking you at all; a warning icon appears beside the switches while that is the case.
+
+Right after KeePass was unlocked for the same request, the Windows Hello step is skipped while the confirmation prompt is on, since unlocking already verified you. See [When KeePass is locked](#when-keepass-is-locked).
 
 The **Approval timeout** controls how long the confirmation prompt stays open before the operation is cancelled (default: 60 seconds). It only applies when the confirmation prompt is on.
 
