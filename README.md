@@ -122,6 +122,7 @@ Credentials created here can be read by KeePassXC and vice versa. Three algorith
 - All signing happens inside KeePass, so private keys are never sent over the pipe.
 - The KeePass plugin verifies the connecting COM server before any request is processed: in production (MSIX-installed) it checks the client's package family name and rejects non-MSIX processes.
 - The named pipe is restricted by ACL to the current user at medium integrity, so other users and lower-integrity processes cannot connect.
+- With fast user switching every signed-in user can use passkeys with their own KeePass at the same time: the first KeePass keeps the original pipe name, so older app versions still reach it, and every further user gets a pipe named with their SID.
 
 ## AAGUID
 

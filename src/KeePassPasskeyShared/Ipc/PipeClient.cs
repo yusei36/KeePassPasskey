@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Runtime.InteropServices;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -24,7 +25,7 @@ public sealed class PipeClient
 	public PipeClient(Action<string> logger = null, string pipeName = null)
 	{
 		_logger = logger;
-		_pipeName = pipeName ?? PipeConstants.PipeName;
+		_pipeName = pipeName;
 	}
 
 	public PingResponse Ping()
@@ -59,7 +60,7 @@ public sealed class PipeClient
 		request.ProtocolVersion = PipeConstants.ProtocolVersion;
 		try
 		{
-			using (var pipe = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut))
+			using (var pipe = new NamedPipeClientStream(".", _pipeName ?? ResolvePipeName(), PipeDirection.InOut))
 			{
 				pipe.Connect(ConnectTimeoutMs);
 
@@ -89,6 +90,28 @@ public sealed class PipeClient
 			return null;
 		}
 	}
+
+	/// <summary>
+	/// The per-user name, or the legacy name when this user's plugin holds it (it claims it first) or is
+	/// older. Resolved per request, since KeePass (and with it the plugin) may start or be updated after
+	/// this client.
+	/// </summary>
+	private static string ResolvePipeName()
+	{
+		if (!PipeExists(PipeConstants.PipeName) && PipeExists(PipeConstants.LegacyPipeName))
+			return PipeConstants.LegacyPipeName;
+		return PipeConstants.PipeName;
+	}
+
+	// WaitNamedPipe does not connect, so probing takes no instance from the server. It fails with
+	// ERROR_FILE_NOT_FOUND only when no pipe of that name exists; busy instances time out instead.
+	private static bool PipeExists(string name)
+		=> WaitNamedPipe(@"\\.\pipe\" + name, 1) || Marshal.GetLastWin32Error() != ERROR_FILE_NOT_FOUND;
+
+	private const int ERROR_FILE_NOT_FOUND = 2;
+
+	[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+	private static extern bool WaitNamedPipe(string name, uint timeout);
 
 	private static void WriteMessage(NamedPipeClientStream pipe, byte[] json)
 	{

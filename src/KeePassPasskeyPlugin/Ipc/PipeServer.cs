@@ -17,7 +17,8 @@ using Microsoft.Win32.SafeHandles;
 namespace KeePassPasskey.Ipc;
 
 /// <summary>
-/// Named pipe server that listens on \\.\pipe\ + <see cref="PipeConstants.PipeName"/>.
+/// Named pipe server that listens on \\.\pipe\ + <see cref="PipeConstants.LegacyPipeName"/>, or on
+/// <see cref="PipeConstants.PipeName"/> when another user's KeePass already holds the legacy name.
 /// Each connection is handled on a thread pool thread.
 /// Messages are length-prefixed: [4-byte LE uint32 length][UTF-8 JSON body].
 /// </summary>
@@ -32,6 +33,7 @@ internal sealed class PipeServer : IDisposable
 	private volatile bool _running;
 	private Thread _listenThread;
 	private NamedPipeServerStream _firstPipe;
+	private string _pipeName;
 
 	internal PipeServer(RequestHandler handler)
 	{
@@ -39,28 +41,32 @@ internal sealed class PipeServer : IDisposable
 	}
 
 	/// <summary>
-	/// Claims the pipe name and starts listening. Returns false if the name is already in use
+	/// Claims a pipe name and starts listening. Returns false if both names are already in use
 	/// (possible pipe-name squatting), in which case the server serves no requests.
 	/// </summary>
 	internal bool Start()
 	{
-		// First instance uses FILE_FLAG_FIRST_PIPE_INSTANCE, so an existing squatter is detected here.
+		// The legacy name first, so a 1.4.x provider still reaches a newer plugin (e.g. a portable
+		// KeePass carrying its own plugin). With several users signed in only the first one gets it;
+		// the others fall back to their per-user name. The client tries both.
 		try
 		{
-			_firstPipe = CreatePipe(firstInstance: true);
-		}
-		catch (Win32Exception ex) when (ex.NativeErrorCode == ERROR_ACCESS_DENIED)
-		{
-			Log.Error($"Pipe name '{PipeConstants.PipeName}' is already in use by another process. " +
-					  "Refusing to serve passkey requests (possible pipe-name squatting). " +
-					  "Close the other process and restart KeePass.");
-			return false;
+			_firstPipe = ClaimFirstInstance(PipeConstants.LegacyPipeName) ?? ClaimFirstInstance(PipeConstants.PipeName);
 		}
 		catch (Exception ex)
 		{
 			Log.Error($"Failed to create named pipe: {ex.Message}");
 			return false;
 		}
+
+		if (_firstPipe == null)
+		{
+			Log.Error($"Pipe name '{PipeConstants.PipeName}' is already in use by another process. " +
+					  "Refusing to serve passkey requests (possible pipe-name squatting). " +
+					  "Close the other process and restart KeePass.");
+			return false;
+		}
+		Log.Info($"listening on '{_pipeName}'");
 
 		_running = true;
 		_listenThread = new Thread(ListenLoop) { IsBackground = true, Name = "KeePass-Passkey-PipeServer" };
@@ -74,7 +80,7 @@ internal sealed class PipeServer : IDisposable
 		// Wake up the listener by connecting a dummy client
 		try
 		{
-			using (var dummy = new NamedPipeClientStream(".", PipeConstants.PipeName, PipeDirection.Out))
+			using (var dummy = new NamedPipeClientStream(".", _pipeName, PipeDirection.Out))
 				dummy.Connect(100);
 		}
 		catch { }
@@ -90,7 +96,7 @@ internal sealed class PipeServer : IDisposable
 			try
 			{
 				// Reuse the instance claimed in Start() for the first iteration, then create more.
-				pipe = Interlocked.Exchange(ref _firstPipe, null) ?? CreatePipe(firstInstance: false);
+				pipe = Interlocked.Exchange(ref _firstPipe, null) ?? CreatePipe(_pipeName, firstInstance: false);
 
 				pipe.WaitForConnection();
 
@@ -191,8 +197,28 @@ internal sealed class PipeServer : IDisposable
 		return true;
 	}
 
+	/// <summary>
+	/// Creates the first instance with FILE_FLAG_FIRST_PIPE_INSTANCE, so an existing owner of the name is
+	/// detected here. Returns null when the name is taken, by another user's KeePass or a squatter.
+	/// </summary>
+	private NamedPipeServerStream ClaimFirstInstance(string name)
+	{
+		try
+		{
+			var pipe = CreatePipe(name, firstInstance: true);
+			_pipeName = name;
+			return pipe;
+		}
+		// ERROR_PIPE_BUSY instead of ERROR_ACCESS_DENIED when the owner has no free instance left.
+		catch (Win32Exception ex) when (ex.NativeErrorCode == ERROR_ACCESS_DENIED || ex.NativeErrorCode == ERROR_PIPE_BUSY)
+		{
+			Log.Info($"pipe name '{name}' is already in use");
+			return null;
+		}
+	}
+
 	// The managed PipeOptions enum lacks FILE_FLAG_FIRST_PIPE_INSTANCE on .NET Framework.
-	private static NamedPipeServerStream CreatePipe(bool firstInstance)
+	private static NamedPipeServerStream CreatePipe(string name, bool firstInstance)
 	{
 		uint openMode = PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED;
 		if (firstInstance)
@@ -218,7 +244,7 @@ internal sealed class PipeServer : IDisposable
 			}
 
 			SafePipeHandle handle = CreateNamedPipe(
-				@"\\.\pipe\" + PipeConstants.PipeName,
+				@"\\.\pipe\" + name,
 				openMode,
 				PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
 				(uint)MaxInstances,
@@ -270,6 +296,7 @@ internal sealed class PipeServer : IDisposable
 	private const uint PIPE_READMODE_BYTE = 0x0;
 	private const uint PIPE_WAIT = 0x0;
 	private const int ERROR_ACCESS_DENIED = 5;
+	private const int ERROR_PIPE_BUSY = 231;
 
 	[StructLayout(LayoutKind.Sequential)]
 	private struct SECURITY_ATTRIBUTES
