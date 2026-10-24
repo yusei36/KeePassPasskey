@@ -74,12 +74,11 @@ internal sealed class PasskeyEntryStorage
 	// the user can restore it; Title/URL/UserName the user already set are preserved.
 	internal bool AddPasskeyToExistingEntry(PasskeyCredential credential, EntryTargetInfo target)
 	{
-		if (target == null || string.IsNullOrEmpty(target.EntryUuid))
-			return false;
+		var uuid = ParseEntryUuid(target?.EntryUuid);
+		if (uuid == null) return false;
 
 		var settings = _settingsStorage.Load();
 
-		var uuid = new PwUuid(MemUtil.HexStringToByteArray(target.EntryUuid));
 		PwDatabase db = null;
 		PwEntry entry = null;
 		foreach (var candidate in GetSearchDatabases())
@@ -217,10 +216,10 @@ internal sealed class PasskeyEntryStorage
 
 	// Sets the KPEX_PASSKEY_* fields (and BE/BS flags) on an entry. Shared by new-entry
 	// creation and save-to-existing-entry so both write identical passkey material.
-	private static void ApplyPasskeyFields(PwEntry entry, PasskeyCredential credential)
+	internal static void ApplyPasskeyFields(PwEntry entry, PasskeyCredential credential)
 	{
 		entry.Strings.Set(FieldCredentialId, new ProtectedString(true, credential.CredentialId));
-		entry.Strings.Set(FieldPrivateKey, new ProtectedString(true, credential.PrivateKeyPem));
+		entry.Strings.Set(FieldPrivateKey, credential.PrivateKey?.WithProtection(true) ?? ProtectedString.EmptyEx);
 		entry.Strings.Set(FieldRelyingParty, new ProtectedString(false, credential.RelyingParty));
 		entry.Strings.Set(FieldUserHandle, new ProtectedString(true, credential.UserHandle ?? ""));
 		entry.Strings.Set(FieldUsername, new ProtectedString(false, credential.Username ?? ""));
@@ -394,6 +393,8 @@ internal sealed class PasskeyEntryStorage
 					Title = ResolveTitle(entry, db),
 					HasPasskey = hasPasskey,
 					IsSelected = isSelected,
+					UserName = entry.Strings.ReadSafe(PwDefs.UserNameField),
+					Icon = UI.KeePassIcons.EncodeEntryIcon(_host, db, entry),
 				};
 
 				int rank = isSelected ? 0 : (rpMatch ? 1 : 2);
@@ -441,12 +442,16 @@ internal sealed class PasskeyEntryStorage
 
 		var credIdSet = new HashSet<string>(credentialIds, StringComparer.Ordinal);
 
+		// The entry being overwritten is replaced, not duplicated, so its own passkey cannot exclude it.
+		var overwrittenUuid = ParseEntryUuid(targetEntry?.EntryUuid);
+
 		foreach (var db in databases)
 		{
 			if (db == null || !db.IsOpen) continue;
 			foreach (var entry in db.RootGroup.GetEntries(true))
 			{
 				if (!IsSearchable(entry)) continue;
+				if (overwrittenUuid != null && entry.Uuid.Equals(overwrittenUuid)) continue;
 				if (!entry.Strings.Exists(FieldCredentialId)) continue;
 				if (!credIdSet.Contains(entry.Strings.ReadSafe(FieldCredentialId))) continue;
 				if (!entry.Strings.Exists(FieldRelyingParty)) continue;
@@ -455,6 +460,20 @@ internal sealed class PasskeyEntryStorage
 			}
 		}
 		return false;
+	}
+
+	private static PwUuid ParseEntryUuid(string hex)
+	{
+		if (string.IsNullOrEmpty(hex)) return null;
+		try
+		{
+			return new PwUuid(MemUtil.HexStringToByteArray(hex));
+		}
+		catch (Exception ex)
+		{
+			Log.Warn($"Could not parse entry uuid '{hex}': {ex.Message}", nameof(ParseEntryUuid));
+			return null;
+		}
 	}
 
 	internal bool HasCredentialForRpId(string rpId, string credentialIdBase64Url)
@@ -481,11 +500,16 @@ internal sealed class PasskeyEntryStorage
 		var results = new List<PasskeyCredential>();
 		foreach (var db in GetSearchDatabases())
 		{
+			string dbName = string.IsNullOrEmpty(db.Name) ? "(unnamed)" : db.Name;
 			foreach (var entry in db.RootGroup.GetEntries(true))
 			{
 				if (!IsSearchable(entry)) continue;
-				if (entry.Strings.Exists(FieldCredentialId) && entry.Strings.Exists(FieldRelyingParty))
-					results.Add(ExtractCredentialMetadata(entry, db));
+				if (!entry.Strings.Exists(FieldCredentialId) || !entry.Strings.Exists(FieldRelyingParty)) continue;
+
+				var credential = ExtractCredentialMetadata(entry, db);
+				credential.DatabaseName = dbName;
+				credential.Icon = UI.KeePassIcons.EncodeEntryIcon(_host, db, entry);
+				results.Add(credential);
 			}
 		}
 		return results;
@@ -551,22 +575,10 @@ internal sealed class PasskeyEntryStorage
 		return defaultValue;
 	}
 
-	internal PasskeyCredential ExtractCredential(PwEntry entry, PwDatabase db)
+	internal static PasskeyCredential ExtractCredential(PwEntry entry, PwDatabase db)
 	{
 		var credential = ExtractCredentialMetadata(entry, db);
-
-		var pem = entry.Strings.ReadSafe(FieldPrivateKey);
-		credential.PrivateKeyPem = pem;
-
-		if (!string.IsNullOrEmpty(pem))
-		{
-			try { credential.Algorithm = PasskeyKeyHelper.DetectAlgorithm(pem); }
-			catch (CryptographicException ex)
-			{
-				Log.Warn($"Failed to detect passkey algorithm for entry '{credential.Title}': {ex.Message}");
-			}
-		}
-
+		credential.PrivateKey = entry.Strings.Get(FieldPrivateKey);
 		return credential;
 	}
 

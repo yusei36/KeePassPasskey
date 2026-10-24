@@ -29,7 +29,7 @@ jobs:
       - name: Set up .NET 10
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.x'
+          global-json-file: global.json
 
       # Style and analyzer rules come from .editorconfig via EnforceCodeStyleInBuild.
       # Only CI treats them as errors, so local builds stay warning-tolerant.
@@ -52,7 +52,7 @@ jobs:
 
       - name: Run unit tests
         shell: pwsh
-        run: dotnet test src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj -c Debug --nologo
+        run: dotnet test --project src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj -c Debug
 
       - name: Build (Debug, optimized, unsigned)
         shell: pwsh

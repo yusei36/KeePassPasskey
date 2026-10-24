@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Settings;
 
 namespace KeePassPasskeyProvider.Authenticator;
 
@@ -44,22 +45,67 @@ internal static unsafe class CredentialCache
 	}
 
 	/// <summary>
+	/// The one place the cache policy lives: the sync setting decides whether the cache is wanted
+	/// at all, the Windows switch then decides between filling and emptying it.
+	/// </summary>
+	public static void Refresh(Guid pluginClsid)
+	{
+		if (!KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
+		{
+			Log.Info("credential sync disabled, clearing Windows cache");
+			ClearWindowsCache(pluginClsid);
+			return;
+		}
+
+		SyncToWindowsCache(pluginClsid);
+	}
+
+	/// <summary>
 	/// Query KeePass for all passkeys and push changes to the Windows cache.
 	/// Returns true if KeePass was reached (sync applied), false otherwise.
+	/// A provider switched off in Windows Settings is emptied instead of refreshed.
 	/// </summary>
 	public static bool SyncToWindowsCache(Guid pluginClsid)
 	{
-		_syncGate.Wait();
-		Mutex? crossProcess = AcquireCrossProcessLock();
-		if (crossProcess == null)
+		return WithCacheLock("sync", () =>
 		{
-			_syncGate.Release();
-			Log.Warn("could not acquire cross-process cache lock, skipping sync");
-			return false;
-		}
-		try
-		{
+			int hrState = PluginRegistration.GetState(out var state);
+			if (hrState < HResults.S_OK)
+			{
+				Log.Warn($"authenticator state unavailable hr=0x{hrState:X8}, skipping credential sync");
+				return false;
+			}
+
+			if (state != AuthenticatorState.AuthenticatorState_Enabled)
+			{
+				Log.Info("provider disabled in Windows, clearing the credential cache instead of syncing");
+				return ClearCredentialCache(pluginClsid);
+			}
+
 			return SyncToCredentialCache(pluginClsid);
+		});
+	}
+
+	/// <summary>
+	/// Removes every credential from the Windows autofill cache. Returns false if the platform
+	/// refused. The cache repopulates on the next sync (database open/save or a passkey change).
+	/// </summary>
+	public static bool ClearWindowsCache(Guid pluginClsid)
+		=> WithCacheLock("clear", () => ClearCredentialCache(pluginClsid));
+
+	private static bool WithCacheLock(string operation, Func<bool> write)
+	{
+		_syncGate.Wait();
+		Mutex? crossProcess = AcquireCrossProcessLock();
+		if (crossProcess == null)
+		{
+			_syncGate.Release();
+			Log.Warn($"could not acquire cross-process cache lock, skipping {operation}");
+			return false;
+		}
+		try
+		{
+			return write();
 		}
 		catch (Exception ex)
 		{
@@ -73,109 +119,86 @@ internal static unsafe class CredentialCache
 		}
 	}
 
-	/// <summary>
-	/// Remove all credentials from the Windows autofill cache.
-	/// </summary>
-	public static void ClearWindowsCache(Guid pluginClsid)
+	private static bool ClearCredentialCache(Guid pluginClsid)
 	{
-		_syncGate.Wait();
-		Mutex? crossProcess = AcquireCrossProcessLock();
-		if (crossProcess == null)
-		{
-			_syncGate.Release();
-			Log.Warn("could not acquire cross-process cache lock, skipping clear");
-			return;
-		}
-		try
-		{
-			uint cExisting = 0;
-			WebAuthnPluginCredentialDetails* pExisting = null;
-			int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
-				pluginClsid, &cExisting, &pExisting);
-			if (hrGet < HResults.S_OK) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
+		int hrGet = ReadCache(pluginClsid, out var entries);
+		if (hrGet < HResults.S_OK) Log.Error($"GetAllCredentials hr=0x{hrGet:X8}");
 
-			if (hrGet < HResults.S_OK || cExisting == 0 || pExisting == null)
-			{
-				if (pExisting != null)
-					WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
-				return;
-			}
+		int listed = entries.Count;
+		if (listed > 0) ApplyRemove(pluginClsid, entries);
 
-			var toRemove = new List<ManagedCredentialDetails>((int)cExisting);
-			for (uint i = 0; i < cExisting; i++)
-				toRemove.Add(ManagedCredentialDetails.FromNative(&pExisting[i]));
+		// Verify: a per-credential remove only reaches rows GetAllCredentials can address.
+		ReadCache(pluginClsid, out var remaining);
+		if (remaining.Count == 0)
+		{
+			Log.Info($"cleared={listed}");
+			return true;
+		}
 
-			ApplyRemove(pluginClsid, toRemove);
-			WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
-			Log.Info($"removed={toRemove.Count}");
-		}
-		catch (Exception ex)
+		// Fallback only: RemoveAllCredentials did not work in the original native implementation.
+		int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveAllCredentials(pluginClsid);
+		Log.Warn($"{remaining.Count} credential(s) left after per-credential remove, RemoveAllCredentials hr=0x{hr:X8}");
+
+		ReadCache(pluginClsid, out var afterFallback);
+		if (afterFallback.Count > 0)
 		{
-			Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+			Log.Error($"cache still holds {afterFallback.Count} credential(s) after RemoveAllCredentials");
+			return false;
 		}
-		finally
-		{
-			ReleaseCrossProcessLock(crossProcess);
-			_syncGate.Release();
-		}
+
+		Log.Info($"cleared={listed}");
+		return true;
 	}
 
-	/// <summary>
-	/// Looks up username and display hint from the Windows autofill cache for a given rpId,
-	/// optionally filtered by the allowCredentials list. Falls back to empty strings.
-	/// </summary>
-	public static unsafe void LookupWindowsCache(
-		string rpId, List<string> allowList,
-		out string userName, out string displayHint)
+	/// <summary>Writes both sides of the sync comparison; read-only. Backs /dumpcredentials.</summary>
+	public static void DumpCredentials(Guid pluginClsid, Action<string> write)
 	{
-		userName = string.Empty;
-		displayHint = string.Empty;
+		var pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
+		var response = pipeClient.GetCredentials(new GetCredentialsRequest { OmitIcons = true });
+		if (response == null)
+			write("KeePass unavailable (is it running with a database open?)");
+		else if (response.ErrorCode != null)
+			write($"KeePass returned error={response.ErrorCode} {response.ErrorMessage}");
 
-		uint cDetails = 0;
-		WebAuthnPluginCredentialDetails* pDetails = null;
-		int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
-			PluginConstants.KeePassPasskeyProviderClsid, &cDetails, &pDetails);
-		if (hr < HResults.S_OK || cDetails == 0 || pDetails == null)
+		var kpCredentials = response?.ErrorCode == null
+			? ParseKeePassCredentials(response?.Credentials)
+			: [];
+
+		uint cExisting = 0;
+		WebAuthnPluginCredentialDetails* pExisting = null;
+		int hrGet = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
+			pluginClsid, &cExisting, &pExisting);
+		if (hrGet < HResults.S_OK)
 		{
-			if (pDetails != null)
-				WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cDetails, pDetails);
+			write($"GetAllCredentials failed hr=0x{hrGet:X8}");
 			return;
 		}
 
-		try
+		var existingList = new List<ManagedCredentialDetails>();
+		if (pExisting != null)
 		{
-			for (uint i = 0; i < cDetails; i++)
-			{
-				var entry = &pDetails[i];
-				string entryRpId = entry->pwszRpId != null ? new string(entry->pwszRpId) : string.Empty;
-				if (!string.Equals(entryRpId, rpId, StringComparison.OrdinalIgnoreCase))
-					continue;
-
-				if (allowList.Count > 0)
-				{
-					string entryCredId = entry->cbCredentialId > 0
-						? Base64Url.Encode(new ReadOnlySpan<byte>(entry->pbCredentialId, (int)entry->cbCredentialId).ToArray())
-						: string.Empty;
-					if (!allowList.Contains(entryCredId))
-						continue;
-				}
-
-				userName = entry->pwszUserName != null ? new string(entry->pwszUserName) : string.Empty;
-				displayHint = entry->pwszUserDisplayName != null ? new string(entry->pwszUserDisplayName) : string.Empty;
-				break;
-			}
+			for (uint i = 0; i < cExisting; i++)
+				existingList.Add(ManagedCredentialDetails.FromNative(&pExisting[i]));
+			WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
 		}
-		finally
-		{
-			WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cDetails, pDetails);
-		}
+
+		write($"Windows cache ({existingList.Count}):");
+		foreach (var c in existingList) write("  " + Describe(c));
+		write($"KeePass ({kpCredentials.Count}):");
+		foreach (var c in kpCredentials) write("  " + Describe(c));
+
+		int matched = kpCredentials.Count(kp => existingList.Any(ex => SameCredential(ex, kp)));
+		int identical = kpCredentials.Count(kp =>
+			existingList.Any(ex => SameCredential(ex, kp) && SamePayload(ex, kp)));
+		write($"cached: {matched} of {kpCredentials.Count}, of which unchanged: {identical}");
 	}
 
 	private static bool SyncToCredentialCache(Guid pluginClsid)
 	{
 		// 1. Query credentials from KeePass
 		var pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
-		var response = pipeClient.GetCredentials(new GetCredentialsRequest());
+		// The Windows cache has no icon field, so asking for them would only cost pipe traffic.
+		var response = pipeClient.GetCredentials(new GetCredentialsRequest { OmitIcons = true });
 		if (response == null)
 		{
 			Log.Info("KeePass unavailable or error, skipping credential sync");
@@ -205,20 +228,38 @@ internal static unsafe class CredentialCache
 				existingList.Add(ManagedCredentialDetails.FromNative(&pExisting[i]));
 		}
 
-		// 4. Diff
+		// 4. Diff. Identity is credentialId + rpId (what Windows keys on), the display fields are
+		// payload. Each credential claims one row, so a leftover duplicate row ends up in toRemove.
 		var toRemove = new List<ManagedCredentialDetails>();
-		foreach (var ex in existingList)
-		{
-			bool matchedAndSame = kpCredentials.Any(kp => kp.Equals(ex));
-			if (!matchedAndSame) toRemove.Add(ex);
-		}
-
 		var toAdd = new List<ManagedCredentialDetails>();
+		var unclaimed = new List<ManagedCredentialDetails>(existingList);
+		int unchanged = 0;
+
 		foreach (var kp in kpCredentials)
 		{
-			bool matchedAndSame = existingList.Any(ex => ex.Equals(kp));
-			if (!matchedAndSame) toAdd.Add(kp);
+			// Prefer an already-correct row, so shedding a duplicate does not rewrite the good one.
+			int idx = unclaimed.FindIndex(ex => SameCredential(ex, kp) && SamePayload(ex, kp));
+			if (idx < 0) idx = unclaimed.FindIndex(ex => SameCredential(ex, kp));
+			if (idx < 0)
+			{
+				toAdd.Add(kp);
+				continue;
+			}
+
+			var claimed = unclaimed[idx];
+			unclaimed.RemoveAt(idx);
+			if (SamePayload(claimed, kp))
+			{
+				unchanged++;
+			}
+			else
+			{
+				toRemove.Add(claimed);
+				toAdd.Add(kp);
+			}
 		}
+
+		toRemove.AddRange(unclaimed);
 
 		// 5. Apply - remove first (pExisting pointers still valid), then free, then add
 		if (toRemove.Count > 0)
@@ -234,41 +275,47 @@ internal static unsafe class CredentialCache
 			ApplyAdd(pluginClsid, toAdd);
 		}
 
-		Log.Info($"sync done removed={toRemove.Count} added={toAdd.Count} unchanged={kpCredentials.Count - toAdd.Count}");
+		Log.Info($"sync done removed={toRemove.Count} added={toAdd.Count} unchanged={unchanged}");
 		return true;
 	}
 
 	private static void ApplyRemove(Guid pluginClsid, List<ManagedCredentialDetails> items)
 	{
-		// Pin all byte arrays, build native struct array, call RemoveCredentials
-		var pinned = new List<GCHandle>();
-		try
+		foreach (var item in items)
 		{
-			var natives = BuildNativeArray(items, pinned);
-			fixed (WebAuthnPluginCredentialDetails* ptr = natives)
-			{
-				int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveCredentials(
-					pluginClsid, (uint)natives.Length, ptr);
-				if (hr < HResults.S_OK) Log.Error($"RemoveCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
-			}
-		}
-		finally
-		{
-			foreach (var h in pinned) h.Free();
+			int hr = ApplyOne(pluginClsid, item, remove: true);
+			// Already gone, which is the state we wanted.
+			if (hr == HResults.NTE_NOT_FOUND) continue;
+			if (hr < HResults.S_OK)
+				Log.Error($"RemoveCredential hr=0x{hr:X8} {Describe(item)}", nameof(SyncToCredentialCache));
 		}
 	}
 
 	private static void ApplyAdd(Guid pluginClsid, List<ManagedCredentialDetails> items)
 	{
+		foreach (var item in items)
+		{
+			int hr = ApplyOne(pluginClsid, item, remove: false);
+			// Already cached, which is the state we wanted.
+			if (hr == HResults.NTE_EXISTS) continue;
+			if (hr < HResults.S_OK)
+				Log.Error($"AddCredential hr=0x{hr:X8} {Describe(item)}", nameof(SyncToCredentialCache));
+		}
+	}
+
+	// One per call: these APIs take an array but return a single HRESULT, so one rejected row
+	// discards the whole batch.
+	private static int ApplyOne(Guid pluginClsid, ManagedCredentialDetails item, bool remove)
+	{
 		var pinned = new List<GCHandle>();
 		try
 		{
-			var natives = BuildNativeArray(items, pinned);
+			var natives = BuildNativeArray([item], pinned);
 			fixed (WebAuthnPluginCredentialDetails* ptr = natives)
 			{
-				int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorAddCredentials(
-					pluginClsid, (uint)natives.Length, ptr);
-				if (hr < HResults.S_OK) Log.Error($"AddCredentials hr=0x{hr:X8}", nameof(SyncToCredentialCache));
+				return remove
+					? WebAuthnPluginApi.WebAuthNPluginAuthenticatorRemoveCredentials(pluginClsid, 1, ptr)
+					: WebAuthnPluginApi.WebAuthNPluginAuthenticatorAddCredentials(pluginClsid, 1, ptr);
 			}
 		}
 		finally
@@ -313,10 +360,19 @@ internal static unsafe class CredentialCache
 		if (credentials == null) return [];
 
 		var result = new List<ManagedCredentialDetails>(credentials.Count);
+		var seen = new HashSet<string>(StringComparer.Ordinal);
 		foreach (var c in credentials)
 		{
 			if (string.IsNullOrEmpty(c.CredentialId) || string.IsNullOrEmpty(c.RpId))
 				continue;
+
+			// Windows keys the cache on the credential id, so one passkey held by several entries
+			// is still one row; offering it twice is rejected with NTE_EXISTS.
+			if (!seen.Add(c.CredentialId))
+			{
+				Log.Debug($"skipping duplicate credential id for rpId={c.RpId}");
+				continue;
+			}
 
 			byte[] credId = Base64Url.Decode(c.CredentialId);
 			byte[] userId = string.IsNullOrEmpty(c.UserHandle) ? [] : Base64Url.Decode(c.UserHandle);
@@ -328,6 +384,61 @@ internal static unsafe class CredentialCache
 			result.Add(new ManagedCredentialDetails(credId, rpId, rpName, userId, userName, dispName));
 		}
 		return result;
+	}
+
+	/// <summary>Reads the cache and frees the native array. Returns the underlying HRESULT.</summary>
+	private static int ReadCache(Guid pluginClsid, out List<ManagedCredentialDetails> entries)
+	{
+		entries = [];
+
+		uint cExisting = 0;
+		WebAuthnPluginCredentialDetails* pExisting = null;
+		int hr = WebAuthnPluginApi.WebAuthNPluginAuthenticatorGetAllCredentials(
+			pluginClsid, &cExisting, &pExisting);
+		if (pExisting == null) return hr;
+
+		if (hr >= HResults.S_OK)
+		{
+			for (uint i = 0; i < cExisting; i++)
+				entries.Add(ManagedCredentialDetails.FromNative(&pExisting[i]));
+		}
+
+		WebAuthnPluginApi.WebAuthNPluginAuthenticatorFreeCredentialDetailsArray(cExisting, pExisting);
+		return hr;
+	}
+
+	/// <summary>Same credential as far as Windows is concerned. Display fields are not identity.</summary>
+	private static bool SameCredential(ManagedCredentialDetails a, ManagedCredentialDetails b) =>
+		a.CredentialId.AsSpan().SequenceEqual(b.CredentialId)
+		&& string.Equals(a.RpId, b.RpId, StringComparison.OrdinalIgnoreCase);
+
+	/// <summary>What the sign-in UI displays. A difference here is an update, not a new credential.</summary>
+	private static bool SamePayload(ManagedCredentialDetails a, ManagedCredentialDetails b) =>
+		a.UserName == b.UserName
+		&& a.UserDisplayName == b.UserDisplayName
+		&& a.UserId.AsSpan().SequenceEqual(b.UserId);
+
+	private static string Describe(ManagedCredentialDetails c) =>
+		$"credId={ShortId(c.CredentialId)} rpId={c.RpId} rpName={c.RpName} " +
+		$"userName={Pii(c.UserName)} displayName={Pii(c.UserDisplayName)} userId={ShortId(c.UserId)}";
+
+	// Length plus a prefix is enough to line two entries up.
+	private static string ShortId(byte[] bytes) => bytes.Length == 0
+		? "<empty>"
+		: $"[{bytes.Length}]{Convert.ToHexString(bytes, 0, Math.Min(4, bytes.Length))}";
+
+	// Debug: the value. Release: length plus a short hash, so shared logs carry no usernames but
+	// stay comparable.
+	private static string Pii(string value)
+	{
+		if (value.Length == 0) return "<empty>";
+#if DEBUG
+		return value;
+#else
+		byte[] hash = System.Security.Cryptography.SHA256.HashData(
+			System.Text.Encoding.UTF8.GetBytes(value));
+		return $"<len={value.Length},h={Convert.ToHexString(hash, 0, 2)}>";
+#endif
 	}
 
 	// Managed mirror of WebAuthnPluginCredentialDetails for diffing
@@ -356,16 +467,5 @@ internal static unsafe class CredentialCache
 				p->pwszUserDisplayName != null ? new string(p->pwszUserDisplayName) : string.Empty);
 		}
 
-		public bool Equals(ManagedCredentialDetails? other)
-		{
-			if (other is null) return false;
-			return CredentialId.AsSpan().SequenceEqual(other.CredentialId)
-				&& RpId == other.RpId
-				&& UserName == other.UserName
-				&& UserDisplayName == other.UserDisplayName
-				&& UserId.AsSpan().SequenceEqual(other.UserId);
-		}
-
-		public override int GetHashCode() => CredentialId.Length; // satisfies CS0659; never used in a hash collection
 	}
 }

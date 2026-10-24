@@ -89,7 +89,12 @@ body:
     id: logs
     attributes:
       label: Logs
-      description: Paste any relevant log output from `%LOCALAPPDATA%\KeePassPasskey\`
+      description: >-
+        Paste any relevant log output. In the KeePassPasskey app open the Diagnostics page,
+        pick the Provider log or Plugin log tab and use the copy button there. Please read
+        through it before posting rather than pasting it wholesale: logs can contain the
+        websites you visited, user names and entry titles, and the Debug log level records
+        far more detail. Remove anything you would not want to be public.
       render: text
     validations:
       required: false

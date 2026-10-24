@@ -60,11 +60,56 @@ internal static class Win32Native
 	[DllImport("kernel32.dll")]
 	internal static extern uint GetCurrentThreadId();
 
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct POINT
+	{
+		public int X;
+		public int Y;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct RECT
+	{
+		public int Left;
+		public int Top;
+		public int Right;
+		public int Bottom;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct MONITORINFO
+	{
+		public int cbSize;
+		public RECT rcMonitor;
+		public RECT rcWork;
+		public uint dwFlags;
+	}
+
+	[DllImport("user32.dll")]
+	internal static extern bool GetCursorPos(out POINT lpPoint);
+
+	[DllImport("user32.dll")]
+	internal static extern nint MonitorFromWindow(nint hWnd, uint dwFlags);
+
+	[DllImport("user32.dll", EntryPoint = "GetMonitorInfoW")]
+	internal static extern bool GetMonitorInfo(nint hMonitor, ref MONITORINFO lpmi);
+
+	internal const uint MONITOR_DEFAULTTONEAREST = 2;
+
 	[DllImport("user32.dll")]
 	internal static extern nint GetForegroundWindow();
 
 	[DllImport("user32.dll")]
 	internal static extern bool SetForegroundWindow(nint hWnd);
+
+	[DllImport("user32.dll")]
+	internal static extern bool AllowSetForegroundWindow(int dwProcessId);
+
+	[DllImport("user32.dll")]
+	internal static extern uint GetWindowThreadProcessId(nint hWnd, out uint lpdwProcessId);
+
+	[DllImport("user32.dll")]
+	internal static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 
 	[DllImport("user32.dll")]
 	internal static extern bool ShowWindow(nint hWnd, int nCmdShow);
@@ -90,6 +135,21 @@ internal static class Win32Native
 
 	[DllImport("user32.dll")]
 	internal static extern uint GetDoubleClickTime();
+
+	[DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+	internal static extern nint SetWindowLongPtr(nint hWnd, int nIndex, nint dwNewLong);
+
+	internal const int GWLP_HWNDPARENT = -8;
+
+	[DllImport("user32.dll")]
+	internal static extern bool IsWindow(nint hWnd);
+
+	[DllImport("dwmapi.dll")]
+	internal static extern int DwmSetWindowAttribute(nint hwnd, uint dwAttribute, in uint pvAttribute, uint cbAttribute);
+
+	internal const uint DWMWA_CLOAK = 13;
+	internal const uint DWMWA_BORDER_COLOR = 34;
+	internal const uint DWMWA_COLOR_NONE = 0xFFFFFFFE;
 
 	internal const uint EVENT_MODIFY_STATE = 0x0002;
 	internal const uint WAIT_OBJECT_0 = 0;

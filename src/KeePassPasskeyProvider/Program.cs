@@ -23,6 +23,9 @@ internal static class Program
 	/// <summary>Set before starting the Avalonia app; tells the main window to hide itself on first open.</summary>
 	internal static bool StartHidden { get; private set; }
 
+	/// <summary>Set before starting the Avalonia app; opens on Settings rather than Home.</summary>
+	internal static bool StartOnSettings { get; private set; }
+
 	[MTAThread]
 	private static int Main(string[] args)
 	{
@@ -62,11 +65,20 @@ internal static class Program
 			return ComServer.RunComServer();
 		}
 
+#if DEBUG
+		if (args.Any(a => string.Equals(a, "/promptdemo", StringComparison.OrdinalIgnoreCase)))
+			return App.Prompts.PromptDemo.Run();
+#endif
+
 		bool syncCredential = args.Any(a =>
 			string.Equals(a, "/synccredential", StringComparison.OrdinalIgnoreCase));
 
 		if (syncCredential)
 			return RunSyncCredential();
+
+		// Opened from KeePass's Tools menu.
+		if (args.Any(a => string.Equals(a, "/settings", StringComparison.OrdinalIgnoreCase)))
+			return RunManagementUI(startOnSettings: true);
 
 		// No args: show management UI
 		if (args.Length == 0)
@@ -87,17 +99,10 @@ internal static class Program
 	{
 		Log.Info($"/synccredential received (log level: {Log.MinLevel})");
 
-		if (!KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
-		{
-			Log.Info("credential sync disabled, clearing Windows cache");
-			CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
-			return 0;
-		}
-
 		// EnsureRegistered is a cheap no-op when already registered; the cache APIs require the
 		// authenticator to be known to the platform.
 		PluginRegistration.EnsureRegistered();
-		CredentialCache.SyncToWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+		CredentialCache.Refresh(PluginConstants.KeePassPasskeyProviderClsid);
 		return 0;
 	}
 
@@ -133,9 +138,10 @@ internal static class Program
 	/// Management UI mode (no args). Shows an Avalonia window on a dedicated STA thread.
 	/// Uses a mutex to ensure only one UI instance runs.
 	/// </summary>
-	private static int RunManagementUI(bool startHidden = false)
+	private static int RunManagementUI(bool startHidden = false, bool startOnSettings = false)
 	{
 		StartHidden = startHidden;
+		StartOnSettings = startOnSettings;
 		var mutex = new Mutex(false, PluginConstants.ManagementUiMutexName);
 
 		try
@@ -145,7 +151,7 @@ internal static class Program
 				// Another instance is running; activate its window if this is a normal launch
 				Log.Info("Another instance is already running; activating existing window");
 				if (!startHidden)
-					ActivateExistingWindow();
+					ActivateExistingWindow(startOnSettings);
 				return 0;
 			}
 
@@ -168,7 +174,7 @@ internal static class Program
 		}
 	}
 
-	private static void ActivateExistingWindow()
+	private static void ActivateExistingWindow(bool onSettings = false)
 	{
 		var existing = System.Diagnostics.Process.GetProcessesByName("KeePassPasskeyProvider")
 			.FirstOrDefault(p => p.Id != Environment.ProcessId);
@@ -178,6 +184,15 @@ internal static class Program
 			Log.Warn("Could not find existing process");
 			return;
 		}
+
+		// We may take the foreground because the process that started us held it; pass that on, so
+		// the running instance can raise its own window when it is the one acting.
+		Win32Native.AllowSetForegroundWindow(existing.Id);
+
+		// A window that is already open can only change page by being asked to, so this route always
+		// goes through the event; its handler shows and raises the window as well.
+		if (onSettings && SignalRunningInstance(PluginConstants.ShowSettingsEventName))
+			return;
 
 		nint hwnd = existing.MainWindowHandle;
 		if (hwnd != 0)
@@ -189,17 +204,19 @@ internal static class Program
 		}
 
 		// Window is hidden to tray — signal the running instance to show itself
-		nint ev = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE, false, PluginConstants.ShowEventName);
-		if (ev != 0)
-		{
-			Win32Native.SetEvent(ev);
-			Win32Native.CloseHandle(ev);
-			Log.Info("Signalled running instance to show window");
-		}
-		else
-		{
+		if (!SignalRunningInstance(PluginConstants.ShowEventName))
 			Log.Warn("Could not find existing window or show-window event");
-		}
+	}
+
+	private static bool SignalRunningInstance(string eventName)
+	{
+		nint ev = Win32Native.OpenEvent(Win32Native.EVENT_MODIFY_STATE, false, eventName);
+		if (ev == 0) return false;
+
+		Win32Native.SetEvent(ev);
+		Win32Native.CloseHandle(ev);
+		Log.Info("Signalled running instance: " + eventName);
+		return true;
 	}
 
 	private static AppBuilder BuildAvaloniaApp()
@@ -253,9 +270,25 @@ internal static class Program
 				return hr >= HResults.S_OK ? 0 : 1;
 			}
 
+			case "/dumpcredentials":
+			{
+				CredentialCache.DumpCredentials(
+					PluginConstants.KeePassPasskeyProviderClsid, Console.WriteLine);
+				return 0;
+			}
+
+			case "/clearcredentials":
+			{
+				bool cleared = CredentialCache.ClearWindowsCache(PluginConstants.KeePassPasskeyProviderClsid);
+				Console.WriteLine(cleared
+					? "Windows credential cache cleared. It repopulates on the next database open or save."
+					: "Could not clear the Windows credential cache; see the provider log.");
+				return cleared ? 0 : 1;
+			}
+
 			default:
 				Console.WriteLine("KeePassPasskey Provider");
-				Console.WriteLine("Usage: KeePassPasskeyProvider.exe /register | /unregister | /status");
+				Console.WriteLine("Usage: KeePassPasskeyProvider.exe /register | /unregister | /status | /dumpcredentials | /clearcredentials");
 				return 0;
 		}
 	}

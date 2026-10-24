@@ -15,6 +15,7 @@ public sealed partial class SetupGuideViewModel : ObservableObject
 
 	public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
 	public ICommand ShowPluginFileCommand => ProviderCommands.ShowPluginFileCommand;
+	public ICommand InstallPluginCommand => ProviderCommands.InstallPluginCommand;
 
 	/// <summary>True when the bundled plugin DLL exists (gates the "Show KeePassPasskey.dll" button).</summary>
 	public bool HasBundledPlugin => ProviderCommands.HasBundledPlugin;

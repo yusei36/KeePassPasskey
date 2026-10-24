@@ -158,8 +158,7 @@ internal static unsafe class PluginRegistration
 
 	/// <summary>
 	/// Builds the CTAP2 authenticatorGetInfo CBOR blob.
-	/// Format: {1: ["FIDO_2_0", "FIDO_2_1"], 2: ["prf", "hmac-secret"],
-	///          3: h'AAGUID', 4: {rk:true,up:true,uv:true},
+	/// Format: {1: ["FIDO_2_0", "FIDO_2_1"], 3: h'AAGUID', 4: {rk:true,up:true,uv:true},
 	///          9: ["internal"], 10: [{alg:-7,type:"public-key"},{alg:-8,...},{alg:-257,...}]}
 	/// Keys sorted per CTAP2 canonical ordering.
 	/// </summary>
@@ -171,8 +170,7 @@ internal static unsafe class PluginRegistration
 		// 1: versions
 		info.Add(1, CBORObject.NewArray().Add("FIDO_2_0").Add("FIDO_2_1"));
 
-		// 2: extensions
-		info.Add(2, CBORObject.NewArray().Add("prf").Add("hmac-secret"));
+		// 2: extensions - omitted, none are implemented (PRF output is not surfaced by Windows for plugins)
 
 		// 3: aaguid (16-byte bstr) - the passed value, or the stored/default one via AuthenticatorIdentity
 		info.Add(3, aaguidBytes ?? AuthenticatorIdentity.EffectiveAaguidBytes);
@@ -205,7 +203,7 @@ internal static unsafe class PluginRegistration
 			$"clsid={PluginConstants.KeePassPasskeyProviderClsid} " +
 			$"pluginRpId={PluginConstants.PluginRpId} " +
 			$"aaguid={aaguid}{(aaguid != AuthenticatorIdentity.DefaultAaguid ? $" (spoofed, default={AuthenticatorIdentity.DefaultAaguid})" : " (default)")} " +
-			$"versions=[FIDO_2_0,FIDO_2_1] extensions=[prf,hmac-secret] transports=[internal] " +
+			$"versions=[FIDO_2_0,FIDO_2_1] extensions=[] transports=[internal]" +
 			$"algorithms=[ES256(-7),EdDSA(-8),RS256(-257)] options={{rk,up,uv}} " +
 			$"lightLogo={LogoResources.LightThemeSvg.Length}chars darkLogo={LogoResources.DarkThemeSvg.Length}chars");
 	}

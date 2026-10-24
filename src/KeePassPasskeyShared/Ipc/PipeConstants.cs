@@ -1,16 +1,31 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System.Reflection;
+using System.Security.Principal;
 
 namespace KeePassPasskeyShared.Ipc;
 
 public static class PipeConstants
 {
 #if DEBUG
-	public const string PipeName = "keepass-passkey-provider-dev";
+	private const string BaseName = "keepass-passkey-provider-dev";
 #else
-	public const string PipeName = "keepass-passkey-provider";
+	private const string BaseName = "keepass-passkey-provider";
 #endif
+
+	/// <summary>
+	/// Pipe names are machine-wide, not per session, so the user SID keeps the pipes of users
+	/// signed in at the same time (fast user switching) apart. Plugin and provider run as the
+	/// same user and therefore derive the same name.
+	/// </summary>
+	public static readonly string PipeName = BaseName + "-" + WindowsIdentity.GetCurrent().User.Value;
+
+	/// <summary>
+	/// Name used by plugins up to 1.4.x. The plugin still claims it first, so an older provider keeps
+	/// reaching a newer plugin; only when another user's KeePass holds it does the plugin use
+	/// <see cref="PipeName"/>. The client tries <see cref="PipeName"/> first and falls back to this one.
+	/// </summary>
+	public const string LegacyPipeName = BaseName;
 
 	/// <summary>
 	/// Protocol version gating the ping handshake, independent of the product version.

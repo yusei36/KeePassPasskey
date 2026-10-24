@@ -35,6 +35,9 @@ public partial class MainWindow : FAAppWindow
 			if (e.NameScope.Find<Grid>("ItemsContainerGrid") is { } grid)
 				grid.Margin = new Avalonia.Thickness(0);
 		};
+
+		WindowChrome.RemoveBorder(this);
+		WindowChrome.SetCloaked(this, true);
 	}
 
 	protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -42,20 +45,30 @@ public partial class MainWindow : FAAppWindow
 		base.OnApplyTemplate(e);
 		if (e.NameScope.Find<Image>("Icon") is { } icon)
 		{
-			icon.Width = 20;
-			icon.Height = 20;
+			icon.Width = 22;
+			icon.Height = 22;
 			icon.Margin = new Avalonia.Thickness(12, 0, 0, 0);
 		}
 		if (e.NameScope.Find<TextBlock>("TitleText") is { } title)
 		{
-			title.Margin = new Avalonia.Thickness(36, 0, 0, 0);
+			title.Margin = new Avalonia.Thickness(38, 0, 0, 0);
 		}
+	}
+
+	protected override void OnOpened(EventArgs e)
+	{
+		base.OnOpened(e);
+		WindowChrome.RemoveBorder(this); // again, in case the handle did not exist yet in the constructor
+		DispatcherTimer.RunOnce(() => WindowChrome.SetCloaked(this, false), WindowChrome.UncloakDelay);
 	}
 
 	protected override void OnLoaded(RoutedEventArgs e)
 	{
 		base.OnLoaded(e);
-		NavView.SelectedItem = NavView.MenuItems.OfType<FANavigationViewItem>().First();
+		if (Program.StartOnSettings)
+			NavigateToSettings();
+		else
+			NavigateToHome();
 	}
 
 	internal void NavigateToHome()
@@ -71,11 +84,24 @@ public partial class MainWindow : FAAppWindow
 			NavView.SelectedItem = settings;
 	}
 
+	/// <summary>Brings the window back from the tray or from behind other windows, on the given page.
+	/// Reached from the tray menu and from a second launch of the app.</summary>
+	internal void ShowOnPage(bool settings)
+	{
+		Show();
+		WindowState = WindowState.Normal;
+		Activate();
+		if (settings)
+			NavigateToSettings();
+		else
+			NavigateToHome();
+	}
+
 	protected override void OnClosing(WindowClosingEventArgs e)
 	{
 		base.OnClosing(e);
 
-		if (AppSettings.Current.EnableTrayIcon)
+		if (AppSettings.Current.EnableTrayIcon && e.CloseReason == WindowCloseReason.WindowClosing)
 		{
 			e.Cancel = true;
 			Hide();

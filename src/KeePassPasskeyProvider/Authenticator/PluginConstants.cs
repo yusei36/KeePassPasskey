@@ -45,6 +45,14 @@ internal static class PluginConstants
 	public static readonly Guid KeePassPasskeyProviderAaguid = new("9addb28c-b46f-4402-808f-019651441ff3");
 #endif
 
+	/// <summary>Readable channel name, appended to copied version strings.</summary>
+	public static string ChannelDisplayName => Channel switch
+	{
+		DistributionChannel.Store => "Microsoft Store",
+		DistributionChannel.Dev => "Dev",
+		_ => "GitHub",
+	};
+
 	/// <summary>Provider log file name</summary>
 	public const string ProviderLogFileName = "Provider.log";
 
@@ -91,6 +99,8 @@ internal static class PluginConstants
 	public static readonly string CacheSyncMutexName = SyncObjectBase + "_CacheSync";
 	/// <summary>Event signalling the running management app to show its window.</summary>
 	public static readonly string ShowEventName = SyncObjectBase + "_Show";
+	/// <summary>Same, but landing on the Settings page (KeePass's Tools menu opens it there).</summary>
+	public static readonly string ShowSettingsEventName = SyncObjectBase + "_ShowSettings";
 
 	public const string PluginRpId = "keepasspasskey.github.io";
 

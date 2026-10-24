@@ -15,6 +15,12 @@ public class KeePassPasskeySettings
 	[JsonProperty("signInVerification")]
 	public UserVerificationMode SignInVerification { get; set; } = UserVerificationMode.Both;
 
+	[JsonProperty("skipWindowsHelloAfterUnlock")]
+	public bool SkipWindowsHelloAfterUnlock { get; set; }
+
+	[JsonProperty("useLegacyNotificationPrompts")]
+	public bool UseLegacyNotificationPrompts { get; set; }
+
 	[JsonProperty("showErrorNotifications")]
 	public bool ShowErrorNotifications { get; set; } = true;
 
@@ -39,7 +45,7 @@ public class KeePassPasskeySettings
 	public ExcludeCredentialCheckMode ExcludeCredentialCheckMode { get; set; } = ExcludeCredentialCheckMode.TargetDatabase;
 
 	[JsonProperty("notificationVerificationTimeoutMilliseconds")]
-	public int NotificationVerificationTimeoutMilliseconds { get; set; } = 30_000;
+	public int NotificationVerificationTimeoutMilliseconds { get; set; } = 60_000;
 
 	[JsonProperty("logLevel")]
 	[JsonConverter(typeof(StringEnumConverter))]
@@ -57,6 +63,11 @@ public class KeePassPasskeySettings
 
 	[JsonProperty("statusRefreshIntervalMilliseconds")]
 	public int StatusRefreshIntervalMilliseconds { get; set; } = 30_000;
+
+	// Whether the plugin offers to update itself from the DLL bundled in the installed provider
+	// package. Only controls the check: every update is still confirmed in a dialog.
+	[JsonProperty("checkForPluginUpdates")]
+	public bool CheckForPluginUpdates { get; set; } = true;
 
 	[JsonProperty("newPasskeyBackupEligible")]
 	public bool NewPasskeyBackupEligible { get; set; } = true;

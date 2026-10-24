@@ -7,7 +7,6 @@ namespace KeePassPasskeyPlugin.Tests;
 
 public class RpIdMatcherTests
 {
-	// --- Exact host matches -------------------------------------------------------------
 
 	[Theory]
 	[InlineData("https://github.com", "github.com")]
@@ -22,8 +21,6 @@ public class RpIdMatcherTests
 		Assert.True(RpIdMatcher.UrlHostMatchesRpId(url, rpId));
 	}
 
-	// --- Subdomain matches --------------------------------------------------------------
-
 	[Theory]
 	[InlineData("https://www.github.com/login", "github.com")]
 	[InlineData("https://login.eu.github.com", "github.com")]
@@ -32,8 +29,6 @@ public class RpIdMatcherTests
 	{
 		Assert.True(RpIdMatcher.UrlHostMatchesRpId(url, rpId));
 	}
-
-	// --- Non-matches (including lookalike / spoof attempts) -----------------------------
 
 	[Theory]
 	[InlineData("https://mygithub.com", "github.com")]        // suffix but not at a label boundary
@@ -44,8 +39,6 @@ public class RpIdMatcherTests
 	{
 		Assert.False(RpIdMatcher.UrlHostMatchesRpId(url, rpId));
 	}
-
-	// --- Empty / null inputs ------------------------------------------------------------
 
 	[Theory]
 	[InlineData(null, "github.com")]
@@ -58,8 +51,6 @@ public class RpIdMatcherTests
 	{
 		Assert.False(RpIdMatcher.UrlHostMatchesRpId(url!, rpId!));
 	}
-
-	// --- TryGetHost -------------------------------------------------------------------
 
 	[Theory]
 	[InlineData("https://www.github.com/login?x=1", "www.github.com")]

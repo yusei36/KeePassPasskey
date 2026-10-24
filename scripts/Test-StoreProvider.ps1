@@ -29,8 +29,8 @@
 	Skip cert creation; the cert must already exist in CurrentUser\My.
 
 .EXAMPLE
-	.\Install-StoreProvider.ps1
-	.\Install-StoreProvider.ps1 -SkipBuild
+	.\Test-StoreProvider.ps1
+	.\Test-StoreProvider.ps1 -SkipBuild
 #>
 param(
 	[switch]$SkipBuild,

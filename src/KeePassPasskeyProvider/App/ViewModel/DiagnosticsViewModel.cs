@@ -16,6 +16,7 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 	[ObservableProperty] public partial PingStatus PingStatus { get; set; }
 	public ICommand RegisterCommand { get; }
 	public ICommand UnregisterCommand { get; }
+	public ICommand OpenPasskeySettingsCommand => ProviderCommands.OpenPasskeySettingsCommand;
 	public LogViewModel LogPanel { get; } = new LogViewModel();
 
 	public string ServerVersionShort => ServerVersion != null ? ShortenVersion(ServerVersion) : "";
@@ -39,6 +40,7 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 
 	public static string ClientVersion => _appVersion;
 	public static string ClientVersionShort => ShortenVersion(_appVersion);
+	public static string ClientVersionWithChannel => $"{ClientVersion} ({Authenticator.PluginConstants.ChannelDisplayName})";
 
 	partial void OnServerVersionChanged(string? value)
 	{
@@ -69,6 +71,33 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 	{
 		if (text is null) return;
 		await Application.CopyToClipboardAsync(text);
+	}
+
+	/// <summary>
+	/// Registration is deliberately left alone: this page has its own Register button, so syncing
+	/// must not quietly undo an Unregister.
+	/// </summary>
+	[RelayCommand]
+	private async Task SyncCredentials()
+	{
+		await Task.Run(() => Authenticator.CredentialCache.SyncToWindowsCache(
+			Authenticator.PluginConstants.KeePassPasskeyProviderClsid));
+	}
+
+	[RelayCommand]
+	private async Task DumpCredentials()
+	{
+		// Off the UI thread: this talks to KeePass over the pipe and can sit on its timeout.
+		await Task.Run(() => Authenticator.CredentialCache.DumpCredentials(
+			Authenticator.PluginConstants.KeePassPasskeyProviderClsid,
+			line => Log.Info(line, nameof(DumpCredentials))));
+	}
+
+	[RelayCommand]
+	private async Task ClearCredentials()
+	{
+		await Task.Run(() => Authenticator.CredentialCache.ClearWindowsCache(
+			Authenticator.PluginConstants.KeePassPasskeyProviderClsid));
 	}
 
 	private static string ShortenVersion(string v)

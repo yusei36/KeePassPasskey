@@ -1,57 +1,60 @@
-﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
+// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Settings;
-using Microsoft.Toolkit.Uwp.Notifications;
-using Windows.UI.Notifications;
 
 namespace KeePassPasskeyProvider.Authenticator.UserVerification;
 
 internal static class UserVerifierDispatcher
 {
-	private static readonly IUserVerifier[] _verifiers =
+	private static readonly IUserVerifier _windowsHello = new WindowsHelloUserVerifier();
+	private static readonly IUserVerifier _dialog = new DialogUserVerifier();
+	private static readonly IUserVerifier _notification = new NotificationUserVerifier();
+
+	// The Notification flag means "confirmation prompt"; the setting only picks how it is presented.
+	private static IUserVerifier[] Verifiers =>
 	[
-		new WindowsHelloUserVerifier(),
-		new NotificationUserVerifier(),
+		_windowsHello,
+		KeePassPasskeySettings.Current.UseLegacyNotificationPrompts ? _notification : _dialog,
 	];
 
 	public static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) VerifyForRegistration(
-		nint pRequest, Guid transactionId,
-		string rpId, string rpName, string uvUsername, string uvDisplayHint,
-		IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries)
-		=> DispatchRegistration(KeePassPasskeySettings.Current.RegistrationVerification,
+		RegistrationVerification request, bool unlockedNow, CancellationToken cancellation)
+		=> DispatchRegistration(EffectiveMode(KeePassPasskeySettings.Current.RegistrationVerification, unlockedNow),
 			(IUserVerifier v, out DatabaseInfo? sel, out EntryTargetInfo? selEntry) =>
-				v.VerifyForRegistration(pRequest, rpId, rpName, uvUsername, uvDisplayHint, transactionId, databases, candidateEntries, out sel, out selEntry));
+				v.VerifyForRegistration(request, cancellation, out sel, out selEntry));
 
-	public static int VerifyForSignIn(
-		nint pRequest, Guid transactionId,
-		string rpId, string uvUsername, string uvDisplayHint)
-		=> DispatchSignIn(KeePassPasskeySettings.Current.SignInVerification,
-			v => v.VerifyForSignIn(pRequest, rpId, uvUsername, uvDisplayHint, transactionId));
+	public static int VerifyForSignIn(SignInVerification request, bool unlockedNow, CancellationToken cancellation)
+		=> DispatchSignIn(EffectiveMode(KeePassPasskeySettings.Current.SignInVerification, unlockedNow),
+			v => v.VerifyForSignIn(request, cancellation));
+
+	/// <summary>
+	/// Unlocking KeePass for this very request already verified the user, often with Windows Hello
+	/// itself, so with <see cref="KeePassPasskeySettings.SkipWindowsHelloAfterUnlock"/> on, a second
+	/// Windows Hello prompt right after it is dropped. Off by default, since without a Windows Hello
+	/// unlock plugin the prompt would seem to go missing at random. Only while the confirmation prompt
+	/// stays on: it names the site and, on registration, picks the target database. Without it,
+	/// Windows Hello is the only step that shows which site asked, so it is kept.
+	/// </summary>
+	private static UserVerificationMode EffectiveMode(UserVerificationMode mode, bool unlockedNow)
+	{
+		if (!unlockedNow || !KeePassPasskeySettings.Current.SkipWindowsHelloAfterUnlock
+			|| !mode.HasFlag(UserVerificationMode.WindowsHello)
+			|| !mode.HasFlag(UserVerificationMode.Notification)) return mode;
+		Log.Info("database was just unlocked, skipping Windows Hello");
+		return mode & ~UserVerificationMode.WindowsHello;
+	}
 
 	private delegate int VerifyRegistrationFunc(IUserVerifier v, out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry);
-
-	private static bool AreNotificationsDisabled(UserVerificationMode mode)
-	{
-		if (!mode.HasFlag(UserVerificationMode.Notification)) return false;
-
-		var setting = ToastNotificationManagerCompat.CreateToastNotifier().Setting;
-		if (setting == NotificationSetting.Enabled) return false;
-
-		Log.Warn($"Notifications disabled ({setting}); verification failed", nameof(UserVerifierDispatcher));
-		return true;
-	}
 
 	private static (int hr, DatabaseInfo? selectedDatabase, EntryTargetInfo? selectedEntry) DispatchRegistration(
 		UserVerificationMode mode, VerifyRegistrationFunc call)
 	{
-		if (AreNotificationsDisabled(mode)) return (HResults.E_FAIL, null, null);
-
 		DatabaseInfo? selected = null;
 		EntryTargetInfo? selectedEntry = null;
-		foreach (var verifier in _verifiers)
+		foreach (var verifier in Verifiers)
 		{
 			if (!mode.HasFlag(verifier.Mode)) continue;
 			int hr = call(verifier, out DatabaseInfo? sel, out EntryTargetInfo? selEntry);
@@ -65,9 +68,7 @@ internal static class UserVerifierDispatcher
 
 	private static int DispatchSignIn(UserVerificationMode mode, Func<IUserVerifier, int> call)
 	{
-		if (AreNotificationsDisabled(mode)) return HResults.E_FAIL;
-
-		foreach (var verifier in _verifiers)
+		foreach (var verifier in Verifiers)
 		{
 			if (!mode.HasFlag(verifier.Mode)) continue;
 			int hr = call(verifier);

@@ -41,8 +41,15 @@ set "PS1=%~dp0install_user.ps1"
 	echo     Read-Host "Press Enter to exit"
 	echo     exit 1
 	echo }
-	echo "Starting KeePassPasskeyProvider..." ^| Log
-	echo Start-Process KeePassPasskeyProvider.exe
+	echo $publisher = ^(Get-AuthenticodeSignature '%MSIX%'^).SignerCertificate.Subject
+	echo $pkg = Get-AppxPackage -Name '*KeePassPasskey*' ^| Where-Object { $_.Publisher -eq $publisher } ^| Select-Object -First 1
+	echo if ^($pkg^) {
+	echo     $exe = Join-Path $pkg.InstallLocation 'KeePassPasskeyProvider\KeePassPasskeyProvider.exe'
+	echo     "Starting $exe" ^| Log
+	echo     Start-Process $exe
+	echo } else {
+	echo     "ERROR: Installed package not found; start KeePassPasskey from the Start menu." ^| LogError
+	echo }
 	echo "Done." ^| Log
 	echo Remove-Item $PSCommandPath
 	echo Start-Sleep -Seconds 10

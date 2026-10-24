@@ -5,7 +5,7 @@ KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once ins
 ## Requirements
 
 - [KeePass](https://keepass.info/) 2.54 or later
-- Windows 11 24H2 or later, with TPM[*](troubleshooting-faq.md#why-is-a-tpm-required) enabled
+- Windows 11 24H2 or later, with TPM[*](troubleshooting-faq.md#why-is-a-tpm-required) enabled and Windows Hello[*](troubleshooting-faq.md#why-is-windows-hello-required) set up
 
 ## Installation
 
@@ -13,7 +13,42 @@ See the [installation instructions in the README](../README.md#installation) for
 
 ## Updates
 
-Updates are installed the same way as a fresh installation: replace the KeePassPasskey plugin file in your KeePass plugins folder with the new version, then either run `InstallMsix.bat` as an administrator or install the MSIX package. Replacing the plugin file is a manual step, the installer only handles the MSIX and never writes to your KeePass plugins folder. The KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
+The app and the plugin are two separate pieces and are updated separately. The app knows which plugin version it ships, so once it has been updated, KeePass takes care of the rest.
+
+**The plugin update prompt.** When KeePass starts and the installed KeePassPasskey app contains a newer plugin than the one loaded, a dialog offers three choices:
+
+| Choice | What it does |
+|---|---|
+| Update now | Replaces the plugin file, then offers to restart KeePass so the new version is loaded. Declining that restart is fine: the version you were already running stays loaded until the next start |
+| Later | Asks again the next time KeePass starts |
+| Skip version *x.y.z* | Stays quiet until a version newer than that one appears |
+
+Below them sits a **Don't check for plugin updates again** checkbox. It applies alongside whichever choice you make, so you can tick it and still install this update, and the check can be turned back on under [Advanced](#advanced) settings. Closing the dialog without choosing counts as Later.
+
+The dialog names the version you have, the version on offer, which installed app it comes from and the folder it will be written to. Updating a KeePass installed under `C:\Program Files\` asks for administrator rights once; portable and per-user installations update with no prompt at all. That prompt names **Windows Command Processor**, because Windows does not allow a Store app to request administrator rights for itself, so the copy is carried out by a script that ships inside the app. Expanding the prompt's details shows the script path inside the KeePassPasskey app folder.
+
+If you dismiss the administrator prompt, or the copy fails for some other reason, the dialog reports it and offers **Try again**. Nothing is changed, your current plugin keeps running, and you are asked again at the next KeePass start. You can also trigger the check yourself at any time from **Tools -> KeePassPasskey -> Update plugin from installed app** in KeePass, which asks even if you chose Skip or Never earlier. Nothing is downloaded: the plugin only ever comes from the KeePassPasskey app already installed on this PC. The same submenu has **Passkey settings**, which opens the KeePassPasskey app on its Settings page, bringing it back from the system tray if it is already running there.
+
+**Microsoft Store installs** update the app automatically in the background, so the plugin prompt is usually the first sign of a new version.
+
+**GitHub installs** update the app by running `InstallMsix.bat` as an administrator or installing the MSIX package. The plugin is then offered by the prompt above at the next KeePass start; the installer itself never writes to your KeePass plugins folder.
+
+**Installing or removing the plugin from the app.** The app can install, update and remove the plugin for you. It detects your KeePass folder (you can correct it or browse for it, and its `Plugins` folder, or any folder inside it, is accepted just as well) and shows exactly which file will be written where before anything happens. If you would rather do it yourself, it can instead reveal that file in Explorer for you to copy into the `Plugins` folder by hand. This is the route for a first installation, when no plugin is loaded yet to prompt anything.
+
+Either way, the KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
+
+## Uninstalling
+
+**The app.** Uninstall it under **Settings → Apps → Installed apps → KeePassPasskey → Uninstall**. Windows then removes KeePassPasskey as a passkey provider by itself, together with the app's settings and log files, which live in the app's own storage. If you want to be extra thorough, you can first click **Clear** under **Credential cache** and **Unregister** under **Provider registration** on the [Diagnostics](#diagnostics) page, but Windows normally takes care of both.
+
+For a GitHub installation, you can also delete the certificate trusted during installation, if you have not already: open **certlm.msc → Trusted People → Certificates**, find **KeePassPasskey**, and delete it.
+
+**The plugin.** Close KeePass and delete `KeePassPasskey.dll` from KeePass's `Plugins` folder, or use **Remove** in the app's **Install plugin** dialog before uninstalling the app. Optionally, also remove:
+
+- The plugin log: the folder `%LOCALAPPDATA%\KeePassPasskey`, with `Plugin.log` and `Plugin.log.bak`.
+- The plugin settings: the `KeePassPasskey.*` entries in `KeePass.config.xml` (next to `KeePass.exe` for KeePass Portable). They do nothing without the plugin; edit the file only while KeePass is closed.
+
+**Your passkeys** stay in your database as ordinary entries, by default in the **Passkeys** group. Delete them if you no longer need them.
 
 ## Creating a passkey
 
@@ -31,15 +66,13 @@ A list of available passkey providers appears. Select **KeePassPasskey**.
 
 <img src="images/passkey-creation-step2.png" width="450" alt="Windows passkey provider list with KeePassPasskey selected">
 
-**Step 3: Confirm in the KeePassPasskey notification**
+**Step 3: Confirm in the KeePassPasskey dialog**
 
-A notification from KeePassPasskey appears in the taskbar. Click **Create passkey** to save the passkey to your KeePass database. If more than one KeePass database is unlocked, a database picker appears first. Select the database you want to save to.
+A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants to save a passkey"**. Pick the database you want to save to from the **Database** dropdown, then click **Save**. Every unlocked database is listed. **Cancel** declines the request, and so does the close button or the Escape key.
 
-At most **5** unlocked databases are offered in this picker. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. If you regularly work with more than 5 databases open, keep only the ones you save passkeys to unlocked.
+The dialog counts down in its title bar and cancels the request when it runs out (see [Approval timeout](#notifications--user-verification)).
 
-<img src="images/passkey-creation-step3.png" width="300" alt="KeePassPasskey notification with &quot;Passkey creation requested&quot; and the Create passkey button">
-
-<img src="images/passkey-creation-select-db.png" width="300" alt="KeePassPasskey dialog for selecting which open KeePass database to save the passkey to">
+<img src="images/passkey-creation-step3.png" width="400" alt="KeePassPasskey dialog asking to save a passkey, with the database dropdown and the Save button">
 
 **Step 4: Passkey saved in KeePass**
 
@@ -51,9 +84,13 @@ The passkey is now stored as an entry in the **Passkeys** group in your open Kee
 
 If you already have an entry for the website (for example your username and password login), KeePassPasskey can save the new passkey **onto that existing entry** instead of creating a separate one, so the passkey lives next to your login.
 
-When matching entries are found, the creation notification shows an extra **Add to existing** button next to **Create passkey**. Choosing it opens a second notification listing the matching entries. The entry you currently have selected in KeePass is listed first and labelled **[selected]**; entries that already hold a passkey are labelled **[overwrite passkey]** (both when applicable: **[selected, overwrite passkey]**). Pick one and confirm to write the passkey onto it.
+When matching entries are found, the creation dialog shows a **Create new** / **Add to existing** switch above the database dropdown. It starts on **Create new**, so nothing changes unless you choose otherwise. Switch to **Add to existing** to see the matching entries, grouped by the database they live in, then pick one and click **Save** to write the passkey onto it.
 
-At most **5** matching entries are offered. This is a Windows limitation: the notification's selection box cannot hold more than 5 items. When more than 5 entries match, the most relevant are shown first: your selected entry, then entries already holding a passkey for this site, then entries matched by their URL.
+Every matching entry is listed, however many there are. Type in the search box to narrow the list by title, username or database. The key button beside it cycles through three filters: all entries, only entries that already hold a passkey, and only entries that do not. Collapse a database group by clicking its name.
+
+Each entry shows its KeePass icon, title and username. The entry you currently have selected in KeePass is listed first and marked with a dot; entries that already hold a passkey are marked with a key. Selecting an entry that already holds a passkey shows a warning, because saving replaces the passkey it already has.
+
+<img src="images/passkey-creation-add-existing.png" width="400" alt="KeePassPasskey dialog on Add to existing, listing matching entries with the search box, the filter button and the replace warning">
 
 Matching is by website: an entry qualifies when it already holds a passkey for this site, or when its **URL** field points at the same site (the same domain or a subdomain). If you overwrite an entry that already had a passkey, the previous version is kept in that entry's **History** tab so you can restore it.
 
@@ -79,11 +116,11 @@ If you did not use autofill and have multiple passkeys for this site, Windows sh
 
 <img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
-**Step 3: Approve in the KeePassPasskey notification**
+**Step 3: Approve in the KeePassPasskey dialog**
 
-A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
+A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants you to sign in"**, and showing the KeePass entry Windows picked with its icon, title, username and database. Click **Sign in** to confirm, or **Cancel** to decline.
 
-<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey notification with &quot;Authentication requested&quot; and the Approve button">
+<img src="images/passkey-signin-approve.png" width="400" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
 
 ### Login with a password and passkey as a second factor
 
@@ -103,11 +140,21 @@ If you have multiple passkeys for this site, Windows shows a list. Select the on
 
 <img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
-**Step 4: Approve in the KeePassPasskey notification**
+**Step 4: Approve in the KeePassPasskey dialog**
 
-A KeePassPasskey notification appears in the taskbar. Click **Approve** to confirm.
+A KeePassPasskey dialog appears, showing the KeePass entry Windows picked. Click **Sign in** to confirm.
 
-<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey notification with &quot;Authentication requested&quot; and the Approve button">
+<img src="images/passkey-signin-approve.png" width="300" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
+
+## When KeePass is locked
+
+If a passkey is requested while your KeePass database is locked, KeePass comes to the front and asks you to unlock it, the same prompt its own unlock command shows. With a quick unlock plugin such as KeePassWinHello, that is its Windows Hello prompt. Once the database is open, the passkey operation continues and the focus returns to the window that asked for the passkey, usually your browser.
+
+KeePassPasskey still asks for Windows Hello afterwards as usual. If unlocking KeePass already verifies you (for example with KeePassWinHello) and you find the second prompt redundant, turn on **Skip Windows Hello after unlocking KeePass** in the settings (see [Notifications & User Verification](#notifications--user-verification)).
+
+If KeePass already shows a dialog when the request arrives, for example its unlock prompt that you opened yourself, KeePass comes to the front with that dialog instead of opening a second prompt. KeePassPasskey waits until the dialog closes and continues once the database is open.
+
+If you cancel the unlock, the operation fails with the usual "database is locked" notification. If the website or browser cancels the request while KeePass is still waiting to be unlocked, KeePassPasskey stops right away; unlocking afterwards only unlocks KeePass. KeePass itself must be running; KeePassPasskey does not start it.
 
 ## Managing passkeys in KeePass
 
@@ -170,16 +217,18 @@ Open the KeePassPasskey app from the Start menu and navigate to **Settings**.
 
 ### Notifications & User Verification
 
-Controls how KeePassPasskey confirms your identity before completing a passkey operation.
+Controls how KeePassPasskey confirms your identity before completing a passkey operation. **Registration** (creating a passkey) and **Sign-in** (using a passkey) are configured separately, and each has two independent switches:
 
-| Option | Behavior |
+| Switch | Behavior |
 |---|---|
-| Notification | Shows a notification you must approve |
 | Windows Hello | Requires Windows Hello (PIN, fingerprint, or face) |
-| Both | Requires both a notification approval and Windows Hello (default) |
-| None | No confirmation required: passkey operations complete silently |
+| Confirmation prompt | Shows a KeePassPasskey dialog you must approve |
 
-Separate settings exist for **Registration** (creating a passkey) and **Sign-in** (using a passkey). The **Approval timeout** controls how long the notification stays open before the operation is cancelled (default: 30 seconds). This timeout only applies when the approval mode includes **Notification**.
+Both are on by default. Turning both off for an operation lets it complete silently, without asking you at all; a warning icon appears beside the switches while that is the case.
+
+**Skip Windows Hello after unlocking KeePass** (off by default): when KeePass was locked and you just unlocked it for the same request, the Windows Hello step is skipped, since unlocking already verified you. It only applies while the confirmation prompt is on; with Windows Hello as the only verification it is kept, since it is then the step that shows which site asked. See [When KeePass is locked](#when-keepass-is-locked).
+
+The **Approval timeout** controls how long the confirmation prompt stays open before the operation is cancelled (default: 60 seconds). It only applies when the confirmation prompt is on.
 
 **Show error notifications**: when enabled, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
 
@@ -194,8 +243,6 @@ Controls how new passkey entries are created in your database.
 **Resolve title placeholders**: when enabled (default), placeholders are resolved when the passkey is created and the resulting text is stored as the title. When disabled, the placeholders are stored as-is so KeePass resolves them each time the entry is shown (useful if you later edit a referenced field). `{RP_NAME}` is always resolved, because it has no underlying entry field.
 
 **Tag new passkeys**: when enabled (default), a `Passkey` tag is added to each entry created when a new passkey is registered.
-
-**Offer saving to an existing entry**: when enabled (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History.
 
 **Allow duplicate passkeys**: a website can ask not to register a second passkey for an account it already has one for. This setting controls where that request is enforced:
 
@@ -215,11 +262,21 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 |---|---|
 | Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
 | Status refresh interval | How often the app polls for connection status. |
-| Sync passkeys to Windows | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
+| Check for plugin updates | When on (default), KeePass offers to update the plugin at startup if the installed app ships a newer one. Every update is still confirmed in a dialog, nothing is replaced without your click. Turn this off to never be asked; see [Updates](#updates). |
+| Offer saving to an existing entry | When on (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History. Requires the registration confirmation prompt. |
+| Use legacy notification prompts | Show confirmation prompts as Windows notifications instead of dialogs, the way earlier versions did. Off by default. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their database and entry pickers are limited to 5 items, so only turn this on if the dialogs cause you trouble. |
 
 ### Expert
 
 Advanced options for uncommon setups. Leave them at their defaults unless you specifically need a different value.
+
+#### Windows credential cache
+
+| Setting | Description |
+|---|---|
+| Windows credential cache | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
+
+Leave this **On**. It is the switch that puts your passkeys in front of Windows at all, so turning it off disables passkey sign-in almost everywhere. It is here for the rare case where you want KeePassPasskey installed but invisible to Windows.
 
 #### Backup flags
 
@@ -243,6 +300,34 @@ To change it, type a GUID into the field and click **Apply**. Applying re-regist
 | Spoof AAGUID | The GUID to report. Must be a valid GUID (for example `00000000-0000-0000-0000-000000000000`), or empty to use the default. |
 
 The AAGUID is only sent when a passkey is **created**; it is never sent during sign-in, so changing it has no effect on passkeys you already have. **A few websites that enforce attestation may reject a passkey whose AAGUID they do not recognise**, so change this only if you know why you need to.
+
+## Diagnostics
+
+The **Diagnostics** page shows the app and plugin versions, the provider registration state, and a live view of both log files. You normally never need it; it is there for when something is not working.
+
+### Provider registration
+
+**Register** and **Unregister** add or remove KeePassPasskey as a passkey provider in Windows. Use them only if the app is missing from **Settings → Accounts → Passkeys → Advanced options**, or if support asks you to. **Advanced passkey settings** opens that Windows page, which also holds the switch that turns KeePassPasskey on or off.
+
+### Credential cache
+
+To offer your passkeys in the sign-in prompt, Windows keeps its own copy of them. It is refreshed automatically whenever you open, save or close a database, or add or change a passkey, so these buttons are only needed when something looks wrong.
+
+The copy exists only while KeePassPasskey is switched on in **Settings → Accounts → Passkeys → Advanced options**. Switching the provider off there empties it, and switching it back on fills it again. That happens straight away while the KeePassPasskey app is running, whether its window is open or it sits in the system tray; with the app closed, the change is picked up the next time you open or save a database in KeePass, or use **Sync now**.
+
+| Button | Description |
+|---|---|
+| Sync now | Refreshes the Windows copy from the databases currently open in KeePass. |
+| Write to log | Writes the Windows copy and your KeePass passkeys to the log, side by side, for troubleshooting and bug reports. Usernames are not written in full. |
+| Clear | Removes every passkey from the Windows copy. They come back on the next sync, so use this together with **Sync now** to rebuild it from scratch. |
+
+If your passkeys are not offered at sign-in, see [The website says there are no passkeys on this device](troubleshooting-faq.md#the-website-says-there-are-no-passkeys-on-this-device).
+
+## Limitations
+
+**No attestation.** Some websites ask the authenticator for a certificate-signed proof (attestation) of which device created the passkey, so they can accept only approved hardware. KeePassPasskey creates every passkey without attestation, because it is software and has no manufacturer-signed key to prove anything with. Most websites do not ask for attestation, but the few that require it, usually workplace or government logins, will refuse the passkey. See [A site asks for enterprise attestation](troubleshooting-faq.md#a-site-asks-for-enterprise-attestation).
+
+**No PRF extension.** Some websites and apps use a passkey not only to sign in but also to derive an encryption key from it (the PRF extension), for example to unlock an encrypted vault without a password. KeePassPasskey cannot provide this yet: Windows does not currently pass a third-party passkey provider's PRF result on to the browser. Signing in with the passkey still works; only the encryption feature is unavailable, so you need the site's other unlock method, such as a master password.
 
 ## FAQ & Troubleshooting
 

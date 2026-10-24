@@ -4,9 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Windows.Forms;
+using KeePass;
+using KeePass.Forms;
 using KeePass.Plugins;
+using KeePass.UI;
 using KeePassPasskey.Passkey;
 using KeePassPasskey.Storage;
+using KeePassPasskey.UI;
+using KeePassPasskey.Update;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
 using KeePassPasskeyShared.Passkey;
@@ -55,9 +61,9 @@ internal sealed class RequestHandler
 				FindMatchingEntriesRequest r => HandleFindMatchingEntries(r),
 				MakeCredentialRequest r => HandleMakeCredential(r),
 				GetAssertionRequest r => HandleGetAssertion(r),
-				CancelRequest r => HandleCancel(r),
 				GetSettingsRequest r => HandleGetSettings(r),
 				SaveSettingsRequest r => HandleSaveSettings(r),
+				UnlockDatabaseRequest r => HandleUnlockDatabase(r),
 				_ => new PipeResponseBase { ErrorCode = PipeErrorCode.InternalError, ErrorMessage = "Unknown request type: " + req.Type }
 			};
 			return JsonConvert.SerializeObject(response);
@@ -89,7 +95,12 @@ internal sealed class RequestHandler
 		var status = clientProtocolVersion != PipeConstants.ProtocolVersion
 			? PingStatus.IncompatibleVersion
 			: databaseOpen ? PingStatus.Ready : PingStatus.NoDatabase;
-		return new PingResponse { Status = status, ProtocolVersion = PipeConstants.ProtocolVersion };
+		return new PingResponse
+		{
+			Status = status,
+			ProtocolVersion = PipeConstants.ProtocolVersion,
+			PluginPath = PluginLocation.DirectoryPath,
+		};
 	}
 
 	private GetCredentialsResponse HandleGetCredentials(GetCredentialsRequest req)
@@ -99,6 +110,7 @@ internal sealed class RequestHandler
 
 		var all = _passkeyStorage.GetAllCredentials();
 		var infos = new List<CredentialInfo>(all.Count);
+		bool nameDatabases = OpenDatabaseCount() > 1;
 		foreach (var c in all)
 		{
 			if (!string.IsNullOrEmpty(req.RpId) && c.RelyingParty != req.RpId)
@@ -113,11 +125,23 @@ internal sealed class RequestHandler
 				RpId = c.RelyingParty,
 				UserHandle = c.UserHandle,
 				UserName = c.Username,
-				Title = c.Title
+				Title = c.Title,
+				DatabaseName = nameDatabases ? c.DatabaseName : null,
+				Icon = req.OmitIcons ? null : c.Icon
 			});
 		}
 
 		return new GetCredentialsResponse { Credentials = infos };
+	}
+
+	private int OpenDatabaseCount()
+	{
+		int count = 0;
+		foreach (var doc in _host.MainWindow.DocumentManager.Documents)
+		{
+			if (doc.Database?.IsOpen == true) count++;
+		}
+		return count;
 	}
 
 	private GetDatabasesResponse HandleGetDatabases(GetDatabasesRequest req)
@@ -180,7 +204,7 @@ internal sealed class RequestHandler
 			return new MakeCredentialResponse { ErrorCode = PipeErrorCode.UnsupportedAlgorithm, ErrorMessage = "No supported algorithm in pubKeyCredParams" };
 
 		// Generate key pair and COSE key
-		var (pem, pubComponents) = PasskeyKeyHelper.GenerateKeyPair(chosenAlg.Value);
+		var (privateKey, pubComponents) = PasskeyKeyHelper.GenerateKeyPair(chosenAlg.Value);
 		var coseKeyBytes = PasskeyKeyHelper.BuildCoseKey(chosenAlg.Value, pubComponents);
 
 		// Generate 32-byte random credential ID
@@ -197,7 +221,7 @@ internal sealed class RequestHandler
 		var credential = new PasskeyCredential
 		{
 			CredentialId = credentialId,
-			PrivateKeyPem = pem,
+			PrivateKey = privateKey,
 			RelyingParty = req.RpId,
 			RpName = req.RpName,
 			UserHandle = req.UserId ?? "",
@@ -267,7 +291,7 @@ internal sealed class RequestHandler
 		Array.Copy(clientDataHashBytes, 0, dataToSign, authData.Length, clientDataHashBytes.Length);
 
 		// Sign with private key
-		var signature = PasskeyKeyHelper.Sign(credential.PrivateKeyPem, dataToSign);
+		var signature = PasskeyKeyHelper.Sign(credential.PrivateKey, dataToSign);
 
 		return new GetAssertionResponse
 		{
@@ -280,11 +304,6 @@ internal sealed class RequestHandler
 		};
 	}
 
-	private CancelResponse HandleCancel(CancelRequest req)
-	{
-		return new CancelResponse { Status = "acknowledged" };
-	}
-
 	private GetSettingsResponse HandleGetSettings(GetSettingsRequest req)
 	{
 		return new GetSettingsResponse { Settings = _settingsStorage.Load() };
@@ -295,6 +314,56 @@ internal sealed class RequestHandler
 		_settingsStorage.Save(req.Settings);
 		Log.Configure(Log.LogFilePath, req.Settings.LogLevel);
 		return new SaveSettingsResponse();
+	}
+
+	private UnlockDatabaseResponse HandleUnlockDatabase(UnlockDatabaseRequest req)
+	{
+		bool busy = false;
+		if (!IsDatabaseOpen())
+		{
+			var mw = _host.MainWindow;
+			if (mw.InvokeRequired)
+				mw.Invoke(new MethodInvoker(() => busy = !TryPromptUnlock(mw, req.BringToFront)));
+			else
+				busy = !TryPromptUnlock(mw, req.BringToFront);
+		}
+		bool unlocked = IsDatabaseOpen();
+		return new UnlockDatabaseResponse { Unlocked = unlocked, Busy = busy && !unlocked };
+	}
+
+	/// <summary>
+	/// Brings KeePass to the front, then runs its own unlock path, the one its remote unlock message
+	/// takes: show the key prompt for the active locked document. Returns once the prompt closes.
+	/// False when KeePass shows a dialog, so the caller can ask again once it has closed.
+	/// </summary>
+	private static bool TryPromptUnlock(MainForm mw, bool bringToFront)
+	{
+		// A dialog is already open, possibly the key prompt itself; a second one on top would only confuse.
+		if (mw.UIIsInteractionBlocked() || GlobalWindowManager.WindowCount > 0)
+		{
+			if (bringToFront)
+			{
+				Log.Info("KeePass is busy with a dialog, bringing it to the front");
+				KeePassForeground.BringToFront(mw, GlobalWindowManager.TopWindow);
+			}
+			return false;
+		}
+
+		var locked = mw.DocumentManager.Documents.FirstOrDefault(mw.IsFileLocked);
+		if (locked == null)
+		{
+			Log.Info("no locked database to unlock");
+			return true;
+		}
+
+		if (mw.DocumentManager.ActiveDocument != locked)
+			mw.MakeDocumentActive(locked);
+
+		Log.Info("prompting to unlock the database");
+		var previous = KeePassForeground.BringToFront(mw);
+		mw.ProcessAppMessage((IntPtr)Program.AppMessage.Unlock, IntPtr.Zero);
+		KeePassForeground.Restore(previous);
+		return true;
 	}
 
 	private bool IsDatabaseOpen()

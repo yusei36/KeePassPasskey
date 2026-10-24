@@ -100,6 +100,24 @@ function Invoke-BuildWapproj {
 		[switch]$Optimized,
 		[switch]$Store
 	)
+	# Optimized and plain builds share one output dir and the publish step never overwrites what is
+	# staged there, so a stale trimmed runtime otherwise survives into the MSIX.
+	Remove-Item "$RepoRoot\build\$Configuration\KeePassPasskeyProvider\win-x64\msixpublish" `
+		-Recurse -Force -ErrorAction SilentlyContinue
+
+	# Release defaults to Optimized in the props, so the switch alone under-reports a trimmed build.
+	if ($Optimized -or $Configuration -eq 'Release') {
+		# The restore re-records the trim/R2R packs, which a plain build in between drops from the
+		# shared nuget props (NETSDK1094); msbuild on the wapproj does not restore the provider.
+		Remove-Item "$RepoRoot\src\KeePassPasskeyProvider\obj\x64\$Configuration" `
+			-Recurse -Force -ErrorAction SilentlyContinue
+		$restoreArgs = @('restore', "$RepoRoot\src\KeePassPasskeyProvider\KeePassPasskeyProvider.csproj",
+			"/p:Configuration=$Configuration", '/p:Optimized=true', '--nologo')
+		if ($Store) { $restoreArgs += '/p:Store=true' }
+		& dotnet $restoreArgs
+		if ($LASTEXITCODE -ne 0) { throw "dotnet restore failed with exit code $LASTEXITCODE" }
+	}
+
 	$versions = Get-BuildVersions $RepoRoot
 	$manifest         = "$RepoRoot\src\KeePassPasskeyProvider.Package\Package.appxmanifest"
 	$originalContent  = [IO.File]::ReadAllText($manifest)
@@ -122,6 +140,23 @@ function Invoke-BuildWapproj {
 		$patchedContent = $patchedContent -replace [regex]::Escape($script:ReleaseClsid), $script:StoreClsid
 	}
 	[IO.File]::WriteAllText($manifest, $patchedContent)
+
+	# Store builds swap the badged tile/logo assets in over the GitHub-channel ones for the
+	# duration of the build (restored in finally, mirroring the manifest patch above). The badged
+	# PNGs live in Assets.Store, alongside the plain ones.
+	$assetsDir      = "$RepoRoot\src\KeePassPasskeyProvider.Package\Assets"
+	$storeAssetsDir = "$RepoRoot\src\KeePassPasskeyProvider.Package\Assets.Store"
+	$assetBackup    = $null
+	if ($Store) {
+		if (-not (Test-Path $storeAssetsDir)) { throw "Store assets not found: $storeAssetsDir" }
+		$assetBackup = Join-Path ([IO.Path]::GetTempPath()) ("kpp-assets-" + [Guid]::NewGuid().ToString('N'))
+		New-Item $assetBackup -ItemType Directory | Out-Null
+		foreach ($png in Get-ChildItem $storeAssetsDir -Filter *.png) {
+			$target = Join-Path $assetsDir $png.Name
+			if (Test-Path $target) { Copy-Item $target (Join-Path $assetBackup $png.Name) -Force }
+			Copy-Item $png.FullName $target -Force
+		}
+	}
 
 	$wapproj = "$RepoRoot\src\KeePassPasskeyProvider.Package\KeePassPasskeyProvider.Package.wapproj"
 	# Build the arg list as an array. Only add /p:Optimized when set, so that when it is omitted the
@@ -147,6 +182,12 @@ function Invoke-BuildWapproj {
 		Write-Host "  Build OK.  ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)"
 	} finally {
 		[IO.File]::WriteAllText($manifest, $originalContent)
+		if ($assetBackup) {
+			foreach ($png in Get-ChildItem $assetBackup -Filter *.png) {
+				Copy-Item $png.FullName (Join-Path $assetsDir $png.Name) -Force
+			}
+			Remove-Item $assetBackup -Recurse -Force -ErrorAction SilentlyContinue
+		}
 	}
 }
 
@@ -257,7 +298,9 @@ function Invoke-GenerateLicenseNotices {
 		if ($LASTEXITCODE -ne 0) { throw "Failed to install nuget-license" }
 	}
 
+	# Test packages never ship, so they stay out of the notices
 	$projects = Get-ChildItem -Path "$RepoRoot\src" -Filter '*.csproj' -Recurse |
+					   Where-Object { $_.Name -notlike '*.Tests.csproj' } |
 					   Select-Object -ExpandProperty FullName
 
 	Write-Host "  Restoring NuGet packages..."
@@ -365,7 +408,7 @@ function Invoke-Wack {
 	$installed = Get-AppxPackage -Name (Get-StoreIdentityName) | Select-Object -First 1
 	if ($installed) {
 		Write-Host "  Removing installed Store package so WACK can deploy its own copy."
-		Write-Host "  Reinstall afterwards with: scripts\Install-StoreProvider.ps1 -SkipBuild" -ForegroundColor Yellow
+		Write-Host "  Reinstall afterwards with: scripts\Test-StoreProvider.ps1 -SkipBuild" -ForegroundColor Yellow
 		Get-Process -Name KeePassPasskeyProvider -ErrorAction SilentlyContinue |
 			Where-Object { $_.Path -and $_.Path.StartsWith($installed.InstallLocation, [StringComparison]::OrdinalIgnoreCase) } |
 			Stop-Process -Force -ErrorAction SilentlyContinue

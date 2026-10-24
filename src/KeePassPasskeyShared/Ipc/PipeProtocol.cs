@@ -21,9 +21,9 @@ public static class PipeMessageTypes
 	public const string FindMatchingEntries = "find_matching_entries";
 	public const string MakeCredential = "make_credential";
 	public const string GetAssertion = "get_assertion";
-	public const string Cancel = "cancel";
 	public const string GetSettings = "get_settings";
 	public const string SaveSettings = "save_settings";
+	public const string UnlockDatabase = "unlock_database";
 }
 
 [JsonConverter(typeof(PipeRequestConverter))]
@@ -55,6 +55,10 @@ public sealed class GetCredentialsRequest : PipeRequestBase
 
 	[JsonProperty("allowCredentials", NullValueHandling = NullValueHandling.Ignore)]
 	public List<string> AllowCredentials { get; set; }
+
+	// Negative so that absent, which is what an older provider sends, still means icons.
+	[JsonProperty("omitIcons")]
+	public bool OmitIcons { get; set; }
 }
 
 public sealed class GetDatabasesRequest : PipeRequestBase
@@ -121,11 +125,6 @@ public sealed class GetAssertionRequest : PipeRequestBase
 	public string HmacSecretOutput { get; set; }
 }
 
-public sealed class CancelRequest : PipeRequestBase
-{
-	public override string Type => PipeMessageTypes.Cancel;
-}
-
 public sealed class GetSettingsRequest : PipeRequestBase
 {
 	public override string Type => PipeMessageTypes.GetSettings;
@@ -137,6 +136,17 @@ public sealed class SaveSettingsRequest : PipeRequestBase
 
 	[JsonProperty("settings")]
 	public KeePassPasskeySettings Settings { get; set; }
+}
+
+// Asks KeePass to show its unlock prompt for a locked database. The response comes once the prompt
+// is closed, or right away with Busy set while KeePass shows another dialog. A plugin predating this
+// request answers with an error, which the caller treats as locked.
+public sealed class UnlockDatabaseRequest : PipeRequestBase
+{
+	public override string Type => PipeMessageTypes.UnlockDatabase;
+
+	[JsonProperty("bringToFront")]
+	public bool BringToFront { get; set; }
 }
 
 [JsonConverter(typeof(StringEnumConverter), typeof(SnakeCaseNamingStrategy))]
@@ -183,6 +193,10 @@ public sealed class PingResponse : PipeResponseBase
 
 	[JsonProperty("version")]
 	public string Version { get; set; } = PipeConstants.Version;
+
+	/// <summary>Folder the plugin DLL was loaded from, so the app can offer to install/update it there.</summary>
+	[JsonProperty("pluginPath", NullValueHandling = NullValueHandling.Ignore)]
+	public string PluginPath { get; set; }
 }
 
 public sealed class GetCredentialsResponse : PipeResponseBase
@@ -249,14 +263,6 @@ public sealed class GetAssertionResponse : PipeResponseBase
 	public string UserDisplayName { get; set; }
 }
 
-public sealed class CancelResponse : PipeResponseBase
-{
-	public CancelResponse() { Type = PipeMessageTypes.Cancel; }
-
-	[JsonProperty("status")]
-	public string Status { get; set; }
-}
-
 public sealed class GetSettingsResponse : PipeResponseBase
 {
 	public GetSettingsResponse() { Type = PipeMessageTypes.GetSettings; }
@@ -268,6 +274,21 @@ public sealed class GetSettingsResponse : PipeResponseBase
 public sealed class SaveSettingsResponse : PipeResponseBase
 {
 	public SaveSettingsResponse() { Type = PipeMessageTypes.SaveSettings; }
+}
+
+public sealed class UnlockDatabaseResponse : PipeResponseBase
+{
+	public UnlockDatabaseResponse() { Type = PipeMessageTypes.UnlockDatabase; }
+
+	[JsonProperty("unlocked")]
+	public bool Unlocked { get; set; }
+
+	/// <summary>
+	/// KeePass shows a dialog, possibly its own key prompt opened by the user, so no prompt was opened.
+	/// Ask again once it may have closed.
+	/// </summary>
+	[JsonProperty("busy")]
+	public bool Busy { get; set; }
 }
 
 public sealed class CredentialInfo
@@ -286,6 +307,13 @@ public sealed class CredentialInfo
 
 	[JsonProperty("title")]
 	public string Title { get; set; }
+
+	[JsonProperty("databaseName", NullValueHandling = NullValueHandling.Ignore)]
+	public string DatabaseName { get; set; }
+
+	// Base64 PNG of the KeePass entry icon.
+	[JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
+	public string Icon { get; set; }
 }
 
 public sealed class DatabaseInfo
@@ -317,6 +345,13 @@ public sealed class EntryMatchInfo
 
 	[JsonProperty("isSelected")]
 	public bool IsSelected { get; set; }
+
+	[JsonProperty("userName", NullValueHandling = NullValueHandling.Ignore)]
+	public string UserName { get; set; }
+
+	// Base64 PNG of the KeePass entry icon.
+	[JsonProperty("icon", NullValueHandling = NullValueHandling.Ignore)]
+	public string Icon { get; set; }
 }
 
 // Identifies the existing entry a passkey should be written onto.
@@ -347,9 +382,9 @@ internal sealed class PipeRequestConverter : JsonConverter
 			PipeMessageTypes.FindMatchingEntries => new FindMatchingEntriesRequest(),
 			PipeMessageTypes.MakeCredential => new MakeCredentialRequest(),
 			PipeMessageTypes.GetAssertion => new GetAssertionRequest(),
-			PipeMessageTypes.Cancel => new CancelRequest(),
 			PipeMessageTypes.GetSettings => new GetSettingsRequest(),
 			PipeMessageTypes.SaveSettings => new SaveSettingsRequest(),
+			PipeMessageTypes.UnlockDatabase => new UnlockDatabaseRequest(),
 			_ => throw new JsonSerializationException($"Unknown request type: {type}")
 		};
 		serializer.Populate(jobj.CreateReader(), result);

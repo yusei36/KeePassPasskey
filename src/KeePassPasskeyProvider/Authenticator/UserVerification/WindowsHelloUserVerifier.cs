@@ -12,17 +12,27 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
 {
 	public UserVerificationMode Mode => UserVerificationMode.WindowsHello;
 
-	public int VerifyForRegistration(nint pRequest, string rpId, string rpName, string username, string displayHint,
-		Guid transactionId, IReadOnlyList<DatabaseInfo> databases, IReadOnlyList<EntryMatchInfo> candidateEntries,
+	public int VerifyForRegistration(RegistrationVerification request, CancellationToken cancellation,
 		out DatabaseInfo? selectedDatabase, out EntryTargetInfo? selectedEntry)
 	{
 		selectedDatabase = null;
 		selectedEntry = null;
-		return Verify(pRequest, username, displayHint, transactionId);
+		// rpId, not the site-supplied rp.name: this is rendered by Windows' own dialog, and in
+		// WindowsHello-only mode it is the only site identification the user ever sees.
+		return Verify(request.RequestPtr, request.UserName, request.RpId, request.TransactionId);
 	}
 
-	public int VerifyForSignIn(nint pRequest, string rpId, string username, string displayHint, Guid transactionId)
-		=> Verify(pRequest, username, displayHint, transactionId);
+	// The platform owns the Hello prompt and tears it down on its own cancel, so the token is unused.
+	public int VerifyForSignIn(SignInVerification request, CancellationToken cancellation)
+		=> Verify(request.RequestPtr, request.UserName, SignInHint(request), request.TransactionId);
+
+	// Null means no entry was found, blank means the entry has one and it says nothing.
+	private static string SignInHint(SignInVerification request) => request.EntryTitle switch
+	{
+		null => request.RpId,
+		var title when string.IsNullOrWhiteSpace(title) => "(no title)",
+		var title => title,
+	};
 
 	private static unsafe int Verify(nint pRequest, string username, string displayHint, Guid transactionId)
 	{

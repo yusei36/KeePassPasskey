@@ -3,10 +3,14 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
+using KeePassLib.Security;
+using KeePassLib.Utility;
 using KeePassPasskeyShared.Passkey;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.EdEC;
 using Org.BouncyCastle.Asn1.Nist;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1.X9;
@@ -31,7 +35,9 @@ internal static class PasskeyKeyHelper
 	// secp256r1 / prime256v1 OID - used to produce named-curve PKCS#8 matching Botan/KeePassXC
 	private static readonly DerObjectIdentifier P256Oid = new DerObjectIdentifier("1.2.840.10045.3.1.7");
 
-	internal static (string privateKeyPem, PublicKeyComponents pub) GenerateKeyPair(PasskeyAlgorithm alg)
+	private const string Pkcs8Label = "PRIVATE KEY";
+
+	internal static (ProtectedString privateKey, PublicKeyComponents pub) GenerateKeyPair(PasskeyAlgorithm alg)
 	{
 		AsymmetricCipherKeyPair keyPair;
 		PublicKeyComponents pub;
@@ -82,7 +88,7 @@ internal static class PasskeyKeyHelper
 				throw new ArgumentOutOfRangeException(nameof(alg), alg, null);
 		}
 
-		return (ExportPrivateKeyPem(keyPair.Private), pub);
+		return (ExportPrivateKey(keyPair.Private), pub);
 	}
 
 	internal static byte[] BuildCoseKey(PasskeyAlgorithm alg, PublicKeyComponents pub)
@@ -118,21 +124,9 @@ internal static class PasskeyKeyHelper
 		return map.EncodeToBytes(options);
 	}
 
-	internal static PasskeyAlgorithm DetectAlgorithm(string pem)
+	internal static byte[] Sign(ProtectedString privateKey, byte[] dataToSign)
 	{
-		var key = LoadPrivateKey(pem);
-		return key switch
-		{
-			ECPrivateKeyParameters _ => PasskeyAlgorithm.ES256,
-			Ed25519PrivateKeyParameters _ => PasskeyAlgorithm.EdDSA,
-			RsaPrivateCrtKeyParameters _ => PasskeyAlgorithm.RS256,
-			_ => throw new CryptographicException($"Unsupported private key type: {key.GetType().Name}")
-		};
-	}
-
-	internal static byte[] Sign(string pem, byte[] dataToSign)
-	{
-		var key = LoadPrivateKey(pem);
+		var key = LoadPrivateKey(privateKey);
 
 		switch (key)
 		{
@@ -165,69 +159,150 @@ internal static class PasskeyKeyHelper
 		}
 	}
 
-	private static AsymmetricKeyParameter LoadPrivateKey(string pem)
+	// The plaintext key only ever lives in byte/char arrays that are zeroed after use, never in a string.
+	private static AsymmetricKeyParameter LoadPrivateKey(ProtectedString privateKey)
 	{
-		using var sr = new StringReader(pem);
-		var obj = new PemReader(sr).ReadObject();
-		return obj is AsymmetricCipherKeyPair pair ? pair.Private : (AsymmetricKeyParameter)obj;
+		if (privateKey == null || privateKey.IsEmpty)
+			throw new CryptographicException("The entry holds no passkey private key");
+
+		byte[] pem = privateKey.ReadUtf8();
+		try
+		{
+			byte[] der = DecodePem(pem, Pkcs8Label);
+			if (der == null)
+				return LoadPrivateKeyFromOtherPem(pem);
+			try { return PrivateKeyFactory.CreateKey(der); }
+			finally { MemUtil.ZeroByteArray(der); }
+		}
+		finally { MemUtil.ZeroByteArray(pem); }
 	}
 
-	private static string ExportPrivateKeyPem(AsymmetricKeyParameter privateKey)
+	// Only for non-PKCS#8 PEM (e.g. SEC1, PKCS#1): PemReader needs the key as a string.
+	private static AsymmetricKeyParameter LoadPrivateKeyFromOtherPem(byte[] pem)
 	{
-		var sw = new StringWriter();
+		using var sr = new StringReader(Encoding.UTF8.GetString(pem));
+		var obj = new PemReader(sr).ReadObject();
+		var key = obj is AsymmetricCipherKeyPair pair ? pair.Private : obj as AsymmetricKeyParameter;
+		return key ?? throw new CryptographicException("The passkey private key is not a supported PEM key");
+	}
 
+	// Null when there is no such block or it carries headers (an encrypted key), so the caller falls back.
+	internal static byte[] DecodePem(byte[] pem, string label)
+	{
+		byte[] begin = Encoding.ASCII.GetBytes("-----BEGIN " + label + "-----");
+		byte[] end = Encoding.ASCII.GetBytes("-----END " + label + "-----");
+		int bodyStart = IndexOf(pem, begin, 0);
+		if (bodyStart < 0) return null;
+		bodyStart += begin.Length;
+		int bodyEnd = IndexOf(pem, end, bodyStart);
+		if (bodyEnd < 0) return null;
+
+		char[] base64 = new char[bodyEnd - bodyStart];
+		int count = 0;
+		try
+		{
+			for (int i = bodyStart; i < bodyEnd; i++)
+			{
+				char c = (char)pem[i];
+				if (c == '\r' || c == '\n' || c == ' ' || c == '\t') continue;
+				if (!IsBase64Char(c)) return null;
+				base64[count++] = c;
+			}
+			return Convert.FromBase64CharArray(base64, 0, count);
+		}
+		catch (FormatException) { return null; }
+		finally { MemUtil.ZeroArray(base64); }
+	}
+
+	private static bool IsBase64Char(char c)
+		=> (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '+' || c == '/' || c == '=';
+
+	private static int IndexOf(byte[] haystack, byte[] needle, int start)
+	{
+		for (int i = start; i <= haystack.Length - needle.Length; i++)
+		{
+			int j = 0;
+			while (j < needle.Length && haystack[i + j] == needle[j]) j++;
+			if (j == needle.Length) return i;
+		}
+		return -1;
+	}
+
+	private static ProtectedString ExportPrivateKey(AsymmetricKeyParameter privateKey)
+	{
+		byte[] der = BuildPrivateKeyInfo(privateKey).GetEncoded();
+		byte[] pem = null;
+		try
+		{
+			pem = EncodePem(der, Pkcs8Label);
+			return new ProtectedString(true, pem);
+		}
+		finally
+		{
+			MemUtil.ZeroByteArray(der);
+			if (pem != null) MemUtil.ZeroByteArray(pem);
+		}
+	}
+
+	// Always PKCS#8 ("BEGIN PRIVATE KEY"): KeePassXC/Botan accept nothing else.
+	private static PrivateKeyInfo BuildPrivateKeyInfo(AsymmetricKeyParameter privateKey)
+	{
 		if (privateKey is Ed25519PrivateKeyParameters edKey)
 		{
 			// PrivateKeyInfoFactory.CreatePrivateKeyInfo(Ed25519PrivateKeyParameters) produces PKCS#8 v1
 			// with [1] public key - KeePassXC/Botan only accept v0 without the embedded public key.
-			var pki = new Org.BouncyCastle.Asn1.Pkcs.PrivateKeyInfo(
+			return new PrivateKeyInfo(
 				new AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519),
 				new DerOctetString(edKey.GetEncoded()));
-			new PemWriter(sw).WriteObject(pki);
 		}
-		else if (privateKey is RsaPrivateCrtKeyParameters rsaKey)
+		if (privateKey is RsaPrivateCrtKeyParameters rsaKey)
 		{
-			// PemWriter.WriteObject(RsaPrivateCrtKeyParameters) produces "BEGIN RSA PRIVATE KEY"
-			// (PKCS#1 format) - KeePassXC/Botan only accept "BEGIN PRIVATE KEY" (PKCS#8).
-			var rsaStruct = new Org.BouncyCastle.Asn1.Pkcs.RsaPrivateKeyStructure(
+			var rsaStruct = new RsaPrivateKeyStructure(
 				rsaKey.Modulus, rsaKey.PublicExponent, rsaKey.Exponent,
 				rsaKey.P, rsaKey.Q, rsaKey.DP, rsaKey.DQ, rsaKey.QInv);
-			var algId = new AlgorithmIdentifier(
-				Org.BouncyCastle.Asn1.Pkcs.PkcsObjectIdentifiers.RsaEncryption,
-				DerNull.Instance);
-			var pki = new Org.BouncyCastle.Asn1.Pkcs.PrivateKeyInfo(algId, rsaStruct.ToAsn1Object());
-			WritePem(sw, "PRIVATE KEY", pki.GetEncoded());
+			var algId = new AlgorithmIdentifier(PkcsObjectIdentifiers.RsaEncryption, DerNull.Instance);
+			return new PrivateKeyInfo(algId, rsaStruct.ToAsn1Object());
 		}
-		else if (privateKey is ECPrivateKeyParameters ecKey)
+		if (privateKey is ECPrivateKeyParameters ecKey)
 		{
-			// PemWriter.WriteObject(ECPrivateKeyParameters) produces "BEGIN EC PRIVATE KEY"
-			// (SEC1 format) - KeePassXC/Botan only accept "BEGIN PRIVATE KEY" (PKCS#8).
 			var q = ecKey.Parameters.G.Multiply(ecKey.D).Normalize();
 			var ecStruct = new ECPrivateKeyStructure(
 				ecKey.Parameters.N.BitLength,
 				ecKey.D,
 				new DerBitString(q.GetEncoded(false)), // uncompressed public key [1]
 				null);                                  // no [0] - curve OID is in AlgorithmIdentifier
-			var algId = new AlgorithmIdentifier(
-				X9ObjectIdentifiers.IdECPublicKey,
-				P256Oid);
-			var pki = new Org.BouncyCastle.Asn1.Pkcs.PrivateKeyInfo(algId, ecStruct.ToAsn1Object());
-			WritePem(sw, "PRIVATE KEY", pki.GetEncoded());
+			var algId = new AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, P256Oid);
+			return new PrivateKeyInfo(algId, ecStruct.ToAsn1Object());
 		}
-		else
-		{
-			new PemWriter(sw).WriteObject(PrivateKeyInfoFactory.CreatePrivateKeyInfo(privateKey));
-		}
-
-		return sw.ToString();
+		return PrivateKeyInfoFactory.CreatePrivateKeyInfo(privateKey);
 	}
 
-	private static void WritePem(StringWriter sw, string type, byte[] der)
+	// One exactly sized buffer, so a growing buffer leaves no partial copies of the key behind.
+	internal static byte[] EncodePem(byte[] der, string label)
 	{
-		sw.WriteLine($"-----BEGIN {type}-----");
-		var b64 = Convert.ToBase64String(der);
-		for (int i = 0; i < b64.Length; i += 64)
-			sw.WriteLine(b64.Substring(i, Math.Min(64, b64.Length - i)));
-		sw.WriteLine($"-----END {type}-----");
+		const string NewLine = "\r\n";
+		string header = "-----BEGIN " + label + "-----" + NewLine;
+		string footer = "-----END " + label + "-----" + NewLine;
+
+		char[] base64 = new char[(der.Length + 2) / 3 * 4];
+		try
+		{
+			Convert.ToBase64CharArray(der, 0, der.Length, base64, 0);
+			int lineCount = (base64.Length + 63) / 64;
+			var pem = new byte[header.Length + base64.Length + lineCount * NewLine.Length + footer.Length];
+
+			int pos = Encoding.ASCII.GetBytes(header, 0, header.Length, pem, 0);
+			for (int i = 0; i < base64.Length; i += 64)
+			{
+				int len = Math.Min(64, base64.Length - i);
+				for (int j = 0; j < len; j++)
+					pem[pos++] = (byte)base64[i + j];
+				pem[pos++] = (byte)'\r';
+				pem[pos++] = (byte)'\n';
+			}
+			Encoding.ASCII.GetBytes(footer, 0, footer.Length, pem, pos);
+			return pem;
+		}
+		finally { MemUtil.ZeroArray(base64); }
 	}
 }

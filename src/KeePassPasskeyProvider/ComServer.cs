@@ -3,6 +3,7 @@
 using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
+using KeePassPasskeyProvider.App;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.Util;
@@ -39,6 +40,9 @@ internal static class ComServer
 		Log.Info($"registered class factory cookie={cookie}");
 
 		PluginRegistration.EnsureRegistered();
+
+		// Get the UI stack up before the platform asks for a ceremony; a cold start costs seconds.
+		PromptHost.WarmUp();
 
 		// Capture main thread ID so the idle timer can post WM_QUIT here to wake GetMessage.
 		uint mainThreadId = Win32Native.GetCurrentThreadId();

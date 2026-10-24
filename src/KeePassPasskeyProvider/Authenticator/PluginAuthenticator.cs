@@ -1,5 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
+using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using System.Text;
 using KeePassPasskeyShared;
@@ -13,15 +14,19 @@ namespace KeePassPasskeyProvider.Authenticator;
 
 /// <summary>
 /// Managed implementation of IPluginAuthenticator.
-/// Each COM activation creates one instance; CancelOperation sets m_cancelled.
 /// </summary>
 #pragma warning disable CA1725 // "Raw" suffix frees the interface's name for the typed pointer cast from it.
 [ComVisible(true)]
 [ClassInterface(ClassInterfaceType.None)]
 public sealed class PluginAuthenticator : IPluginAuthenticator
 {
-	private volatile bool _cancelled;
-	private Guid _currentTransactionId;
+	// Every COM activation creates its own instance, so a cancel can land on a different one than the
+	// operation it aborts. Keyed per process by transaction id, any instance can reach any operation.
+	private static readonly ConcurrentDictionary<Guid, InFlightOperation> _operations = new();
+
+	/// <param name="EncodedRequest">Kept because the platform signs a cancel over it, not over the transaction id.</param>
+	private sealed record InFlightOperation(CancellationTokenSource Cancellation, byte[] EncodedRequest);
+
 	private readonly PipeClient _pipeClient = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient)));
 
 	// null = unknown (first call), true = last ping succeeded, false = last ping failed
@@ -41,11 +46,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
 		*pResponse = default;
 
+		Guid transactionId = pRequest->transactionId;
+
 		ComActivity.EnterOperation();
 		try
 		{
-			_cancelled = false;
-			_currentTransactionId = pRequest->transactionId;
+			var cts = BeginOperation(transactionId, pRequest->pbEncodedRequest, pRequest->cbEncodedRequest);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -67,7 +73,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
 				if (sigResult < 0) return sigResult;
 
-				if (_cancelled) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
+				if (cts.IsCancellationRequested) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
 
 				// 3. Build JSON request for KeePass
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -75,7 +81,8 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				CtapRequestDump.LogRequest(pDecoded);
 
 				// Always return "none"; warn when a site asks for enterprise attestation so a rejection is traceable.
-				if (pDecoded->dwEnterpriseAttestation != WebAuthnConstants.EnterpriseAttestationNone)
+				bool enterpriseAttestation = pDecoded->dwEnterpriseAttestation != WebAuthnConstants.EnterpriseAttestationNone;
+				if (enterpriseAttestation)
 					Log.Warn($"Relying party {rpIdUtf8} requested enterprise attestation ({pDecoded->dwEnterpriseAttestation}); KeePassPasskey can't provide this and will return none. The site may reject the passkey if enterprise attestation is required.");
 
 				string userIdB64 = string.Empty;
@@ -95,10 +102,10 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 					rpNameStr = new string(pDecoded->pRpInformation->pwszName);
 
 				// 3b. Check KeePass reachability before prompting for verification.
-				int hrReady = CheckKeePassReady("Passkey creation");
+				int hrReady = CheckKeePassReady("Passkey creation", cts.Token, out bool unlockedNow);
 				if (hrReady < HResults.S_OK) return hrReady;
 
-				// 3c. Fetch the open databases for the registration toast's database picker.
+				// 3c. Fetch the open databases for the registration prompt's database picker.
 				var dbResponse = _pipeClient.GetDatabases();
 				var databases = dbResponse?.Databases ?? new List<DatabaseInfo>();
 				if (databases.Count == 0)
@@ -111,7 +118,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var excludeList = ExtractCredentialIds(pDecoded->CredentialList);
 
 				// 3d. Look up candidate entries to save onto, only if that feature is enabled.
-				// The offer is made on the registration toast, so it needs the Notification verifier.
+				// The offer lives on the registration prompt, so it needs the confirmation prompt enabled.
 				IReadOnlyList<EntryMatchInfo> candidates = Array.Empty<EntryMatchInfo>();
 				if (KeePassPasskeySettings.Current.SaveToExistingEntry &&
 					KeePassPasskeySettings.Current.RegistrationVerification.HasFlag(UserVerificationMode.Notification))
@@ -123,7 +130,9 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
 				// 4. User verification
 				var (hrUv, targetDatabase, targetEntry) = UserVerifierDispatcher.VerifyForRegistration(
-					(nint)pRequest, pRequest->transactionId, rpIdUtf8, rpNameStr, userNameStr, rpNameStr, databases, candidates);
+					new RegistrationVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8,
+						userNameStr, databases, candidates, enterpriseAttestation),
+					unlockedNow, cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8} selectedDb={targetDatabase?.Id ?? "(none)"} targetEntry={targetEntry?.EntryUuid ?? "(none)"}");
 				if (hrUv < 0) return hrUv;
 
@@ -199,6 +208,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		finally
 		{
+			EndOperation(transactionId);
 			ComActivity.ExitOperation();
 		}
 	}
@@ -217,11 +227,12 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		var pResponse = (WebAuthnPluginOperationResponse*)pResponseRaw;
 		*pResponse = default;
 
+		Guid transactionId = pRequest->transactionId;
+
 		ComActivity.EnterOperation();
 		try
 		{
-			_cancelled = false;
-			_currentTransactionId = pRequest->transactionId;
+			var cts = BeginOperation(transactionId, pRequest->pbEncodedRequest, pRequest->cbEncodedRequest);
 			Log.Info("entry");
 
 			// 1. Decode CBOR request
@@ -244,7 +255,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
 				if (sigResult < 0) return sigResult;
 
-				if (_cancelled) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
+				if (cts.IsCancellationRequested) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
 
 				// 3. Extract fields
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -256,13 +267,19 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var allowList = ExtractCredentialIds(pDecoded->CredentialList);
 
 				// 3b. Check KeePass reachability before prompting for verification.
-				int hrReady = CheckKeePassReady("Sign-in");
+				int hrReady = CheckKeePassReady("Sign-in", cts.Token, out bool unlockedNow);
 				if (hrReady < HResults.S_OK) return hrReady;
 
 				// 4. User verification
-				CredentialCache.LookupWindowsCache(rpIdUtf8, allowList, out string uvUsername, out string uvDisplayHint);
-				Log.Info($"UV cache lookup userName={uvUsername} displayHint={uvDisplayHint}");
-				int hrUv = UserVerifierDispatcher.VerifyForSignIn((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername, uvDisplayHint);
+				var entry = LookupCredential(rpIdUtf8, allowList);
+				string uvUsername = entry?.UserName ?? string.Empty;
+				Log.Info($"credential lookup userName={uvUsername} title={entry?.Title ?? "(none)"}");
+
+				int hrUv = UserVerifierDispatcher.VerifyForSignIn(
+					new SignInVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername,
+						// Null only when there is no entry, so a titleless one stays tellable from none.
+						entry == null ? null : entry.Title ?? "", entry?.DatabaseName, entry?.Icon),
+					unlockedNow, cts.Token);
 				Log.Info($"UserVerification hr=0x{hrUv:X8}");
 				if (hrUv < 0) return hrUv;
 
@@ -326,28 +343,52 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		finally
 		{
+			EndOperation(transactionId);
 			ComActivity.ExitOperation();
 		}
 	}
 
-	/// <summary>IPluginAuthenticator.CancelOperation implementation. Verifies the cancel signature and sets the cancellation flag.</summary>
+	/// <summary>IPluginAuthenticator.CancelOperation implementation. Verifies the cancel signature and cancels the named operation.</summary>
 	public unsafe int CancelOperation(nint pCancelRequest)
 	{
 		ComActivity.MarkActivity();
 		if (pCancelRequest == 0) return HResults.E_INVALIDARG;
 
 		var pCancel = (WebAuthnPluginCancelOperationRequest*)pCancelRequest;
-		if (pCancel->transactionId != _currentTransactionId)
+		if (!_operations.TryGetValue(pCancel->transactionId, out var operation))
 			return HResults.NTE_NOT_FOUND;
 
-		int sigResult = SignatureVerifier.VerifyIfKeyAvailable(
-			(byte*)&pCancel->transactionId, (uint)sizeof(Guid),
-			pCancel->pbRequestSignature, pCancel->cbRequestSignature);
+		// The platform signs a cancel over the encoded request of the operation being cancelled, not
+		// over the transaction id, which only says which operation to stop. Undocumented; established
+		// by trying candidate payloads against a real cancel.
+		int sigResult;
+		fixed (byte* pbRequest = operation.EncodedRequest)
+		{
+			sigResult = SignatureVerifier.VerifyIfKeyAvailable(
+				pbRequest, (uint)operation.EncodedRequest.Length,
+				pCancel->pbRequestSignature, pCancel->cbRequestSignature);
+		}
 		Log.Info($"CancelOperation signature hr=0x{sigResult:X8}");
 		if (sigResult < 0) return sigResult;
 
-		_cancelled = true;
+		// The operation thread may have finished and disposed the source in the meantime.
+		try { operation.Cancellation.Cancel(); } catch (ObjectDisposedException) { }
 		return HResults.S_OK;
+	}
+
+	private static unsafe CancellationTokenSource BeginOperation(
+		Guid transactionId, byte* pbEncodedRequest, uint cbEncodedRequest)
+	{
+		var cts = new CancellationTokenSource();
+		if (_operations.TryRemove(transactionId, out var stale)) stale.Cancellation.Dispose();
+		_operations[transactionId] = new InFlightOperation(
+			cts, new ReadOnlySpan<byte>(pbEncodedRequest, (int)cbEncodedRequest).ToArray());
+		return cts;
+	}
+
+	private static void EndOperation(Guid transactionId)
+	{
+		if (_operations.TryRemove(transactionId, out var operation)) operation.Cancellation.Dispose();
 	}
 
 	/// <summary>
@@ -382,11 +423,15 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 	/// Pings KeePass to confirm it is reachable with an open database before the user is prompted
 	/// for verification, so both MakeCredential and GetAssertion fail fast (with a notification
 	/// already shown) instead of verifying first and only then discovering KeePass cannot proceed.
-	/// Returns S_OK when ready, otherwise the appropriate failure HRESULT.
+	/// A locked database is offered for unlocking first; <paramref name="unlockedNow"/> tells whether
+	/// that happened, since the user has then just verified themselves to KeePass.
+	/// Returns S_OK when ready, NTE_USER_CANCELLED when the operation was cancelled meanwhile (without a
+	/// notification, since nobody waits for it any more), otherwise the appropriate failure HRESULT.
 	/// </summary>
 	/// <param name="operation">Operation name used in the failure notification.</param>
-	private int CheckKeePassReady(string operation)
+	private int CheckKeePassReady(string operation, CancellationToken cancellation, out bool unlockedNow)
 	{
+		unlockedNow = false;
 		var ping = _pipeClient.Ping();
 		if (ping == null)
 		{
@@ -400,6 +445,17 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 			Log.Warn($"version mismatch clientVersion={PipeConstants.Version} serverVersion={ping.Version}");
 			Notifier.ShowVersionMismatch(operation, PipeConstants.Version, ping.Version);
 			return HResults.E_FAIL;
+		}
+
+		if (ping.Status == PingStatus.NoDatabase)
+		{
+			int hrUnlock = UnlockDatabase(cancellation, out bool unlocked);
+			if (hrUnlock < HResults.S_OK) return hrUnlock;
+			if (unlocked)
+			{
+				unlockedNow = true;
+				return HResults.S_OK;
+			}
 		}
 
 		if (ping.Status != PingStatus.Ready)
@@ -486,6 +542,79 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		=> cb > 0 && pb != null
 			? new ReadOnlySpan<byte>(pb, (int)cb).ToArray()
 			: Array.Empty<byte>();
+
+	/// <summary>
+	/// Asks KeePass to show its unlock prompt and waits until the user closes it. While KeePass shows
+	/// another dialog, possibly its own key prompt opened by the user, asks again until that has closed.
+	/// Stops waiting as soon as the operation is cancelled (browser cancel or timeout) and returns
+	/// NTE_USER_CANCELLED, so a late unlock does not continue a finished ceremony; the prompt itself
+	/// stays with KeePass. Otherwise S_OK, with <paramref name="unlocked"/> false when the database stays
+	/// locked, including with an older plugin that does not know the request.
+	/// </summary>
+	private int UnlockDatabase(CancellationToken cancellation, out bool unlocked)
+	{
+		unlocked = false;
+		Log.Info("database locked, asking KeePass to unlock");
+		bool loggedBusy = false;
+		bool bringToFront = true;
+		while (true)
+		{
+			bool first = bringToFront;
+			var request = Task.Run(() => _pipeClient.UnlockDatabase(first));
+			bringToFront = false;
+			try
+			{
+				request.Wait(cancellation);
+			}
+			catch (OperationCanceledException)
+			{
+				Log.Info("cancelled while waiting for the unlock");
+				return HResults.NTE_USER_CANCELLED;
+			}
+
+			var response = request.Result;
+			bool answered = response != null && response.ErrorCode == null;
+			unlocked = answered && response!.Unlocked;
+			if (!(answered && response!.Busy))
+			{
+				Log.Info($"unlocked={unlocked} error={response?.ErrorCode}");
+				break;
+			}
+
+			if (!loggedBusy)
+			{
+				Log.Info("KeePass is busy with a dialog, brought to the front, waiting for it to close");
+				loggedBusy = true;
+			}
+			if (cancellation.WaitHandle.WaitOne(BusyRetryIntervalMs))
+				break;
+		}
+
+		if (cancellation.IsCancellationRequested)
+		{
+			Log.Info("cancelled while waiting for the unlock");
+			unlocked = false;
+			return HResults.NTE_USER_CANCELLED;
+		}
+		return HResults.S_OK;
+	}
+
+	private const int BusyRetryIntervalMs = 500;
+
+	/// <summary>
+	/// The KeePass entry behind the credential, for the sign-in prompt's card. The Windows cache only
+	/// carries the user name, and it is a mirror that can lag behind a renamed entry.
+	/// </summary>
+	private CredentialInfo? LookupCredential(string rpId, List<string> allowList)
+	{
+		var response = _pipeClient.GetCredentials(new GetCredentialsRequest { RpId = rpId, AllowCredentials = allowList });
+		var credentials = response?.Credentials;
+		if (credentials == null || credentials.Count == 0) return null;
+
+		// With no allow list the platform picked a credential it does not name, so there is nothing to
+		// match on and the first is as good a guess as any. The plugin picks the one it signs with.
+		return credentials[0];
+	}
 
 	/// <summary>
 	/// Verifies the request signature by extracting fields from the request pointer.

@@ -1,61 +1,105 @@
 # KeePassPasskey
 
-[![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey) [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey?style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest)
+[![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey) [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey?style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="120" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
 
-**[Download](https://github.com/yusei36/KeePassPasskey/releases/latest)** | **[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | **[FAQ & Troubleshooting](docs/troubleshooting-faq.md)**
+**[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | **[FAQ & Troubleshooting](docs/troubleshooting-faq.md)**
 
-A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically - no browser extension required.
+A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically, no browser extension required.
 
 <img src="docs/images/passkey-creation-step2.png" width="450" alt="Windows passkey provider list with KeePassPasskey selected">
 
 ## Requirements
 
 - [KeePass](https://keepass.info/) 2.54 or later
-- Windows 11 24H2 or later, with TPM[*](docs/troubleshooting-faq.md#why-is-a-tpm-required) enabled
+- Windows 11 24H2 or later, with TPM[*](docs/troubleshooting-faq.md#why-is-a-tpm-required) enabled and Windows Hello[*](docs/troubleshooting-faq.md#why-is-windows-hello-required) set up
+
+**Limitations & unsupported passkey features:** attestation and the PRF extension. See [Limitations](docs/user-guide.md#limitations).
 
 ## How it works
 
-Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project implements that COM server and a KeePass plugin that handles the actual cryptography:
+When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry. If KeePass is locked, it asks you to unlock it first. Signing in takes the same path, with the entry already there. Keys never leave your database file, and all cryptography runs locally.
 
-```
-          Browser
-             ↕  (Windows WebAuthn API)
-          Windows
-             ↕  (COM)
-KeePassPasskeyProvider.exe
-             ↕  (Named pipe)
-    KeePassPasskey.dll
-             ↕  (KeePass entry)
-     KeePass Database
+<details>
+<summary><b>Diagram: where a passkey request goes</b></summary>
+
+```mermaid
+%%{init: {'flowchart': {'useMaxWidth': false}}}%%
+flowchart TB
+    Site["`**Website or app**
+you ask it for a passkey`"]
+    Win["`**Windows**
+offers your passkey providers`"]
+
+    subgraph KPP ["KeePassPasskey"]
+        Prompt["`**Passkey prompts**
+create and sign-in, you approve`"]
+        UI["`**App window**
+status, settings, plugin install`"]
+        Plug["`**KeePass plugin**
+creates the key and signs with it`"]
+    end
+
+    DB[("`**Your KeePass database**
+the passkey is a normal entry`")]
+
+    Site -->|Windows WebAuthn API| Win
+    Win -->|COM| Prompt
+    Prompt -->|named pipe| Plug
+    UI -->|named pipe| Plug
+    Plug -->|KPEX_PASSKEY_* fields| DB
+    Plug ==>|Windows credential cache| Win
 ```
 
-- **KeePassPasskeyProvider.exe** - COM server, MSIX-packaged, handles the Windows WebAuthn API surface and credential cache sync
-- **KeePassPasskey.dll** - KeePass plugin, handles key generation and signing, stores credentials in the open database
-- Credentials are stored in KeePassXC-compatible `KPEX_PASSKEY_*` fields, so they are readable by KeePassXC and vice versa
+</details>
+
+You meet KeePassPasskey twice: as the prompt you approve during a request, and as the app window you open yourself for status, settings and installing the plugin. Both are the same installed app, started two different ways, and neither runs permanently.
+
+So that Windows can offer your passkeys in its sign-in dialogs, the passkey metadata (site and user name, never the keys themselves) is written to the Windows credential cache as you open or save your database.
+
+Entries use KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePassXC can read them and vice versa.
+
+Under the hood, Windows 11 routes passkey operations through a COM server registered as a plugin authenticator. This project is both sides of that:
+
+- **KeePassPasskeyProvider.exe**: the MSIX-packaged provider. Windows cold-starts it per request and it self-exits when idle; the same binary hosts the app window and keeps the Windows credential cache in sync
+- **KeePassPasskey.dll**: the KeePass plugin. Generates and uses the keys, and stores them in the open database
 
 ## Installation
 
-### Option A - automatic (recommended)
+Install the app, add the plugin to KeePass, enable the provider in Windows. Each option below does those three things a different way, so choose the one you like most. Afterwards the [User Guide](docs/user-guide.md) walks you through creating and using your first passkey.
 
-1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
-2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
-3. Run `InstallMsix.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
-4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
-5. Both status indicators in the **KeePassPasskey** app should show green.
+### Option A - Microsoft Store (recommended)
+
+[<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
+
+1. Install [KeePassPasskey](https://apps.microsoft.com/detail/9nwnfhjpspgz) from the Microsoft Store and launch it.
+2. Follow the built-in **Setup Guide**: click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
+3. Continue the Setup Guide to open Windows **Advanced passkey options** and enable **KeePassPasskey**.
+4. Both status indicators in the **KeePassPasskey** app should show green.
 
 <img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
 
-### Option B - manual
+> [!NOTE]
+> The app updates automatically, the plugin does not. After the app moves to a newer version, KeePass offers to update the plugin at its next start, see [Updates](docs/user-guide.md#updates).
+
+Prefer the command line? `winget install --name "KeePassPasskey" --source msstore` installs the same package.
+
+### Option B - GitHub install with script
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
-2. Copy the `KeePassPasskeyPlugin` folder to your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\`) and (re)start KeePass.
-3. Trust the certificate: right-click `KeePassPasskey.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
-4. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
-5. Launch **KeePassPasskey** from the Start menu, click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+2. Run `InstallMsix.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
+3. In the app, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
+4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+5. Both status indicators in the **KeePassPasskey** app should show green.
+
+### Option C - GitHub manual installation
+
+1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
+2. Trust the certificate: right-click `KeePassPasskey.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
+3. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
+4. Launch **KeePassPasskey** from the Start menu, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
+5. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
 6. Both status indicators in the **KeePassPasskey** app should show green.
 7. (Optional) Remove the certificate: open **certlm.msc** → **Trusted People** → **Certificates**, find **KeePassPasskey**, and delete it. The certificate is only needed during installation.
-
-Once installed, see the [User Guide](docs/user-guide.md) to get started.
 
 ## Credential storage
 
@@ -77,7 +121,7 @@ Credentials created here can be read by KeePassXC and vice versa. Three algorith
 
 ## Security
 
-- All signing happens inside KeePass, so private keys are never sent over the pipe.
+- All signing happens inside KeePass, so private keys are never sent over the pipe. In KeePass they stay under its in-memory protection and are only decrypted for the signature itself, see [How is the private key protected?](docs/troubleshooting-faq.md#how-is-the-private-key-protected)
 - The KeePass plugin verifies the connecting COM server before any request is processed: in production (MSIX-installed) it checks the client's package family name and rejects non-MSIX processes.
 - The named pipe is restricted by ACL to the current user at medium integrity, so other users and lower-integrity processes cannot connect.
 
@@ -94,6 +138,7 @@ src/
   KeePassPasskeyShared/         IPC protocol definitions and shared helpers
   KeePassPasskeyProvider/       COM server (.NET 10, x64)
   KeePassPasskeyPlugin/         KeePass plugin (.NET Framework 4.8)
+  KeePassPasskeyPlugin.Tests/   Unit tests (xunit.v3)
   KeePassPasskeyProvider.Package/  MSIX packaging (wapproj)
 scripts/
   Install-Provider.ps1          Build, sign, and install the provider for local testing (requires elevation)
@@ -109,7 +154,7 @@ scripts/
 |---|---|
 | Visual Studio 2026 | With .NET desktop development workload |
 | Windows SDK 10.0.26100.7175+ | Required for wapproj build and code signing |
-| .NET 10 SDK | For KeePassPasskeyProvider |
+| .NET 10 SDK (10.0.400) | For KeePassPasskeyProvider |
 | .NET Framework 4.8 SDK | For KeePassPasskeyPlugin |
 | KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` - minimum supported version, used only for compilation |
 | KeePass.exe (current, for debugging) | Place at `build\KeePass\KeePass.exe` - your installed/current version, used to launch KeePass during development |
@@ -129,6 +174,12 @@ Then run the build script as Administrator - builds the MSIX, signs it, and inst
 ```
 
 Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass. Then click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+
+### Running the tests
+
+```powershell
+dotnet test --project src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj
+```
 
 ### Manual registration (CLI alternative)
 

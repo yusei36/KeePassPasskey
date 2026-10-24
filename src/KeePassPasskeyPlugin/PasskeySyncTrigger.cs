@@ -99,8 +99,8 @@ internal sealed class PasskeySyncTrigger : IDisposable
 	private void LaunchProviderSync()
 	{
 		// Debug launches the dev provider via its alias; Release refreshes every installed
-		// channel (GitHub + Store) by full install path. See ProviderSyncLauncher.
-		ProviderSyncLauncher.LaunchSync();
+		// channel (GitHub + Store) by full install path. See ProviderLauncher.
+		ProviderLauncher.LaunchSync();
 	}
 
 	private bool IsAnyDatabaseOpen()

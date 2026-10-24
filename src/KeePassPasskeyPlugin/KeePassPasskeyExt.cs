@@ -10,6 +10,7 @@ using KeePass.Plugins;
 using KeePassPasskey.Ipc;
 using KeePassPasskey.Storage;
 using KeePassPasskey.UI;
+using KeePassPasskey.Update;
 using KeePassPasskeyShared;
 
 namespace KeePassPasskey;
@@ -25,6 +26,7 @@ public sealed class KeePassPasskeyExt : Plugin
 	private PipeServer _pipeServer;
 	private PasskeySyncTrigger _syncTrigger;
 	private EntryMenuController _entryMenu;
+	private PluginUpdateChecker _updateChecker;
 
 	// Loaded once; MemoryStream kept open for GDI+ lifetime requirement.
 	private static readonly Image _smallIcon = LoadSmallIcon();
@@ -85,6 +87,8 @@ public sealed class KeePassPasskeyExt : Plugin
 					"KeePassPasskey could not claim its named pipe.",
 					"Another process is already using the passkey pipe name. Passkey operations are disabled until you close that process and restart KeePass.");
 			}
+
+			_updateChecker = new PluginUpdateChecker(_host, settingsStorage);
 		}
 		catch (Exception ex)
 		{
@@ -97,12 +101,39 @@ public sealed class KeePassPasskeyExt : Plugin
 
 	public override ToolStripMenuItem GetMenuItem(PluginMenuType t)
 	{
-		if (t != PluginMenuType.Entry) return null;
-		return _entryMenu?.GetEntryMenuItem();
+		if (t == PluginMenuType.Entry) return _entryMenu?.GetEntryMenuItem();
+		if (t == PluginMenuType.Main) return BuildToolsMenuItem();
+		return null;
+	}
+
+	private ToolStripMenuItem BuildToolsMenuItem()
+	{
+		if (_updateChecker == null) return null;
+
+		var settings = new ToolStripMenuItem("Passkey settings", KeePassIcons.Get("B16x16_Misc"));
+		settings.Click += (s, e) => OpenProviderSettings();
+
+		var update = new ToolStripMenuItem("Update plugin from installed app",
+			KeePassIcons.Get("B16x16_2UpArrow"));
+		update.Click += (s, e) => _updateChecker.Check(true);
+
+		var root = new ToolStripMenuItem("KeePassPasskey") { Image = _smallIcon };
+		root.DropDownItems.Add(settings);
+		root.DropDownItems.Add(update);
+		return root;
+	}
+
+	private static void OpenProviderSettings()
+	{
+		if (!ProviderLauncher.LaunchSettings())
+			KeePassLib.Utility.MessageService.ShowWarning("KeePassPasskey",
+				"The KeePassPasskey app could not be opened. It does not seem to be installed.");
 	}
 
 	public override void Terminate()
 	{
+		_updateChecker?.Dispose();
+		_updateChecker = null;
 		_entryMenu?.Dispose();
 		_entryMenu = null;
 		_syncTrigger?.Dispose();

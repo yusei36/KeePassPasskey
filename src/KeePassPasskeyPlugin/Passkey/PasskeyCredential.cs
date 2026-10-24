@@ -1,20 +1,21 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
-using KeePassPasskeyShared.Passkey;
+using KeePassLib.Security;
 
 namespace KeePassPasskey.Passkey;
 
 internal sealed class PasskeyCredential
 {
 	internal string CredentialId { get; set; }
-	internal string PrivateKeyPem { get; set; }
+	internal ProtectedString PrivateKey { get; set; }
 	internal string RelyingParty { get; set; }
 	internal string UserHandle { get; set; }
 	internal string Username { get; set; }
 	internal string Title { get; set; }
+	internal string DatabaseName { get; set; }
+	internal string Icon { get; set; }
 	internal string RpName { get; set; }
 	internal string Origin { get; set; }
-	internal PasskeyAlgorithm Algorithm { get; set; }
 	internal bool BackupEligible { get; set; } = true;
 	internal bool BackupState { get; set; } = true;
 }

@@ -16,8 +16,17 @@ public sealed partial class SettingsViewModel : ObservableObject
 {
 	[ObservableProperty]
 	[NotifyPropertyChangedFor(nameof(IsSaveToExistingEntryAvailable))]
+	[NotifyPropertyChangedFor(nameof(RegistrationWindowsHello))]
+	[NotifyPropertyChangedFor(nameof(RegistrationPrompt))]
+	[NotifyPropertyChangedFor(nameof(IsRegistrationSilent))]
 	public partial UserVerificationMode RegistrationVerification { get; set; }
-	[ObservableProperty] public partial UserVerificationMode SignInVerification { get; set; }
+	[ObservableProperty]
+	[NotifyPropertyChangedFor(nameof(SignInWindowsHello))]
+	[NotifyPropertyChangedFor(nameof(SignInPrompt))]
+	[NotifyPropertyChangedFor(nameof(IsSignInSilent))]
+	public partial UserVerificationMode SignInVerification { get; set; }
+	[ObservableProperty] public partial bool SkipWindowsHelloAfterUnlock { get; set; }
+	[ObservableProperty] public partial bool UseLegacyNotificationPrompts { get; set; }
 	[ObservableProperty] public partial bool ShowErrorNotifications { get; set; }
 	[ObservableProperty] public partial bool AddPasskeyTag { get; set; }
 	[ObservableProperty] public partial bool SaveToExistingEntry { get; set; }
@@ -28,11 +37,45 @@ public sealed partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] public partial double NotificationTimeoutSeconds { get; set; }
 	[ObservableProperty] public partial LogLevel LogLevel { get; set; }
 	[ObservableProperty] public partial bool SyncCredentialsToWindows { get; set; }
+	[ObservableProperty] public partial bool CheckForPluginUpdates { get; set; }
 	[ObservableProperty] public partial double StatusRefreshIntervalSeconds { get; set; }
 	[ObservableProperty] public partial bool NewPasskeyBackupEligible { get; set; }
 	[ObservableProperty] public partial bool NewPasskeyBackupState { get; set; }
 	public bool IsSaveToExistingEntryAvailable => RegistrationVerification.HasFlag(UserVerificationMode.Notification);
 
+	// One toggle per flag, with the enum staying the stored value.
+	public bool RegistrationWindowsHello
+	{
+		get => RegistrationVerification.HasFlag(UserVerificationMode.WindowsHello);
+		set => RegistrationVerification = WithFlag(RegistrationVerification, UserVerificationMode.WindowsHello, value);
+	}
+
+	public bool RegistrationPrompt
+	{
+		get => RegistrationVerification.HasFlag(UserVerificationMode.Notification);
+		set => RegistrationVerification = WithFlag(RegistrationVerification, UserVerificationMode.Notification, value);
+	}
+
+	public bool SignInWindowsHello
+	{
+		get => SignInVerification.HasFlag(UserVerificationMode.WindowsHello);
+		set => SignInVerification = WithFlag(SignInVerification, UserVerificationMode.WindowsHello, value);
+	}
+
+	public bool SignInPrompt
+	{
+		get => SignInVerification.HasFlag(UserVerificationMode.Notification);
+		set => SignInVerification = WithFlag(SignInVerification, UserVerificationMode.Notification, value);
+	}
+
+	public bool IsRegistrationSilent => RegistrationVerification == UserVerificationMode.None;
+	public bool IsSignInSilent => SignInVerification == UserVerificationMode.None;
+
+	public const string SilentVerificationWarning =
+		"Both are off, so passkey operations will complete without asking you.";
+
+	private static UserVerificationMode WithFlag(UserVerificationMode mode, UserVerificationMode flag, bool on)
+		=> on ? mode | flag : mode & ~flag;
 
 	// BS implies BE: turning eligibility off forces synced off.
 	partial void OnNewPasskeyBackupEligibleChanged(bool value)
@@ -178,7 +221,9 @@ public sealed partial class SettingsViewModel : ObservableObject
 	{
 		base.OnPropertyChanged(e);
 		if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme)
-				or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus) or nameof(IsSaveToExistingEntryAvailable)))
+				or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus) or nameof(IsSaveToExistingEntryAvailable)
+				or nameof(RegistrationWindowsHello) or nameof(RegistrationPrompt) or nameof(IsRegistrationSilent)
+				or nameof(SignInWindowsHello) or nameof(SignInPrompt) or nameof(IsSignInSilent)))
 			CheckForUnsavedChanges();
 	}
 
@@ -194,6 +239,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 	{
 		RegistrationVerification = RegistrationVerification,
 		SignInVerification = SignInVerification,
+		SkipWindowsHelloAfterUnlock = SkipWindowsHelloAfterUnlock,
+		UseLegacyNotificationPrompts = UseLegacyNotificationPrompts,
 		ShowErrorNotifications = ShowErrorNotifications,
 		AddPasskeyTag = AddPasskeyTag,
 		SaveToExistingEntry = SaveToExistingEntry,
@@ -204,21 +251,20 @@ public sealed partial class SettingsViewModel : ObservableObject
 		NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
 		LogLevel = LogLevel,
 		IsCredentialSyncEnabled = SyncCredentialsToWindows,
+		CheckForPluginUpdates = CheckForPluginUpdates,
 		StatusRefreshIntervalMilliseconds = (int)StatusRefreshIntervalSeconds * 1000,
 		NewPasskeyBackupEligible = NewPasskeyBackupEligible,
 		NewPasskeyBackupState = NewPasskeyBackupState && NewPasskeyBackupEligible, // BS implies BE
 	};
 
-	public static UserVerificationMode[] VerificationModes { get; } = Enum.GetValues<UserVerificationMode>();
 	public static PasskeyEntryGroupMode[] GroupModes { get; } = Enum.GetValues<PasskeyEntryGroupMode>();
 	public static ExcludeCredentialCheckMode[] ExcludeCredentialCheckModes { get; } = Enum.GetValues<ExcludeCredentialCheckMode>();
 	public static LogLevel[] LogLevels { get; } = Enum.GetValues<LogLevel>();
 	public static Theme[] Themes { get; } = Enum.GetValues<Theme>();
 	public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
-	public string AppVersionFull => DiagnosticsViewModel.ClientVersion;
-	public static bool IsOfficialRelease { get; } = CheckIsOfficialRelease();
+	public string AppVersionFull => DiagnosticsViewModel.ClientVersionWithChannel;
 
-	[ObservableProperty] public partial string VerifyReleaseMessage { get; set; } = "Release build";
+	[ObservableProperty] public partial string VerifyReleaseMessage { get; set; } = ChannelIcon.Description;
 	private static readonly string[] Principles = ["Its'y ywzxy. Ajwnkd.", "Xjqk-hzxyid.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjdx, sty dtzw fhhtzsyx.", "Xtajwjnls. Fqbfdx. Dtzwx."];
 	private int _verifyReleaseIndex = -1;
 
@@ -246,22 +292,6 @@ public sealed partial class SettingsViewModel : ObservableObject
 			}
 		}
 		return new string(result);
-	}
-
-	private static bool CheckIsOfficialRelease()
-	{
-		var version = DiagnosticsViewModel.ClientVersion;
-		if (version.Contains('-'))
-			return false;
-		try
-		{
-			return Authenticator.PluginConstants.IsOfficialPackageFamilyName(
-				Windows.ApplicationModel.Package.Current.Id.FamilyName);
-		}
-		catch
-		{
-			return false;
-		}
 	}
 
 	private static readonly string LicensePath =
@@ -390,6 +420,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 		_isLoading = true;
 		RegistrationVerification = c.RegistrationVerification;
 		SignInVerification = c.SignInVerification;
+		SkipWindowsHelloAfterUnlock = c.SkipWindowsHelloAfterUnlock;
+		UseLegacyNotificationPrompts = c.UseLegacyNotificationPrompts;
 		ShowErrorNotifications = c.ShowErrorNotifications;
 		AddPasskeyTag = c.AddPasskeyTag;
 		SaveToExistingEntry = c.SaveToExistingEntry;
@@ -400,6 +432,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 		NotificationTimeoutSeconds = c.NotificationVerificationTimeoutMilliseconds / 1000;
 		LogLevel = c.LogLevel;
 		SyncCredentialsToWindows = c.IsCredentialSyncEnabled;
+		CheckForPluginUpdates = c.CheckForPluginUpdates;
 		StatusRefreshIntervalSeconds = c.StatusRefreshIntervalMilliseconds / 1000;
 		NewPasskeyBackupEligible = c.NewPasskeyBackupEligible;
 		NewPasskeyBackupState = c.NewPasskeyBackupState && c.NewPasskeyBackupEligible;
@@ -430,17 +463,10 @@ public sealed partial class SettingsViewModel : ObservableObject
 			SettingsCache.Save(settings);
 			HasUnsavedChanges = false;
 
-			// Reflect the sync toggle in the Windows cache immediately: enabling reconciles it
-			// against the open databases, disabling clears it. The app is the packaged process, so
-			// it can call the WebAuthn cache APIs directly.
-			var clsid = Authenticator.PluginConstants.KeePassPasskeyProviderClsid;
-			await Task.Run(() =>
-			{
-				if (settings.IsCredentialSyncEnabled)
-					Authenticator.CredentialCache.SyncToWindowsCache(clsid);
-				else
-					Authenticator.CredentialCache.ClearWindowsCache(clsid);
-			});
+			// Reflect the change in the Windows cache immediately. The app is the packaged
+			// process, so it can call the WebAuthn cache APIs directly.
+			await Task.Run(() => Authenticator.CredentialCache.Refresh(
+				Authenticator.PluginConstants.KeePassPasskeyProviderClsid));
 		}
 		finally
 		{
