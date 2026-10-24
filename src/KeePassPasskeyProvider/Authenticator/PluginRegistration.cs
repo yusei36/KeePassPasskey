@@ -203,7 +203,7 @@ internal static unsafe class PluginRegistration
 			$"clsid={PluginConstants.KeePassPasskeyProviderClsid} " +
 			$"pluginRpId={PluginConstants.PluginRpId} " +
 			$"aaguid={aaguid}{(aaguid != AuthenticatorIdentity.DefaultAaguid ? $" (spoofed, default={AuthenticatorIdentity.DefaultAaguid})" : " (default)")} " +
-			$"versions=[FIDO_2_0,FIDO_2_1] extensions=[] transports=[internal]" +
+			$"versions=[FIDO_2_0,FIDO_2_1] extensions=[] transports=[internal] " +
 			$"algorithms=[ES256(-7),EdDSA(-8),RS256(-257)] options={{rk,up,uv}} " +
 			$"lightLogo={LogoResources.LightThemeSvg.Length}chars darkLogo={LogoResources.DarkThemeSvg.Length}chars");
 	}
