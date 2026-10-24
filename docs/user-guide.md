@@ -327,7 +327,7 @@ If your passkeys are not offered at sign-in, see [The website says there are no 
 
 **No attestation.** Some websites ask the authenticator for a certificate-signed proof (attestation) of which device created the passkey, so they can accept only approved hardware. KeePassPasskey creates every passkey without attestation, because it is software and has no manufacturer-signed key to prove anything with. Most websites do not ask for attestation, but the few that require it, usually workplace or government logins, will refuse the passkey. See [A site asks for enterprise attestation](troubleshooting-faq.md#a-site-asks-for-enterprise-attestation).
 
-**No PRF extension.** Some websites and apps use a passkey not only to sign in but also to derive an encryption key from it (the PRF extension), for example to unlock an encrypted vault without a password. KeePassPasskey cannot provide this yet: Windows does not currently pass a third-party passkey provider's PRF result on to the browser. Signing in with the passkey still works; only the encryption feature is unavailable, so you need the site's other unlock method, such as a master password.
+**No PRF extension.** Some websites and apps use a passkey not only to sign in but also to derive an encryption key from it (the PRF extension), for example to unlock an encrypted vault without a password. KeePassPasskey does not support this yet; progress is tracked in [issue #24](https://github.com/yusei36/KeePassPasskey/issues/24). Signing in with the passkey still works; only the encryption feature is unavailable, so you need the site's other unlock method, such as a master password.
 
 ## FAQ & Troubleshooting
 
