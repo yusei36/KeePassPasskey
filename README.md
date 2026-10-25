@@ -157,7 +157,7 @@ scripts/
 |---|---|
 | Visual Studio 2026 | With .NET desktop development workload |
 | Windows SDK 10.0.26100.7175+ | Required for wapproj build and code signing |
-| .NET 10 SDK (10.0.400) | For KeePassPasskeyProvider |
+| .NET 10 SDK (see `global.json`) | For KeePassPasskeyProvider |
 | .NET Framework 4.8 SDK | For KeePassPasskeyPlugin |
 | KeePass.exe (2.54, compile reference) | Place at `build\KeePass.exe` - minimum supported version, used only for compilation |
 | KeePass.exe (current, for debugging) | Place at `build\KeePass\KeePass.exe` - your installed/current version, used to launch KeePass during development |
