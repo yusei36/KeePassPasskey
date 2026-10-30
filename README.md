@@ -2,7 +2,7 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-yusei36%2FKeePassPasskey-black?logo=github&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey) [![GitHub Release](https://img.shields.io/github/v/release/yusei36/KeePassPasskey?include_prereleases&style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [![GitHub Release Date](https://img.shields.io/github/release-date-pre/yusei36/KeePassPasskey?style=for-the-badge)](https://github.com/yusei36/KeePassPasskey/releases/latest) [<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="120" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
 
-**[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | **[FAQ & Troubleshooting](docs/troubleshooting-faq.md)**
+**[Installation](#installation)** | **[User Guide](docs/user-guide.md)** | **[FAQ & Troubleshooting](docs/troubleshooting-faq.md)** | **[Corporate Deployment](docs/corporate-deployment.md)**
 
 A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. Websites and apps that support passkeys work automatically, no browser extension required.
 
@@ -13,9 +13,9 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 - [KeePass](https://keepass.info/) 2.54 or later
 - Windows 11 24H2 or later, with TPM[*](docs/troubleshooting-faq.md#why-is-a-tpm-required) enabled and Windows Hello[*](docs/troubleshooting-faq.md#why-is-windows-hello-required) set up
 
-**Limitations:**
+**Passkey limitations:**
 
-- No attestation (not possible, see [limitations](docs/user-guide.md#limitations))
+- No enterprise attestation, see [limitations](docs/user-guide.md#limitations)
 - No PRF yet, planned ([issue #24](https://github.com/yusei36/KeePassPasskey/issues/24))
 
 ## How it works
@@ -68,7 +68,7 @@ Under the hood, Windows 11 routes passkey operations through a COM server regist
 
 ## Installation
 
-Install the app, add the plugin to KeePass, enable the provider in Windows. Each option below does those three things a different way, so choose the one you like most. Afterwards the [User Guide](docs/user-guide.md) walks you through creating and using your first passkey.
+Install the app, add the plugin to KeePass, enable the provider in Windows. Each option below does those three things a different way, so choose the one you like most. Afterwards the [User Guide](docs/user-guide.md) walks you through creating and using your first passkey. Rolling it out on managed PCs? See the [Corporate Deployment guide](docs/corporate-deployment.md).
 
 ### Option A - Microsoft Store (recommended)
 
