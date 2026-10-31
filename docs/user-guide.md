@@ -209,6 +209,8 @@ Passkeys created by [KeePassXC](https://keepassxc.org/) are stored in the same f
 
 Open the KeePassPasskey app from the Start menu and navigate to **Settings**.
 
+If the page shows **Settings enforced by KeePass**, these settings come from KeePass's enforced configuration (`KeePass.config.enforced.xml`), usually set by your administrator, and can't be changed in the app. See [Preconfiguring settings](corporate-deployment.md#preconfiguring-settings).
+
 ### Appearance
 
 **Theme**: choose between System (follows Windows), Light, or Dark.

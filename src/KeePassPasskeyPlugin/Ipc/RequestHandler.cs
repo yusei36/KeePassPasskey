@@ -292,7 +292,11 @@ internal sealed class RequestHandler
 
 	private GetSettingsResponse HandleGetSettings(GetSettingsRequest req)
 	{
-		return new GetSettingsResponse { Settings = _settingsStorage.Load() };
+		return new GetSettingsResponse
+		{
+			Settings = _settingsStorage.Load(),
+			SettingsEnforced = _settingsStorage.IsEnforced,
+		};
 	}
 
 	private SaveSettingsResponse HandleSaveSettings(SaveSettingsRequest req)

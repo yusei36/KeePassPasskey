@@ -61,6 +61,13 @@
 								</StackPanel>
 						</Border>
 
+						<ui:FAInfoBar Title="Settings enforced by KeePass"
+													Message="These settings come from KeePass.config.enforced.xml and can't be changed here."
+													Severity="Warning"
+													IsOpen="{Binding SettingsEnforced}"
+													IsVisible="{Binding SettingsEnforced}"
+													IsClosable="False" />
+
 						<ui:FASettingsExpander Header="Appearance"
 																 IconSource="DarkTheme"
 																 Description="Application appearance and theme"
@@ -88,7 +95,7 @@
 																 Description="Confirmation prompts and user verification for passkey operations"
 																 IsExpanded="True">
 
-								<ui:FASettingsExpanderItem Content="Error notifications"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Error notifications"
 																				 Description="Show a detailed notification when a passkey error occurs (Windows always displays a generic error)">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding ShowErrorNotifications}"
@@ -98,7 +105,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Approval timeout"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Approval timeout"
 																				 Description="How long the confirmation prompt stays open">
 										<ui:FASettingsExpanderItem.Footer>
 												<ui:FANumberBox Value="{Binding NotificationTimeoutSeconds}"
@@ -112,7 +119,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem>
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}">
 										<ui:FASettingsExpanderItem.Content>
 												<StackPanel Spacing="0" Margin="0 4">
 														<StackPanel Spacing="2" Margin="0 0 0 6">
@@ -144,7 +151,7 @@
 										</ui:FASettingsExpanderItem.Content>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem>
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}">
 										<ui:FASettingsExpanderItem.Content>
 												<StackPanel Spacing="0" Margin="0 4">
 														<StackPanel Spacing="2" Margin="0 0 0 6">
@@ -176,7 +183,7 @@
 										</ui:FASettingsExpanderItem.Content>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Skip Windows Hello after unlocking KeePass"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Skip Windows Hello after unlocking KeePass"
 																				 Description="When KeePass was locked and you just unlocked it for this request, don't ask for Windows Hello again. Only applies while the confirmation prompt is on">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding SkipWindowsHelloAfterUnlock}"
@@ -193,7 +200,7 @@
 																 Description="How new passkey entries are created"
 																 IsExpanded="True">
 
-								<ui:FASettingsExpanderItem Content="Save new passkeys in"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Save new passkeys in"
 																				 Description="Passkeys group: the default group for passkeys.&#x0a;Selected group: the group selected in KeePass when creating the passkey.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ComboBox SelectedItem="{Binding NewEntryGroupMode}"
@@ -208,7 +215,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Entry title"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Entry title"
 																				 Description="Title for new entries. Supports {RP_NAME} and KeePass placeholders like {USERNAME} or {URL}.">
 										<ui:FASettingsExpanderItem.Footer>
 												<TextBox Text="{Binding EntryTitleTemplate}"
@@ -217,7 +224,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Store resolved title placeholders"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Store resolved title placeholders"
 																				 Description="On: placeholders are resolved and the final text is saved in the title. Off: KeePass resolves them each time the entry is shown. {RP_NAME} is always resolved on save.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding ResolveTitlePlaceholders}"
@@ -227,7 +234,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Tag new passkeys"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Tag new passkeys"
 																				 Description="Add a &quot;Passkey&quot; tag to each entry created when a new passkey is registered">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding AddPasskeyTag}"
@@ -237,7 +244,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Allow duplicate passkeys"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Allow duplicate passkeys"
 																				 Description="Where to enforce a website's request not to add a second passkey for an account it already has one for.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ComboBox SelectedItem="{Binding ExcludeCredentialCheckMode}"
@@ -259,7 +266,7 @@
 																 Description="Behaviour, timing and logging settings that are rarely changed"
 																 IsExpanded="False">
 
-								<ui:FASettingsExpanderItem Content="Log level"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Log level"
 																				 Description="Verbosity of the provider and plugin log files">
 										<ui:FASettingsExpanderItem.Footer>
 												<ComboBox SelectedItem="{Binding LogLevel}"
@@ -268,7 +275,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Status refresh interval"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Status refresh interval"
 																				 Description="How often the app polls for provider status">
 										<ui:FASettingsExpanderItem.Footer>
 												<ui:FANumberBox Value="{Binding StatusRefreshIntervalSeconds}"
@@ -282,7 +289,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Offer saving to an existing entry"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Offer saving to an existing entry"
 																				 Description="Offer to save a passkey onto a matching entry instead of always creating a new one. Requires the registration confirmation prompt.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding SaveToExistingEntry}"
@@ -293,7 +300,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Check for plugin updates"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Check for plugin updates"
 																			 Description="When KeePass starts, offer to update the plugin if this app ships a newer one. Every update is confirmed in a dialog.">
 									<ui:FASettingsExpanderItem.Footer>
 											<ToggleSwitch IsChecked="{Binding CheckForPluginUpdates}"
@@ -303,7 +310,7 @@
 									</ui:FASettingsExpanderItem.Footer>
 							</ui:FASettingsExpanderItem>
 
-							<ui:FASettingsExpanderItem Content="Use legacy notification prompts"
+							<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Use legacy notification prompts"
 																				 Description="Show confirmation prompts as Windows notifications instead of dialogs. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their pickers are limited to 5 items.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding UseLegacyNotificationPrompts}"
@@ -320,7 +327,7 @@
 																 Description="Advanced options for uncommon setups. Change only if you know why."
 																 IsExpanded="False">
 
-								<ui:FASettingsExpanderItem Content="Windows credential cache"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Windows credential cache"
 																				 Description="Lets your passkeys appear in the Windows sign-in prompt and autofill. Turning this off prevents passkey sign-in on most sites.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding SyncCredentialsToWindows}"
@@ -330,7 +337,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Backup Eligibility (BE)"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Backup Eligibility (BE)"
 																				 Description="When on, websites are told that a new passkey is allowed to be backed up and synced to your other devices. When off, they are told it is saved on a single device only.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding NewPasskeyBackupEligible}"
@@ -340,7 +347,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Backup State (BS)"
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Backup State (BS)"
 																				 Description="When on, websites are told that a new passkey is backed up right now. Only available while &quot;Backup Eligibility&quot; is on.">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding NewPasskeyBackupState}"
@@ -351,7 +358,7 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem>
+								<ui:FASettingsExpanderItem IsVisible="{Binding IsAaguidSpoofingAllowed}">
 										<ui:FASettingsExpanderItem.Content>
 												<StackPanel Spacing="8" Margin="0 4">
 														<StackPanel Spacing="2">

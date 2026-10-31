@@ -264,6 +264,9 @@ public sealed class GetSettingsResponse : PipeResponseBase
 
 	[JsonProperty("settings")]
 	public KeePassPasskeySettings Settings { get; set; }
+
+	[JsonProperty("settingsEnforced")]
+	public bool SettingsEnforced { get; set; }
 }
 
 public sealed class SaveSettingsResponse : PipeResponseBase

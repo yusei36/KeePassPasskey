@@ -104,6 +104,7 @@ internal static class Program
 		// EnsureRegistered is a cheap no-op when already registered; the cache APIs require the
 		// authenticator to be known to the platform.
 		PluginRegistration.EnsureRegistered();
+		AuthenticatorIdentity.RestoreDefaultIfSpoofingDisallowed();
 		CredentialCache.Refresh(PluginConstants.KeePassPasskeyProviderClsid);
 		return 0;
 	}

@@ -149,7 +149,7 @@ To **enforce** settings, add them to `KeePass.config.enforced.xml` next to `KeeP
 	<Custom>
 		<Item>
 			<Key>KeePassPasskey.Settings</Key>
-			<Value>{"registrationVerification":3,"signInVerification":3,"checkForPluginUpdates":false,"syncCredentialsToWindows":true}</Value>
+			<Value>{"registrationVerification":3,"signInVerification":3,"checkForPluginUpdates":false}</Value>
 		</Item>
 	</Custom>
 </Configuration>
@@ -157,8 +157,8 @@ To **enforce** settings, add them to `KeePass.config.enforced.xml` next to `KeeP
 
 Keep in mind:
 
-- **The value is all or nothing.** It holds every KeePassPasskey setting at once, so enforcing it locks all of them. Settings left out of the JSON fall back to their defaults.
-- **Changes in the app do not stick.** Users can still change settings in the app, but the enforced value is applied again at the next KeePass start.
+- **The value is all or nothing.** It holds every KeePassPasskey setting at once, so enforcing it locks all of them. Settings left out of the JSON fall back to their defaults, with one exception: the Spoof AAGUID option is turned off unless the JSON sets `"allowAaguidSpoofing":true`.
+- **Users cannot change them in the app.** The app's Settings page shows a **Settings enforced by KeePass** notice and greys out every setting stored in KeePass. A change saved by other means, such as an older version of the app, is stored in the user's configuration but not applied: KeePassPasskey keeps using the enforced values.
 - The JSON must be valid and XML-escaped where needed (`&`, `<`).
 - **Users must not be able to write to the KeePass folder**, or they can simply edit the enforced file. That rules out enforcing settings for KeePass Portable in a user-writable location.
 
@@ -173,10 +173,11 @@ The settings you are most likely to care about:
 | `newPasskeyBackupEligible`, `newPasskeyBackupState` | `true` | `true`, `false` | The backup flags written to new passkeys, see [Backup flags](#backup-flags-and-attestation) |
 | `logLevel` | `Info` | `Off`, `Error`, `Warn`, `Info`, `Debug` | Log verbosity |
 | `notificationVerificationTimeoutMilliseconds` | `60000` | number | How long the confirmation prompt waits |
+| `allowAaguidSpoofing` | `false` when enforced, otherwise `true` | `true`, `false` | `false` removes the [Spoof AAGUID](user-guide.md#spoof-aaguid) option, so new passkeys always report KeePassPasskey's own AAGUID. A value a user already applied is reset to the default the next time KeePass opens or saves a database. This setting has no control in the app and can only be set in the configuration file. Enforcing the settings turns it off unless the enforced JSON sets it to `true` |
 
 The full list of settings is described in [Settings](user-guide.md#settings) in the User Guide.
 
-Settings that belong to the app window only (theme, tray icon) and the [spoofed AAGUID](user-guide.md#spoof-aaguid) are stored per user in the app's own storage and cannot be preset this way.
+Settings that belong to the app window only (theme, tray icon) are stored per user in the app's own storage and cannot be preset this way.
 
 ## Security considerations
 

@@ -88,6 +88,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] public partial string SpoofAaguid { get; set; } = "";
 	[ObservableProperty] public partial bool IsApplyingAaguid { get; set; }
 	[ObservableProperty] public partial string SpoofAaguidStatus { get; set; } = "";
+	[ObservableProperty] public partial bool IsAaguidSpoofingAllowed { get; set; } = true;
 	private string? _storedSpoofAaguid;
 
 	public bool IsSpoofAaguidValid => string.IsNullOrWhiteSpace(SpoofAaguid) || Guid.TryParse(SpoofAaguid, out _);
@@ -154,6 +155,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
 	private void LoadAaguidFromStore()
 	{
+		IsAaguidSpoofingAllowed = KeePassPasskeySettings.Current.AllowAaguidSpoofing;
 		_storedSpoofAaguid = AuthenticatorSettingsStore.Load().SpoofAaguid;
 		SpoofAaguid = NormalizeAaguid(_storedSpoofAaguid);
 		SpoofAaguidStatus = "";
@@ -212,9 +214,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] public partial bool CanResetToDefaults { get; set; }
 	[ObservableProperty][NotifyPropertyChangedFor(nameof(CanSave))] public partial bool IsSaving { get; set; }
 	[ObservableProperty][NotifyPropertyChangedFor(nameof(CanSave))] public partial bool HasUnsavedChanges { get; set; }
-	public bool CanSave => HasUnsavedChanges && !IsSaving;
+	public bool CanSave => HasUnsavedChanges && !IsSaving && !SettingsEnforced;
 
-	private static readonly KeePassPasskeySettings DefaultSettings = new();
 	private bool _isLoading;
 
 	protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -230,12 +231,20 @@ public sealed partial class SettingsViewModel : ObservableObject
 	private void CheckForUnsavedChanges()
 	{
 		var current = BuildSettings();
+		var defaults = WithConfigOnlySettings(new KeePassPasskeySettings());
 		HasUnsavedChanges = !current.Equals(KeePassPasskeySettings.Current);
-		HasNonDefaultSettings = !current.Equals(DefaultSettings);
-		CanResetToDefaults = HasNonDefaultSettings && !KeePassPasskeySettings.Current.Equals(DefaultSettings);
+		HasNonDefaultSettings = !current.Equals(defaults);
+		CanResetToDefaults = HasNonDefaultSettings && !KeePassPasskeySettings.Current.Equals(defaults) && !SettingsEnforced;
 	}
 
-	private KeePassPasskeySettings BuildSettings() => new()
+	// Settings without a control on this page pass through unchanged, so a save never resets them.
+	private static KeePassPasskeySettings WithConfigOnlySettings(KeePassPasskeySettings settings)
+	{
+		settings.AllowAaguidSpoofing = KeePassPasskeySettings.Current.AllowAaguidSpoofing;
+		return settings;
+	}
+
+	private KeePassPasskeySettings BuildSettings() => WithConfigOnlySettings(new()
 	{
 		RegistrationVerification = RegistrationVerification,
 		SignInVerification = SignInVerification,
@@ -255,7 +264,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 		StatusRefreshIntervalMilliseconds = (int)StatusRefreshIntervalSeconds * 1000,
 		NewPasskeyBackupEligible = NewPasskeyBackupEligible,
 		NewPasskeyBackupState = NewPasskeyBackupState && NewPasskeyBackupEligible, // BS implies BE
-	};
+	});
 
 	public static PasskeyEntryGroupMode[] GroupModes { get; } = Enum.GetValues<PasskeyEntryGroupMode>();
 	public static ExcludeCredentialCheckMode[] ExcludeCredentialCheckModes { get; } = Enum.GetValues<ExcludeCredentialCheckMode>();
@@ -373,6 +382,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] public partial bool IsLoading { get; set; }
 	// Set when the on-entry pull from KeePass fails; the page shows a hint.
 	[ObservableProperty] public partial bool LoadFailed { get; set; }
+	// KeePass.config.enforced.xml sets the settings, so a save is stored but does not take effect.
+	[ObservableProperty][NotifyPropertyChangedFor(nameof(CanSave))] public partial bool SettingsEnforced { get; set; }
 
 	// Entering the page: block the UI and reload, overriding any stale in-progress edits.
 	internal async Task LoadOnEnterAsync()
@@ -394,11 +405,13 @@ public sealed partial class SettingsViewModel : ObservableObject
 
 		if (response == null || response.ErrorCode != null) return false;
 
+		SettingsEnforced = response.SettingsEnforced;
 		if (!response.Settings.Equals(KeePassPasskeySettings.Current))
 		{
 			KeePassPasskeySettings.Current = response.Settings;
 			SettingsCache.Save(response.Settings);
 		}
+		await Task.Run(Authenticator.AuthenticatorIdentity.RestoreDefaultIfSpoofingDisallowed);
 
 		// Re-check: the user may have started editing while the pipe call ran.
 		if (force || !HasUnsavedChanges)
@@ -459,9 +472,16 @@ public sealed partial class SettingsViewModel : ObservableObject
 				return;
 			}
 
-			KeePassPasskeySettings.Current = settings;
-			SettingsCache.Save(settings);
-			HasUnsavedChanges = false;
+			// Enforced: the plugin stored the save but still applies the enforced values, so take
+			// those back rather than caching values the provider must not act on.
+			if (SettingsEnforced)
+				await SyncFromKeePassAsync(force: true);
+			else
+			{
+				KeePassPasskeySettings.Current = settings;
+				SettingsCache.Save(settings);
+				HasUnsavedChanges = false;
+			}
 
 			// Reflect the change in the Windows cache immediately. The app is the packaged
 			// process, so it can call the WebAuthn cache APIs directly.
