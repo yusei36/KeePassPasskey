@@ -291,6 +291,17 @@ These control the **backup flags** (`BE`/`BS`) written to newly created passkeys
 
 These are the defaults for *new* passkeys. Each passkey stores its own `KPEX_PASSKEY_FLAG_BE`/`KPEX_PASSKEY_FLAG_BS` values, which are replayed on every sign-in. To change the flags on an existing passkey, edit those fields directly in the entry's **Advanced** tab in KeePass (`1` = on, `0` = off).
 
+#### Signing algorithms
+
+A website lists the signing algorithms it accepts when you create a passkey. KeePassPasskey supports three: **ES256** (EC P-256), **EdDSA** (Ed25519) and **RS256** (RSA-2048). A new passkey only ever uses an algorithm the website asked for; these settings choose between them when it offers more than one.
+
+- **Order**: **Use list order** (default) picks the topmost enabled algorithm in the list that the website accepts; use the arrows to reorder the list. **Keep website preference** picks the first enabled algorithm in the website's own preference order, which is what the passkey standard (CTAP2) specifies.
+- **On/off switches**: an algorithm that is off is never used for new passkeys, so if a website accepts only algorithms you turned off, creating a passkey there fails. At least one algorithm always stays on. The switches apply with either order.
+
+The default list is ES256, EdDSA, RS256.
+
+For example, to prefer EdDSA but still work everywhere, move EdDSA to the top. To use EdDSA only, turn ES256 and RS256 off. These settings affect new passkeys only; existing passkeys keep their algorithm and keep working.
+
 #### Spoof AAGUID
 
 The **AAGUID** is a fixed identifier that tells a website which authenticator created a passkey. By default KeePassPasskey reports its own AAGUID. This setting lets you override it, for example to report a neutral all-zero value or to match another authenticator model.

@@ -1,5 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -43,6 +44,14 @@ public class KeePassPasskeySettings
 	[JsonProperty("excludeCredentialCheckMode")]
 	[JsonConverter(typeof(StringEnumConverter))]
 	public ExcludeCredentialCheckMode ExcludeCredentialCheckMode { get; set; } = ExcludeCredentialCheckMode.TargetDatabase;
+
+	[JsonProperty("algorithmSelectionMode")]
+	[JsonConverter(typeof(StringEnumConverter))]
+	public AlgorithmSelectionMode AlgorithmSelectionMode { get; set; } = AlgorithmSelectionMode.PreferenceOrder;
+
+	// Replace, not Auto: Json.NET would otherwise append the stored list to the initialized defaults.
+	[JsonProperty("algorithmPreferences", ObjectCreationHandling = ObjectCreationHandling.Replace)]
+	public List<AlgorithmPreference> AlgorithmPreferences { get; set; } = AlgorithmPreference.CreateDefaults();
 
 	[JsonProperty("notificationVerificationTimeoutMilliseconds")]
 	public int NotificationVerificationTimeoutMilliseconds { get; set; } = 60_000;

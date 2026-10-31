@@ -1,5 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -34,6 +35,11 @@ public sealed partial class SettingsViewModel : ObservableObject
 	[ObservableProperty] public partial bool ResolveTitlePlaceholders { get; set; }
 	[ObservableProperty] public partial PasskeyEntryGroupMode NewEntryGroupMode { get; set; }
 	[ObservableProperty] public partial ExcludeCredentialCheckMode ExcludeCredentialCheckMode { get; set; }
+	[ObservableProperty]
+	[NotifyPropertyChangedFor(nameof(IsAlgorithmOrderEditable))]
+	public partial AlgorithmSelectionMode AlgorithmSelectionMode { get; set; }
+	public ObservableCollection<AlgorithmPreferenceViewModel> AlgorithmPreferences { get; } = [];
+	public bool IsAlgorithmOrderEditable => AlgorithmSelectionMode == AlgorithmSelectionMode.PreferenceOrder;
 	[ObservableProperty] public partial double NotificationTimeoutSeconds { get; set; }
 	[ObservableProperty] public partial LogLevel LogLevel { get; set; }
 	[ObservableProperty] public partial bool SyncCredentialsToWindows { get; set; }
@@ -81,6 +87,55 @@ public sealed partial class SettingsViewModel : ObservableObject
 	partial void OnNewPasskeyBackupEligibleChanged(bool value)
 	{
 		if (!value) NewPasskeyBackupState = false;
+	}
+
+	[RelayCommand]
+	private void MoveAlgorithmUp(AlgorithmPreferenceViewModel item) => MoveAlgorithm(item, -1);
+
+	[RelayCommand]
+	private void MoveAlgorithmDown(AlgorithmPreferenceViewModel item) => MoveAlgorithm(item, +1);
+
+	private void MoveAlgorithm(AlgorithmPreferenceViewModel item, int offset)
+	{
+		int from = AlgorithmPreferences.IndexOf(item);
+		int to = from + offset;
+		if (from < 0 || to < 0 || to >= AlgorithmPreferences.Count) return;
+		AlgorithmPreferences.Move(from, to);
+		UpdateAlgorithmStates();
+		CheckForUnsavedChanges();
+	}
+
+	private void LoadAlgorithmPreferences(IEnumerable<AlgorithmPreference> stored)
+	{
+		foreach (var item in AlgorithmPreferences)
+			item.PropertyChanged -= OnAlgorithmPreferenceChanged;
+		AlgorithmPreferences.Clear();
+		foreach (var p in AlgorithmPreference.Normalize(stored))
+		{
+			var item = new AlgorithmPreferenceViewModel(p.Algorithm, p.Enabled);
+			item.PropertyChanged += OnAlgorithmPreferenceChanged;
+			AlgorithmPreferences.Add(item);
+		}
+		UpdateAlgorithmStates();
+	}
+
+	private void OnAlgorithmPreferenceChanged(object? sender, PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName != nameof(AlgorithmPreferenceViewModel.Enabled)) return;
+		UpdateAlgorithmStates();
+		if (!_isLoading) CheckForUnsavedChanges();
+	}
+
+	private void UpdateAlgorithmStates()
+	{
+		int enabledCount = AlgorithmPreferences.Count(p => p.Enabled);
+		for (int i = 0; i < AlgorithmPreferences.Count; i++)
+		{
+			var item = AlgorithmPreferences[i];
+			item.CanToggle = !(item.Enabled && enabledCount == 1);
+			item.CanMoveUp = i > 0;
+			item.CanMoveDown = i < AlgorithmPreferences.Count - 1;
+		}
 	}
 
 	// Spoofed AAGUID. Device-local (AuthenticatorSettingsStore), not part of the KeePass-synced
@@ -257,6 +312,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 		ResolveTitlePlaceholders = ResolveTitlePlaceholders,
 		NewEntryGroupMode = NewEntryGroupMode,
 		ExcludeCredentialCheckMode = ExcludeCredentialCheckMode,
+		AlgorithmSelectionMode = AlgorithmSelectionMode,
+		AlgorithmPreferences = AlgorithmPreferences.Select(p => new AlgorithmPreference(p.Algorithm, p.Enabled)).ToList(),
 		NotificationVerificationTimeoutMilliseconds = (int)NotificationTimeoutSeconds * 1000,
 		LogLevel = LogLevel,
 		IsCredentialSyncEnabled = SyncCredentialsToWindows,
@@ -268,6 +325,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
 	public static PasskeyEntryGroupMode[] GroupModes { get; } = Enum.GetValues<PasskeyEntryGroupMode>();
 	public static ExcludeCredentialCheckMode[] ExcludeCredentialCheckModes { get; } = Enum.GetValues<ExcludeCredentialCheckMode>();
+	public static AlgorithmSelectionMode[] AlgorithmSelectionModes { get; } = Enum.GetValues<AlgorithmSelectionMode>();
 	public static LogLevel[] LogLevels { get; } = Enum.GetValues<LogLevel>();
 	public static Theme[] Themes { get; } = Enum.GetValues<Theme>();
 	public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
@@ -442,6 +500,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 		ResolveTitlePlaceholders = c.ResolveTitlePlaceholders;
 		NewEntryGroupMode = c.NewEntryGroupMode;
 		ExcludeCredentialCheckMode = c.ExcludeCredentialCheckMode;
+		AlgorithmSelectionMode = c.AlgorithmSelectionMode;
+		LoadAlgorithmPreferences(c.AlgorithmPreferences);
 		NotificationTimeoutSeconds = c.NotificationVerificationTimeoutMilliseconds / 1000;
 		LogLevel = c.LogLevel;
 		SyncCredentialsToWindows = c.IsCredentialSyncEnabled;

@@ -358,6 +358,77 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}">
+										<ui:FASettingsExpanderItem.Content>
+												<StackPanel Spacing="8" Margin="0 4">
+														<Grid ColumnDefinitions="*,Auto">
+																<StackPanel Spacing="2" VerticalAlignment="Center" Margin="0 0 16 0">
+																		<TextBlock Text="Signing algorithms" />
+																		<TextBlock Text="Which algorithm a new passkey gets when the website accepts several.&#x0a;A website that accepts only algorithms that are off can't create a passkey."
+																							 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+																							 FontSize="12"
+																							 TextWrapping="Wrap" />
+																</StackPanel>
+																<ComboBox Grid.Column="1"
+																					SelectedItem="{Binding AlgorithmSelectionMode}"
+																					ItemsSource="{Binding AlgorithmSelectionModes}"
+																					VerticalAlignment="Center"
+																					MinWidth="220">
+																		<ComboBox.ItemTemplate>
+																				<DataTemplate>
+																						<TextBlock Text="{Binding Converter={x:Static conv:AlgorithmSelectionModeConverters.Text}}" />
+																				</DataTemplate>
+																		</ComboBox.ItemTemplate>
+																</ComboBox>
+														</Grid>
+														<ItemsControl ItemsSource="{Binding AlgorithmPreferences}">
+																<ItemsControl.ItemTemplate>
+																		<DataTemplate x:DataType="vm:AlgorithmPreferenceViewModel">
+																				<Grid ColumnDefinitions="*,Auto,Auto,Auto" MinHeight="32">
+																						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+																								<TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+																								<TextBlock Text="{Binding Description}"
+																													 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+																													 FontSize="12"
+																													 VerticalAlignment="Center" />
+																						</StackPanel>
+																						<Button Grid.Column="1"
+																										Command="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).MoveAlgorithmUpCommand}"
+																										CommandParameter="{Binding}"
+																										IsEnabled="{Binding CanMoveUp}"
+																										IsVisible="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).IsAlgorithmOrderEditable}"
+																										ToolTip.Tip="Move up"
+																										Padding="8 3"
+																										VerticalAlignment="Center"
+																										Margin="0 0 4 0">
+																								<ui:FAFontIcon Glyph="&#xE70E;" FontSize="14" FontFamily="Segoe Fluent Icons" />
+																						</Button>
+																						<Button Grid.Column="2"
+																										Command="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).MoveAlgorithmDownCommand}"
+																										CommandParameter="{Binding}"
+																										IsEnabled="{Binding CanMoveDown}"
+																										IsVisible="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).IsAlgorithmOrderEditable}"
+																										ToolTip.Tip="Move down"
+																										Padding="8 3"
+																										VerticalAlignment="Center"
+																										Margin="0 0 8 0">
+																								<ui:FAFontIcon Glyph="&#xE70D;" FontSize="14" FontFamily="Segoe Fluent Icons" />
+																						</Button>
+																						<ToggleSwitch Grid.Column="3"
+																													IsChecked="{Binding Enabled}"
+																													IsEnabled="{Binding CanToggle}"
+																													OnContent="On"
+																													OffContent="Off"
+																													VerticalAlignment="Center"
+																													Margin="0 -6 4 -6" />
+																				</Grid>
+																		</DataTemplate>
+																</ItemsControl.ItemTemplate>
+														</ItemsControl>
+												</StackPanel>
+										</ui:FASettingsExpanderItem.Content>
+								</ui:FASettingsExpanderItem>
+
 								<ui:FASettingsExpanderItem IsVisible="{Binding IsAaguidSpoofingAllowed}">
 										<ui:FASettingsExpanderItem.Content>
 												<StackPanel Spacing="8" Margin="0 4">

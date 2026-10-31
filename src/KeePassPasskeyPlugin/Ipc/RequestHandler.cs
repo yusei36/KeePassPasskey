@@ -22,9 +22,6 @@ namespace KeePassPasskey.Ipc;
 
 internal sealed class RequestHandler
 {
-	private static readonly PasskeyAlgorithm[] SupportedAlgorithmsByPriority =
-		{ PasskeyAlgorithm.ES256, PasskeyAlgorithm.EdDSA, PasskeyAlgorithm.RS256 };
-
 	private readonly IPluginHost _host;
 	private readonly PasskeyEntryStorage _passkeyStorage;
 	private readonly SettingsStorage _settingsStorage;
@@ -198,10 +195,10 @@ internal sealed class RequestHandler
 		if (_passkeyStorage.HasExcludeCredential(req.RpId, req.ExcludeCredentials, req.TargetDatabase, req.TargetEntry))
 			return new MakeCredentialResponse { ErrorCode = PipeErrorCode.Duplicate, ErrorMessage = "Credential already exists for this RP" };
 
-		// Algorithm selection: ES256 > EdDSA > RS256, intersected with RP preference
-		var chosenAlg = SelectAlgorithm(req.PubKeyCredParams);
+		var settings = _settingsStorage.Load();
+		var chosenAlg = AlgorithmSelector.Select(req.PubKeyCredParams, settings.AlgorithmSelectionMode, settings.AlgorithmPreferences);
 		if (chosenAlg == null)
-			return new MakeCredentialResponse { ErrorCode = PipeErrorCode.UnsupportedAlgorithm, ErrorMessage = "No supported algorithm in pubKeyCredParams" };
+			return new MakeCredentialResponse { ErrorCode = PipeErrorCode.UnsupportedAlgorithm, ErrorMessage = "No enabled algorithm in pubKeyCredParams" };
 
 		// Generate key pair and COSE key
 		var (privateKey, pubComponents) = PasskeyKeyHelper.GenerateKeyPair(chosenAlg.Value);
@@ -214,7 +211,6 @@ internal sealed class RequestHandler
 		var credentialId = Base64Url.Encode(credentialIdBytes);
 
 		// Backup flags from settings (BS implies BE)
-		var settings = _settingsStorage.Load();
 		bool backupEligible = settings.NewPasskeyBackupEligible;
 		bool backupState = settings.NewPasskeyBackupState && backupEligible;
 
@@ -361,19 +357,5 @@ internal sealed class RequestHandler
 		foreach (var doc in _host.MainWindow.DocumentManager.Documents)
 			if (doc.Database != null && doc.Database.IsOpen) return true;
 		return _host.Database != null && _host.Database.IsOpen;
-	}
-
-	private static PasskeyAlgorithm? SelectAlgorithm(List<int> pubKeyCredParams)
-	{
-		if (pubKeyCredParams == null || pubKeyCredParams.Count == 0)
-			return PasskeyAlgorithm.ES256;
-
-		var requested = new HashSet<int>(pubKeyCredParams);
-		foreach (var alg in SupportedAlgorithmsByPriority)
-		{
-			if (requested.Contains((int)alg))
-				return alg;
-		}
-		return null;
 	}
 }
