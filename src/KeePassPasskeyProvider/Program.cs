@@ -99,11 +99,28 @@ internal static class Program
 	{
 		Log.Info($"/synccredential received (log level: {Log.MinLevel})");
 
+		RefreshSettingsFromKeePass();
+
 		// EnsureRegistered is a cheap no-op when already registered; the cache APIs require the
 		// authenticator to be known to the platform.
 		PluginRegistration.EnsureRegistered();
 		CredentialCache.Refresh(PluginConstants.KeePassPasskeyProviderClsid);
 		return 0;
+	}
+
+	private static void RefreshSettingsFromKeePass()
+	{
+		var response = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient))).GetSettings();
+		if (response == null || response.ErrorCode != null)
+		{
+			Log.Warn($"Could not refresh settings from KeePass, keeping the cached ones: {response?.ErrorMessage ?? "no response"}");
+			return;
+		}
+		if (response.Settings.Equals(KeePassPasskeySettings.Current)) return;
+
+		KeePassPasskeySettings.Current = response.Settings;
+		SettingsCache.Save(response.Settings);
+		Log.Info("Settings refreshed from KeePass");
 	}
 
 	private static bool IsToastActivation()
