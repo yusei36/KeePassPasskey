@@ -215,6 +215,8 @@ If the page shows **Settings enforced by KeePass**, these settings come from Kee
 
 **Theme**: choose between System (follows Windows), Light, or Dark.
 
+**Language**: the language of the app, its passkey prompts and its notifications. **Use Windows language** (the default) follows the Windows display language when KeePassPasskey has a translation for it, and English otherwise. The change applies right away; a passkey prompt that is already open keeps its language. The KeePass plugin's menus and dialogs follow the language set in KeePass instead (**View → Change Language** in KeePass).
+
 **System tray icon**: when enabled, closing the window keeps the app running in the tray. The passkey provider continues to work regardless of whether the app is open.
 
 ### Notifications & User Verification
@@ -276,7 +278,7 @@ Advanced options for uncommon setups. Leave them at their defaults unless you sp
 
 | Setting | Description |
 |---|---|
-| Windows credential cache | Make your passkeys appear in the Windows sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
+| Windows credential cache | Shares the website and user name of each passkey with Windows (never the keys themselves), so Windows can offer them in its sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
 
 Leave this **On**. It is the switch that puts your passkeys in front of Windows at all, so turning it off disables passkey sign-in almost everywhere. It is here for the rare case where you want KeePassPasskey installed but invisible to Windows.
 

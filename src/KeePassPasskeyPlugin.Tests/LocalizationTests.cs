@@ -19,10 +19,14 @@ public class LocalizationTests
 	private static readonly Regex Placeholder = new(@"\{(\d+)(?:[,:][^}]*)?\}", RegexOptions.Compiled);
 
 	[Fact]
-	public void Strings_WithoutTranslation_FallBackToEnglish()
+	public void Strings_ResolveGerman_AndFallBackToEnglish()
 	{
 		try
 		{
+			Localizer.Apply(CultureInfo.GetCultureInfo("de-DE"));
+			Assert.Equal("Passkey kopieren", Strings.KeePass_EntryMenu_Copy);
+			Assert.Equal("Das Plugin konnte nicht geschrieben werden.", Strings.Common_Install_Error_WriteFailed);
+
 			Localizer.Apply(CultureInfo.GetCultureInfo("fr"));
 			Assert.Equal("Copy Passkey", Strings.KeePass_EntryMenu_Copy);
 			Assert.Equal("The plugin could not be written.", Strings.Common_Install_Error_WriteFailed);
@@ -38,7 +42,7 @@ public class LocalizationTests
 	{
 		var rm = new EmbeddedResourceManager("KeePassPasskeyShared.Localization.Strings", typeof(Strings).Assembly);
 		Assert.Equal("Copy Passkey", rm.GetString(nameof(Strings.KeePass_EntryMenu_Copy), CultureInfo.InvariantCulture));
-		Assert.Equal("Copy Passkey", rm.GetString(nameof(Strings.KeePass_EntryMenu_Copy), CultureInfo.GetCultureInfo("de-AT")));
+		Assert.Equal("Passkey kopieren", rm.GetString(nameof(Strings.KeePass_EntryMenu_Copy), CultureInfo.GetCultureInfo("de-AT")));
 		Assert.Null(rm.GetString("No_Such_Key", CultureInfo.GetCultureInfo("de")));
 	}
 
