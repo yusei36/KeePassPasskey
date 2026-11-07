@@ -46,14 +46,38 @@ public class LocalizationTests
 		Assert.Null(rm.GetString("No_Such_Key", CultureInfo.GetCultureInfo("de")));
 	}
 
+	/// <summary>Iso6391Code and NameEnglish as the KeePass 2.x translation files report them.</summary>
 	[Theory]
-	[InlineData("", "en")]
-	[InlineData(null, "en")]
-	[InlineData("de", "de")]
-	[InlineData("xx-not-a-culture-zz", "en")]
-	public void PluginLanguage_Resolve(string? code, string expected)
+	[InlineData("", null, "en")]
+	[InlineData(null, null, "en")]
+	[InlineData("xx-not-a-culture-zz", "", "en")]
+	[InlineData("de", "German", "de")]
+	[InlineData("pt-BR", "Portuguese (Brazil)", "pt-BR")]
+	[InlineData("pt", "Portuguese", "pt")]
+	[InlineData("zh", "Chinese_Simplified", "zh-Hans")]
+	[InlineData("zh-tw", "Traditional Chinese", "zh-TW")]
+	[InlineData("sr", "Serbian Cyrillic", "sr-Cyrl")]
+	[InlineData("sr", "Serbian Latin", "sr-Latn")]
+	[InlineData("nb", "Norwegian Bokmal", "nb")]
+	public void PluginLanguage_Resolve(string? code, string? nameEnglish, string expected)
 	{
-		Assert.Equal(expected, PluginLanguage.Resolve(code!).Name);
+		Assert.Equal(expected, PluginLanguage.Resolve(code!, nameEnglish!).Name, ignoreCase: true);
+	}
+
+	/// <summary>A Simplified Chinese translation must reach KeePass in Simplified but not in Traditional Chinese.</summary>
+	[Fact]
+	public void PluginLanguage_ChineseScripts_StaySeparate()
+	{
+		Assert.Contains("zh-Hans", FallbackChain(PluginLanguage.Resolve("zh", "Chinese_Simplified")));
+		Assert.DoesNotContain("zh-Hans", FallbackChain(PluginLanguage.Resolve("zh-tw", "Traditional Chinese")));
+	}
+
+	private static List<string> FallbackChain(CultureInfo culture)
+	{
+		var chain = new List<string>();
+		for (var c = culture; !c.Equals(CultureInfo.InvariantCulture); c = c.Parent)
+			chain.Add(c.Name);
+		return chain;
 	}
 
 	public static IEnumerable<object[]> ResxFiles() =>
