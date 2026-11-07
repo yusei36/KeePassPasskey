@@ -66,6 +66,12 @@ Under the hood, Windows 11 routes passkey operations through a COM server regist
 - **KeePassPasskeyProvider.exe**: the MSIX-packaged provider. Windows cold-starts it per request and it self-exits when idle; the same binary hosts the app window and keeps the Windows credential cache in sync
 - **KeePassPasskey.dll**: the KeePass plugin. Generates and uses the keys, and stores them in the open database
 
+## Languages
+
+KeePassPasskey is available in English and German. The app and its passkey prompts follow your Windows display language; to use a different one, pick it under **Settings → Appearance → Language**. The KeePass plugin follows the language set in KeePass (**View → Change Language**). Anything not translated falls back to English.
+
+More languages are planned in [#49](https://github.com/yusei36/KeePassPasskey/issues/49): votes for a language and offers to review one are welcome. To contribute a translation yourself, see [Translating](#translating).
+
 ## Installation
 
 Install the app, add the plugin to KeePass, enable the provider in Windows. Each option below does those three things a different way, so choose the one you like most. Afterwards the [User Guide](docs/user-guide.md) walks you through creating and using your first passkey. Rolling it out on managed PCs? See the [Corporate Deployment guide](docs/corporate-deployment.md).
@@ -183,6 +189,12 @@ Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside yo
 ```powershell
 dotnet test --project src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.csproj
 ```
+
+### Translating
+
+All UI text of the app and the KeePass plugin lives in one file, `src/KeePassPasskeyShared/Localization/Strings.resx` (English), with one file per language next to it, e.g. `Strings.de.resx`. Keys are named after where the text appears: `App_` (app window), `Prompt_` (passkey prompts), `Notify_` (error notifications), `Tray_` (tray icon), `KeePass_` (plugin menus and dialogs inside KeePass) and `Common_` (used in several of these).
+
+To add a language, copy `Strings.resx` to `Strings.<language>.resx` (for example `Strings.fr.resx`), translate the `<value>` elements and keep `{0}`-style placeholders and `**marked**` parts intact; the `<comment>` elements explain them. Add the language code to `AppLanguage.Supported` in `src/KeePassPasskeyProvider/Localization/AppLanguage.cs` so it appears in the app's language list. Missing entries fall back to English, and the tests check that every translation uses the same keys and placeholders as the English file. Please open one pull request per language so native speakers can review it.
 
 ### Manual registration (CLI alternative)
 
