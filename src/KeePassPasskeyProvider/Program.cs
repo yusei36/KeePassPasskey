@@ -31,6 +31,7 @@ internal static class Program
 	{
 		KeePassPasskeySettings.Current = SettingsCache.TryLoad() ?? new KeePassPasskeySettings();
 		AppSettings.Current = AppSettings.TryLoad() ?? new AppSettings();
+		AppLanguage.Apply(AppSettings.Current.Language);
 
 		Log.Configure(
 			Path.Combine(AppPaths.LogDir, PluginConstants.ProviderLogFileName),

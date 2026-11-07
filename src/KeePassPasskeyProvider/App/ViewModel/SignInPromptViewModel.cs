@@ -25,9 +25,9 @@ public sealed partial class SignInPromptViewModel : PromptViewModelBase
 
 	internal SignInPromptViewModel(SignInVerification request)
 	{
-		WindowTitle = "Sign in with passkey";
-		ConfirmText = "Sign in";
-		SetSite($"{request.RpId} wants you to sign in", "", request.RpId);
+		WindowTitle = Strings.Prompt_SignIn_Title;
+		ConfirmText = Strings.Prompt_SignIn_ConfirmButton;
+		SetSite(Localizer.Format(Strings.Prompt_SignIn_Headline, request.RpId), "", request.RpId);
 
 		CredentialTitle = FirstNonEmpty(request.EntryTitle, request.UserName, request.RpId);
 		CredentialSubtitle = string.Equals(CredentialTitle, request.UserName, StringComparison.Ordinal)

@@ -12,16 +12,16 @@ internal static class Notifier
 	private static bool Enabled => KeePassPasskeySettings.Current.ShowErrorNotifications;
 
 	public static void ShowMakeCredentialError(string rpId, PipeErrorCode? code, string? errorMessage = null) =>
-		ShowError("Passkey creation failed", ErrorBody(code, rpId, errorMessage));
+		ShowError(Strings.Notify_Title_CreateFailed, ErrorBody(code, rpId, errorMessage));
 
 	public static void ShowGetAssertionError(string rpId, string username, PipeErrorCode? code, string? errorMessage = null) =>
-		ShowError("Sign-in failed", ErrorBody(code, rpId, errorMessage, username));
+		ShowError(Strings.Notify_Title_SignInFailed, ErrorBody(code, rpId, errorMessage, username));
 
-	public static void ShowPipeError(string operation) =>
-		ShowError($"{operation} failed", "KeePass is not running or the database is locked.");
+	public static void ShowPipeError(string failureTitle) =>
+		ShowError(failureTitle, Strings.Notify_Error_KeePassNotReady);
 
-	public static void ShowVersionMismatch(string operation, string? appVersion, string? pluginVersion) =>
-		ShowError($"{operation} failed", VersionMismatchBody(appVersion, pluginVersion));
+	public static void ShowVersionMismatch(string failureTitle, string? appVersion, string? pluginVersion) =>
+		ShowError(failureTitle, VersionMismatchBody(appVersion, pluginVersion));
 
 	internal static string VersionMismatchBody(string? appVersion, string? pluginVersion)
 	{
@@ -29,23 +29,27 @@ internal static class Notifier
 		string plugin = PipeConstants.StripBuildMetadata(pluginVersion ?? "");
 		int cmp = PipeConstants.CompareProductVersions(appVersion, pluginVersion);
 		if (cmp > 0)
-			return $"The KeePass plugin ({plugin}) is older than this app ({app}). Update the KeePassPasskey plugin in KeePass.";
+			return Localizer.Format(Strings.Common_Version_PluginOlder, plugin, app);
 		if (cmp < 0)
-			return $"This app ({app}) is older than the KeePass plugin ({plugin}). Update the KeePassPasskey app.";
-		return "The app and the KeePass plugin have incompatible versions. Update both to the latest version.";
+			return Localizer.Format(Strings.Common_Version_AppOlder, app, plugin);
+		return Strings.Common_Version_Incompatible;
 	}
 
 	private static string ErrorBody(PipeErrorCode? code, string rpId, string? errorMessage, string username = "")
 	{
+		// The plugin's errorMessage is English diagnostics, so it is only appended where no code says more.
 		var detail = string.IsNullOrWhiteSpace(errorMessage) ? "" : $"\n{errorMessage}";
-		string user = username.Length > 0 ? $" for {username}" : "";
 		return code switch
 		{
-			PipeErrorCode.DbLocked => "The KeePass database is locked. Please unlock KeePass and try again.",
-			PipeErrorCode.Duplicate => $"A passkey for {rpId} already exists.",
-			PipeErrorCode.NotFound => $"No passkey found{user} on {rpId}.",
-			PipeErrorCode.InternalError => "An internal error occurred in KeePass:" + detail,
-			_ => "An unexpected error occurred:" + detail,
+			PipeErrorCode.DbLocked => Strings.Notify_Error_DbLocked,
+			PipeErrorCode.Duplicate => Localizer.Format(Strings.Notify_Error_Duplicate, rpId),
+			PipeErrorCode.NotFound => username.Length > 0
+				? Localizer.Format(Strings.Notify_Error_NotFoundForUser, username, rpId)
+				: Localizer.Format(Strings.Notify_Error_NotFound, rpId),
+			PipeErrorCode.UnsupportedAlgorithm => Strings.Notify_Error_UnsupportedAlgorithm,
+			PipeErrorCode.IncompatibleVersion => Strings.Common_Version_Incompatible,
+			PipeErrorCode.InternalError => Strings.Notify_Error_Internal + detail,
+			_ => Strings.Notify_Error_Unexpected + detail,
 		};
 	}
 

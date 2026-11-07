@@ -27,7 +27,7 @@ public abstract partial class PromptViewModelBase : ObservableObject, IDisposabl
 	[ObservableProperty] public partial IBrush SiteTileBrush { get; set; } = Brushes.Gray;
 	[ObservableProperty] public partial double CountdownValue { get; set; } = 100;
 	[ObservableProperty] public partial string CountdownText { get; set; } = "";
-	[ObservableProperty] public partial string ConfirmText { get; set; } = "OK";
+	[ObservableProperty] public partial string ConfirmText { get; set; } = Strings.Common_OK;
 
 	/// <summary>True once the user confirmed; false for cancel, close and timeout alike.</summary>
 	public bool Approved { get; private set; }

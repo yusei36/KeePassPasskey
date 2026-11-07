@@ -23,6 +23,10 @@ internal sealed class AppSettings
 	[JsonProperty("theme")]
 	internal Theme Theme { get; set; } = Theme.System;
 
+	/// <summary>UI language as a culture name; null follows the Windows display language.</summary>
+	[JsonProperty("language", NullValueHandling = NullValueHandling.Ignore)]
+	internal string? Language { get; set; }
+
 	[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TrimMode=partial keeps our types intact; IsTrimmable=false keeps Json.NET intact.")]
 	internal static AppSettings? TryLoad()
 	{

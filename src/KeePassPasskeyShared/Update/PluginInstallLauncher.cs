@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using KeePassPasskeyShared.Localization;
 
 namespace KeePassPasskeyShared.Update;
 
@@ -61,7 +62,7 @@ public static class PluginInstallLauncher
 			return new PluginInstallOutcome
 			{
 				Result = PluginInstallResult.SourceMissing,
-				Error = "Installer script not found: " + scriptPath,
+				Error = Localizer.Format(Strings.Common_Install_Error_ScriptNotFound, scriptPath),
 			};
 		}
 
@@ -110,13 +111,13 @@ public static class PluginInstallLauncher
 		switch (result)
 		{
 			case PluginInstallResult.AccessDenied:
-				return "Access to the KeePass plugins folder was denied.";
+				return Strings.Common_Install_Error_AccessDenied;
 			case PluginInstallResult.SourceMissing:
-				return "The installed KeePassPasskey app does not contain a plugin to install.";
+				return Strings.Common_Install_Error_NoBundledPlugin;
 			case PluginInstallResult.TargetInvalid:
-				return "The chosen folder is not part of a KeePass installation.";
+				return Strings.Common_Install_Error_NotKeePassFolder;
 			default:
-				return "The plugin could not be written.";
+				return Strings.Common_Install_Error_WriteFailed;
 		}
 	}
 

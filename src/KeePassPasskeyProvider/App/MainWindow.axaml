@@ -2,6 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <ui:FAAppWindow xmlns="https://github.com/avaloniaui"
 							xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+							xmlns:loc="using:KeePassPasskeyShared.Localization"
 							xmlns:ui="using:FluentAvalonia.UI.Windowing"
 							xmlns:fa="using:FluentAvalonia.UI.Controls"
 							xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
@@ -19,18 +20,20 @@
 		<Grid RowDefinitions="Auto,Auto,*">
 				<!-- Dev build warning -->
 				<fa:FAInfoBar Grid.Row="0"
+										x:Name="DevBuildInfoBar"
 										Margin="8 4 8 0"
-										Title="Development build"
-										Message="This is a dev build with a separate identity, installed alongside any stable release. Not for production use."
+										Title="{x:Static loc:Strings.App_InfoBar_DevBuildTitle}"
+										Message="{x:Static loc:Strings.App_InfoBar_DevBuildMessage}"
 										Severity="Warning"
 										IsOpen="{Binding IsDevBuild}"
 										IsClosable="True" />
 
 				<!-- Not-packaged warning -->
 				<fa:FAInfoBar Grid.Row="1"
+										x:Name="NotPackagedInfoBar"
 										Margin="8 4 8 0"
-										Title="Not installed as package"
-										Message="Register and Unregister will not work correctly. Please install the MSIX package first."
+										Title="{x:Static loc:Strings.App_InfoBar_NotPackagedTitle}"
+										Message="{x:Static loc:Strings.App_InfoBar_NotPackagedMessage}"
 										Severity="Warning"
 										IsOpen="{Binding IsNotPackaged}"
 										IsClosable="True" />
@@ -44,15 +47,15 @@
 													 OpenPaneLength="200"
 													 IsPaneOpen="False">
 						<fa:FANavigationView.MenuItems>
-								<fa:FANavigationViewItem Content="Status"
+								<fa:FANavigationViewItem Content="{x:Static loc:Strings.App_Nav_Status}"
 																			 Tag="home"
 																			 IconSource="Home" />
-								<fa:FANavigationViewItem Content="Diagnostics"
+								<fa:FANavigationViewItem Content="{x:Static loc:Strings.App_Nav_Diagnostics}"
 																			 Tag="diagnostics"
 																			 IconSource="Repair" />
 						</fa:FANavigationView.MenuItems>
 						<fa:FANavigationView.FooterMenuItems>
-								<fa:FANavigationViewItem Content="Settings"
+								<fa:FANavigationViewItem Content="{x:Static loc:Strings.App_Nav_Settings}"
 																			 Tag="settings"
 																			 IconSource="Setting" />
 						</fa:FANavigationView.FooterMenuItems>

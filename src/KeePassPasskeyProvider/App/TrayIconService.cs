@@ -35,7 +35,15 @@ internal sealed class TrayIconService : IDisposable
 		_statusHero = statusHero;
 
 		_statusHero.PropertyChanged += OnStatusChanged;
+		AppLanguage.Changed += OnLanguageChanged;
 		CreateTrayIcon();
+	}
+
+	private void OnLanguageChanged(object? sender, EventArgs e)
+	{
+		if (_trayIcon == null) return;
+		_trayIcon.Menu = BuildContextMenu();
+		_trayIcon.ToolTipText = GetTooltip(_statusHero.Status);
 	}
 
 	private void CreateTrayIcon()
@@ -88,6 +96,7 @@ internal sealed class TrayIconService : IDisposable
 		if (_disposed) return;
 		_disposed = true;
 		_statusHero.PropertyChanged -= OnStatusChanged;
+		AppLanguage.Changed -= OnLanguageChanged;
 		if (Avalonia.Application.Current is { } app)
 			TrayIcon.SetIcons(app, null);
 		_trayIcon?.Dispose();
@@ -126,26 +135,26 @@ internal sealed class TrayIconService : IDisposable
 
 	private static string GetTooltip(ProviderStatus status) => status switch
 	{
-		ProviderStatus.Ready => "Ready",
-		ProviderStatus.KeePassNotConnected => "KeePass not connected",
-		ProviderStatus.NoDatabase => "No database open",
-		ProviderStatus.WaitingToBeEnabled => "Waiting to be enabled",
-		ProviderStatus.IncompatibleVersion => "Incompatible version",
-		ProviderStatus.VersionMismatch => "Version mismatch",
-		ProviderStatus.NotRegistered => "Not registered",
-		ProviderStatus.AutoregisterFailed => "Registration failed",
+		ProviderStatus.Ready => Strings.Tray_Tooltip_Ready,
+		ProviderStatus.KeePassNotConnected => Strings.Common_Status_KeePassNotConnected,
+		ProviderStatus.NoDatabase => Strings.Common_Status_NoDatabase,
+		ProviderStatus.WaitingToBeEnabled => Strings.Common_Status_WaitingToBeEnabled,
+		ProviderStatus.IncompatibleVersion => Strings.Common_Status_IncompatibleVersion,
+		ProviderStatus.VersionMismatch => Strings.Common_Status_VersionMismatch,
+		ProviderStatus.NotRegistered => Strings.Common_Status_NotRegistered,
+		ProviderStatus.AutoregisterFailed => Strings.Tray_Tooltip_RegistrationFailed,
 		_ => status.ToString(),
 	};
 
 	private NativeMenu BuildContextMenu()
 	{
-		var open = new NativeMenuItem("Open KeePassPasskey");
+		var open = new NativeMenuItem(Strings.Tray_Menu_Open);
 		open.Click += (_, _) => Dispatcher.UIThread.Post(ShowWindow);
 
-		var settings = new NativeMenuItem("Settings");
+		var settings = new NativeMenuItem(Strings.Tray_Menu_Settings);
 		settings.Click += (_, _) => Dispatcher.UIThread.Post(ShowSettings);
 
-		var exit = new NativeMenuItem("Exit");
+		var exit = new NativeMenuItem(Strings.Tray_Menu_Exit);
 		exit.Click += (_, _) =>
 		{
 			if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime d)

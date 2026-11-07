@@ -16,11 +16,11 @@ internal static class DialogService
 
 		var dialog = new FAContentDialog
 		{
-			Title = "Unsaved changes",
-			Content = "You have unsaved settings. Save them before leaving?",
-			PrimaryButtonText = "Save",
-			SecondaryButtonText = "Discard",
-			CloseButtonText = "Cancel",
+			Title = Strings.App_UnsavedChanges_Title,
+			Content = Strings.App_UnsavedChanges_Message,
+			PrimaryButtonText = Strings.Common_Save,
+			SecondaryButtonText = Strings.App_UnsavedChanges_DiscardButton,
+			CloseButtonText = Strings.Common_Cancel,
 			DefaultButton = FAContentDialogButton.Primary,
 		};
 
@@ -39,10 +39,10 @@ internal static class DialogService
 		var viewModel = new ViewModel.PluginInstallViewModel();
 		var dialog = new FAContentDialog
 		{
-			Title = "KeePass plugin",
+			Title = Strings.App_InstallDialog_Title,
 			Content = new Dialogs.PluginInstallDialog { DataContext = viewModel },
-			SecondaryButtonText = "Remove",
-			CloseButtonText = "Close",
+			SecondaryButtonText = Strings.App_InstallDialog_RemoveButton,
+			CloseButtonText = Strings.App_InstallDialog_CloseButton,
 		};
 
 		void SyncButtons()
@@ -84,7 +84,7 @@ internal static class DialogService
 		{
 			Title = title,
 			Content = message,
-			CloseButtonText = "OK",
+			CloseButtonText = Strings.Common_OK,
 			DefaultButton = FAContentDialogButton.Close,
 		};
 

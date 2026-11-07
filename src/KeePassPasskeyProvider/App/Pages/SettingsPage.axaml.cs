@@ -19,7 +19,6 @@ public partial class SettingsPage : UserControl
 	{
 		InitializeComponent();
 		DataContext = viewModel;
-		viewModel.PropertyChanged += OnViewModelPropertyChanged;
 	}
 
 	private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -34,6 +33,9 @@ public partial class SettingsPage : UserControl
 	protected override void OnLoaded(RoutedEventArgs e)
 	{
 		base.OnLoaded(e);
+		// Subscribed while shown only: a language switch replaces the page but keeps the view model.
+		if (DataContext is SettingsViewModel vm)
+			vm.PropertyChanged += OnViewModelPropertyChanged;
 		this.AddHandler(GotFocusEvent, OnAnyGotFocus, RoutingStrategies.Bubble);
 		this.AddHandler(KeyDownEvent, OnAnyKeyDown, RoutingStrategies.Tunnel);
 	}
@@ -41,6 +43,8 @@ public partial class SettingsPage : UserControl
 	protected override void OnUnloaded(RoutedEventArgs e)
 	{
 		base.OnUnloaded(e);
+		if (DataContext is SettingsViewModel vm)
+			vm.PropertyChanged -= OnViewModelPropertyChanged;
 		this.RemoveHandler(GotFocusEvent, OnAnyGotFocus);
 		this.RemoveHandler(KeyDownEvent, OnAnyKeyDown);
 		foreach (var nb in this.GetVisualDescendants().OfType<FANumberBox>())

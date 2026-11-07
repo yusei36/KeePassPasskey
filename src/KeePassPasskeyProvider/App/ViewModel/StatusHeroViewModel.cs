@@ -28,7 +28,10 @@ public sealed partial class StatusHeroViewModel : ObservableObject
 		RegisterCommand = register;
 		UnregisterCommand = unregister;
 		RefreshCommand = refresh;
+		AppLanguage.Changed += (_, _) => Subhead = ComputeSubhead();
 	}
+
+	private string? _pluginVersion;
 
 	internal void Update(
 		bool pluginRunning,
@@ -64,22 +67,28 @@ public sealed partial class StatusHeroViewModel : ObservableObject
 				: ProviderStatus.Ready,
 		};
 
-		Subhead = Status switch
-		{
-			ProviderStatus.AutoregisterFailed => "You can retry by clicking Register.",
-			ProviderStatus.NotRegistered => "Click Register to set up KeePassPasskey as your passkey provider.",
-			ProviderStatus.WaitingToBeEnabled => "Click Advanced Passkey Options below to enable KeePassPasskey.",
-			ProviderStatus.IncompatibleVersion => Notifier.VersionMismatchBody(DiagnosticsViewModel.ClientVersion, pluginVersion),
-			ProviderStatus.VersionMismatch => DiagnosticsViewModel.VersionDifferenceMessage(pluginVersion),
-			ProviderStatus.NoDatabase => "Open a KeePass database to use passkeys.",
-			ProviderStatus.KeePassNotConnected => "Start KeePass with the KeePassPasskey plugin installed.",
-			_ => "Provider is enabled and the KeePass plugin is running.",
-		};
+		_pluginVersion = pluginVersion;
+		Subhead = ComputeSubhead();
 
 		// On a version difference the bundled plugin only helps when the plugin is the older side.
 		ShowPluginFile = ProviderCommands.HasBundledPlugin
 			&& (Status == ProviderStatus.KeePassNotConnected
 				|| (Status is ProviderStatus.IncompatibleVersion or ProviderStatus.VersionMismatch
 					&& PipeConstants.CompareProductVersions(DiagnosticsViewModel.ClientVersion, pluginVersion) > 0));
+	}
+
+	private string ComputeSubhead()
+	{
+		return Status switch
+		{
+			ProviderStatus.AutoregisterFailed => Strings.App_Status_Hint_AutoregisterFailed,
+			ProviderStatus.NotRegistered => Strings.App_Status_Hint_NotRegistered,
+			ProviderStatus.WaitingToBeEnabled => Strings.App_Status_Hint_WaitingToBeEnabled,
+			ProviderStatus.IncompatibleVersion => Notifier.VersionMismatchBody(DiagnosticsViewModel.ClientVersion, _pluginVersion),
+			ProviderStatus.VersionMismatch => DiagnosticsViewModel.VersionDifferenceMessage(_pluginVersion),
+			ProviderStatus.NoDatabase => Strings.App_Status_Hint_NoDatabase,
+			ProviderStatus.KeePassNotConnected => Strings.App_Status_Hint_KeePassNotConnected,
+			_ => Strings.App_Status_Hint_Ready,
+		};
 	}
 }

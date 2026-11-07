@@ -54,9 +54,9 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 
 	public string FilterTooltip => Filter switch
 	{
-		PasskeyFilter.WithPasskey => "Showing only entries that already have a passkey",
-		PasskeyFilter.WithoutPasskey => "Showing only entries without a passkey",
-		_ => "Showing all entries",
+		PasskeyFilter.WithPasskey => Strings.Prompt_Register_FilterWithPasskey,
+		PasskeyFilter.WithoutPasskey => Strings.Prompt_Register_FilterWithoutPasskey,
+		_ => Strings.Prompt_Register_FilterAll,
 	};
 
 	public override bool CanConfirm => IsAddToExisting ? SelectedEntry != null : SelectedDatabase != null;
@@ -64,11 +64,11 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 	internal RegistrationPromptViewModel(RegistrationVerification request)
 	{
 		// rpId, not rpName: rpName is site-supplied and unverified.
-		WindowTitle = "Save passkey";
-		ConfirmText = "Save";
+		WindowTitle = Strings.Prompt_Register_Title;
+		ConfirmText = Strings.Common_Save;
 		ShowAttestationHint = request.EnterpriseAttestationRequested;
-		SetSite($"{request.RpId} wants to save a passkey",
-			request.UserName.Length > 0 ? $"as {request.UserName}" : "", request.RpId);
+		SetSite(Localizer.Format(Strings.Prompt_Register_Headline, request.RpId),
+			request.UserName.Length > 0 ? Localizer.Format(Strings.Prompt_Register_AsUser, request.UserName) : "", request.RpId);
 
 		Databases = request.Databases;
 		SelectedDatabase = request.Databases.Count > 0 ? request.Databases[0] : null;

@@ -97,7 +97,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 					rpNameStr = new string(pDecoded->pRpInformation->pwszName);
 
 				// 3b. Check KeePass reachability before prompting for verification.
-				int hrReady = CheckKeePassReady("Passkey creation", cts.Token, out bool unlockedNow);
+				int hrReady = CheckKeePassReady(Strings.Notify_Title_CreateFailed, cts.Token, out bool unlockedNow);
 				if (hrReady < HResults.S_OK) return hrReady;
 
 				// 3c. Fetch the open databases for the registration prompt's database picker.
@@ -106,7 +106,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				if (databases.Count == 0)
 				{
 					Log.Warn("no database open");
-					Notifier.ShowPipeError("Passkey creation");
+					Notifier.ShowPipeError(Strings.Notify_Title_CreateFailed);
 					return HResults.E_FAIL;
 				}
 
@@ -152,7 +152,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				if (response == null)
 				{
 					Log.Warn("pipe failed");
-					Notifier.ShowPipeError("Passkey creation");
+					Notifier.ShowPipeError(Strings.Notify_Title_CreateFailed);
 					return HResults.E_FAIL;
 				}
 
@@ -242,7 +242,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var allowList = ExtractCredentialIds(pDecoded->CredentialList);
 
 				// 3b. Check KeePass reachability before prompting for verification.
-				int hrReady = CheckKeePassReady("Sign-in", cts.Token, out bool unlockedNow);
+				int hrReady = CheckKeePassReady(Strings.Notify_Title_SignInFailed, cts.Token, out bool unlockedNow);
 				if (hrReady < HResults.S_OK) return hrReady;
 
 				// 4. User verification
@@ -272,7 +272,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				if (response == null)
 				{
 					Log.Warn("pipe failed");
-					Notifier.ShowPipeError("Sign-in");
+					Notifier.ShowPipeError(Strings.Notify_Title_SignInFailed);
 					return HResults.E_FAIL;
 				}
 
@@ -393,22 +393,22 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 	/// Returns S_OK when ready, NTE_USER_CANCELLED when the operation was cancelled meanwhile (without a
 	/// notification, since nobody waits for it any more), otherwise the appropriate failure HRESULT.
 	/// </summary>
-	/// <param name="operation">Operation name used in the failure notification.</param>
-	private int CheckKeePassReady(string operation, CancellationToken cancellation, out bool unlockedNow)
+	/// <param name="failureTitle">Title of the failure notification.</param>
+	private int CheckKeePassReady(string failureTitle, CancellationToken cancellation, out bool unlockedNow)
 	{
 		unlockedNow = false;
 		var ping = _pipeClient.Ping();
 		if (ping == null)
 		{
 			Log.Warn("ping pipe failed");
-			Notifier.ShowPipeError(operation);
+			Notifier.ShowPipeError(failureTitle);
 			return HResults.E_FAIL;
 		}
 
 		if (ping.Status == PingStatus.IncompatibleVersion)
 		{
 			Log.Warn($"version mismatch clientVersion={PipeConstants.Version} serverVersion={ping.Version}");
-			Notifier.ShowVersionMismatch(operation, PipeConstants.Version, ping.Version);
+			Notifier.ShowVersionMismatch(failureTitle, PipeConstants.Version, ping.Version);
 			return HResults.E_FAIL;
 		}
 
@@ -426,7 +426,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		if (ping.Status != PingStatus.Ready)
 		{
 			Log.Warn($"KeePass not ready status={ping.Status}");
-			Notifier.ShowPipeError(operation);
+			Notifier.ShowPipeError(failureTitle);
 			return HResults.E_FAIL;
 		}
 

@@ -9,7 +9,7 @@ internal static class AlgorithmSelectionModeConverters
 {
 	public static readonly IValueConverter Text = new LambdaConverter(v => (v as AlgorithmSelectionMode?) switch
 	{
-		AlgorithmSelectionMode.RelyingPartyOrder => "Keep website preference",
-		_ => "Use list order",
+		AlgorithmSelectionMode.RelyingPartyOrder => Strings.App_Settings_Algorithms_OptionWebsiteOrder,
+		_ => Strings.App_Settings_Algorithms_OptionListOrder,
 	});
 }

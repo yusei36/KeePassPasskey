@@ -30,7 +30,7 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
 	private static string SignInHint(SignInVerification request) => request.EntryTitle switch
 	{
 		null => request.RpId,
-		var title when string.IsNullOrWhiteSpace(title) => "(no title)",
+		var title when string.IsNullOrWhiteSpace(title) => Strings.Prompt_WindowsHello_NoTitle,
 		var title => title,
 	};
 

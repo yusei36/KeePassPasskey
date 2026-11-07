@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System;
 using System.IO;
+using KeePassPasskeyShared.Localization;
 using System.Runtime.InteropServices;
 
 namespace KeePassPasskeyShared.Update;
@@ -35,12 +36,12 @@ public static class PluginInstaller
 
 		if (string.IsNullOrEmpty(sourceDll) || !File.Exists(sourceDll))
 		{
-			error = "Bundled plugin not found: " + sourceDll;
+			error = Localizer.Format(Strings.Common_Install_Error_BundledPluginNotFound, sourceDll);
 			return PluginInstallResult.SourceMissing;
 		}
 		if (string.IsNullOrEmpty(targetDirectory))
 		{
-			error = "No target folder given.";
+			error = Strings.Common_Install_Error_NoTargetFolder;
 			return PluginInstallResult.TargetInvalid;
 		}
 
@@ -85,7 +86,7 @@ public static class PluginInstaller
 
 		if (string.IsNullOrEmpty(targetDirectory) || !Directory.Exists(targetDirectory))
 		{
-			error = "Folder not found: " + targetDirectory;
+			error = Localizer.Format(Strings.Common_Install_Error_FolderNotFound, targetDirectory);
 			return PluginInstallResult.TargetInvalid;
 		}
 

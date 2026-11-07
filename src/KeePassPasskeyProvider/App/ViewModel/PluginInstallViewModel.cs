@@ -29,9 +29,8 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 	[ObservableProperty] public partial bool IsBusy { get; set; }
 	[ObservableProperty] public partial string BusyText { get; set; } = "";
 
-	public string SourceCaption { get; } =
-		$"Installs from KeePassPasskey ({PluginConstants.ChannelDisplayName}) "
-		+ PipeConstants.StripBuildMetadata(PipeConstants.Version);
+	public string SourceCaption { get; } = Localizer.Format(Strings.App_InstallDialog_SourceCaption,
+		PluginConstants.ChannelDisplayName, PipeConstants.StripBuildMetadata(PipeConstants.Version));
 
 	public string SourcePath { get; } = ProviderCommands.BundledPluginDll ?? "";
 
@@ -42,9 +41,9 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 
 	public string PrimaryActionText => State switch
 	{
-		PluginInstallState.UpToDate => "Reinstall",
-		PluginInstallState.Outdated or PluginInstallState.Newer => "Update",
-		_ => "Install",
+		PluginInstallState.UpToDate => Strings.App_InstallDialog_ReinstallButton,
+		PluginInstallState.Outdated or PluginInstallState.Newer => Strings.App_InstallDialog_UpdateButton,
+		_ => Strings.App_InstallDialog_InstallButton,
 	};
 
 	/// <summary>Reinstalling an up-to-date file is a repair route, not something to invite.</summary>
@@ -63,9 +62,7 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 	{
 		var located = KeePassLocator.Locate();
 		_detectedFolder = located?.Directory ?? "";
-		_detectedSource = located != null
-			? "Detected from " + located.Source + "."
-			: "KeePass was not found. Enter or browse to its folder, or to its Plugins folder.";
+		_detectedSource = located?.Source ?? Strings.App_InstallDialog_Detected_NotFound;
 
 		SelectedFolder = _detectedFolder;
 		UpdateDetectionSource();
@@ -128,9 +125,8 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 			ShowCreateNote = false;
 			NeedsElevation = false;
 			StatusText = string.IsNullOrWhiteSpace(SelectedFolder)
-				? "No folder chosen."
-				: "This is not a KeePass folder or one of its plugin folders. "
-					+ "Point it at the KeePass folder or its Plugins subfolder.";
+				? Strings.App_InstallDialog_Status_NoFolder
+				: Strings.App_InstallDialog_Status_NotKeePassFolder;
 			return;
 		}
 
@@ -144,7 +140,7 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 		if (installed == null)
 		{
 			State = PluginInstallState.NotInstalled;
-			StatusText = "Not installed.";
+			StatusText = Strings.App_InstallDialog_Status_NotInstalled;
 			return;
 		}
 
@@ -157,9 +153,9 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 		};
 		StatusText = State switch
 		{
-			PluginInstallState.Outdated => $"Version {installed} is installed, {bundled} is available.",
-			PluginInstallState.Newer => $"Version {installed} is installed, which is newer than this app's {bundled}.",
-			_ => $"Version {installed} is installed and up to date.",
+			PluginInstallState.Outdated => Localizer.Format(Strings.App_InstallDialog_Status_Outdated, installed, bundled),
+			PluginInstallState.Newer => Localizer.Format(Strings.App_InstallDialog_Status_PluginNewer, installed, bundled),
+			_ => Localizer.Format(Strings.App_InstallDialog_Status_UpToDate, installed),
 		};
 	}
 
@@ -169,7 +165,8 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 		await RunAsync(() => PluginInstallLauncher.Install(
 			ProviderCommands.BundledPluginDll!,
 			_targetDirectory!,
-			ProviderCommands.InstallScript!), "installed", "Installing...");
+			ProviderCommands.InstallScript!), "installed", Strings.App_InstallDialog_Busy_Installing,
+			Strings.App_InstallDialog_Result_Installed, Strings.App_InstallDialog_Result_InstalledRestart);
 	}
 
 	[RelayCommand]
@@ -177,10 +174,12 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 	{
 		await RunAsync(() => PluginInstallLauncher.Remove(
 			_targetDirectory!,
-			ProviderCommands.InstallScript!), "removed", "Removing...");
+			ProviderCommands.InstallScript!), "removed", Strings.App_InstallDialog_Busy_Removing,
+			Strings.App_InstallDialog_Result_Removed, Strings.App_InstallDialog_Result_RemovedRestart);
 	}
 
-	private async Task RunAsync(Func<PluginInstallOutcome> action, string pastTense, string busyText)
+	private async Task RunAsync(Func<PluginInstallOutcome> action, string pastTense, string busyText,
+		string doneText, string doneRestartText)
 	{
 		BusyText = busyText;
 		IsBusy = true;
@@ -193,19 +192,17 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 			if (outcome.Cancelled)
 			{
 				ResultSeverity = FAInfoBarSeverity.Informational;
-				ResultMessage = "Cancelled at the administrator prompt. Nothing was changed.";
+				ResultMessage = Strings.App_InstallDialog_Result_Cancelled;
 			}
 			else if (outcome.Success)
 			{
 				ResultSeverity = FAInfoBarSeverity.Success;
-				ResultMessage = IsKeePassRunning()
-					? $"The plugin was {pastTense}. Restart KeePass to load the change."
-					: $"The plugin was {pastTense}.";
+				ResultMessage = IsKeePassRunning() ? doneRestartText : doneText;
 			}
 			else
 			{
 				ResultSeverity = FAInfoBarSeverity.Error;
-				ResultMessage = outcome.Error ?? "The plugin could not be written.";
+				ResultMessage = outcome.Error ?? Strings.Common_Install_Error_WriteFailed;
 			}
 		}
 		finally

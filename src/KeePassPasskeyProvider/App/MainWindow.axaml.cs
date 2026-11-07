@@ -38,6 +38,33 @@ public partial class MainWindow : FAAppWindow
 
 		WindowChrome.RemoveBorder(this);
 		WindowChrome.SetCloaked(this, true);
+
+		AppLanguage.Changed += OnLanguageChanged;
+		Closed += (_, _) => AppLanguage.Changed -= OnLanguageChanged;
+	}
+
+	// Views read their text once (x:Static), so they are rebuilt; the view models keep unsaved settings.
+	private void OnLanguageChanged(object? sender, EventArgs e)
+	{
+		DevBuildInfoBar.Title = Strings.App_InfoBar_DevBuildTitle;
+		DevBuildInfoBar.Message = Strings.App_InfoBar_DevBuildMessage;
+		NotPackagedInfoBar.Title = Strings.App_InfoBar_NotPackagedTitle;
+		NotPackagedInfoBar.Message = Strings.App_InfoBar_NotPackagedMessage;
+		foreach (var item in NavView.MenuItems.Concat(NavView.FooterMenuItems).OfType<FANavigationViewItem>())
+		{
+			item.Content = item.Tag?.ToString() switch
+			{
+				"home" => Strings.App_Nav_Status,
+				"diagnostics" => Strings.App_Nav_Diagnostics,
+				"settings" => Strings.App_Nav_Settings,
+				_ => item.Content,
+			};
+		}
+
+		_diagnosticsPage = null;
+		_settingsPage = null;
+		if (_currentItem != null && DataContext is MainWindowViewModel vm)
+			Navigate(_currentItem, vm, reloadSettings: false);
 	}
 
 	protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -147,7 +174,7 @@ public partial class MainWindow : FAAppWindow
 		Navigate(target, vm);
 	}
 
-	private void Navigate(FANavigationViewItem item, MainWindowViewModel vm)
+	private void Navigate(FANavigationViewItem item, MainWindowViewModel vm, bool reloadSettings = true)
 	{
 		vm.Diagnostics.LogPanel.IsLogVisible = false;
 		switch (item.Tag?.ToString())
@@ -162,7 +189,8 @@ public partial class MainWindow : FAAppWindow
 				break;
 			case "settings":
 				_settingsPage ??= new SettingsPage(vm.Settings);
-				_ = vm.Settings.LoadOnEnterAsync();
+				if (reloadSettings)
+					_ = vm.Settings.LoadOnEnterAsync();
 				NavView.Content = _settingsPage;
 				break;
 		}

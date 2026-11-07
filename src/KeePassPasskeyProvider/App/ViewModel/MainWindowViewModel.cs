@@ -98,7 +98,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 		if (hr < HResults.S_OK)
 		{
 			_autoregisterError = true;
-			await ShowPluginRegistrationErrorAsync("Register", hr);
+			await ShowPluginRegistrationErrorAsync(Strings.App_Registration_RegisterFailedTitle, Strings.App_Registration_RegisterFailedMessage, hr);
 		}
 		else
 		{
@@ -113,7 +113,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 		int hr = PluginRegistration.Unregister();
 		if (hr < HResults.S_OK)
 		{
-			await ShowPluginRegistrationErrorAsync("Unregister", hr);
+			await ShowPluginRegistrationErrorAsync(Strings.App_Registration_UnregisterFailedTitle, Strings.App_Registration_UnregisterFailedMessage, hr);
 		}
 		else
 		{
@@ -179,13 +179,8 @@ public sealed partial class MainWindowViewModel : ObservableObject
 		SetupGuide.IsReady = _pluginRunning && _providerEnabled;
 	}
 
-	private static Task ShowPluginRegistrationErrorAsync(string operation, int hr)
-	{
-		string title = $"{operation} failed";
-		string message =
-			$"Windows returned HRESULT 0x{hr:X8} while trying to {operation.ToLowerInvariant()} the passkey provider.";
-		return DialogService.ShowErrorAsync(title, message);
-	}
+	private static Task ShowPluginRegistrationErrorAsync(string title, string detailFormat, int hr) =>
+		DialogService.ShowErrorAsync(title, Localizer.Format(detailFormat, $"0x{hr:X8}"));
 
 	private static bool IsRunningAsPackage()
 	{

@@ -22,8 +22,8 @@ public static class ChannelIcon
 
 	public static string Description => PluginConstants.Channel switch
 	{
-		DistributionChannel.Store => "Installed from the Microsoft Store",
-		DistributionChannel.Dev => "Development build",
-		_ => "GitHub release",
+		DistributionChannel.Store => Strings.App_Channel_Store,
+		DistributionChannel.Dev => Strings.App_Channel_Dev,
+		_ => Strings.App_Channel_GitHub,
 	};
 }

@@ -41,15 +41,16 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		if (NotificationsDisabled()) return HResults.E_FAIL;
 
 		string site = request.RpId;
-		string user = request.UserName.Length > 0 ? $" for {request.UserName}" : "";
 		var candidateEntries = request.CandidateEntries;
 		bool hasCandidates = candidateEntries != null && candidateEntries.Count > 0;
 		string tag = request.TransactionId.ToString("N");
 
 		var (action, sel) = ShowRegistrationToast(
-			title: "Passkey creation requested",
-			body: $"Create a passkey{user} on {site}.",
-			confirmText: "Create passkey",
+			title: Strings.Prompt_Toast_Register_Title,
+			body: request.UserName.Length > 0
+				? Localizer.Format(Strings.Prompt_Toast_Register_BodyForUser, request.UserName, site)
+				: Localizer.Format(Strings.Prompt_Toast_Register_Body, site),
+			confirmText: Strings.Prompt_Toast_Register_ConfirmButton,
 			tag: tag,
 			databases: request.Databases,
 			offerAddToExisting: hasCandidates);
@@ -59,8 +60,8 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		if (action == RegistrationAction.AddToExisting)
 		{
 			var (entryAction, chosen) = ShowEntryPickerToast(
-				title: "Choose an entry to save to",
-				body: $"Create a passkey for {site}.",
+				title: Strings.Prompt_Toast_ChooseEntry_Title,
+				body: Localizer.Format(Strings.Prompt_Toast_ChooseEntry_Body, site),
 				tag: tag,
 				candidates: candidateEntries!);
 
@@ -84,14 +85,15 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 	{
 		if (NotificationsDisabled()) return HResults.E_FAIL;
 
-		string user = request.UserName.Length > 0 ? $" as {request.UserName}" : "";
 		string hint = !string.IsNullOrEmpty(request.EntryTitle) && request.EntryTitle != request.RpId
-			? $"KeePass entry: {request.EntryTitle}" : "";
+			? Localizer.Format(Strings.Prompt_Toast_SignIn_EntryHint, request.EntryTitle) : "";
 		return ShowToast(
-			title: "Authentication requested",
-			body: $"Sign in{user} on {request.RpId}.",
+			title: Strings.Prompt_Toast_SignIn_Title,
+			body: request.UserName.Length > 0
+				? Localizer.Format(Strings.Prompt_Toast_SignIn_BodyAsUser, request.UserName, request.RpId)
+				: Localizer.Format(Strings.Prompt_Toast_SignIn_Body, request.RpId),
 			hint: hint,
-			confirmText: "Approve",
+			confirmText: Strings.Prompt_Toast_SignIn_ConfirmButton,
 			tag: request.TransactionId.ToString("N")) ? HResults.S_OK : HResults.NTE_USER_CANCELLED;
 	}
 
@@ -153,7 +155,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			var selectionBox = new ToastSelectionBox(selectionBoxId)
 			{
 				DefaultSelectionBoxItemId = "0",
-				Title = "Save to database"
+				Title = Strings.Prompt_Toast_DatabasePicker
 			};
 			int dbCount = Math.Min(databases.Count, MaxToastSelectionItems);
 			for (int i = 0; i < dbCount; i++)
@@ -170,11 +172,11 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 		if (offerAddToExisting)
 			builder.AddButton(new ToastButton()
-				.SetContent("Add to existing")
+				.SetContent(Strings.Prompt_Register_AddToExisting)
 				.AddArgument("action", "existing"));
 
 		builder.AddButton(new ToastButton()
-			.SetContent("Cancel")
+			.SetContent(Strings.Common_Cancel)
 			.AddArgument("action", "deny"));
 
 		var toast = BuildToast(builder, tag, timeoutSeconds);
@@ -233,12 +235,12 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			.AddText(body);
 
 		if (truncated)
-			builder.AddText($"Showing {shown} of {candidates.Count} matching entries.");
+			builder.AddText(Localizer.Format(Strings.Prompt_Toast_EntriesTruncated, shown, candidates.Count));
 
 		var selectionBox = new ToastSelectionBox(selectionBoxId)
 		{
 			DefaultSelectionBoxItemId = "0",
-			Title = "Save to entry"
+			Title = Strings.Prompt_Toast_SaveToEntry
 		};
 		for (int i = 0; i < shown; i++)
 			selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(CultureInfo.InvariantCulture), EntryLabel(candidates[i], showDbName)));
@@ -248,13 +250,13 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 		builder.AddVisualChild(ProgressBar())
 			.AddButton(new ToastButton()
-				.SetContent("Save to entry")
+				.SetContent(Strings.Prompt_Toast_SaveToEntry)
 				.AddArgument("action", "allow"))
 			.AddButton(new ToastButton()
-				.SetContent("Create new")
+				.SetContent(Strings.Prompt_Register_CreateNew)
 				.AddArgument("action", "new"))
 			.AddButton(new ToastButton()
-				.SetContent("Cancel")
+				.SetContent(Strings.Common_Cancel)
 				.AddArgument("action", "deny"));
 
 		var toast = BuildToast(builder, tag, timeoutSeconds);
@@ -286,13 +288,13 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 	private static string EntryLabel(EntryMatchInfo entry, bool showDbName)
 	{
-		string title = string.IsNullOrEmpty(entry.Title) ? "(untitled)" : entry.Title;
+		string title = string.IsNullOrEmpty(entry.Title) ? Strings.Prompt_Entry_Untitled : entry.Title;
 		if (showDbName && !string.IsNullOrEmpty(entry.DatabaseName))
 			title = $"{entry.DatabaseName}: {title}";
 
 		var tags = new List<string>(2);
-		if (entry.IsSelected) tags.Add("selected");
-		if (entry.HasPasskey) tags.Add("overwrite passkey");
+		if (entry.IsSelected) tags.Add(Strings.Prompt_Toast_TagSelected);
+		if (entry.HasPasskey) tags.Add(Strings.Prompt_Toast_TagOverwrite);
 		return tags.Count > 0 ? $"{title} [{string.Join(", ", tags)}]" : title;
 	}
 
@@ -309,13 +311,13 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 	private static void AddProgressAndButtons(ToastContentBuilder builder, string confirmText)
 		=> builder.AddVisualChild(ProgressBar())
 			.AddButton(new ToastButton().SetContent(confirmText).AddArgument("action", "allow"))
-			.AddButton(new ToastButton().SetContent("Cancel").AddArgument("action", "deny"));
+			.AddButton(new ToastButton().SetContent(Strings.Common_Cancel).AddArgument("action", "deny"));
 
 	private static ToastNotification BuildToast(ToastContentBuilder builder, string tag, int timeoutSeconds)
 	{
 		var initialData = new NotificationData();
 		initialData.Values["progress"] = "0";
-		initialData.Values["statusText"] = $"Cancelling in {timeoutSeconds}s";
+		initialData.Values["statusText"] = Localizer.Format(Strings.Prompt_Toast_CancellingIn, timeoutSeconds);
 
 		return new ToastNotification(builder.GetXml())
 		{
@@ -342,7 +344,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 				int elapsed = timeoutSeconds - remaining;
 				var update = new NotificationData();
 				update.Values["progress"] = FormattableString.Invariant($"{(double)elapsed / timeoutSeconds}");
-				update.Values["statusText"] = $"Cancelling in {remaining}s";
+				update.Values["statusText"] = Localizer.Format(Strings.Prompt_Toast_CancellingIn, remaining);
 				notifier.Update(update, tag);
 			}
 			notifier.Hide(toast);

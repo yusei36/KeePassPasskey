@@ -3,6 +3,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using KeePassPasskeyShared;
@@ -77,8 +78,6 @@ public sealed partial class SettingsViewModel : ObservableObject
 	public bool IsRegistrationSilent => RegistrationVerification == UserVerificationMode.None;
 	public bool IsSignInSilent => SignInVerification == UserVerificationMode.None;
 
-	public const string SilentVerificationWarning =
-		"Both are off, so passkey operations will complete without asking you.";
 
 	private static UserVerificationMode WithFlag(UserVerificationMode mode, UserVerificationMode flag, bool on)
 		=> on ? mode | flag : mode & ~flag;
@@ -147,7 +146,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 	private string? _storedSpoofAaguid;
 
 	public bool IsSpoofAaguidValid => string.IsNullOrWhiteSpace(SpoofAaguid) || Guid.TryParse(SpoofAaguid, out _);
-	public string? SpoofAaguidError => IsSpoofAaguidValid ? null : "Enter a valid GUID, or leave empty to use the default.";
+	public string? SpoofAaguidError => IsSpoofAaguidValid ? null : Strings.App_Settings_Aaguid_Invalid;
 	public bool HasAaguidChanges => NormalizeAaguid(SpoofAaguid) != NormalizeAaguid(_storedSpoofAaguid);
 	public bool CanApplyAaguid => IsSpoofAaguidValid && HasAaguidChanges && !IsApplyingAaguid;
 	public string DefaultAaguidText => Authenticator.AuthenticatorIdentity.DefaultAaguid.ToString();
@@ -190,15 +189,15 @@ public sealed partial class SettingsViewModel : ObservableObject
 			int hr = await Task.Run(() => Authenticator.PluginRegistration.UpdateDetails(aaguidToApply));
 			if (hr < Authenticator.Native.HResults.S_OK)
 			{
-				await DialogService.ShowErrorAsync("Could not update authenticator",
-					$"The AAGUID was not changed because Windows returned HRESULT 0x{hr:X8} while applying it.");
+				await DialogService.ShowErrorAsync(Strings.App_Settings_Aaguid_ApplyFailedTitle,
+					Localizer.Format(Strings.App_Settings_Aaguid_ApplyFailedMessage, $"0x{hr:X8}"));
 				return;
 			}
 
 			AuthenticatorSettingsStore.Save(new AuthenticatorSettingsStore { SpoofAaguid = normalized });
 			_storedSpoofAaguid = normalized;
 			SpoofAaguid = normalized ?? "";
-			SpoofAaguidStatus = normalized == null ? "Using the default AAGUID." : "Spoofed AAGUID applied.";
+			SpoofAaguidStatus = normalized == null ? Strings.App_Settings_Aaguid_DefaultApplied : Strings.App_Settings_Aaguid_SpoofApplied;
 			OnPropertyChanged(nameof(HasAaguidChanges));
 			ApplyAaguidCommand.NotifyCanExecuteChanged();
 		}
@@ -227,6 +226,24 @@ public sealed partial class SettingsViewModel : ObservableObject
 			AppSettings.Current.Theme = value;
 			AppSettings.Save(AppSettings.Current);
 			ApplyTheme(value);
+		}
+	}
+
+	public IReadOnlyList<LanguageOption> Languages =>
+		[new(null, Strings.App_Settings_Language_OptionSystem),
+		 .. AppLanguage.Supported.Select(name => new LanguageOption(name, AppLanguage.NativeName(name)))];
+
+	public LanguageOption SelectedLanguage
+	{
+		get => Languages.FirstOrDefault(o => o.Name == AppSettings.Current.Language) ?? Languages[0];
+		set
+		{
+			if (value == null || value.Name == AppSettings.Current.Language) return;
+			AppSettings.Current.Language = value.Name;
+			AppSettings.Save(AppSettings.Current);
+			OnPropertyChanged();
+			// Posted: the switch rebuilds the page that holds the ComboBox raising this.
+			Dispatcher.UIThread.Post(() => AppLanguage.Apply(value.Name));
 		}
 	}
 
@@ -276,7 +293,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 	protected override void OnPropertyChanged(PropertyChangedEventArgs e)
 	{
 		base.OnPropertyChanged(e);
-		if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme)
+		if (!_isLoading && e.PropertyName is not (nameof(IsSaving) or nameof(HasUnsavedChanges) or nameof(EnableTrayIcon) or nameof(Theme) or nameof(SelectedLanguage)
 				or nameof(SpoofAaguid) or nameof(IsApplyingAaguid) or nameof(SpoofAaguidStatus) or nameof(IsSaveToExistingEntryAvailable)
 				or nameof(RegistrationWindowsHello) or nameof(RegistrationPrompt) or nameof(IsRegistrationSilent)
 				or nameof(SignInWindowsHello) or nameof(SignInPrompt) or nameof(IsSignInSilent)))
@@ -527,8 +544,8 @@ public sealed partial class SettingsViewModel : ObservableObject
 
 			if (response == null || response.ErrorCode != null)
 			{
-				string detail = response?.ErrorMessage ?? "KeePass is not running. Start KeePass with the passkey plugin before saving settings.";
-				await DialogService.ShowErrorAsync("Could not save settings", detail);
+				string detail = response?.ErrorMessage ?? Strings.App_Settings_SaveFailedNotRunning;
+				await DialogService.ShowErrorAsync(Strings.App_Settings_SaveFailedTitle, detail);
 				return;
 			}
 

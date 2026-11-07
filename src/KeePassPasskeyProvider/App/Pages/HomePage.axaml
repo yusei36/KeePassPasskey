@@ -2,6 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:loc="using:KeePassPasskeyShared.Localization"
 						 xmlns:ctrl="using:KeePassPasskeyProvider.App.Controls"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 						 x:Class="KeePassPasskeyProvider.App.Pages.HomePage"
@@ -17,18 +18,18 @@
 								BorderThickness="1" CornerRadius="8" Padding="16 12">
 						<Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
 								<StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-										<TextBlock Text="Want to keep an eye on the status?"
+										<TextBlock Text="{x:Static loc:Strings.App_TrayOffer_Title}"
 															 FontWeight="SemiBold" FontSize="13" />
-										<TextBlock Text="Add KeePassPasskey to the system tray."
+										<TextBlock Text="{x:Static loc:Strings.App_TrayOffer_Message}"
 															 FontSize="12" Opacity="0.6" TextWrapping="Wrap" />
 								</StackPanel>
 								<Button Grid.Column="1"
-												Content="Add"
+												Content="{x:Static loc:Strings.App_TrayOffer_AddButton}"
 												Command="{Binding SetupGuide.EnableTrayFromOfferCommand}"
 												Classes="accent"
 												VerticalAlignment="Center" />
 								<Button Grid.Column="2"
-												Content="No thanks"
+												Content="{x:Static loc:Strings.App_TrayOffer_NoThanksButton}"
 												Command="{Binding SetupGuide.DismissTrayOfferCommand}"
 												VerticalAlignment="Center" />
 						</Grid>

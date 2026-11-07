@@ -1,0 +1,1110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App_Action_AdvancedPasskeyOptions" xml:space="preserve">
+    <value>Advanced Passkey Options</value>
+  </data>
+  <data name="App_Action_AdvancedPasskeyOptionsTooltip" xml:space="preserve">
+    <value>Open advanced passkey options in Windows Settings</value>
+  </data>
+  <data name="App_Action_InstallPlugin" xml:space="preserve">
+    <value>Install plugin</value>
+  </data>
+  <data name="App_Action_InstallPluginTooltip" xml:space="preserve">
+    <value>Install or update the KeePass plugin</value>
+  </data>
+  <data name="App_Action_Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="App_Action_ShowPluginFile" xml:space="preserve">
+    <value>Show plugin file</value>
+  </data>
+  <data name="App_Channel_Dev" xml:space="preserve">
+    <value>Development build</value>
+  </data>
+  <data name="App_Channel_GitHub" xml:space="preserve">
+    <value>GitHub release</value>
+  </data>
+  <data name="App_Channel_Store" xml:space="preserve">
+    <value>Installed from the Microsoft Store</value>
+  </data>
+  <data name="App_Diagnostics_CopyPluginVersionTooltip" xml:space="preserve">
+    <value>Copy plugin version</value>
+  </data>
+  <data name="App_Diagnostics_CopyProviderVersionTooltip" xml:space="preserve">
+    <value>Copy provider version</value>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Message" xml:space="preserve">
+    <value>{0} Passkey operations are blocked until then.</value>
+    <comment>{0} = sentence saying which side to update</comment>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Title" xml:space="preserve">
+    <value>Incompatible version</value>
+  </data>
+  <data name="App_Diagnostics_PluginNotConnected" xml:space="preserve">
+    <value>not connected</value>
+  </data>
+  <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
+    <value>Open the passkey provider switch in Windows Settings</value>
+  </data>
+  <data name="App_Diagnostics_Registration_Label" xml:space="preserve">
+    <value>Provider registration</value>
+  </data>
+  <data name="App_Diagnostics_Registration_UnregisterButton" xml:space="preserve">
+    <value>Unregister</value>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
+    <value>This app ({0}) and the KeePass plugin ({1}) have different versions but are compatible. Passkeys keep working, but new features might not be available until the older side is updated.</value>
+    <comment>{0} = app version, {1} = plugin version</comment>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
+    <value>Version mismatch</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearButton" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearTooltip" xml:space="preserve">
+    <value>Remove every passkey from the Windows cache. They return on the next database open or save.</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpButton" xml:space="preserve">
+    <value>Write to log</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpTooltip" xml:space="preserve">
+    <value>Write the Windows cache and the KeePass passkeys to the log</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_Label" xml:space="preserve">
+    <value>Credential cache</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncButton" xml:space="preserve">
+    <value>Sync now</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncTooltip" xml:space="preserve">
+    <value>Refresh the Windows cache from the open KeePass databases now</value>
+  </data>
+  <data name="App_InfoBar_DevBuildMessage" xml:space="preserve">
+    <value>This is a dev build with a separate identity, installed alongside any stable release. Not for production use.</value>
+  </data>
+  <data name="App_InfoBar_DevBuildTitle" xml:space="preserve">
+    <value>Development build</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedMessage" xml:space="preserve">
+    <value>Register and Unregister will not work correctly. Please install the MSIX package first.</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
+    <value>Not installed as package</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
+    <value>Installing...</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Removing" xml:space="preserve">
+    <value>Removing...</value>
+  </data>
+  <data name="App_InstallDialog_CloseButton" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="App_InstallDialog_CopyYourselfLabel" xml:space="preserve">
+    <value>Or copy the file yourself:</value>
+  </data>
+  <data name="App_InstallDialog_Detected_DefaultPath" xml:space="preserve">
+    <value>Detected from the default install path.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Msi" xml:space="preserve">
+    <value>Detected from the MSI installation.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_NotFound" xml:space="preserve">
+    <value>KeePass was not found. Enter or browse to its folder, or to its Plugins folder.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Registry" xml:space="preserve">
+    <value>Detected from the KeePass installer's registry entry.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_RunningKeePass" xml:space="preserve">
+    <value>Detected from the running KeePass.</value>
+  </data>
+  <data name="App_InstallDialog_FolderLabel" xml:space="preserve">
+    <value>KeePass folder or plugins folder</value>
+  </data>
+  <data name="App_InstallDialog_FolderWillBeCreated" xml:space="preserve">
+    <value>This folder does not exist yet and will be created.</value>
+  </data>
+  <data name="App_InstallDialog_InstallButton" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="App_InstallDialog_NeedsAdmin" xml:space="preserve">
+    <value>Writing here needs administrator rights. Windows asks for them once.</value>
+  </data>
+  <data name="App_InstallDialog_PickFolderTitle" xml:space="preserve">
+    <value>Select the KeePass folder, its Plugins folder, or a subfolder of it</value>
+  </data>
+  <data name="App_InstallDialog_ReinstallButton" xml:space="preserve">
+    <value>Reinstall</value>
+  </data>
+  <data name="App_InstallDialog_RemoveButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="App_InstallDialog_Result_Cancelled" xml:space="preserve">
+    <value>Cancelled at the administrator prompt. Nothing was changed.</value>
+  </data>
+  <data name="App_InstallDialog_Result_Installed" xml:space="preserve">
+    <value>The plugin was installed.</value>
+  </data>
+  <data name="App_InstallDialog_Result_InstalledRestart" xml:space="preserve">
+    <value>The plugin was installed. Restart KeePass to load the change.</value>
+  </data>
+  <data name="App_InstallDialog_Result_Removed" xml:space="preserve">
+    <value>The plugin was removed.</value>
+  </data>
+  <data name="App_InstallDialog_Result_RemovedRestart" xml:space="preserve">
+    <value>The plugin was removed. Restart KeePass to load the change.</value>
+  </data>
+  <data name="App_InstallDialog_ShowPluginFileTooltip" xml:space="preserve">
+    <value>Reveal KeePassPasskey.dll in File Explorer</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetButton" xml:space="preserve">
+    <value>Show target folder</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetTooltip" xml:space="preserve">
+    <value>Open the KeePass plugins folder in File Explorer</value>
+  </data>
+  <data name="App_InstallDialog_SourceCaption" xml:space="preserve">
+    <value>Installs from KeePassPasskey ({0}) {1}</value>
+    <comment>{0} = channel name, {1} = version</comment>
+  </data>
+  <data name="App_InstallDialog_Status_NoFolder" xml:space="preserve">
+    <value>No folder chosen.</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotInstalled" xml:space="preserve">
+    <value>Not installed.</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
+    <value>This is not a KeePass folder or one of its plugin folders. Point it at the KeePass folder or its Plugins subfolder.</value>
+  </data>
+  <data name="App_InstallDialog_Status_Outdated" xml:space="preserve">
+    <value>Version {0} is installed, {1} is available.</value>
+    <comment>{0} = installed version, {1} = available version</comment>
+  </data>
+  <data name="App_InstallDialog_Status_PluginNewer" xml:space="preserve">
+    <value>Version {0} is installed, which is newer than this app's {1}.</value>
+    <comment>{0} = installed version, {1} = version this app bundles</comment>
+  </data>
+  <data name="App_InstallDialog_Status_UpToDate" xml:space="preserve">
+    <value>Version {0} is installed and up to date.</value>
+    <comment>{0} = installed version</comment>
+  </data>
+  <data name="App_InstallDialog_TargetLabel" xml:space="preserve">
+    <value>Installs to</value>
+  </data>
+  <data name="App_InstallDialog_Title" xml:space="preserve">
+    <value>KeePass plugin</value>
+  </data>
+  <data name="App_InstallDialog_UpdateButton" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="App_Label_KeePassPlugin" xml:space="preserve">
+    <value>KeePass plugin</value>
+  </data>
+  <data name="App_Label_PasskeyProvider" xml:space="preserve">
+    <value>Passkey provider</value>
+  </data>
+  <data name="App_Log_CopyTooltip" xml:space="preserve">
+    <value>Copy log to clipboard</value>
+  </data>
+  <data name="App_Log_NoFile" xml:space="preserve">
+    <value>(no log file yet)</value>
+  </data>
+  <data name="App_Log_OpenFileTooltip" xml:space="preserve">
+    <value>Open log file</value>
+  </data>
+  <data name="App_Log_OpenFolderTooltip" xml:space="preserve">
+    <value>Open log directory</value>
+  </data>
+  <data name="App_Log_ReadFailed" xml:space="preserve">
+    <value>(could not read log: {0})</value>
+    <comment>{0} = error message</comment>
+  </data>
+  <data name="App_Nav_Diagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="App_Nav_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="App_Nav_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="App_Registration_RegisterFailedMessage" xml:space="preserve">
+    <value>Windows returned HRESULT {0} while trying to register the passkey provider.</value>
+    <comment>{0} = error code such as 0x80090027</comment>
+  </data>
+  <data name="App_Registration_RegisterFailedTitle" xml:space="preserve">
+    <value>Register failed</value>
+  </data>
+  <data name="App_Registration_UnregisterFailedMessage" xml:space="preserve">
+    <value>Windows returned HRESULT {0} while trying to unregister the passkey provider.</value>
+    <comment>{0} = error code</comment>
+  </data>
+  <data name="App_Registration_UnregisterFailedTitle" xml:space="preserve">
+    <value>Unregister failed</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyButton" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedMessage" xml:space="preserve">
+    <value>The AAGUID was not changed because Windows returned HRESULT {0} while applying it.</value>
+    <comment>{0} = error code</comment>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedTitle" xml:space="preserve">
+    <value>Could not update authenticator</value>
+  </data>
+  <data name="App_Settings_Aaguid_ClearTooltip" xml:space="preserve">
+    <value>Clear field</value>
+  </data>
+  <data name="App_Settings_Aaguid_DefaultApplied" xml:space="preserve">
+    <value>Using the default AAGUID.</value>
+  </data>
+  <data name="App_Settings_Aaguid_Description" xml:space="preserve">
+    <value>Override the authenticator identifier (AAGUID) that websites see when you create a passkey. Leave empty to use the default. Applying re-registers the authenticator with Windows.</value>
+  </data>
+  <data name="App_Settings_Aaguid_Header" xml:space="preserve">
+    <value>Spoof AAGUID</value>
+  </data>
+  <data name="App_Settings_Aaguid_Invalid" xml:space="preserve">
+    <value>Enter a valid GUID, or leave empty to use the default.</value>
+  </data>
+  <data name="App_Settings_Aaguid_SpoofApplied" xml:space="preserve">
+    <value>Spoofed AAGUID applied.</value>
+  </data>
+  <data name="App_Settings_About_Contributors" xml:space="preserve">
+    <value>Contributors</value>
+  </data>
+  <data name="App_Settings_About_ContributorsTooltip" xml:space="preserve">
+    <value>Open contributors on GitHub</value>
+  </data>
+  <data name="App_Settings_About_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="App_Settings_About_CopyrightNotice" xml:space="preserve">
+    <value>© 2026 Uwe Kögel and contributors</value>
+  </data>
+  <data name="App_Settings_About_CopyVersionTooltip" xml:space="preserve">
+    <value>Copy version</value>
+  </data>
+  <data name="App_Settings_About_Description" xml:space="preserve">
+    <value>Version, source code and license</value>
+  </data>
+  <data name="App_Settings_About_Header" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="App_Settings_About_License" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="App_Settings_About_LicenseName" xml:space="preserve">
+    <value>GNU GPL v3.0 or later</value>
+  </data>
+  <data name="App_Settings_About_LicenseTooltip" xml:space="preserve">
+    <value>Open license text</value>
+  </data>
+  <data name="App_Settings_About_ReportBug" xml:space="preserve">
+    <value>Report a bug</value>
+  </data>
+  <data name="App_Settings_About_ReportBugTooltip" xml:space="preserve">
+    <value>Open issue tracker on GitHub</value>
+  </data>
+  <data name="App_Settings_About_SourceCode" xml:space="preserve">
+    <value>Source code</value>
+  </data>
+  <data name="App_Settings_About_SourceCodeTooltip" xml:space="preserve">
+    <value>Open source code on GitHub</value>
+  </data>
+  <data name="App_Settings_About_ThirdParty" xml:space="preserve">
+    <value>Third-party notices</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyDescription" xml:space="preserve">
+    <value>Open source licenses for bundled libraries</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyTooltip" xml:space="preserve">
+    <value>Open third-party notices</value>
+  </data>
+  <data name="App_Settings_About_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="App_Settings_About_Website" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="App_Settings_About_WebsiteTooltip" xml:space="preserve">
+    <value>Open website</value>
+  </data>
+  <data name="App_Settings_Advanced_Description" xml:space="preserve">
+    <value>Behaviour, timing and logging settings that are rarely changed</value>
+  </data>
+  <data name="App_Settings_Advanced_Header" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="App_Settings_Algorithms_Description" xml:space="preserve">
+    <value>Which algorithm a new passkey gets when the website accepts several.
+A website that accepts only algorithms that are off can't create a passkey.</value>
+  </data>
+  <data name="App_Settings_Algorithms_Header" xml:space="preserve">
+    <value>Signing algorithms</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveDownTooltip" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveUpTooltip" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionListOrder" xml:space="preserve">
+    <value>Use list order</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
+    <value>Keep website preference</value>
+  </data>
+  <data name="App_Settings_Appearance_Description" xml:space="preserve">
+    <value>Application appearance, theme and language</value>
+  </data>
+  <data name="App_Settings_Appearance_Header" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Description" xml:space="preserve">
+    <value>How long the confirmation prompt stays open</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Header" xml:space="preserve">
+    <value>Approval timeout</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Description" xml:space="preserve">
+    <value>When on, websites are told that a new passkey is allowed to be backed up and synced to your other devices. When off, they are told it is saved on a single device only.</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Header" xml:space="preserve">
+    <value>Backup Eligibility (BE)</value>
+  </data>
+  <data name="App_Settings_BackupState_Description" xml:space="preserve">
+    <value>When on, websites are told that a new passkey is backed up right now. Only available while "Backup Eligibility" is on.</value>
+  </data>
+  <data name="App_Settings_BackupState_Header" xml:space="preserve">
+    <value>Backup State (BS)</value>
+  </data>
+  <data name="App_Settings_DiscardTooltip" xml:space="preserve">
+    <value>Discard changes</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Description" xml:space="preserve">
+    <value>Where to enforce a website's request not to add a second passkey for an account it already has one for.</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Header" xml:space="preserve">
+    <value>Allow duplicate passkeys</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionAllDatabases" xml:space="preserve">
+    <value>Check all databases</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionNone" xml:space="preserve">
+    <value>Don't check</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionTargetDatabase" xml:space="preserve">
+    <value>Check target database</value>
+  </data>
+  <data name="App_Settings_Enforced_Message" xml:space="preserve">
+    <value>These settings come from KeePass.config.enforced.xml and can't be changed here.</value>
+  </data>
+  <data name="App_Settings_Enforced_Title" xml:space="preserve">
+    <value>Settings enforced by KeePass</value>
+  </data>
+  <data name="App_Settings_Entries_Description" xml:space="preserve">
+    <value>How new passkey entries are created</value>
+  </data>
+  <data name="App_Settings_Entries_Header" xml:space="preserve">
+    <value>Passkey Entries</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Description" xml:space="preserve">
+    <value>Passkeys group: the default group for passkeys.
+Selected group: the group selected in KeePass when creating the passkey.</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Header" xml:space="preserve">
+    <value>Save new passkeys in</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionPasskeys" xml:space="preserve">
+    <value>Passkeys group</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionSelected" xml:space="preserve">
+    <value>Selected group</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Description" xml:space="preserve">
+    <value>Title for new entries. Supports {RP_NAME} and KeePass placeholders like {USERNAME} or {URL}.</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Header" xml:space="preserve">
+    <value>Entry title</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Description" xml:space="preserve">
+    <value>Show a detailed notification when a passkey error occurs (Windows always displays a generic error)</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Header" xml:space="preserve">
+    <value>Error notifications</value>
+  </data>
+  <data name="App_Settings_Expert_Description" xml:space="preserve">
+    <value>Advanced options for uncommon setups. Change only if you know why.</value>
+  </data>
+  <data name="App_Settings_Expert_Header" xml:space="preserve">
+    <value>Expert</value>
+  </data>
+  <data name="App_Settings_Language_Header" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
+    <value>Use Windows language</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
+    <value>Show confirmation prompts as Windows notifications instead of dialogs. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their pickers are limited to 5 items.</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
+    <value>Use legacy notification prompts</value>
+  </data>
+  <data name="App_Settings_LoadFailed" xml:space="preserve">
+    <value>Could not load the latest settings from KeePass. Showing the last known values.</value>
+  </data>
+  <data name="App_Settings_Loading" xml:space="preserve">
+    <value>Loading settings…</value>
+  </data>
+  <data name="App_Settings_LogLevel_Description" xml:space="preserve">
+    <value>Verbosity of the provider and plugin log files</value>
+  </data>
+  <data name="App_Settings_LogLevel_Header" xml:space="preserve">
+    <value>Log level</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionDebug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionWarn" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Description" xml:space="preserve">
+    <value>When KeePass starts, offer to update the plugin if this app ships a newer one. Every update is confirmed in a dialog.</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
+    <value>Check for plugin updates</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Description" xml:space="preserve">
+    <value>How often the app polls for provider status</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Header" xml:space="preserve">
+    <value>Status refresh interval</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Description" xml:space="preserve">
+    <value>How you approve saving a new passkey</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
+    <value>Registration</value>
+  </data>
+  <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
+    <value>Reset to defaults</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Description" xml:space="preserve">
+    <value>On: placeholders are resolved and the final text is saved in the title. Off: KeePass resolves them each time the entry is shown. {RP_NAME} is always resolved on save.</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Header" xml:space="preserve">
+    <value>Store resolved title placeholders</value>
+  </data>
+  <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
+    <value>KeePass is not running. Start KeePass with the passkey plugin before saving settings.</value>
+  </data>
+  <data name="App_Settings_SaveFailedTitle" xml:space="preserve">
+    <value>Could not save settings</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Description" xml:space="preserve">
+    <value>Offer to save a passkey onto a matching entry instead of always creating a new one. Requires the registration confirmation prompt.</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Header" xml:space="preserve">
+    <value>Offer saving to an existing entry</value>
+  </data>
+  <data name="App_Settings_SaveTooltip" xml:space="preserve">
+    <value>Save settings</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Description" xml:space="preserve">
+    <value>How you approve signing in</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
+    <value>Sign-in</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
+    <value>When KeePass was locked and you just unlocked it for this request, don't ask for Windows Hello again. Only applies while the confirmation prompt is on</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
+    <value>Skip Windows Hello after unlocking KeePass</value>
+  </data>
+  <data name="App_Settings_TagEntries_Description" xml:space="preserve">
+    <value>Add a "Passkey" tag to each entry created when a new passkey is registered</value>
+  </data>
+  <data name="App_Settings_TagEntries_Header" xml:space="preserve">
+    <value>Tag new passkeys</value>
+  </data>
+  <data name="App_Settings_Theme_OptionDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="App_Settings_Theme_OptionLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="App_Settings_Theme_OptionSystem" xml:space="preserve">
+    <value>Use system setting</value>
+  </data>
+  <data name="App_Settings_ToggleOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="App_Settings_ToggleOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Description" xml:space="preserve">
+    <value>Show a status icon in the system tray. Closing the window keeps the app running in the tray.</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Header" xml:space="preserve">
+    <value>System tray icon</value>
+  </data>
+  <data name="App_Settings_UnsavedChangesTooltip" xml:space="preserve">
+    <value>You have unsaved changes</value>
+  </data>
+  <data name="App_Settings_Verification_Description" xml:space="preserve">
+    <value>Confirmation prompts and user verification for passkey operations</value>
+  </data>
+  <data name="App_Settings_Verification_Header" xml:space="preserve">
+    <value>Notifications &amp; User Verification</value>
+  </data>
+  <data name="App_Settings_Verification_Prompt" xml:space="preserve">
+    <value>Confirmation prompt</value>
+  </data>
+  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
+    <value>Both are off, so passkey operations will complete without asking you.</value>
+  </data>
+  <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
+    <value>Windows Hello (PIN, fingerprint, or face)</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Description" xml:space="preserve">
+    <value>Shares the website and user name of your passkeys with Windows (never the keys themselves), so Windows can offer them when you sign in. When off, Windows doesn't know about your passkeys and sign-in fails on most sites.</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Header" xml:space="preserve">
+    <value>Windows credential cache</value>
+  </data>
+  <data name="App_SetupGuide_ShowPluginFileTooltip" xml:space="preserve">
+    <value>Reveal KeePassPasskey.dll in Explorer to copy it yourself</value>
+  </data>
+  <data name="App_SetupGuide_Step1_Text" xml:space="preserve">
+    <value>Put **KeePassPasskey.dll** in your KeePass **Plugins** folder, by hand or with the button below, then restart KeePass.</value>
+    <comment>Text between ** ** is shown in a monospace font; keep the file name unchanged</comment>
+  </data>
+  <data name="App_SetupGuide_Step1_Title" xml:space="preserve">
+    <value>Install the plugin</value>
+  </data>
+  <data name="App_SetupGuide_Step2_Text" xml:space="preserve">
+    <value>Go to **Settings › Accounts › Passkeys › Advanced options**, or use the button below.</value>
+    <comment>Text between ** ** is the Windows Settings path in monospace; use the names Windows shows in this language</comment>
+  </data>
+  <data name="App_SetupGuide_Step2_Title" xml:space="preserve">
+    <value>Open Advanced Passkey Options</value>
+  </data>
+  <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
+    <value>Toggle **KeePassPasskey** on in the passkey provider list.</value>
+    <comment>Text between ** ** is shown in a monospace font</comment>
+  </data>
+  <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
+    <value>Enable KeePassPasskey</value>
+  </data>
+  <data name="App_SetupGuide_Step4_Text" xml:space="preserve">
+    <value>Both statuses above should read **Enabled** / **Connected**.</value>
+    <comment>The marked words must match Status_Pill_Enabled and Status_Pill_Running</comment>
+  </data>
+  <data name="App_SetupGuide_Step4_Title" xml:space="preserve">
+    <value>Verify</value>
+  </data>
+  <data name="App_SetupGuide_Title" xml:space="preserve">
+    <value>Getting started</value>
+  </data>
+  <data name="App_SetupGuide_UserGuideTooltip" xml:space="preserve">
+    <value>Open user guide</value>
+  </data>
+  <data name="App_Status_Headline_AutoregisterFailed" xml:space="preserve">
+    <value>Automatic registration failed</value>
+  </data>
+  <data name="App_Status_Headline_Ready" xml:space="preserve">
+    <value>All systems ready</value>
+  </data>
+  <data name="App_Status_Hint_AutoregisterFailed" xml:space="preserve">
+    <value>You can retry by clicking Register.</value>
+  </data>
+  <data name="App_Status_Hint_KeePassNotConnected" xml:space="preserve">
+    <value>Start KeePass with the KeePassPasskey plugin installed.</value>
+  </data>
+  <data name="App_Status_Hint_NoDatabase" xml:space="preserve">
+    <value>Open a KeePass database to use passkeys.</value>
+  </data>
+  <data name="App_Status_Hint_NotRegistered" xml:space="preserve">
+    <value>Click Register to set up KeePassPasskey as your passkey provider.</value>
+  </data>
+  <data name="App_Status_Hint_Ready" xml:space="preserve">
+    <value>Provider is enabled and the KeePass plugin is connected.</value>
+  </data>
+  <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
+    <value>Click Advanced Passkey Options below to enable KeePassPasskey.</value>
+  </data>
+  <data name="App_Status_Pill_Connected" xml:space="preserve">
+    <value>Connected</value>
+    <comment>Plugin status pill; also quoted in Setup_Step4Text</comment>
+  </data>
+  <data name="App_Status_Pill_Enabled" xml:space="preserve">
+    <value>Enabled</value>
+    <comment>Provider status pill; also quoted in Setup_Step4Text</comment>
+  </data>
+  <data name="App_Status_Pill_NotConnected" xml:space="preserve">
+    <value>Not connected</value>
+  </data>
+  <data name="App_Status_Pill_Registered" xml:space="preserve">
+    <value>Registered</value>
+  </data>
+  <data name="App_Status_RefreshTooltip" xml:space="preserve">
+    <value>Refresh status</value>
+  </data>
+  <data name="App_TrayOffer_AddButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="App_TrayOffer_Message" xml:space="preserve">
+    <value>Add KeePassPasskey to the system tray.</value>
+  </data>
+  <data name="App_TrayOffer_NoThanksButton" xml:space="preserve">
+    <value>No thanks</value>
+  </data>
+  <data name="App_TrayOffer_Title" xml:space="preserve">
+    <value>Want to keep an eye on the status?</value>
+  </data>
+  <data name="App_UnsavedChanges_DiscardButton" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="App_UnsavedChanges_Message" xml:space="preserve">
+    <value>You have unsaved settings. Save them before leaving?</value>
+  </data>
+  <data name="App_UnsavedChanges_Title" xml:space="preserve">
+    <value>Unsaved changes</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Install_Error_AccessDenied" xml:space="preserve">
+    <value>Access to the KeePass plugins folder was denied.</value>
+  </data>
+  <data name="Common_Install_Error_BundledPluginNotFound" xml:space="preserve">
+    <value>Bundled plugin not found: {0}</value>
+    <comment>{0} = file path</comment>
+  </data>
+  <data name="Common_Install_Error_FolderNotFound" xml:space="preserve">
+    <value>Folder not found: {0}</value>
+    <comment>{0} = folder path</comment>
+  </data>
+  <data name="Common_Install_Error_NoBundledPlugin" xml:space="preserve">
+    <value>The installed KeePassPasskey app does not contain a plugin to install.</value>
+  </data>
+  <data name="Common_Install_Error_NoTargetFolder" xml:space="preserve">
+    <value>No target folder given.</value>
+  </data>
+  <data name="Common_Install_Error_NotKeePassFolder" xml:space="preserve">
+    <value>The chosen folder is not part of a KeePass installation.</value>
+  </data>
+  <data name="Common_Install_Error_ScriptNotFound" xml:space="preserve">
+    <value>Installer script not found: {0}</value>
+    <comment>{0} = file path</comment>
+  </data>
+  <data name="Common_Install_Error_WriteFailed" xml:space="preserve">
+    <value>The plugin could not be written.</value>
+  </data>
+  <data name="Common_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Common_Status_IncompatibleVersion" xml:space="preserve">
+    <value>Incompatible version</value>
+  </data>
+  <data name="Common_Status_KeePassNotConnected" xml:space="preserve">
+    <value>KeePass not connected</value>
+  </data>
+  <data name="Common_Status_NoDatabase" xml:space="preserve">
+    <value>No database open</value>
+  </data>
+  <data name="Common_Status_NotRegistered" xml:space="preserve">
+    <value>Not registered</value>
+  </data>
+  <data name="Common_Status_VersionMismatch" xml:space="preserve">
+    <value>Version mismatch</value>
+  </data>
+  <data name="Common_Status_WaitingToBeEnabled" xml:space="preserve">
+    <value>Waiting to be enabled</value>
+  </data>
+  <data name="Common_Version_AppOlder" xml:space="preserve">
+    <value>This app ({0}) is older than the KeePass plugin ({1}). Update the KeePassPasskey app.</value>
+    <comment>{0} = app version, {1} = plugin version</comment>
+  </data>
+  <data name="Common_Version_Incompatible" xml:space="preserve">
+    <value>The app and the KeePass plugin have incompatible versions. Update both to the latest version.</value>
+  </data>
+  <data name="Common_Version_PluginOlder" xml:space="preserve">
+    <value>The KeePass plugin ({0}) is older than this app ({1}). Update the KeePassPasskey plugin in KeePass.</value>
+    <comment>{0} = plugin version, {1} = app version</comment>
+  </data>
+  <data name="KeePass_EntryMenu_Copy" xml:space="preserve">
+    <value>Copy Passkey</value>
+  </data>
+  <data name="KeePass_EntryMenu_Cut" xml:space="preserve">
+    <value>Cut Passkey</value>
+  </data>
+  <data name="KeePass_EntryMenu_Paste" xml:space="preserve">
+    <value>Paste Passkey Here</value>
+  </data>
+  <data name="KeePass_EntryMenu_PasteFrom" xml:space="preserve">
+    <value>Paste Passkey from “{0}”</value>
+    <comment>{0} = title of the entry the passkey was cut or copied from</comment>
+  </data>
+  <data name="KeePass_EntryMenu_Remove" xml:space="preserve">
+    <value>Remove Passkey</value>
+  </data>
+  <data name="KeePass_EntryMenu_Root" xml:space="preserve">
+    <value>Passkey</value>
+    <comment>Entry context submenu</comment>
+  </data>
+  <data name="KeePass_NoUpdate_AlreadyNewest" xml:space="preserve">
+    <value>Version {0} is the newest version the installed KeePassPasskey app provides.</value>
+    <comment>{0} = installed version</comment>
+  </data>
+  <data name="KeePass_NoUpdate_AppNotInstalled" xml:space="preserve">
+    <value>The KeePassPasskey app does not seem to be installed.</value>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNewer" xml:space="preserve">
+    <value>Version {0} is installed, which is newer than the {1} the KeePassPasskey app provides. Update the app so both halves match.</value>
+    <comment>{0} = installed plugin version, {1} = version the app provides</comment>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNotLocated" xml:space="preserve">
+    <value>The plugin file could not be located, so it cannot be updated from here.</value>
+  </data>
+  <data name="KeePass_NoUpdate_Title" xml:space="preserve">
+    <value>KeePassPasskey plugin</value>
+  </data>
+  <data name="KeePass_Paste_AlreadyOnEntry" xml:space="preserve">
+    <value>The passkey is already on this entry.</value>
+  </data>
+  <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
+    <value>This entry already contains a passkey. Replace it with the one you are pasting?
+
+The current passkey remains in the entry's history, in case you need it back.</value>
+  </data>
+  <data name="KeePass_Paste_Failed" xml:space="preserve">
+    <value>The passkey could not be pasted.</value>
+  </data>
+  <data name="KeePass_Paste_SourceUnavailable" xml:space="preserve">
+    <value>The entry the passkey came from is no longer available, so the paste was cancelled.</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
+    <value>Another process is already using the passkey pipe name. Passkey operations are disabled until you close that process and restart KeePass.</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedTitle" xml:space="preserve">
+    <value>KeePassPasskey could not claim its named pipe.</value>
+  </data>
+  <data name="KeePass_Remove_Confirm" xml:space="preserve">
+    <value>Remove the passkey from this entry?
+
+The entry itself is kept. The passkey remains in the entry's history, in case you need it back.</value>
+  </data>
+  <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
+    <value>Remove the passkey from “{0}”?
+
+The entry itself is kept. The passkey remains in the entry's history, in case you need it back.</value>
+    <comment>{0} = entry title</comment>
+  </data>
+  <data name="KeePass_Remove_Failed" xml:space="preserve">
+    <value>The passkey could not be removed.</value>
+  </data>
+  <data name="KeePass_Restart_FallbackQuestion" xml:space="preserve">
+    <value>The KeePassPasskey plugin was updated. Restart KeePass now?</value>
+  </data>
+  <data name="KeePass_Restart_Heading" xml:space="preserve">
+    <value>The plugin was updated to {0}.</value>
+    <comment>{0} = new version</comment>
+  </data>
+  <data name="KeePass_Restart_LaterNote" xml:space="preserve">
+    <value>{0} stays in use until KeePass restarts</value>
+    <comment>{0} = installed (old) version</comment>
+  </data>
+  <data name="KeePass_Restart_Message" xml:space="preserve">
+    <value>KeePass has to restart before the new version is loaded.</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
+    <value>Restart now</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowNote" xml:space="preserve">
+    <value>KeePass closes and reopens</value>
+  </data>
+  <data name="KeePass_ToolsMenu_AppOpenFailed" xml:space="preserve">
+    <value>The KeePassPasskey app could not be opened. It does not seem to be installed.</value>
+  </data>
+  <data name="KeePass_ToolsMenu_Settings" xml:space="preserve">
+    <value>Passkey settings</value>
+    <comment>Tools &gt; KeePassPasskey menu</comment>
+  </data>
+  <data name="KeePass_ToolsMenu_UpdatePlugin" xml:space="preserve">
+    <value>Update plugin from installed app</value>
+    <comment>Tools &gt; KeePassPasskey menu</comment>
+  </data>
+  <data name="KeePass_UpdateFailed_FallbackQuestion" xml:space="preserve">
+    <value>{0}
+
+Try again?</value>
+    <comment>{0} = reason the update failed</comment>
+  </data>
+  <data name="KeePass_UpdateFailed_Heading" xml:space="preserve">
+    <value>The plugin was not updated.</value>
+  </data>
+  <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
+    <value>Permission was not granted, so version {0} is still in use.</value>
+    <comment>{0} = installed version</comment>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainButton" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainNote" xml:space="preserve">
+    <value>Runs the update again</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainPermissionNote" xml:space="preserve">
+    <value>Asks for permission once more</value>
+  </data>
+  <data name="KeePass_Update_FallbackQuestion" xml:space="preserve">
+    <value>A new KeePassPasskey plugin is available (version {0}). Install it now?</value>
+    <comment>{0} = available version</comment>
+  </data>
+  <data name="KeePass_Update_FromLabel" xml:space="preserve">
+    <value>From:  KeePassPasskey ({0})</value>
+    <comment>{0} = channel name (GitHub, Microsoft Store); a folder path follows on the next line</comment>
+  </data>
+  <data name="KeePass_Update_Heading" xml:space="preserve">
+    <value>Version {0} is available. Version {1} is installed.</value>
+    <comment>{0} = available version, {1} = installed version</comment>
+  </data>
+  <data name="KeePass_Update_LaterButton" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data name="KeePass_Update_LaterNote" xml:space="preserve">
+    <value>Ask again at the next KeePass start</value>
+  </data>
+  <data name="KeePass_Update_Message" xml:space="preserve">
+    <value>Creating and using passkeys can stop working until these match.</value>
+  </data>
+  <data name="KeePass_Update_NeverCheckCheckbox" xml:space="preserve">
+    <value>Don't check for plugin updates again</value>
+  </data>
+  <data name="KeePass_Update_SkipVersionButton" xml:space="preserve">
+    <value>Skip version {0}</value>
+    <comment>{0} = available version</comment>
+  </data>
+  <data name="KeePass_Update_SkipVersionNote" xml:space="preserve">
+    <value>Do not ask again for this version</value>
+  </data>
+  <data name="KeePass_Update_Title" xml:space="preserve">
+    <value>KeePassPasskey plugin update</value>
+    <comment>Window title of the update dialogs</comment>
+  </data>
+  <data name="KeePass_Update_ToLabel" xml:space="preserve">
+    <value>To:  {0}</value>
+    <comment>{0} = folder path</comment>
+  </data>
+  <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
+    <value>Update now</value>
+  </data>
+  <data name="KeePass_Update_UpdateNowNote" xml:space="preserve">
+    <value>KeePass has to restart afterwards to load it</value>
+  </data>
+  <data name="Notify_Error_DbLocked" xml:space="preserve">
+    <value>The KeePass database is locked. Please unlock KeePass and try again.</value>
+  </data>
+  <data name="Notify_Error_Duplicate" xml:space="preserve">
+    <value>A passkey for {0} already exists.</value>
+    <comment>{0} = website (relying party id)</comment>
+  </data>
+  <data name="Notify_Error_Internal" xml:space="preserve">
+    <value>An internal error occurred in KeePass:</value>
+    <comment>An English technical detail may follow on the next line</comment>
+  </data>
+  <data name="Notify_Error_KeePassNotReady" xml:space="preserve">
+    <value>KeePass is not running or the database is locked.</value>
+  </data>
+  <data name="Notify_Error_NotFound" xml:space="preserve">
+    <value>No passkey found on {0}.</value>
+    <comment>{0} = website</comment>
+  </data>
+  <data name="Notify_Error_NotFoundForUser" xml:space="preserve">
+    <value>No passkey found for {0} on {1}.</value>
+    <comment>{0} = user name, {1} = website</comment>
+  </data>
+  <data name="Notify_Error_Unexpected" xml:space="preserve">
+    <value>An unexpected error occurred:</value>
+    <comment>An English technical detail may follow on the next line</comment>
+  </data>
+  <data name="Notify_Error_UnsupportedAlgorithm" xml:space="preserve">
+    <value>None of the signing algorithms this website accepts is enabled in the settings.</value>
+  </data>
+  <data name="Notify_Title_CreateFailed" xml:space="preserve">
+    <value>Passkey creation failed</value>
+    <comment>Notification title</comment>
+  </data>
+  <data name="Notify_Title_SignInFailed" xml:space="preserve">
+    <value>Sign-in failed</value>
+    <comment>Notification title</comment>
+  </data>
+  <data name="Prompt_CountdownTooltip" xml:space="preserve">
+    <value>The request is cancelled when this runs out</value>
+  </data>
+  <data name="Prompt_Entry_UnnamedDatabase" xml:space="preserve">
+    <value>(unnamed database)</value>
+  </data>
+  <data name="Prompt_Entry_Untitled" xml:space="preserve">
+    <value>(untitled)</value>
+  </data>
+  <data name="Prompt_Register_AddToExisting" xml:space="preserve">
+    <value>Add to existing</value>
+  </data>
+  <data name="Prompt_Register_AsUser" xml:space="preserve">
+    <value>as {0}</value>
+    <comment>{0} = user name</comment>
+  </data>
+  <data name="Prompt_Register_AttestationHint" xml:space="preserve">
+    <value>This site asked for enterprise attestation, which KeePassPasskey cannot provide. It may still accept the passkey.</value>
+  </data>
+  <data name="Prompt_Register_CreateNew" xml:space="preserve">
+    <value>Create new</value>
+  </data>
+  <data name="Prompt_Register_DatabaseLabel" xml:space="preserve">
+    <value>Database</value>
+  </data>
+  <data name="Prompt_Register_FilterAll" xml:space="preserve">
+    <value>Showing all entries</value>
+  </data>
+  <data name="Prompt_Register_FilterWithoutPasskey" xml:space="preserve">
+    <value>Showing only entries without a passkey</value>
+  </data>
+  <data name="Prompt_Register_FilterWithPasskey" xml:space="preserve">
+    <value>Showing only entries that already have a passkey</value>
+  </data>
+  <data name="Prompt_Register_HasPasskeyTooltip" xml:space="preserve">
+    <value>This entry already has a passkey</value>
+  </data>
+  <data name="Prompt_Register_Headline" xml:space="preserve">
+    <value>{0} wants to save a passkey</value>
+    <comment>{0} = website</comment>
+  </data>
+  <data name="Prompt_Register_NewEntryHint" xml:space="preserve">
+    <value>A new entry will be created for this site.</value>
+  </data>
+  <data name="Prompt_Register_NoMatches" xml:space="preserve">
+    <value>No entries match your search.</value>
+  </data>
+  <data name="Prompt_Register_ReplaceHint" xml:space="preserve">
+    <value>This entry already has a passkey. Saving replaces it.</value>
+  </data>
+  <data name="Prompt_Register_SearchPlaceholder" xml:space="preserve">
+    <value>Search entries…</value>
+  </data>
+  <data name="Prompt_Register_SelectedInKeePassTooltip" xml:space="preserve">
+    <value>Selected in KeePass</value>
+  </data>
+  <data name="Prompt_Register_Title" xml:space="preserve">
+    <value>Save passkey</value>
+  </data>
+  <data name="Prompt_SignIn_ConfirmButton" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Prompt_SignIn_Headline" xml:space="preserve">
+    <value>{0} wants you to sign in</value>
+    <comment>{0} = website</comment>
+  </data>
+  <data name="Prompt_SignIn_Title" xml:space="preserve">
+    <value>Sign in with passkey</value>
+  </data>
+  <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
+    <value>Cancelling in {0}s</value>
+    <comment>{0} = seconds</comment>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Body" xml:space="preserve">
+    <value>Create a passkey for {0}.</value>
+    <comment>{0} = website</comment>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Title" xml:space="preserve">
+    <value>Choose an entry to save to</value>
+  </data>
+  <data name="Prompt_Toast_DatabasePicker" xml:space="preserve">
+    <value>Save to database</value>
+  </data>
+  <data name="Prompt_Toast_EntriesTruncated" xml:space="preserve">
+    <value>Showing {0} of {1} matching entries.</value>
+    <comment>{0} = shown count, {1} = total count</comment>
+  </data>
+  <data name="Prompt_Toast_Register_Body" xml:space="preserve">
+    <value>Create a passkey on {0}.</value>
+    <comment>{0} = website</comment>
+  </data>
+  <data name="Prompt_Toast_Register_BodyForUser" xml:space="preserve">
+    <value>Create a passkey for {0} on {1}.</value>
+    <comment>{0} = user name, {1} = website</comment>
+  </data>
+  <data name="Prompt_Toast_Register_ConfirmButton" xml:space="preserve">
+    <value>Create passkey</value>
+  </data>
+  <data name="Prompt_Toast_Register_Title" xml:space="preserve">
+    <value>Passkey creation requested</value>
+  </data>
+  <data name="Prompt_Toast_SaveToEntry" xml:space="preserve">
+    <value>Save to entry</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_Body" xml:space="preserve">
+    <value>Sign in on {0}.</value>
+    <comment>{0} = website</comment>
+  </data>
+  <data name="Prompt_Toast_SignIn_BodyAsUser" xml:space="preserve">
+    <value>Sign in as {0} on {1}.</value>
+    <comment>{0} = user name, {1} = website</comment>
+  </data>
+  <data name="Prompt_Toast_SignIn_ConfirmButton" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_EntryHint" xml:space="preserve">
+    <value>KeePass entry: {0}</value>
+    <comment>{0} = entry title</comment>
+  </data>
+  <data name="Prompt_Toast_SignIn_Title" xml:space="preserve">
+    <value>Authentication requested</value>
+  </data>
+  <data name="Prompt_Toast_TagOverwrite" xml:space="preserve">
+    <value>overwrite passkey</value>
+    <comment>Tag after an entry name in a list</comment>
+  </data>
+  <data name="Prompt_Toast_TagSelected" xml:space="preserve">
+    <value>selected</value>
+    <comment>Tag after an entry name in a list, e.g. "Mail [selected]"</comment>
+  </data>
+  <data name="Prompt_WindowsHello_NoTitle" xml:space="preserve">
+    <value>(no title)</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Open KeePassPasskey</value>
+  </data>
+  <data name="Tray_Menu_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Tray_Tooltip_Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Tray_Tooltip_RegistrationFailed" xml:space="preserve">
+    <value>Registration failed</value>
+  </data>
+</root>

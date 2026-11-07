@@ -9,7 +9,7 @@ internal static class PasskeyEntryGroupModeConverters
 {
 	public static readonly IValueConverter Text = new LambdaConverter(v => (v as PasskeyEntryGroupMode?) switch
 	{
-		PasskeyEntryGroupMode.SelectedGroup => "Selected group",
-		_ => "Passkeys group",
+		PasskeyEntryGroupMode.SelectedGroup => Strings.App_Settings_EntryGroup_OptionSelected,
+		_ => Strings.App_Settings_EntryGroup_OptionPasskeys,
 	});
 }

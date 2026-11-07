@@ -6,6 +6,7 @@ using KeePassPasskey.Storage;
 using KeePassPasskey.UI;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Localization;
 using KeePassPasskeyShared.Update;
 
 namespace KeePassPasskey.Update;
@@ -61,7 +62,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 			if (targetDirectory == null || installedVersion == null)
 			{
 				Log.Debug("plugin update check skipped: plugin location unknown");
-				if (force) ReportNoUpdate("The plugin file could not be located, so it cannot be updated from here.");
+				if (force) ReportNoUpdate(Strings.KeePass_NoUpdate_PluginNotLocated);
 				return;
 			}
 
@@ -70,7 +71,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 			if (availableVersion == null)
 			{
 				Log.Debug("plugin update check: no installed package ships a plugin");
-				if (force) ReportNoUpdate("The KeePassPasskey app does not seem to be installed.");
+				if (force) ReportNoUpdate(Strings.KeePass_NoUpdate_AppNotInstalled);
 				return;
 			}
 
@@ -78,9 +79,8 @@ internal sealed class PluginUpdateChecker : IDisposable
 			if (order <= 0)
 			{
 				if (force) ReportNoUpdate(order == 0
-					? "Version " + Short(installedVersion) + " is the newest version the installed KeePassPasskey app provides."
-					: "Version " + Short(installedVersion) + " is installed, which is newer than the "
-						+ Short(availableVersion) + " the KeePassPasskey app provides. Update the app so both halves match.");
+					? Localizer.Format(Strings.KeePass_NoUpdate_AlreadyNewest, Short(installedVersion))
+					: Localizer.Format(Strings.KeePass_NoUpdate_PluginNewer, Short(installedVersion), Short(availableVersion)));
 				return;
 			}
 
@@ -179,7 +179,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 	}
 
 	private static void ReportNoUpdate(string message) =>
-		KeePassLib.Utility.MessageService.ShowInfo("KeePassPasskey plugin", message);
+		KeePassLib.Utility.MessageService.ShowInfo(Strings.KeePass_NoUpdate_Title, message);
 
 	private static string Short(string version) => PipeConstants.StripBuildMetadata(version);
 

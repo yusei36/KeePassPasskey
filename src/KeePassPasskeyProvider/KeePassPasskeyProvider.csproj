@@ -43,6 +43,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Using Include="KeePassPasskeyProvider.Localization" />
+		<Using Include="KeePassPasskeyShared.Localization" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<EmbeddedResource Include="Resources\logo-dark.svg" />
 		<EmbeddedResource Include="Resources\logo-light.svg" />
 		<EmbeddedResource Include="Resources\logo-store-dark.svg" />

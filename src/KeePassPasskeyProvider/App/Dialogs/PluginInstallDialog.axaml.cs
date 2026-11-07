@@ -21,7 +21,7 @@ public partial class PluginInstallDialog : UserControl
 
 		var folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
 		{
-			Title = "Select the KeePass folder, its Plugins folder, or a subfolder of it",
+			Title = Strings.App_InstallDialog_PickFolderTitle,
 			AllowMultiple = false,
 			SuggestedStartLocation = await SuggestedStart(window, vm),
 		});

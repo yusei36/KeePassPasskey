@@ -8,10 +8,12 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using KeePass.Plugins;
 using KeePassPasskey.Ipc;
+using KeePassPasskey.Localization;
 using KeePassPasskey.Storage;
 using KeePassPasskey.UI;
 using KeePassPasskey.Update;
 using KeePassPasskeyShared;
+using KeePassPasskeyShared.Localization;
 
 namespace KeePassPasskey;
 
@@ -55,6 +57,7 @@ public sealed class KeePassPasskeyExt : Plugin
 		var settingsStorage = new SettingsStorage(host);
 		var initialSettings = settingsStorage.Load();
 		Log.Configure(PluginLogFile.FilePath, initialSettings.LogLevel);
+		PluginLanguage.Apply();
 
 		// Windows 11 24H2 required (build 26100+) for the passkey provider API.
 		var buildVersion = GetRealWindowsBuildNumber();
@@ -84,8 +87,7 @@ public sealed class KeePassPasskeyExt : Plugin
 			{
 				// Pipe name held by another process; skip sync (it would feed the squatter) and warn.
 				KeePassLib.Utility.MessageService.ShowWarning(
-					"KeePassPasskey could not claim its named pipe.",
-					"Another process is already using the passkey pipe name. Passkey operations are disabled until you close that process and restart KeePass.");
+					Strings.KeePass_Pipe_ClaimFailedTitle, Strings.KeePass_Pipe_ClaimFailedMessage);
 			}
 
 			_updateChecker = new PluginUpdateChecker(_host, settingsStorage);
@@ -110,10 +112,10 @@ public sealed class KeePassPasskeyExt : Plugin
 	{
 		if (_updateChecker == null) return null;
 
-		var settings = new ToolStripMenuItem("Passkey settings", KeePassIcons.Get("B16x16_Misc"));
+		var settings = new ToolStripMenuItem(Strings.KeePass_ToolsMenu_Settings, KeePassIcons.Get("B16x16_Misc"));
 		settings.Click += (s, e) => OpenProviderSettings();
 
-		var update = new ToolStripMenuItem("Update plugin from installed app",
+		var update = new ToolStripMenuItem(Strings.KeePass_ToolsMenu_UpdatePlugin,
 			KeePassIcons.Get("B16x16_2UpArrow"));
 		update.Click += (s, e) => _updateChecker.Check(true);
 
@@ -126,8 +128,7 @@ public sealed class KeePassPasskeyExt : Plugin
 	private static void OpenProviderSettings()
 	{
 		if (!ProviderLauncher.LaunchSettings())
-			KeePassLib.Utility.MessageService.ShowWarning("KeePassPasskey",
-				"The KeePassPasskey app could not be opened. It does not seem to be installed.");
+			KeePassLib.Utility.MessageService.ShowWarning("KeePassPasskey", Strings.KeePass_ToolsMenu_AppOpenFailed);
 	}
 
 	public override void Terminate()

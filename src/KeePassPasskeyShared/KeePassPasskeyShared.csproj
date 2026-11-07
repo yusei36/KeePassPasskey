@@ -16,4 +16,23 @@
 		<PackageReference Include="PeterO.Cbor" Version="4.5.5" />
 	</ItemGroup>
 
+	<!-- UI strings of app and plugin: Localization\Strings.resx (English) plus Strings.<lang>.resx per
+	     language. Every language is embedded in this assembly instead of satellites, which the plugin's
+	     ILRepack merge would drop; EmbeddedResourceManager reads them. -->
+	<ItemGroup>
+		<EmbeddedResource Update="Localization\Strings.resx"
+						  LogicalName="KeePassPasskeyShared.Localization.Strings.resources"
+						  StronglyTypedLanguage="CSharp"
+						  StronglyTypedClassName="Strings"
+						  StronglyTypedNamespace="KeePassPasskeyShared.Localization"
+						  StronglyTypedFileName="$(IntermediateOutputPath)Strings.Designer.cs"
+						  PublicClass="true" />
+		<EmbeddedResource Update="Localization\Strings.*.resx"
+						  WithCulture="false"
+						  LogicalName="KeePassPasskeyShared.Localization.%(Filename).resources" />
+		<AssemblyAttribute Include="System.Resources.NeutralResourcesLanguageAttribute">
+			<_Parameter1>en</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
 </Project>

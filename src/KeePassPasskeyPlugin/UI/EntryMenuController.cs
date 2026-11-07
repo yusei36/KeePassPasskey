@@ -6,6 +6,7 @@ using KeePass.Plugins;
 using KeePassLib;
 using KeePassLib.Utility;
 using KeePassPasskey.Storage;
+using KeePassPasskeyShared.Localization;
 
 namespace KeePassPasskey.UI;
 
@@ -42,19 +43,19 @@ internal sealed class EntryMenuController : IDisposable
 	{
 		if (_rootItem != null) return _rootItem;
 
-		_cutItem = new ToolStripMenuItem("Cut Passkey", KeePassIcons.Get("B16x16_Cut"));
+		_cutItem = new ToolStripMenuItem(Strings.KeePass_EntryMenu_Cut, KeePassIcons.Get("B16x16_Cut"));
 		_cutItem.Click += OnCut;
 
-		_copyItem = new ToolStripMenuItem("Copy Passkey", KeePassIcons.Get("B16x16_EditCopy"));
+		_copyItem = new ToolStripMenuItem(Strings.KeePass_EntryMenu_Copy, KeePassIcons.Get("B16x16_EditCopy"));
 		_copyItem.Click += OnCopy;
 
-		_pasteItem = new ToolStripMenuItem("Paste Passkey Here", KeePassIcons.Get("B16x16_EditPaste"));
+		_pasteItem = new ToolStripMenuItem(Strings.KeePass_EntryMenu_Paste, KeePassIcons.Get("B16x16_EditPaste"));
 		_pasteItem.Click += OnPaste;
 
-		_removeItem = new ToolStripMenuItem("Remove Passkey", KeePassIcons.Get("B16x16_DeleteEntry"));
+		_removeItem = new ToolStripMenuItem(Strings.KeePass_EntryMenu_Remove, KeePassIcons.Get("B16x16_DeleteEntry"));
 		_removeItem.Click += OnRemove;
 
-		_rootItem = new ToolStripMenuItem("Passkey", KeePassIcons.GetEntryIcon(_host, PwIcon.MultiKeys));
+		_rootItem = new ToolStripMenuItem(Strings.KeePass_EntryMenu_Root, KeePassIcons.GetEntryIcon(_host, PwIcon.MultiKeys));
 		_rootItem.DropDownItems.Add(_cutItem);
 		_rootItem.DropDownItems.Add(_copyItem);
 		_rootItem.DropDownItems.Add(_pasteItem);
@@ -88,8 +89,7 @@ internal sealed class EntryMenuController : IDisposable
 		if (target == null || ReferenceEquals(target, _sourceEntry)) return;
 
 		if (PasskeyEntryStorage.EntryHasPasskey(target) && !MessageService.AskYesNo(
-			"This entry already contains a passkey. Replace it with the one you are pasting?\r\n\r\n" +
-			"The current passkey remains in the entry's history, in case you need it back.",
+			Strings.KeePass_Paste_ConfirmReplace,
 			PwDefs.ShortProductName))
 			return;
 
@@ -100,15 +100,14 @@ internal sealed class EntryMenuController : IDisposable
 				if (_sourceIsCut) ClearSource(); // a copy stays on the clipboard for further pastes
 				break;
 			case PasskeyTransferResult.SameEntry:
-				MessageService.ShowInfo("The passkey is already on this entry.");
+				MessageService.ShowInfo(Strings.KeePass_Paste_AlreadyOnEntry);
 				break;
 			case PasskeyTransferResult.SourceUnavailable:
-				MessageService.ShowWarning(
-					"The entry the passkey came from is no longer available, so the paste was cancelled.");
+				MessageService.ShowWarning(Strings.KeePass_Paste_SourceUnavailable);
 				ClearSource();
 				break;
 			default:
-				MessageService.ShowWarning("The passkey could not be pasted.");
+				MessageService.ShowWarning(Strings.KeePass_Paste_Failed);
 				break;
 		}
 
@@ -122,17 +121,15 @@ internal sealed class EntryMenuController : IDisposable
 
 		var title = _storage.ResolveEntryTitle(entry, _host.Database);
 		if (!MessageService.AskYesNo(
-			(string.IsNullOrEmpty(title)
-				? "Remove the passkey from this entry?"
-				: "Remove the passkey from “" + title + "”?") + "\r\n\r\n" +
-			"The entry itself is kept. The passkey remains in the entry's history, in case " +
-			"you need it back.",
+			string.IsNullOrEmpty(title)
+				? Strings.KeePass_Remove_Confirm
+				: Localizer.Format(Strings.KeePass_Remove_ConfirmTitled, title),
 			PwDefs.ShortProductName, false))
 			return;
 
 		if (!_storage.RemovePasskey(_host.Database, entry))
 		{
-			MessageService.ShowWarning("The passkey could not be removed.");
+			MessageService.ShowWarning(Strings.KeePass_Remove_Failed);
 			return;
 		}
 
@@ -162,12 +159,12 @@ internal sealed class EntryMenuController : IDisposable
 		{
 			var title = _storage.ResolveEntryTitle(_sourceEntry, _sourceDb);
 			_pasteItem.Text = string.IsNullOrEmpty(title)
-				? "Paste Passkey Here"
-				: "Paste Passkey from “" + title + "”";
+				? Strings.KeePass_EntryMenu_Paste
+				: Localizer.Format(Strings.KeePass_EntryMenu_PasteFrom, title);
 		}
 		else
 		{
-			_pasteItem.Text = "Paste Passkey Here";
+			_pasteItem.Text = Strings.KeePass_EntryMenu_Paste;
 		}
 	}
 

@@ -2,6 +2,8 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:loc="using:KeePassPasskeyShared.Localization"
+						 xmlns:utils="using:KeePassPasskeyProvider.App.Utils"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 						 xmlns:fa="using:FluentAvalonia.UI.Controls"
 						 x:Class="KeePassPasskeyProvider.App.Controls.SetupGuide"
@@ -9,10 +11,10 @@
 		<Expander IsExpanded="{Binding IsSetupExpanded, Mode=TwoWay}">
 				<Expander.Header>
 						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-								<TextBlock Text="Getting started" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
+								<TextBlock Text="{x:Static loc:Strings.App_SetupGuide_Title}" FontWeight="SemiBold" FontSize="14" VerticalAlignment="Center" />
 								<Button Classes="hyperlink" Padding="4" Opacity="0.6"
 												Command="{Binding OpenUserGuideCommand}"
-												ToolTip.Tip="Open user guide"
+												ToolTip.Tip="{x:Static loc:Strings.App_SetupGuide_UserGuideTooltip}"
 												VerticalAlignment="Center">
 										<fa:FAFontIcon Glyph="&#xE8F1;" FontSize="16" FontFamily="Segoe Fluent Icons" />
 								</Button>
@@ -30,24 +32,19 @@
 															 HorizontalAlignment="Center" VerticalAlignment="Center" />
 								</Border>
 								<StackPanel Grid.Column="1" Spacing="4">
-										<TextBlock Text="Install the plugin" FontWeight="SemiBold" FontSize="13" />
-										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-												<Run Text="Put " />
-												<Run Text="KeePassPasskey.dll" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text=" in your KeePass " />
-												<Run Text="Plugins" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text=" folder, by hand or with the button below, then restart KeePass." />
-										</TextBlock>
+										<TextBlock Text="{x:Static loc:Strings.App_SetupGuide_Step1_Title}" FontWeight="SemiBold" FontSize="13" />
+										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+												   utils:MarkedText.Text="{x:Static loc:Strings.App_SetupGuide_Step1_Text}" />
 										<StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left">
-												<Button Content="Install plugin"
+												<Button Content="{x:Static loc:Strings.App_Action_InstallPlugin}"
 																Command="{Binding InstallPluginCommand}"
 																IsVisible="{Binding HasBundledPlugin}"
-																ToolTip.Tip="Install or update the KeePass plugin"
+																ToolTip.Tip="{x:Static loc:Strings.App_Action_InstallPluginTooltip}"
 																Padding="6 2" FontSize="12" />
-												<Button Content="Show plugin file"
+												<Button Content="{x:Static loc:Strings.App_Action_ShowPluginFile}"
 																Command="{Binding ShowPluginFileCommand}"
 																IsVisible="{Binding HasBundledPlugin}"
-																ToolTip.Tip="Reveal KeePassPasskey.dll in Explorer to copy it yourself"
+																ToolTip.Tip="{x:Static loc:Strings.App_SetupGuide_ShowPluginFileTooltip}"
 																Padding="6 2" FontSize="12" />
 										</StackPanel>
 								</StackPanel>
@@ -65,15 +62,12 @@
 															 HorizontalAlignment="Center" VerticalAlignment="Center" />
 								</Border>
 								<StackPanel Grid.Column="1" Spacing="4">
-										<TextBlock Text="Open Advanced Passkey Options" FontWeight="SemiBold" FontSize="13" />
-										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-												<Run Text="Go to " />
-												<Run Text="Settings › Accounts › Passkeys › Advanced options" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text=", or use the button below." />
-										</TextBlock>
-										<Button Content="Advanced Passkey Options"
+										<TextBlock Text="{x:Static loc:Strings.App_SetupGuide_Step2_Title}" FontWeight="SemiBold" FontSize="13" />
+										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+												   utils:MarkedText.Text="{x:Static loc:Strings.App_SetupGuide_Step2_Text}" />
+										<Button Content="{x:Static loc:Strings.App_Action_AdvancedPasskeyOptions}"
 														Command="{Binding OpenPasskeySettingsCommand}"
-														ToolTip.Tip="Open advanced passkey options in Windows Settings"
+														ToolTip.Tip="{x:Static loc:Strings.App_Action_AdvancedPasskeyOptionsTooltip}"
 														Padding="6 2" FontSize="12" HorizontalAlignment="Left" />
 								</StackPanel>
 						</Grid>
@@ -90,12 +84,9 @@
 															 HorizontalAlignment="Center" VerticalAlignment="Center" />
 								</Border>
 								<StackPanel Grid.Column="1" Spacing="2">
-										<TextBlock Text="Enable KeePassPasskey" FontWeight="SemiBold" FontSize="13" />
-										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-												<Run Text="Toggle " />
-												<Run Text="KeePassPasskey" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text=" on in the passkey provider list." />
-										</TextBlock>
+										<TextBlock Text="{x:Static loc:Strings.App_SetupGuide_Step3_Title}" FontWeight="SemiBold" FontSize="13" />
+										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+												   utils:MarkedText.Text="{x:Static loc:Strings.App_SetupGuide_Step3_Text}" />
 								</StackPanel>
 						</Grid>
 
@@ -111,14 +102,9 @@
 															 HorizontalAlignment="Center" VerticalAlignment="Center" />
 								</Border>
 								<StackPanel Grid.Column="1" Spacing="2">
-										<TextBlock Text="Verify" FontWeight="SemiBold" FontSize="13" />
-										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}">
-												<Run Text="Both statuses above should read " />
-												<Run Text="Enabled" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text=" / " />
-												<Run Text="Running" FontFamily="Consolas,Courier New,monospace" FontWeight="SemiBold" />
-												<Run Text="." />
-										</TextBlock>
+										<TextBlock Text="{x:Static loc:Strings.App_SetupGuide_Step4_Title}" FontWeight="SemiBold" FontSize="13" />
+										<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+												   utils:MarkedText.Text="{x:Static loc:Strings.App_SetupGuide_Step4_Text}" />
 								</StackPanel>
 						</Grid>
 				</StackPanel>

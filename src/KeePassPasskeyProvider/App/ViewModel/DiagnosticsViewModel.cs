@@ -24,15 +24,15 @@ public sealed partial class DiagnosticsViewModel : ObservableObject, IDisposable
 	public bool IsServerVersionNotAvailable => ServerVersion is null;
 	public bool IsIncompatibleVersion => PingStatus == KeePassPasskeyShared.Ipc.PingStatus.IncompatibleVersion;
 	public string IncompatibleVersionMessage =>
-		Util.Notifier.VersionMismatchBody(ClientVersion, ServerVersion) + " Passkey operations are blocked until then.";
+		Localizer.Format(Strings.App_Diagnostics_IncompatibleVersion_Message, Util.Notifier.VersionMismatchBody(ClientVersion, ServerVersion));
 
 	public bool IsVersionMismatch =>
 		PingStatus == KeePassPasskeyShared.Ipc.PingStatus.Ready && ProductVersionsDiffer(ServerVersion);
 	public string VersionMismatchMessage => VersionDifferenceMessage(ServerVersion);
 
 	internal static string VersionDifferenceMessage(string? pluginVersion) =>
-		$"This app ({PipeConstants.StripBuildMetadata(ClientVersion)}) and the KeePass plugin ({PipeConstants.StripBuildMetadata(pluginVersion ?? "")}) " +
-		"have different versions but are compatible. Passkeys keep working, but new features might not be available until the older side is updated.";
+		Localizer.Format(Strings.App_Diagnostics_VersionMismatch_Message,
+			PipeConstants.StripBuildMetadata(ClientVersion), PipeConstants.StripBuildMetadata(pluginVersion ?? ""));
 
 	internal static bool ProductVersionsDiffer(string? pluginVersion)
 		=> pluginVersion != null

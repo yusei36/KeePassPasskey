@@ -2,6 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:loc="using:KeePassPasskeyShared.Localization"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 						 xmlns:fa="using:FluentAvalonia.UI.Controls"
 						 xmlns:conv="using:KeePassPasskeyProvider.App.Converters"
@@ -37,7 +38,7 @@
 		<StackPanel Spacing="14">
 
 				<StackPanel Spacing="4">
-						<TextBlock Text="KeePass folder or plugins folder" Classes="caption" />
+						<TextBlock Text="{x:Static loc:Strings.App_InstallDialog_FolderLabel}" Classes="caption" />
 						<Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
 								<TextBox Grid.Column="0" Text="{Binding SelectedFolder, Mode=TwoWay}"
 												 IsEnabled="{Binding !IsBusy}"
@@ -72,7 +73,7 @@
 
 				<StackPanel Spacing="2"
 										IsVisible="{Binding TargetDllPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-						<TextBlock Text="Installs to" Classes="caption" />
+						<TextBlock Text="{x:Static loc:Strings.App_InstallDialog_TargetLabel}" Classes="caption" />
 						<TextBlock Text="{Binding TargetDllPath}" Classes="path">
 								<ToolTip.Tip>
 										<ToolTip MaxWidth="360">
@@ -81,9 +82,9 @@
 										</ToolTip>
 								</ToolTip.Tip>
 						</TextBlock>
-						<TextBlock Text="This folder does not exist yet and will be created." Classes="caption"
+						<TextBlock Text="{x:Static loc:Strings.App_InstallDialog_FolderWillBeCreated}" Classes="caption"
 											 Margin="0 4 0 0" IsVisible="{Binding ShowCreateNote}" />
-						<TextBlock Text="Writing here needs administrator rights. Windows asks for them once."
+						<TextBlock Text="{x:Static loc:Strings.App_InstallDialog_NeedsAdmin}"
 											 Classes="caption" Margin="0 4 0 0" IsVisible="{Binding NeedsElevation}" />
 				</StackPanel>
 
@@ -96,13 +97,13 @@
 											Severity="{Binding ResultSeverity}" Message="{Binding ResultMessage}" />
 
 				<StackPanel Spacing="6">
-						<TextBlock Text="Or copy the file yourself:" Classes="caption" />
+						<TextBlock Text="{x:Static loc:Strings.App_InstallDialog_CopyYourselfLabel}" Classes="caption" />
 						<StackPanel Orientation="Horizontal" Spacing="8">
-								<Button Content="Show plugin file" Command="{Binding ShowPluginFileCommand}"
-												ToolTip.Tip="Reveal KeePassPasskey.dll in File Explorer" />
-								<Button Content="Show target folder" Command="{Binding ShowTargetFolderCommand}"
+								<Button Content="{x:Static loc:Strings.App_Action_ShowPluginFile}" Command="{Binding ShowPluginFileCommand}"
+												ToolTip.Tip="{x:Static loc:Strings.App_InstallDialog_ShowPluginFileTooltip}" />
+								<Button Content="{x:Static loc:Strings.App_InstallDialog_ShowTargetButton}" Command="{Binding ShowTargetFolderCommand}"
 												IsEnabled="{Binding CanInstall}"
-												ToolTip.Tip="Open the KeePass plugins folder in File Explorer" />
+												ToolTip.Tip="{x:Static loc:Strings.App_InstallDialog_ShowTargetTooltip}" />
 						</StackPanel>
 				</StackPanel>
 

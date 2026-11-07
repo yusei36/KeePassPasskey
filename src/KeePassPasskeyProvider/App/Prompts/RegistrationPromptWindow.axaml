@@ -2,6 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <prompts:PromptWindow xmlns="https://github.com/avaloniaui"
 											xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+											xmlns:loc="using:KeePassPasskeyShared.Localization"
 											xmlns:fa="using:FluentAvalonia.UI.Controls"
 											xmlns:prompts="using:KeePassPasskeyProvider.App.Prompts"
 											xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
@@ -54,7 +55,7 @@
 												 FontFamily="Segoe Fluent Icons" VerticalAlignment="Top" Margin="0 1 0 0"
 												 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 					<TextBlock Grid.Column="1" Margin="8 0 0 0"
-										 Text="This site asked for enterprise attestation, which KeePassPasskey cannot provide. It may still accept the passkey."
+										 Text="{x:Static loc:Strings.Prompt_Register_AttestationHint}"
 										 FontSize="11.5" TextWrapping="Wrap"
 										 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 				</Grid>
@@ -66,16 +67,16 @@
 							Background="{DynamicResource ControlFillColorSecondaryBrush}">
 				<Grid ColumnDefinitions="*,*">
 					<RadioButton Grid.Column="0" Classes="segment" GroupName="target"
-											 Content="Create new" IsChecked="{Binding IsCreateNew, Mode=TwoWay}" />
+											 Content="{x:Static loc:Strings.Prompt_Register_CreateNew}" IsChecked="{Binding IsCreateNew, Mode=TwoWay}" />
 					<RadioButton Grid.Column="1" Classes="segment" GroupName="target"
-											 Content="Add to existing" IsChecked="{Binding IsAddToExisting, Mode=TwoWay}" />
+											 Content="{x:Static loc:Strings.Prompt_Register_AddToExisting}" IsChecked="{Binding IsAddToExisting, Mode=TwoWay}" />
 				</Grid>
 			</Border>
 
 			<!-- Create a new entry -->
 			<StackPanel Grid.Row="4" Margin="18 16 18 4" Spacing="6"
 									IsVisible="{Binding IsCreateNew}">
-				<TextBlock Text="Database" FontSize="12"
+				<TextBlock Text="{x:Static loc:Strings.Prompt_Register_DatabaseLabel}" FontSize="12"
 									 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 				<ComboBox HorizontalAlignment="Stretch"
 									ItemsSource="{Binding Databases}"
@@ -86,7 +87,7 @@
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<TextBlock Text="A new entry will be created for this site." FontSize="11.5"
+				<TextBlock Text="{x:Static loc:Strings.Prompt_Register_NewEntryHint}" FontSize="11.5"
 									 Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
 			</StackPanel>
 
@@ -94,7 +95,7 @@
 			<StackPanel Grid.Row="4" Margin="18 14 18 4" Spacing="8"
 									IsVisible="{Binding IsAddToExisting}">
 				<Grid ColumnDefinitions="*,6,Auto">
-					<TextBox Grid.Column="0" PlaceholderText="Search entries…"
+					<TextBox Grid.Column="0" PlaceholderText="{x:Static loc:Strings.Prompt_Register_SearchPlaceholder}"
 									 Text="{Binding SearchText, Mode=TwoWay}" />
 					<ToggleButton Grid.Column="2" Width="32" Height="32" Padding="0"
 												IsChecked="{Binding IsFiltered, Mode=OneWay}"
@@ -104,7 +105,7 @@
 					</ToggleButton>
 				</Grid>
 
-				<TextBlock Text="No entries match your search." FontSize="12" Margin="2 6"
+				<TextBlock Text="{x:Static loc:Strings.Prompt_Register_NoMatches}" FontSize="12" Margin="2 6"
 									 IsVisible="{Binding !HasVisibleEntries}"
 									 Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 
@@ -163,12 +164,12 @@
 																				 TextTrimming="CharacterEllipsis" />
 															<Ellipse Width="6" Height="6" VerticalAlignment="Center"
 																			 IsVisible="{Binding IsKeePassSelected}"
-																			 ToolTip.Tip="Selected in KeePass"
+																			 ToolTip.Tip="{x:Static loc:Strings.Prompt_Register_SelectedInKeePassTooltip}"
 																			 Fill="{DynamicResource AccentFillColorDefaultBrush}" />
 															<PathIcon Data="{x:Static utils:PromptIcons.KeyFilled}"
 																				Width="12" Height="12" VerticalAlignment="Center"
 																				IsVisible="{Binding HasPasskey}"
-																				ToolTip.Tip="This entry already has a passkey"
+																				ToolTip.Tip="{x:Static loc:Strings.Prompt_Register_HasPasskeyTooltip}"
 																				Foreground="{DynamicResource SystemFillColorCautionBrush}" />
 														</StackPanel>
 														<TextBlock Text="{Binding Subtitle}" FontSize="11"
@@ -193,7 +194,7 @@
 													 FontFamily="Segoe Fluent Icons" VerticalAlignment="Top" Margin="0 1 0 0"
 													 Foreground="{DynamicResource SystemFillColorCautionBrush}" />
 						<TextBlock Grid.Column="1" Margin="8 0 0 0"
-											 Text="This entry already has a passkey. Saving replaces it."
+											 Text="{x:Static loc:Strings.Prompt_Register_ReplaceHint}"
 											 FontSize="11.5" TextWrapping="Wrap" />
 					</Grid>
 				</Border>
@@ -210,7 +211,7 @@
 									Command="{Binding ConfirmCommand}" />
 					<Button Grid.Column="2" HorizontalAlignment="Stretch"
 									HorizontalContentAlignment="Center"
-									Content="Cancel"
+									Content="{x:Static loc:Strings.Common_Cancel}"
 									Command="{Binding CancelCommand}" />
 				</Grid>
 			</Border>

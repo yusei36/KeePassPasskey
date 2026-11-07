@@ -8,6 +8,7 @@ using KeePass.UI;
 using KeePassLib.Utility;
 using KeePassPasskey.Update;
 using KeePassPasskeyShared.Ipc;
+using KeePassPasskeyShared.Localization;
 using KeePassPasskeyShared.Update;
 
 namespace KeePassPasskey.UI;
@@ -19,8 +20,6 @@ namespace KeePassPasskey.UI;
 /// </summary>
 internal static class PluginUpdatePrompt
 {
-	private const string Title = "KeePassPasskey plugin update";
-
 	// Ids stay clear of the standard IDOK/IDCANCEL/IDYES/IDNO, so closing with Esc or the title bar
 	// (which reports IDCANCEL) cannot be mistaken for one of ours.
 	private const int IdUpdate = 101;
@@ -36,23 +35,22 @@ internal static class PluginUpdatePrompt
 	internal static PluginUpdateChoice ShowUpdate(PluginUpdateInfo info, Form parent, out bool neverCheck)
 	{
 		var dialog = NewDialog(VtdIcon.Information);
-		dialog.MainInstruction = string.Format("Version {0} is available. Version {1} is installed.",
+		dialog.MainInstruction = Localizer.Format(Strings.KeePass_Update_Heading,
 			Short(info.AvailableVersion), Short(info.InstalledVersion));
-		dialog.Content = "Creating and using passkeys can stop working until these match."
-			+ "\r\n\r\nFrom:  KeePassPasskey (" + info.ChannelDisplayName + ")"
+		dialog.Content = Strings.KeePass_Update_Message
+			+ "\r\n\r\n" + Localizer.Format(Strings.KeePass_Update_FromLabel, info.ChannelDisplayName)
 			+ "\r\n" + WrapPath(info.PackagePath)
-			+ "\r\n\r\n" + WrapPath("To:  " + info.TargetDirectory);
-		dialog.AddButton(IdUpdate, "Update now", "KeePass has to restart afterwards to load it");
-		dialog.AddButton(IdLater, "Later", "Ask again at the next KeePass start");
-		dialog.AddButton(IdSkip, "Skip version " + Short(info.AvailableVersion),
-			"Do not ask again for this version");
-		dialog.VerificationText = "Don't check for plugin updates again";
+			+ "\r\n\r\n" + WrapPath(Localizer.Format(Strings.KeePass_Update_ToLabel, info.TargetDirectory));
+		dialog.AddButton(IdUpdate, Strings.KeePass_Update_UpdateNowButton, Strings.KeePass_Update_UpdateNowNote);
+		dialog.AddButton(IdLater, Strings.KeePass_Update_LaterButton, Strings.KeePass_Update_LaterNote);
+		dialog.AddButton(IdSkip, Localizer.Format(Strings.KeePass_Update_SkipVersionButton, Short(info.AvailableVersion)),
+			Strings.KeePass_Update_SkipVersionNote);
+		dialog.VerificationText = Strings.KeePass_Update_NeverCheckCheckbox;
 
 		if (!dialog.ShowDialog(parent))
 		{
 			neverCheck = false;
-			return MessageService.AskYesNo("A new KeePassPasskey plugin is available (version "
-				+ Short(info.AvailableVersion) + "). Install it now?")
+			return MessageService.AskYesNo(Localizer.Format(Strings.KeePass_Update_FallbackQuestion, Short(info.AvailableVersion)))
 				? PluginUpdateChoice.Update
 				: PluginUpdateChoice.Later;
 		}
@@ -70,14 +68,14 @@ internal static class PluginUpdatePrompt
 	internal static bool ShowRestart(PluginUpdateInfo info, Form parent)
 	{
 		var dialog = NewDialog(VtdIcon.Information);
-		dialog.MainInstruction = "The plugin was updated to " + Short(info.AvailableVersion) + ".";
-		dialog.Content = "KeePass has to restart before the new version is loaded.";
-		dialog.AddButton(IdRestart, "Restart now", "KeePass closes and reopens");
-		dialog.AddButton(IdLater, "Later",
-			Short(info.InstalledVersion) + " stays in use until KeePass restarts");
+		dialog.MainInstruction = Localizer.Format(Strings.KeePass_Restart_Heading, Short(info.AvailableVersion));
+		dialog.Content = Strings.KeePass_Restart_Message;
+		dialog.AddButton(IdRestart, Strings.KeePass_Restart_RestartNowButton, Strings.KeePass_Restart_RestartNowNote);
+		dialog.AddButton(IdLater, Strings.KeePass_Update_LaterButton,
+			Localizer.Format(Strings.KeePass_Restart_LaterNote, Short(info.InstalledVersion)));
 
 		if (!dialog.ShowDialog(parent))
-			return MessageService.AskYesNo("The KeePassPasskey plugin was updated. Restart KeePass now?");
+			return MessageService.AskYesNo(Strings.KeePass_Restart_FallbackQuestion);
 
 		return dialog.Result == IdRestart;
 	}
@@ -88,25 +86,25 @@ internal static class PluginUpdatePrompt
 		// A dismissed elevation prompt is a decision rather than an error, so it only reports what it
 		// left behind. Anything else carries the reason the write failed.
 		string reason = outcome.Cancelled
-			? "Permission was not granted, so version " + Short(info.InstalledVersion) + " is still in use."
-			: outcome.Error ?? "The plugin file could not be written.";
+			? Localizer.Format(Strings.KeePass_UpdateFailed_PermissionDenied, Short(info.InstalledVersion))
+			: outcome.Error ?? Strings.Common_Install_Error_WriteFailed;
 
 		var dialog = NewDialog(VtdIcon.Warning);
-		dialog.MainInstruction = "The plugin was not updated.";
+		dialog.MainInstruction = Strings.KeePass_UpdateFailed_Heading;
 		dialog.Content = reason;
-		dialog.AddButton(IdRetry, "Try again",
-			outcome.Cancelled ? "Asks for permission once more" : "Runs the update again");
-		dialog.AddButton(IdLater, "Later", "Ask again at the next KeePass start");
+		dialog.AddButton(IdRetry, Strings.KeePass_UpdateFailed_TryAgainButton,
+			outcome.Cancelled ? Strings.KeePass_UpdateFailed_TryAgainPermissionNote : Strings.KeePass_UpdateFailed_TryAgainNote);
+		dialog.AddButton(IdLater, Strings.KeePass_Update_LaterButton, Strings.KeePass_Update_LaterNote);
 
 		if (!dialog.ShowDialog(parent))
-			return MessageService.AskYesNo(reason + "\r\n\r\nTry again?");
+			return MessageService.AskYesNo(Localizer.Format(Strings.KeePass_UpdateFailed_FallbackQuestion, reason));
 
 		return dialog.Result == IdRetry;
 	}
 
 	private static VistaTaskDialog NewDialog(VtdIcon icon)
 	{
-		var dialog = new VistaTaskDialog { CommandLinks = true, WindowTitle = Title };
+		var dialog = new VistaTaskDialog { CommandLinks = true, WindowTitle = Strings.KeePass_Update_Title };
 		dialog.SetIcon(icon);
 		AllowCancellation(dialog);
 		return dialog;

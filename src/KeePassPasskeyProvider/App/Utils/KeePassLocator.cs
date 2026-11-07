@@ -9,6 +9,7 @@ using Microsoft.Win32;
 
 namespace KeePassPasskeyProvider.App.Utils;
 
+/// <param name="Source">Localized sentence telling the user where the folder was found.</param>
 internal sealed record KeePassLocation(string Directory, string Source);
 
 /// <summary>
@@ -77,7 +78,7 @@ internal static class KeePassLocator
 		for (int level = 0; level < 3 && !string.IsNullOrEmpty(directory); level++)
 		{
 			if (IsKeePassDirectory(directory))
-				return new KeePassLocation(directory, "the running KeePass");
+				return new KeePassLocation(directory, Strings.App_InstallDialog_Detected_RunningKeePass);
 			directory = Path.GetDirectoryName(directory);
 		}
 		return null;
@@ -93,7 +94,7 @@ internal static class KeePassLocator
 				{
 					string? exe = process.MainModule?.FileName;
 					if (exe != null)
-						return new KeePassLocation(Path.GetDirectoryName(exe)!, "the running KeePass");
+						return new KeePassLocation(Path.GetDirectoryName(exe)!, Strings.App_InstallDialog_Detected_RunningKeePass);
 				}
 			}
 		}
@@ -113,7 +114,7 @@ internal static class KeePassLocator
 				using var root = RegistryKey.OpenBaseKey(hive, view).OpenSubKey(subKey);
 				string? location = root?.GetValue("InstallLocation") as string;
 				if (!string.IsNullOrWhiteSpace(location))
-					return new KeePassLocation(location.Trim('"').TrimEnd('\\'), "the KeePass installer's registry entry");
+					return new KeePassLocation(location.Trim('"').TrimEnd('\\'), Strings.App_InstallDialog_Detected_Registry);
 			}
 			catch (Exception ex)
 			{
@@ -160,7 +161,7 @@ internal static class KeePassLocator
 					if (component?.GetValue(compressed) is not string path) continue;
 					if (!path.EndsWith(@"\" + KeePassExe, StringComparison.OrdinalIgnoreCase)) continue;
 
-					return new KeePassLocation(Path.GetDirectoryName(path)!, "the MSI installation");
+					return new KeePassLocation(Path.GetDirectoryName(path)!, Strings.App_InstallDialog_Detected_Msi);
 				}
 			}
 		}
@@ -219,7 +220,7 @@ internal static class KeePassLocator
 		{
 			string candidate = Path.Combine(Environment.GetFolderPath(folder), "KeePass Password Safe 2");
 			if (IsKeePassDirectory(candidate))
-				return new KeePassLocation(candidate, "the default install path");
+				return new KeePassLocation(candidate, Strings.App_InstallDialog_Detected_DefaultPath);
 		}
 		return null;
 	}

@@ -105,7 +105,7 @@ public sealed partial class LogViewModel : ObservableObject, IDisposable
 		{
 			if (!File.Exists(filePath))
 			{
-				setLines([new LogLine("(no log file yet)", null)]);
+				setLines([new LogLine(Strings.App_Log_NoFile, null)]);
 				return;
 			}
 			using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -117,7 +117,7 @@ public sealed partial class LogViewModel : ObservableObject, IDisposable
 		}
 		catch (Exception ex)
 		{
-			setLines([new LogLine($"(could not read log: {ex.Message})", null)]);
+			setLines([new LogLine(Localizer.Format(Strings.App_Log_ReadFailed, ex.Message), null)]);
 		}
 	}
 

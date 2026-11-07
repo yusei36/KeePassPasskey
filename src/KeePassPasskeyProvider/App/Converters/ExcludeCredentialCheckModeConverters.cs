@@ -9,8 +9,8 @@ internal static class ExcludeCredentialCheckModeConverters
 {
 	public static readonly IValueConverter Text = new LambdaConverter(v => (v as ExcludeCredentialCheckMode?) switch
 	{
-		ExcludeCredentialCheckMode.None => "Don't check",
-		ExcludeCredentialCheckMode.AllDatabases => "Check all databases",
-		_ => "Check target database",
+		ExcludeCredentialCheckMode.None => Strings.App_Settings_DuplicateCheck_OptionNone,
+		ExcludeCredentialCheckMode.AllDatabases => Strings.App_Settings_DuplicateCheck_OptionAllDatabases,
+		_ => Strings.App_Settings_DuplicateCheck_OptionTargetDatabase,
 	});
 }

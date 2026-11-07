@@ -2,6 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:loc="using:KeePassPasskeyShared.Localization"
 						 xmlns:fa="using:FluentAvalonia.UI.Controls"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 						 x:Class="KeePassPasskeyProvider.App.Prompts.PromptTitleBar"
@@ -19,7 +20,7 @@
 
 		<StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" Margin="0 0 8 0"
 								VerticalAlignment="Center"
-								ToolTip.Tip="The request is cancelled when this runs out">
+								ToolTip.Tip="{x:Static loc:Strings.Prompt_CountdownTooltip}">
 			<fa:FAProgressRing Width="18" Height="18" IsIndeterminate="False"
 												 Value="{Binding CountdownValue}" />
 			<TextBlock Text="{Binding CountdownText}" FontSize="11" VerticalAlignment="Center"
@@ -27,7 +28,7 @@
 		</StackPanel>
 
 		<Button Grid.Column="3" Classes="caption" Command="{Binding CancelCommand}"
-						ToolTip.Tip="Cancel">
+						ToolTip.Tip="{x:Static loc:Strings.Common_Cancel}">
 			<fa:FAFontIcon Glyph="&#xE8BB;" FontSize="11" FontFamily="Segoe Fluent Icons" />
 		</Button>
 	</Grid>

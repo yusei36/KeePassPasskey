@@ -25,8 +25,8 @@ public sealed class EntryRowViewModel
 	internal EntryRowViewModel(EntryMatchInfo entry)
 	{
 		Entry = entry;
-		Title = string.IsNullOrEmpty(entry.Title) ? "(untitled)" : entry.Title;
-		DatabaseName = string.IsNullOrEmpty(entry.DatabaseName) ? "(unnamed database)" : entry.DatabaseName;
+		Title = string.IsNullOrEmpty(entry.Title) ? Strings.Prompt_Entry_Untitled : entry.Title;
+		DatabaseName = string.IsNullOrEmpty(entry.DatabaseName) ? Strings.Prompt_Entry_UnnamedDatabase : entry.DatabaseName;
 		Subtitle = entry.UserName ?? "";
 		Letter = LetterTile.Letter(Title);
 		TileBrush = LetterTile.Brush(Title);

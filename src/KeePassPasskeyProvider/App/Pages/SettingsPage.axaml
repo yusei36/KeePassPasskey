@@ -2,6 +2,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <UserControl xmlns="https://github.com/avaloniaui"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:loc="using:KeePassPasskeyShared.Localization"
 						 xmlns:ui="using:FluentAvalonia.UI.Controls"
 						 xmlns:vm="using:KeePassPasskeyProvider.App.ViewModel"
 			 xmlns:utils="using:KeePassPasskeyProvider.App.Utils"
@@ -12,18 +13,18 @@
 
 		<Grid RowDefinitions="Auto,*">
 				<Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto,Auto,Auto" Margin="16 16 16 4">
-						<TextBlock Text="Settings"
+						<TextBlock Text="{x:Static loc:Strings.App_Nav_Settings}"
 											 Theme="{StaticResource TitleTextBlockStyle}" />
 						<ui:FASymbolIcon Grid.Column="1" Symbol="ImportantFilled" FontSize="16"
 													 VerticalAlignment="Center" Margin="0 0 8 0"
 													 IsVisible="{Binding HasUnsavedChanges}"
 													 Foreground="{DynamicResource SystemFillColorCautionBrush}"
-													 ToolTip.Tip="You have unsaved changes" />
+													 ToolTip.Tip="{x:Static loc:Strings.App_Settings_UnsavedChangesTooltip}" />
 						<Button Grid.Column="2"
 										Command="{Binding ResetCommand}"
 										IsEnabled="{Binding !IsSaving}"
 										IsVisible="{Binding HasUnsavedChanges}"
-										ToolTip.Tip="Discard changes"
+										ToolTip.Tip="{x:Static loc:Strings.App_Settings_DiscardTooltip}"
 										VerticalAlignment="Center"
 										Margin="0 0 4 0">
 								<ui:FASymbolIcon Symbol="Undo" FontSize="18" />
@@ -32,7 +33,7 @@
 										Command="{Binding ResetToDefaultsCommand}"
 										IsEnabled="{Binding !IsSaving}"
 										IsVisible="{Binding CanResetToDefaults}"
-										ToolTip.Tip="Reset to defaults"
+										ToolTip.Tip="{x:Static loc:Strings.App_Settings_ResetToDefaultsTooltip}"
 										VerticalAlignment="Center"
 										Margin="0 0 4 0">
 								<ui:FAFontIcon Glyph="&#xE75C;" FontSize="18" FontFamily="Segoe Fluent Icons" />
@@ -40,7 +41,7 @@
 						<Button Grid.Column="4"
 										Command="{Binding SaveCommand}"
 										IsEnabled="{Binding CanSave}"
-										ToolTip.Tip="Save settings"
+										ToolTip.Tip="{x:Static loc:Strings.App_Settings_SaveTooltip}"
 										VerticalAlignment="Center"
 										Classes="accent">
 								<ui:FASymbolIcon Symbol="Save" FontSize="18" />
@@ -57,56 +58,76 @@
 																		 Foreground="{DynamicResource SystemFillColorCautionBrush}"
 																		 VerticalAlignment="Center" />
 										<TextBlock TextWrapping="Wrap" VerticalAlignment="Center"
-															 Text="Could not load the latest settings from KeePass. Showing the last known values." />
+															 Text="{x:Static loc:Strings.App_Settings_LoadFailed}" />
 								</StackPanel>
 						</Border>
 
-						<ui:FAInfoBar Title="Settings enforced by KeePass"
-													Message="These settings come from KeePass.config.enforced.xml and can't be changed here."
+						<ui:FAInfoBar Title="{x:Static loc:Strings.App_Settings_Enforced_Title}"
+													Message="{x:Static loc:Strings.App_Settings_Enforced_Message}"
 													Severity="Warning"
 													IsOpen="{Binding SettingsEnforced}"
 													IsVisible="{Binding SettingsEnforced}"
 													IsClosable="False" />
 
-						<ui:FASettingsExpander Header="Appearance"
+						<ui:FASettingsExpander Header="{x:Static loc:Strings.App_Settings_Appearance_Header}"
 																 IconSource="DarkTheme"
-																 Description="Application appearance and theme"
+																 Description="{x:Static loc:Strings.App_Settings_Appearance_Description}"
 																 IsExpanded="True">
 								<ui:FASettingsExpander.Footer>
 										<ComboBox SelectedItem="{Binding Theme}"
 															ItemsSource="{Binding Themes}"
-															MinWidth="120" />
+															MinWidth="120">
+												<ComboBox.ItemTemplate>
+														<DataTemplate>
+																<TextBlock Text="{Binding Converter={x:Static conv:ThemeConverters.Text}}" />
+														</DataTemplate>
+												</ComboBox.ItemTemplate>
+										</ComboBox>
 								</ui:FASettingsExpander.Footer>
 
-								<ui:FASettingsExpanderItem Content="System tray icon"
-																				 Description="Show a status icon in the system tray. Closing the window keeps the app running in the tray.">
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_Language_Header}">
+										<ui:FASettingsExpanderItem.Footer>
+												<ComboBox SelectedItem="{Binding SelectedLanguage}"
+																	ItemsSource="{Binding Languages}"
+																	MinWidth="160">
+														<ComboBox.ItemTemplate>
+																<DataTemplate x:DataType="vm:LanguageOption">
+																		<TextBlock Text="{Binding DisplayName}" />
+																</DataTemplate>
+														</ComboBox.ItemTemplate>
+												</ComboBox>
+										</ui:FASettingsExpanderItem.Footer>
+								</ui:FASettingsExpanderItem>
+
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_TrayIcon_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_TrayIcon_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding EnableTrayIcon}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
 						</ui:FASettingsExpander>
 
-						<ui:FASettingsExpander Header="Notifications &amp; User Verification"
+						<ui:FASettingsExpander Header="{x:Static loc:Strings.App_Settings_Verification_Header}"
 																 IconSource="OtherUser"
-																 Description="Confirmation prompts and user verification for passkey operations"
+																 Description="{x:Static loc:Strings.App_Settings_Verification_Description}"
 																 IsExpanded="True">
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Error notifications"
-																				 Description="Show a detailed notification when a passkey error occurs (Windows always displays a generic error)">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_ErrorNotifications_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_ErrorNotifications_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding ShowErrorNotifications}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Approval timeout"
-																				 Description="How long the confirmation prompt stays open">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_ApprovalTimeout_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_ApprovalTimeout_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ui:FANumberBox Value="{Binding NotificationTimeoutSeconds}"
 																			Minimum="5"
@@ -124,28 +145,28 @@
 												<StackPanel Spacing="0" Margin="0 4">
 														<StackPanel Spacing="2" Margin="0 0 0 6">
 																<StackPanel Orientation="Horizontal" Spacing="8">
-																		<TextBlock Text="Registration" VerticalAlignment="Center" />
+																		<TextBlock Text="{x:Static loc:Strings.App_Settings_RegistrationVerification_Header}" VerticalAlignment="Center" />
 																		<ui:FASymbolIcon Symbol="ImportantFilled" FontSize="16"
 																				VerticalAlignment="Center"
 																				IsVisible="{Binding IsRegistrationSilent}"
 																				Foreground="{DynamicResource SystemFillColorCautionBrush}"
-																				ToolTip.Tip="{x:Static vm:SettingsViewModel.SilentVerificationWarning}" />
+																				ToolTip.Tip="{x:Static loc:Strings.App_Settings_Verification_SilentWarning}" />
 																</StackPanel>
-																<TextBlock Text="How you approve saving a new passkey"
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_RegistrationVerification_Description}"
 																		Foreground="{DynamicResource TextFillColorSecondaryBrush}"
 																		FontSize="12" />
 														</StackPanel>
 														<Grid ColumnDefinitions="*,Auto">
-																<TextBlock Text="Windows Hello (PIN, fingerprint, or face)" VerticalAlignment="Center" />
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Verification_WindowsHello}" VerticalAlignment="Center" />
 																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationWindowsHello}" MinHeight="0"
-																		OnContent="On"
-																		OffContent="Off" />
+																		OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																		OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}" />
 														</Grid>
 														<Grid ColumnDefinitions="*,Auto">
-																<TextBlock Text="Confirmation prompt" VerticalAlignment="Center" />
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Verification_Prompt}" VerticalAlignment="Center" />
 																<ToggleSwitch Grid.Column="1" IsChecked="{Binding RegistrationPrompt}" MinHeight="0"
-																		OnContent="On"
-																		OffContent="Off" />
+																		OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																		OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}" />
 														</Grid>
 												</StackPanel>
 										</ui:FASettingsExpanderItem.Content>
@@ -156,52 +177,52 @@
 												<StackPanel Spacing="0" Margin="0 4">
 														<StackPanel Spacing="2" Margin="0 0 0 6">
 																<StackPanel Orientation="Horizontal" Spacing="8">
-																		<TextBlock Text="Sign-in" VerticalAlignment="Center" />
+																		<TextBlock Text="{x:Static loc:Strings.App_Settings_SignInVerification_Header}" VerticalAlignment="Center" />
 																		<ui:FASymbolIcon Symbol="ImportantFilled" FontSize="16"
 																				VerticalAlignment="Center"
 																				IsVisible="{Binding IsSignInSilent}"
 																				Foreground="{DynamicResource SystemFillColorCautionBrush}"
-																				ToolTip.Tip="{x:Static vm:SettingsViewModel.SilentVerificationWarning}" />
+																				ToolTip.Tip="{x:Static loc:Strings.App_Settings_Verification_SilentWarning}" />
 																</StackPanel>
-																<TextBlock Text="How you approve signing in"
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_SignInVerification_Description}"
 																		Foreground="{DynamicResource TextFillColorSecondaryBrush}"
 																		FontSize="12" />
 														</StackPanel>
 														<Grid ColumnDefinitions="*,Auto">
-																<TextBlock Text="Windows Hello (PIN, fingerprint, or face)" VerticalAlignment="Center" />
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Verification_WindowsHello}" VerticalAlignment="Center" />
 																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInWindowsHello}" MinHeight="0"
-																		OnContent="On"
-																		OffContent="Off" />
+																		OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																		OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}" />
 														</Grid>
 														<Grid ColumnDefinitions="*,Auto">
-																<TextBlock Text="Confirmation prompt" VerticalAlignment="Center" />
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Verification_Prompt}" VerticalAlignment="Center" />
 																<ToggleSwitch Grid.Column="1" IsChecked="{Binding SignInPrompt}" MinHeight="0"
-																		OnContent="On"
-																		OffContent="Off" />
+																		OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																		OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}" />
 														</Grid>
 												</StackPanel>
 										</ui:FASettingsExpanderItem.Content>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Skip Windows Hello after unlocking KeePass"
-																				 Description="When KeePass was locked and you just unlocked it for this request, don't ask for Windows Hello again. Only applies while the confirmation prompt is on">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_SkipHelloAfterUnlock_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_SkipHelloAfterUnlock_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding SkipWindowsHelloAfterUnlock}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
 						</ui:FASettingsExpander>
 
-						<ui:FASettingsExpander Header="Passkey Entries"
+						<ui:FASettingsExpander Header="{x:Static loc:Strings.App_Settings_Entries_Header}"
 																 IconSource="Save"
-																 Description="How new passkey entries are created"
+																 Description="{x:Static loc:Strings.App_Settings_Entries_Description}"
 																 IsExpanded="True">
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Save new passkeys in"
-																				 Description="Passkeys group: the default group for passkeys.&#x0a;Selected group: the group selected in KeePass when creating the passkey.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_EntryGroup_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_EntryGroup_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ComboBox SelectedItem="{Binding NewEntryGroupMode}"
 																	ItemsSource="{Binding GroupModes}"
@@ -215,8 +236,8 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Entry title"
-																				 Description="Title for new entries. Supports {RP_NAME} and KeePass placeholders like {USERNAME} or {URL}.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_EntryTitle_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_EntryTitle_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<TextBox Text="{Binding EntryTitleTemplate}"
 																 PlaceholderText="{}{RP_NAME} (Passkey)"
@@ -224,28 +245,28 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Store resolved title placeholders"
-																				 Description="On: placeholders are resolved and the final text is saved in the title. Off: KeePass resolves them each time the entry is shown. {RP_NAME} is always resolved on save.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_ResolvePlaceholders_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_ResolvePlaceholders_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding ResolveTitlePlaceholders}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Tag new passkeys"
-																				 Description="Add a &quot;Passkey&quot; tag to each entry created when a new passkey is registered">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_TagEntries_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_TagEntries_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding AddPasskeyTag}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Allow duplicate passkeys"
-																				 Description="Where to enforce a website's request not to add a second passkey for an account it already has one for.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_DuplicateCheck_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_DuplicateCheck_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ComboBox SelectedItem="{Binding ExcludeCredentialCheckMode}"
 																	ItemsSource="{Binding ExcludeCredentialCheckModes}"
@@ -261,22 +282,28 @@
 
 						</ui:FASettingsExpander>
 
-						<ui:FASettingsExpander Header="Advanced"
+						<ui:FASettingsExpander Header="{x:Static loc:Strings.App_Settings_Advanced_Header}"
 																 IconSource="Setting"
-																 Description="Behaviour, timing and logging settings that are rarely changed"
+																 Description="{x:Static loc:Strings.App_Settings_Advanced_Description}"
 																 IsExpanded="False">
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Log level"
-																				 Description="Verbosity of the provider and plugin log files">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_LogLevel_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_LogLevel_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ComboBox SelectedItem="{Binding LogLevel}"
 																	ItemsSource="{Binding LogLevels}"
-																	MinWidth="120" />
+																	MinWidth="120">
+														<ComboBox.ItemTemplate>
+																<DataTemplate>
+																		<TextBlock Text="{Binding Converter={x:Static conv:LogLevelConverters.Text}}" />
+																</DataTemplate>
+														</ComboBox.ItemTemplate>
+												</ComboBox>
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Status refresh interval"
-																				 Description="How often the app polls for provider status">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_RefreshInterval_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_RefreshInterval_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ui:FANumberBox Value="{Binding StatusRefreshIntervalSeconds}"
 																			Minimum="1"
@@ -289,71 +316,71 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Offer saving to an existing entry"
-																				 Description="Offer to save a passkey onto a matching entry instead of always creating a new one. Requires the registration confirmation prompt.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_SaveToExisting_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_SaveToExisting_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding SaveToExistingEntry}"
 																			IsEnabled="{Binding IsSaveToExistingEntryAvailable}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Check for plugin updates"
-																			 Description="When KeePass starts, offer to update the plugin if this app ships a newer one. Every update is confirmed in a dialog.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_PluginUpdates_Header}"
+																			 Description="{x:Static loc:Strings.App_Settings_PluginUpdates_Description}">
 									<ui:FASettingsExpanderItem.Footer>
 											<ToggleSwitch IsChecked="{Binding CheckForPluginUpdates}"
-																OnContent="On"
-																OffContent="Off"
+																OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																Margin="0 0 4 0" />
 									</ui:FASettingsExpanderItem.Footer>
 							</ui:FASettingsExpanderItem>
 
-							<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Use legacy notification prompts"
-																				 Description="Show confirmation prompts as Windows notifications instead of dialogs. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their pickers are limited to 5 items.">
+							<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_LegacyPrompts_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_LegacyPrompts_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding UseLegacyNotificationPrompts}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
 						</ui:FASettingsExpander>
 
-						<ui:FASettingsExpander Header="Expert"
+						<ui:FASettingsExpander Header="{x:Static loc:Strings.App_Settings_Expert_Header}"
 																 IconSource="Important"
-																 Description="Advanced options for uncommon setups. Change only if you know why."
+																 Description="{x:Static loc:Strings.App_Settings_Expert_Description}"
 																 IsExpanded="False">
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Windows credential cache"
-																				 Description="Lets your passkeys appear in the Windows sign-in prompt and autofill. Turning this off prevents passkey sign-in on most sites.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_WindowsCache_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_WindowsCache_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding SyncCredentialsToWindows}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Backup Eligibility (BE)"
-																				 Description="When on, websites are told that a new passkey is allowed to be backed up and synced to your other devices. When off, they are told it is saved on a single device only.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_BackupEligibility_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_BackupEligibility_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding NewPasskeyBackupEligible}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="Backup State (BS)"
-																				 Description="When on, websites are told that a new passkey is backed up right now. Only available while &quot;Backup Eligibility&quot; is on.">
+								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}" Content="{x:Static loc:Strings.App_Settings_BackupState_Header}"
+																				 Description="{x:Static loc:Strings.App_Settings_BackupState_Description}">
 										<ui:FASettingsExpanderItem.Footer>
 												<ToggleSwitch IsChecked="{Binding NewPasskeyBackupState}"
 																			IsEnabled="{Binding NewPasskeyBackupEligible}"
-																			OnContent="On"
-																			OffContent="Off"
+																			OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																			OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																			Margin="0 0 4 0" />
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
@@ -363,8 +390,8 @@
 												<StackPanel Spacing="8" Margin="0 4">
 														<Grid ColumnDefinitions="*,Auto">
 																<StackPanel Spacing="2" VerticalAlignment="Center" Margin="0 0 16 0">
-																		<TextBlock Text="Signing algorithms" />
-																		<TextBlock Text="Which algorithm a new passkey gets when the website accepts several.&#x0a;A website that accepts only algorithms that are off can't create a passkey."
+																		<TextBlock Text="{x:Static loc:Strings.App_Settings_Algorithms_Header}" />
+																		<TextBlock Text="{x:Static loc:Strings.App_Settings_Algorithms_Description}"
 																							 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
 																							 FontSize="12"
 																							 TextWrapping="Wrap" />
@@ -397,7 +424,7 @@
 																										CommandParameter="{Binding}"
 																										IsEnabled="{Binding CanMoveUp}"
 																										IsVisible="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).IsAlgorithmOrderEditable}"
-																										ToolTip.Tip="Move up"
+																										ToolTip.Tip="{x:Static loc:Strings.App_Settings_Algorithms_MoveUpTooltip}"
 																										Padding="8 3"
 																										VerticalAlignment="Center"
 																										Margin="0 0 4 0">
@@ -408,7 +435,7 @@
 																										CommandParameter="{Binding}"
 																										IsEnabled="{Binding CanMoveDown}"
 																										IsVisible="{Binding $parent[ItemsControl].((vm:SettingsViewModel)DataContext).IsAlgorithmOrderEditable}"
-																										ToolTip.Tip="Move down"
+																										ToolTip.Tip="{x:Static loc:Strings.App_Settings_Algorithms_MoveDownTooltip}"
 																										Padding="8 3"
 																										VerticalAlignment="Center"
 																										Margin="0 0 8 0">
@@ -417,8 +444,8 @@
 																						<ToggleSwitch Grid.Column="3"
 																													IsChecked="{Binding Enabled}"
 																													IsEnabled="{Binding CanToggle}"
-																													OnContent="On"
-																													OffContent="Off"
+																													OnContent="{x:Static loc:Strings.App_Settings_ToggleOn}"
+																													OffContent="{x:Static loc:Strings.App_Settings_ToggleOff}"
 																													VerticalAlignment="Center"
 																													Margin="0 -6 4 -6" />
 																				</Grid>
@@ -433,8 +460,8 @@
 										<ui:FASettingsExpanderItem.Content>
 												<StackPanel Spacing="8" Margin="0 4">
 														<StackPanel Spacing="2">
-																<TextBlock Text="Spoof AAGUID" />
-																<TextBlock Text="Override the authenticator identifier (AAGUID) that websites see when you create a passkey. Leave empty to use the default. Applying re-registers the authenticator with Windows."
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Aaguid_Header}" />
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Aaguid_Description}"
 																					 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
 																					 FontSize="12"
 																					 TextWrapping="Wrap" />
@@ -448,11 +475,11 @@
 																				 VerticalAlignment="Center" />
 																<Button Command="{Binding ClearAaguidCommand}"
 																				IsEnabled="{Binding !IsApplyingAaguid}"
-																				ToolTip.Tip="Clear field"
+																				ToolTip.Tip="{x:Static loc:Strings.App_Settings_Aaguid_ClearTooltip}"
 																				VerticalAlignment="Center">
 																		<ui:FAFontIcon Glyph="&#xE75C;" FontSize="16" FontFamily="Segoe Fluent Icons" />
 																</Button>
-																<Button Content="Apply"
+																<Button Content="{x:Static loc:Strings.App_Settings_Aaguid_ApplyButton}"
 																				Command="{Binding ApplyAaguidCommand}"
 																				Classes="accent"
 																				VerticalAlignment="Center" />
@@ -473,18 +500,18 @@
 
 						</ui:FASettingsExpander>
 
-						<ui:FASettingsExpander Header="About"
+						<ui:FASettingsExpander Header="{x:Static loc:Strings.App_Settings_About_Header}"
 																 IconSource="Help"
-																 Description="Version, source code and license"
+																 Description="{x:Static loc:Strings.App_Settings_About_Description}"
 																 IsExpanded="False">
 
-								<ui:FASettingsExpanderItem Content="Copyright"
-																				 Description="&#169; 2026 Uwe K&#246;gel and contributors" />
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_About_Copyright}"
+																				 Description="{x:Static loc:Strings.App_Settings_About_CopyrightNotice}" />
 
 								<ui:FASettingsExpanderItem>
 										<ui:FASettingsExpanderItem.Content>
 												<StackPanel>
-														<TextBlock Text="Version" />
+														<TextBlock Text="{x:Static loc:Strings.App_Settings_About_Version}" />
 														<StackPanel Orientation="Horizontal" Spacing="6" Margin="0 1 0 0">
 																<TextBlock Text="{Binding AppVersion}"
 																					 FontSize="12"
@@ -517,73 +544,73 @@
 										<ui:FASettingsExpanderItem.Footer>
 												<Button Command="{Binding CopyToClipboardCommand}"
 																CommandParameter="{Binding AppVersionFull}"
-																ToolTip.Tip="Copy version">
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_About_CopyVersionTooltip}">
 														<ui:FASymbolIcon Symbol="Copy" FontSize="14" />
 												</Button>
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Website"
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_About_Website}"
 																				 Description="keepasspasskey.github.io">
 										<ui:FASettingsExpanderItem.Footer>
 												<Button Command="{Binding OpenUrlCommand}"
 																CommandParameter="https://keepasspasskey.github.io"
-																ToolTip.Tip="Open website">
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_About_WebsiteTooltip}">
 														<ui:FASymbolIcon Symbol="Globe" FontSize="14" />
 												</Button>
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Source code"
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_About_SourceCode}"
 																				 Description="github.com/yusei36/KeePassPasskey">
 										<ui:FASettingsExpanderItem.Footer>
 												<Button Command="{Binding OpenUrlCommand}"
 																CommandParameter="https://github.com/yusei36/KeePassPasskey"
-																ToolTip.Tip="Open source code on GitHub">
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_About_SourceCodeTooltip}">
 														<ui:FASymbolIcon Symbol="Globe" FontSize="14" />
 												</Button>
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Contributors"
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_About_Contributors}"
 																				 Description="github.com/yusei36/KeePassPasskey/graphs/contributors">
 										<ui:FASettingsExpanderItem.Footer>
 												<Button Command="{Binding OpenUrlCommand}"
 																CommandParameter="https://github.com/yusei36/KeePassPasskey/graphs/contributors"
-																ToolTip.Tip="Open contributors on GitHub">
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_About_ContributorsTooltip}">
 														<ui:FASymbolIcon Symbol="Globe" FontSize="14" />
 												</Button>
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Report a bug"
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_About_ReportBug}"
 																				 Description="github.com/yusei36/KeePassPasskey/issues">
 										<ui:FASettingsExpanderItem.Footer>
 												<Button Command="{Binding OpenUrlCommand}"
 																CommandParameter="https://github.com/yusei36/KeePassPasskey/issues"
-																ToolTip.Tip="Open issue tracker on GitHub">
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_About_ReportBugTooltip}">
 														<ui:FASymbolIcon Symbol="Globe" FontSize="14" />
 												</Button>
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="License"
-																				 Description="GNU GPL v3.0 or later"
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_About_License}"
+																				 Description="{x:Static loc:Strings.App_Settings_About_LicenseName}"
 																				 IsVisible="{Binding HasLicense}">
 										<ui:FASettingsExpanderItem.Footer>
 												<Button Command="{Binding OpenLicenseCommand}"
-																ToolTip.Tip="Open license text">
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_About_LicenseTooltip}">
 														<ui:FASymbolIcon Symbol="Document" FontSize="14" />
 												</Button>
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
-								<ui:FASettingsExpanderItem Content="Third-party notices"
-																				 Description="Open source licenses for bundled libraries"
+								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_About_ThirdParty}"
+																				 Description="{x:Static loc:Strings.App_Settings_About_ThirdPartyDescription}"
 																				 IsVisible="{Binding HasThirdPartyNotices}">
 										<ui:FASettingsExpanderItem.Footer>
 												<Button Command="{Binding OpenThirdPartyNoticesCommand}"
-																ToolTip.Tip="Open third-party notices">
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_About_ThirdPartyTooltip}">
 														<ui:FASymbolIcon Symbol="Document" FontSize="14" />
 												</Button>
 										</ui:FASettingsExpanderItem.Footer>
@@ -601,7 +628,7 @@
 						<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
 								<ui:FAProgressRing IsIndeterminate="True" Width="48" Height="48"
 																	 HorizontalAlignment="Center" />
-								<TextBlock Text="Loading settings…" HorizontalAlignment="Center" />
+								<TextBlock Text="{x:Static loc:Strings.App_Settings_Loading}" HorizontalAlignment="Center" />
 						</StackPanel>
 				</Border>
 		</Grid>
