@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Resources;
@@ -28,7 +29,12 @@ public sealed class EmbeddedResourceManager : ResourceManager
 	/// <summary>
 	/// Swaps the ResourceManager of an MSBuild-generated strongly typed resource class for this one.
 	/// </summary>
-	public static void Install(Type stronglyTypedClass)
+	public static void Install(
+#if NET
+		// Keeps the trimmer from dropping the private field that is set by reflection.
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicFields)]
+#endif
+		Type stronglyTypedClass)
 	{
 		var field = stronglyTypedClass.GetField("resourceMan", BindingFlags.Static | BindingFlags.NonPublic)
 			?? throw new InvalidOperationException("Generated resource class has no resourceMan field: " + stronglyTypedClass.FullName);
