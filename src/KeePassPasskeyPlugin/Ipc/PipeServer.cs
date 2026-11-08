@@ -34,10 +34,20 @@ internal sealed class PipeServer : IDisposable
 	private Thread _listenThread;
 	private NamedPipeServerStream _firstPipe;
 	private string _pipeName;
+	private readonly string _legacyName;
+	private readonly string _perUserName;
 
 	internal PipeServer(RequestHandler handler)
+		: this(handler, PipeConstants.LegacyPipeName, PipeConstants.PipeName)
+	{
+	}
+
+	// Names are injectable so tests can use private ones instead of the machine-wide production pipes.
+	internal PipeServer(RequestHandler handler, string legacyName, string perUserName)
 	{
 		_handler = handler;
+		_legacyName = legacyName;
+		_perUserName = perUserName;
 	}
 
 	/// <summary>
@@ -51,7 +61,7 @@ internal sealed class PipeServer : IDisposable
 		// the others fall back to their per-user name. The client tries both.
 		try
 		{
-			_firstPipe = ClaimFirstInstance(PipeConstants.LegacyPipeName) ?? ClaimFirstInstance(PipeConstants.PipeName);
+			_firstPipe = ClaimFirstInstance(_legacyName) ?? ClaimFirstInstance(_perUserName);
 		}
 		catch (Exception ex)
 		{
@@ -61,7 +71,7 @@ internal sealed class PipeServer : IDisposable
 
 		if (_firstPipe == null)
 		{
-			Log.Error($"Pipe name '{PipeConstants.PipeName}' is already in use by another process. " +
+			Log.Error($"Pipe name '{_perUserName}' is already in use by another process. " +
 					  "Refusing to serve passkey requests (possible pipe-name squatting). " +
 					  "Close the other process and restart KeePass.");
 			return false;
