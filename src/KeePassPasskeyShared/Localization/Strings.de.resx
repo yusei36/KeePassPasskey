@@ -534,6 +534,9 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
   <data name="App_Settings_TagEntries_Header" xml:space="preserve">
     <value>Neue Passkeys markieren</value>
   </data>
+  <data name="App_Settings_Theme_Header" xml:space="preserve">
+    <value>Design</value>
+  </data>
   <data name="App_Settings_Theme_OptionDark" xml:space="preserve">
     <value>Dunkel</value>
   </data>

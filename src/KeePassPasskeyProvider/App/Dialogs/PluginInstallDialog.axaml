@@ -88,10 +88,10 @@
 											 Classes="caption" Margin="0 4 0 0" IsVisible="{Binding NeedsElevation}" />
 				</StackPanel>
 
-				<StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsBusy}">
-						<fa:FAProgressRing IsIndeterminate="True" Width="18" Height="18" />
-						<TextBlock Text="{Binding BusyText}" VerticalAlignment="Center" />
-				</StackPanel>
+				<Grid ColumnDefinitions="Auto,*" IsVisible="{Binding IsBusy}">
+						<fa:FAProgressRing IsIndeterminate="True" Width="18" Height="18" Margin="0 0 10 0" />
+						<TextBlock Grid.Column="1" Text="{Binding BusyText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+				</Grid>
 
 				<fa:FAInfoBar IsOpen="{Binding ShowResult}" IsClosable="False"
 											Severity="{Binding ResultSeverity}" Message="{Binding ResultMessage}" />

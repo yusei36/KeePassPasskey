@@ -364,7 +364,7 @@ A website that accepts only algorithms that are off can't create a passkey.</val
     <value>Application appearance, theme and language</value>
   </data>
   <data name="App_Settings_Appearance_Header" xml:space="preserve">
-    <value>Appearance</value>
+    <value>Theme</value>
   </data>
   <data name="App_Settings_ApprovalTimeout_Description" xml:space="preserve">
     <value>How long the confirmation prompt stays open</value>
@@ -543,6 +543,9 @@ Selected group: the group selected in KeePass when creating the passkey.</value>
   </data>
   <data name="App_Settings_TagEntries_Header" xml:space="preserve">
     <value>Tag new passkeys</value>
+  </data>
+  <data name="App_Settings_Theme_Header" xml:space="preserve">
+    <value>Theme</value>
   </data>
   <data name="App_Settings_Theme_OptionDark" xml:space="preserve">
     <value>Dark</value>
