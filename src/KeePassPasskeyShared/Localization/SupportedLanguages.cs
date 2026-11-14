@@ -7,10 +7,11 @@ namespace KeePassPasskeyShared.Localization;
 
 public sealed class SupportedLanguage
 {
-	public SupportedLanguage(string tag, string keePassCode)
+	public SupportedLanguage(string tag, string keePassCode, bool reviewed)
 	{
 		Tag = tag;
 		KeePassCode = keePassCode;
+		Reviewed = reviewed;
 	}
 
 	/// <summary>Language tag as .NET spells it; also the <c>Strings.&lt;tag&gt;.resx</c> file name.</summary>
@@ -18,6 +19,9 @@ public sealed class SupportedLanguage
 
 	/// <summary>The Iso6391Code of the KeePass translation, which is not always a language tag.</summary>
 	public string KeePassCode { get; }
+
+	/// <summary>A native speaker has checked the translation; the app marks the others as not yet reviewed.</summary>
+	public bool Reviewed { get; }
 }
 
 /// <summary>
@@ -29,8 +33,8 @@ public static class SupportedLanguages
 	// English first, then sorted by tag, one per line: language branches then merge without conflicts.
 	public static readonly IReadOnlyList<SupportedLanguage> All = new[]
 	{
-		new SupportedLanguage("en", "en"),
-		new SupportedLanguage("de", "de"),
+		new SupportedLanguage("en", "en", reviewed: true),
+		new SupportedLanguage("de", "de", reviewed: true),
 	};
 
 	/// <returns>The tag of the language KeePass runs in, or null when we have no translation for it.</returns>

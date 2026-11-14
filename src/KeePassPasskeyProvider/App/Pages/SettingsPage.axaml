@@ -101,6 +101,21 @@
 										</ui:FASettingsExpanderItem.Footer>
 								</ui:FASettingsExpanderItem>
 
+								<ui:FASettingsExpanderItem IsVisible="{Binding IsLanguageNotReviewed}">
+										<ui:FASettingsExpanderItem.Content>
+												<TextBlock TextWrapping="Wrap"
+																	 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+																	 Text="{x:Static loc:Strings.App_Settings_Language_NotReviewed}" />
+										</ui:FASettingsExpanderItem.Content>
+										<ui:FASettingsExpanderItem.Footer>
+												<Button Command="{Binding OpenUrlCommand}"
+																CommandParameter="https://github.com/yusei36/KeePassPasskey/issues/49"
+																ToolTip.Tip="{x:Static loc:Strings.App_Settings_Language_ReviewTooltip}">
+														<ui:FASymbolIcon Symbol="Globe" FontSize="14" />
+												</Button>
+										</ui:FASettingsExpanderItem.Footer>
+								</ui:FASettingsExpanderItem>
+
 								<ui:FASettingsExpanderItem Content="{x:Static loc:Strings.App_Settings_TrayIcon_Header}"
 																				 Description="{x:Static loc:Strings.App_Settings_TrayIcon_Description}">
 										<ui:FASettingsExpanderItem.Footer>

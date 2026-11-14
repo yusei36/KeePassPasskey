@@ -448,8 +448,18 @@ Selected group: the group selected in KeePass when creating the passkey.</value>
   <data name="App_Settings_Language_Header" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="App_Settings_Language_NotReviewed" xml:space="preserve">
+    <value>This translation was created automatically and has not been reviewed by a native speaker yet.</value>
+  </data>
+  <data name="App_Settings_Language_OptionNotReviewed" xml:space="preserve">
+    <value>{0} (not yet reviewed)</value>
+    <comment>{0} = name of a language in that language, e.g. Français</comment>
+  </data>
   <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
     <value>Use Windows language</value>
+  </data>
+  <data name="App_Settings_Language_ReviewTooltip" xml:space="preserve">
+    <value>Help review this translation</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
     <value>Show confirmation prompts as Windows notifications instead of dialogs. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their pickers are limited to 5 items.</value>

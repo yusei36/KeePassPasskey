@@ -438,6 +438,9 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
   <data name="App_Settings_Language_Header" xml:space="preserve">
     <value>Sprache</value>
   </data>
+  <data name="App_Settings_Language_OptionNotReviewed" xml:space="preserve">
+    <value>{0} (noch nicht geprüft)</value>
+  </data>
   <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
     <value>Systemsprache verwenden</value>
   </data>

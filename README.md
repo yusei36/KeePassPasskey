@@ -68,7 +68,7 @@ Under the hood, Windows 11 routes passkey operations through a COM server regist
 
 ## Languages
 
-KeePassPasskey is available in English and German. The app and its passkey prompts follow your Windows display language; to use a different one, pick it under **Settings → Appearance → Language**. The KeePass plugin follows the language set in KeePass (**View → Change Language**). Anything not translated falls back to English.
+KeePassPasskey is available in English and German. The app and its passkey prompts follow your Windows display language; to use a different one, pick it under **Settings → Appearance → Language**. The KeePass plugin follows the language set in KeePass (**View → Change Language**). Anything not translated falls back to English. A translation that no native speaker has checked yet is marked "not yet reviewed" in the language list.
 
 More languages are planned in [#49](https://github.com/yusei36/KeePassPasskey/issues/49): votes for a language and offers to review one are welcome. To contribute a translation yourself, see [Translating](#translating).
 
@@ -194,7 +194,7 @@ dotnet test --project src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.
 
 All UI text of the app and the KeePass plugin lives in one file, `src/KeePassPasskeyShared/Localization/Strings.resx` (English), with one file per language next to it, e.g. `Strings.de.resx`. Keys are named after where the text appears: `App_` (app window), `Prompt_` (passkey prompts), `Notify_` (error notifications), `Tray_` (tray icon), `KeePass_` (plugin menus and dialogs inside KeePass) and `Common_` (used in several of these).
 
-To add a language, copy `Strings.resx` to `Strings.<language>.resx` (for example `Strings.fr.resx`), translate the `<value>` elements and keep `{0}`-style placeholders and `**marked**` parts intact; the `<comment>` elements explain them. Add a line for the language to `SupportedLanguages.All` in `src/KeePassPasskeyShared/Localization/SupportedLanguages.cs`, with its language tag and the code KeePass uses for it (the `Iso6391Code` of the KeePass translation, usually the same), so the app lists it and the plugin picks it up when KeePass runs in that language. Missing entries fall back to English, and the tests check that every translation uses the same keys and placeholders as the English file. Please open one pull request per language so native speakers can review it.
+To add a language, copy `Strings.resx` to `Strings.<language>.resx` (for example `Strings.fr.resx`), translate the `<value>` elements and keep `{0}`-style placeholders and `**marked**` parts intact; the `<comment>` elements explain them. Add a line for the language to `SupportedLanguages.All` in `src/KeePassPasskeyShared/Localization/SupportedLanguages.cs`, with its language tag and the code KeePass uses for it (the `Iso6391Code` of the KeePass translation, usually the same), so the app lists it and the plugin picks it up when KeePass runs in that language. Set `reviewed` to `true` if you are a native speaker or one has checked the translation; otherwise the app marks the language as not yet reviewed. Missing entries fall back to English, and the tests check that every translation uses the same keys and placeholders as the English file. Please open one pull request per language so native speakers can review it.
 
 ### Manual registration (CLI alternative)
 

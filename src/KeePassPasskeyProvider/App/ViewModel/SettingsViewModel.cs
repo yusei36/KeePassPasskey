@@ -231,7 +231,16 @@ public sealed partial class SettingsViewModel : ObservableObject
 
 	public IReadOnlyList<LanguageOption> Languages =>
 		[new(null, Strings.App_Settings_Language_OptionSystem),
-		 .. SupportedLanguages.All.Select(l => new LanguageOption(l.Tag, AppLanguage.NativeName(l.Tag)))];
+		 .. SupportedLanguages.All.Select(l => new LanguageOption(l.Tag, LanguageName(l)))];
+
+	private static string LanguageName(SupportedLanguage language)
+	{
+		string name = AppLanguage.NativeName(language.Tag);
+		return language.Reviewed ? name : Localizer.Format(Strings.App_Settings_Language_OptionNotReviewed, name);
+	}
+
+	/// <summary>Follows the language in use, so it also covers "Use Windows language".</summary>
+	public bool IsLanguageNotReviewed => !AppLanguage.IsCurrentReviewed;
 
 	public LanguageOption SelectedLanguage
 	{

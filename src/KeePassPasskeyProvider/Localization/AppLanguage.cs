@@ -55,13 +55,18 @@ internal static class AppLanguage
 		return name.Length > 0 ? char.ToUpper(name[0], culture) + name[1..] : cultureName;
 	}
 
-	private static bool IsSupported(CultureInfo culture)
+	/// <summary>False while the language in use is a translation no native speaker has checked.</summary>
+	internal static bool IsCurrentReviewed => Find(_current)?.Reviewed ?? true;
+
+	private static bool IsSupported(CultureInfo culture) => Find(culture) != null;
+
+	private static SupportedLanguage? Find(CultureInfo culture)
 	{
 		for (var c = culture; !c.Equals(CultureInfo.InvariantCulture); c = c.Parent)
 		{
-			if (SupportedLanguages.All.Any(l => l.Tag == c.Name))
-				return true;
+			if (SupportedLanguages.All.FirstOrDefault(l => l.Tag == c.Name) is { } language)
+				return language;
 		}
-		return false;
+		return null;
 	}
 }
