@@ -68,7 +68,7 @@ Under the hood, Windows 11 routes passkey operations through a COM server regist
 
 ## Languages
 
-KeePassPasskey is available in English and German. The app and its passkey prompts follow your Windows display language; to use a different one, pick it under **Settings → Appearance → Language**. The KeePass plugin follows the language set in KeePass (**View → Change Language**). Anything not translated falls back to English.
+KeePassPasskey is available in English, German and Polish. The app and its passkey prompts follow your Windows display language; to use a different one, pick it under **Settings → Appearance → Language**. The KeePass plugin follows the language set in KeePass (**View → Change Language**). Anything not translated falls back to English.
 
 More languages are planned in [#49](https://github.com/yusei36/KeePassPasskey/issues/49): votes for a language and offers to review one are welcome. To contribute a translation yourself, see [Translating](#translating).
 

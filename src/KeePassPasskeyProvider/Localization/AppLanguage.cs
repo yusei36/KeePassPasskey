@@ -12,7 +12,7 @@ namespace KeePassPasskeyProvider.Localization;
 internal static class AppLanguage
 {
 	/// <summary>Languages with a translation, as neutral culture names. English first.</summary>
-	internal static readonly string[] Supported = ["en", "de"];
+	internal static readonly string[] Supported = ["en", "de", "pl"];
 
 	private static readonly CultureInfo SystemCulture = CultureInfo.CurrentUICulture;
 
