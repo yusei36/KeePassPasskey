@@ -68,7 +68,7 @@
     <value>Leeren</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_ClearTooltip" xml:space="preserve">
-    <value>Entfernt alle Passkeys aus dem Windows Cache. Sie kehren beim nächsten Öffnen oder Speichern einer Datenbank zurück.</value>
+    <value>Alle Passkeys aus dem Windows Cache entfernen. Beim nächsten Öffnen oder Speichern einer Datenbank werden sie wieder übertragen.</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_DumpButton" xml:space="preserve">
     <value>Ins Log schreiben</value>
@@ -86,13 +86,13 @@
     <value>Den Windows Cache jetzt aus den geöffneten KeePass Datenbanken aktualisieren</value>
   </data>
   <data name="App_InfoBar_DevBuildMessage" xml:space="preserve">
-    <value>Dies ist eine Entwicklungsversion mit eigener Identität, die neben einer stabilen Version installiert wird. Nicht für den produktiven Einsatz.</value>
+    <value>Dies ist eine Entwicklungsversion mit eigener Identität, die sich neben jeder stabilen Version installieren lässt. Nicht für den produktiven Einsatz.</value>
   </data>
   <data name="App_InfoBar_DevBuildTitle" xml:space="preserve">
     <value>Entwicklungsversion</value>
   </data>
   <data name="App_InfoBar_NotPackagedMessage" xml:space="preserve">
-    <value>Registrieren und Registrierung aufheben funktionieren nicht richtig. Bitte installieren Sie zuerst das MSIX-Paket.</value>
+    <value>Registrieren und Registrierung aufheben funktionieren nicht richtig. Installieren Sie zuerst das MSIX-Paket.</value>
   </data>
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>Nicht als Paket installiert</value>
@@ -116,7 +116,7 @@
     <value>Ermittelt aus der MSI Installation.</value>
   </data>
   <data name="App_InstallDialog_Detected_NotFound" xml:space="preserve">
-    <value>KeePass wurde nicht gefunden. Geben Sie seinen Ordner oder seinen Plugin Ordner ein oder wählen Sie ihn aus.</value>
+    <value>KeePass wurde nicht gefunden. Geben Sie seinen Ordner oder seinen Plugins Ordner ein oder wählen Sie ihn aus.</value>
   </data>
   <data name="App_InstallDialog_Detected_Registry" xml:space="preserve">
     <value>Ermittelt aus der Registry.</value>
@@ -125,7 +125,7 @@
     <value>Ermittelt aus dem laufenden KeePass.</value>
   </data>
   <data name="App_InstallDialog_FolderLabel" xml:space="preserve">
-    <value>KeePass Ordner oder Plugin Ordner</value>
+    <value>KeePass Ordner oder Plugins Ordner</value>
   </data>
   <data name="App_InstallDialog_FolderWillBeCreated" xml:space="preserve">
     <value>Dieser Ordner existiert noch nicht und wird angelegt.</value>
@@ -134,10 +134,10 @@
     <value>Installieren</value>
   </data>
   <data name="App_InstallDialog_NeedsAdmin" xml:space="preserve">
-    <value>Für diesen Ordner sind Administratorrechte nötig. Windows fragt beim Kopieren danach.</value>
+    <value>Für diesen Ordner sind Administratorrechte nötig. Windows fragt beim Installieren danach.</value>
   </data>
   <data name="App_InstallDialog_PickFolderTitle" xml:space="preserve">
-    <value>Den KeePass Ordner, seinen Plugin Ordner oder einen Unterordner davon auswählen</value>
+    <value>Den KeePass Ordner, seinen Plugins Ordner oder einen Unterordner davon auswählen</value>
   </data>
   <data name="App_InstallDialog_ReinstallButton" xml:space="preserve">
     <value>Neu installieren</value>
@@ -167,10 +167,10 @@
     <value>Zielordner anzeigen</value>
   </data>
   <data name="App_InstallDialog_ShowTargetTooltip" xml:space="preserve">
-    <value>Den Plugin Ordner von KeePass im Explorer öffnen</value>
+    <value>Den Plugins Ordner von KeePass im Explorer öffnen</value>
   </data>
   <data name="App_InstallDialog_SourceCaption" xml:space="preserve">
-    <value>Installiert aus KeePassPasskey ({0}) {1}</value>
+    <value>Installation aus KeePassPasskey ({0}) {1}</value>
   </data>
   <data name="App_InstallDialog_Status_NoFolder" xml:space="preserve">
     <value>Kein Ordner ausgewählt.</value>
@@ -179,7 +179,7 @@
     <value>Nicht installiert.</value>
   </data>
   <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
-    <value>Dies ist weder ein KeePass Ordner noch einer seiner Plugin Ordner. Wählen Sie den KeePass Ordner oder seinen Unterordner Plugins.</value>
+    <value>Dies ist weder ein KeePass Ordner noch sein Plugins Ordner. Wählen Sie den KeePass Ordner oder seinen Unterordner Plugins.</value>
   </data>
   <data name="App_InstallDialog_Status_Outdated" xml:space="preserve">
     <value>Version {0} ist installiert, {1} ist verfügbar.</value>
@@ -191,7 +191,7 @@
     <value>Version {0} ist installiert und aktuell.</value>
   </data>
   <data name="App_InstallDialog_TargetLabel" xml:space="preserve">
-    <value>Installiert nach</value>
+    <value>Installation nach</value>
   </data>
   <data name="App_InstallDialog_Title" xml:space="preserve">
     <value>KeePass Plugin</value>
@@ -239,7 +239,7 @@
     <value>Windows hat beim Aufheben der Registrierung des Passkey Providers HRESULT {0} zurückgegeben.</value>
   </data>
   <data name="App_Registration_UnregisterFailedTitle" xml:space="preserve">
-    <value>Aufheben der Registrierung fehlgeschlagen</value>
+    <value>Registrierung konnte nicht aufgehoben werden</value>
   </data>
   <data name="App_Settings_Aaguid_ApplyButton" xml:space="preserve">
     <value>Übernehmen</value>
@@ -293,7 +293,7 @@
     <value>Lizenz</value>
   </data>
   <data name="App_Settings_About_LicenseName" xml:space="preserve">
-    <value>GNU GPL v3.0 oder neuer</value>
+    <value>GNU GPL v3.0 oder später</value>
   </data>
   <data name="App_Settings_About_LicenseTooltip" xml:space="preserve">
     <value>Lizenztext öffnen</value>
@@ -342,10 +342,10 @@ Eine Website, die nur ausgeschaltete Algorithmen akzeptiert, kann keinen Passkey
     <value>Signaturalgorithmen</value>
   </data>
   <data name="App_Settings_Algorithms_MoveDownTooltip" xml:space="preserve">
-    <value>Nach unten</value>
+    <value>Nach unten verschieben</value>
   </data>
   <data name="App_Settings_Algorithms_MoveUpTooltip" xml:space="preserve">
-    <value>Nach oben</value>
+    <value>Nach oben verschieben</value>
   </data>
   <data name="App_Settings_Algorithms_OptionListOrder" xml:space="preserve">
     <value>Reihenfolge der Liste verwenden</value>
@@ -381,7 +381,7 @@ Eine Website, die nur ausgeschaltete Algorithmen akzeptiert, kann keinen Passkey
     <value>Änderungen verwerfen</value>
   </data>
   <data name="App_Settings_DuplicateCheck_Description" xml:space="preserve">
-    <value>Ob und in welchen Datenbanken die Bitte einer Website beachtet wird, keinen zweiten Passkey für ein Konto anzulegen, das bereits einen hat</value>
+    <value>Ob und in welchen Datenbanken die Bitte einer Website beachtet wird, keinen zweiten Passkey für ein Konto zu erstellen, das bereits einen hat</value>
   </data>
   <data name="App_Settings_DuplicateCheck_Header" xml:space="preserve">
     <value>Prüfung auf doppelte Passkeys</value>
@@ -448,10 +448,10 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Systemsprache verwenden</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
-    <value>Zeigt Bestätigungen als Windows Benachrichtigungen statt als Dialoge. Benachrichtigungen werden bei "Nicht stören" stillschweigend ausgeblendet, und ihre Auswahllisten sind auf 5 Einträge begrenzt.</value>
+    <value>Zeigt Bestätigungen als Windows Benachrichtigungen statt als Dialoge. Im Modus Nicht stören werden Benachrichtigungen ohne Hinweis ausgeblendet, und ihre Auswahllisten zeigen höchstens 5 Einträge.</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
-    <value>Ältere Benachrichtigungsdialoge verwenden</value>
+    <value>Windows Benachrichtigungen statt Dialogen verwenden</value>
   </data>
   <data name="App_Settings_LoadFailed" xml:space="preserve">
     <value>Die aktuellen Einstellungen konnten nicht aus KeePass geladen werden. Angezeigt werden die zuletzt bekannten Werte.</value>
@@ -481,7 +481,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Warnung</value>
   </data>
   <data name="App_Settings_PluginUpdates_Description" xml:space="preserve">
-    <value>Bietet beim Start von KeePass ein Update des Plugins an, wenn diese App ein neueres mitbringt. Jedes Update wird in einem Dialog bestätigt.</value>
+    <value>Bietet beim Start von KeePass ein Update des Plugins an, wenn diese App ein neueres enthält. Jedes Update wird in einem Dialog bestätigt.</value>
   </data>
   <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
     <value>Nach Plugin Updates suchen</value>
@@ -604,7 +604,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Erweiterte Passkey Optionen öffnen</value>
   </data>
   <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
-    <value>Schalten Sie **KeePassPasskey** in der Liste der Passkey Anbieter ein.</value>
+    <value>Schalten Sie **KeePassPasskey** in der Liste der Passkey Provider ein.</value>
   </data>
   <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
     <value>KeePassPasskey aktivieren</value>
@@ -628,7 +628,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Alles bereit</value>
   </data>
   <data name="App_Status_Hint_AutoregisterFailed" xml:space="preserve">
-    <value>Sie können es mit "Registrieren" erneut versuchen.</value>
+    <value>Klicken Sie auf Registrieren, um es erneut zu versuchen.</value>
   </data>
   <data name="App_Status_Hint_KeePassNotConnected" xml:space="preserve">
     <value>Starten Sie KeePass mit installiertem KeePassPasskey Plugin.</value>
@@ -637,7 +637,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Öffnen Sie eine KeePass Datenbank, um Passkeys zu verwenden.</value>
   </data>
   <data name="App_Status_Hint_NotRegistered" xml:space="preserve">
-    <value>Klicken Sie auf "Registrieren", um KeePassPasskey als Passkey Provider einzurichten.</value>
+    <value>Klicken Sie auf Registrieren, um KeePassPasskey als Passkey Provider einzurichten.</value>
   </data>
   <data name="App_Status_Hint_Ready" xml:space="preserve">
     <value>Der Passkey Provider ist aktiviert und das KeePass Plugin ist verbunden.</value>
@@ -685,7 +685,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Abbrechen</value>
   </data>
   <data name="Common_Install_Error_AccessDenied" xml:space="preserve">
-    <value>Der Zugriff auf den Plugin Ordner von KeePass wurde verweigert.</value>
+    <value>Der Zugriff auf den Plugins Ordner von KeePass wurde verweigert.</value>
   </data>
   <data name="Common_Install_Error_BundledPluginNotFound" xml:space="preserve">
     <value>Mitgeliefertes Plugin nicht gefunden: {0}</value>
@@ -778,9 +778,9 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Der Passkey befindet sich bereits in diesem Eintrag.</value>
   </data>
   <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
-    <value>Dieser Eintrag enthält bereits einen Passkey. Soll er durch den eingefügten ersetzt werden?
+    <value>Dieser Eintrag enthält bereits einen Passkey. Soll er durch den neuen Passkey ersetzt werden?
 
-Der bisherige Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wieder brauchen.</value>
+Der bisherige Passkey bleibt in der Chronik des Eintrags und kann bei Bedarf wiederhergestellt werden.</value>
   </data>
   <data name="KeePass_Paste_Failed" xml:space="preserve">
     <value>Der Passkey konnte nicht eingefügt werden.</value>
@@ -797,12 +797,12 @@ Der bisherige Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wie
   <data name="KeePass_Remove_Confirm" xml:space="preserve">
     <value>Passkey aus diesem Eintrag entfernen?
 
-Der Eintrag selbst bleibt erhalten. Der Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wieder brauchen.</value>
+Der Eintrag selbst bleibt erhalten. Der Passkey bleibt in der Chronik des Eintrags und kann bei Bedarf wiederhergestellt werden.</value>
   </data>
   <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
     <value>Passkey aus "{0}" entfernen?
 
-Der Eintrag selbst bleibt erhalten. Der Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wieder brauchen.</value>
+Der Eintrag selbst bleibt erhalten. Der Passkey bleibt in der Chronik des Eintrags und kann bei Bedarf wiederhergestellt werden.</value>
   </data>
   <data name="KeePass_Remove_Failed" xml:space="preserve">
     <value>Der Passkey konnte nicht entfernt werden.</value>
@@ -814,7 +814,7 @@ Der Eintrag selbst bleibt erhalten. Der Passkey bleibt im Verlauf des Eintrags e
     <value>Das Plugin wurde auf {0} aktualisiert</value>
   </data>
   <data name="KeePass_Restart_LaterNote" xml:space="preserve">
-    <value>{0} bleibt in Verwendung, bis KeePass neu startet</value>
+    <value>{0} wird bis zum Neustart von KeePass weiter verwendet</value>
   </data>
   <data name="KeePass_Restart_Message" xml:space="preserve">
     <value>KeePass muss neu starten, um die neue Version zu laden.</value>
@@ -843,7 +843,7 @@ Erneut versuchen?</value>
     <value>Das Plugin wurde nicht aktualisiert</value>
   </data>
   <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
-    <value>Die Berechtigung wurde nicht erteilt, daher ist weiterhin Version {0} in Verwendung.</value>
+    <value>Die Berechtigung wurde nicht erteilt, daher wird weiterhin Version {0} verwendet.</value>
   </data>
   <data name="KeePass_UpdateFailed_TryAgainButton" xml:space="preserve">
     <value>Erneut versuchen</value>
@@ -894,7 +894,7 @@ Erneut versuchen?</value>
     <value>KeePass muss danach neu starten, um die neue Version zu laden</value>
   </data>
   <data name="Notify_Error_DbLocked" xml:space="preserve">
-    <value>Die KeePass Datenbank ist gesperrt. Bitte entsperren Sie KeePass und versuchen Sie es erneut.</value>
+    <value>Die KeePass Datenbank ist gesperrt. Entsperren Sie KeePass und versuchen Sie es erneut.</value>
   </data>
   <data name="Notify_Error_Duplicate" xml:space="preserve">
     <value>Für {0} existiert bereits ein Passkey.</value>
@@ -909,7 +909,7 @@ Erneut versuchen?</value>
     <value>Kein Passkey für {0} gefunden.</value>
   </data>
   <data name="Notify_Error_NotFoundForUser" xml:space="preserve">
-    <value>Kein Passkey für {0} und {1} gefunden.</value>
+    <value>Kein Passkey für {0} bei {1} gefunden.</value>
   </data>
   <data name="Notify_Error_Unexpected" xml:space="preserve">
     <value>Ein unerwarteter Fehler ist aufgetreten:</value>
@@ -951,13 +951,13 @@ Erneut versuchen?</value>
     <value>Datenbank</value>
   </data>
   <data name="Prompt_Register_FilterAll" xml:space="preserve">
-    <value>Alle Einträge</value>
+    <value>Angezeigt werden alle Einträge</value>
   </data>
   <data name="Prompt_Register_FilterWithoutPasskey" xml:space="preserve">
-    <value>Nur Einträge ohne Passkey</value>
+    <value>Angezeigt werden nur Einträge ohne Passkey</value>
   </data>
   <data name="Prompt_Register_FilterWithPasskey" xml:space="preserve">
-    <value>Nur Einträge, die bereits einen Passkey haben</value>
+    <value>Angezeigt werden nur Einträge, die bereits einen Passkey haben</value>
   </data>
   <data name="Prompt_Register_HasPasskeyTooltip" xml:space="preserve">
     <value>Dieser Eintrag hat bereits einen Passkey</value>
@@ -1017,16 +1017,16 @@ Erneut versuchen?</value>
     <value>Einen Passkey für {0} erstellen.</value>
   </data>
   <data name="Prompt_Toast_Register_BodyForUser" xml:space="preserve">
-    <value>Einen Passkey für {0} auf {1} erstellen.</value>
+    <value>Einen Passkey für {0} bei {1} erstellen.</value>
   </data>
   <data name="Prompt_Toast_Register_ConfirmButton" xml:space="preserve">
-    <value>Passkey erstellen</value>
+    <value>Erstellen</value>
   </data>
   <data name="Prompt_Toast_Register_Title" xml:space="preserve">
-    <value>Neue Passkey Erstellung angefordert</value>
+    <value>Passkey Erstellung angefordert</value>
   </data>
   <data name="Prompt_Toast_SaveToEntry" xml:space="preserve">
-    <value>In Eintrag speichern</value>
+    <value>In Eintrag</value>
   </data>
   <data name="Prompt_Toast_SignIn_Body" xml:space="preserve">
     <value>Bei {0} anmelden.</value>
