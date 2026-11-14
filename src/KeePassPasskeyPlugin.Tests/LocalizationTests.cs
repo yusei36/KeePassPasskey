@@ -27,7 +27,7 @@ public class LocalizationTests
 			Assert.Equal("Passkey kopieren", Strings.KeePass_EntryMenu_Copy);
 			Assert.Equal("Das Plugin konnte nicht geschrieben werden.", Strings.Common_Install_Error_WriteFailed);
 
-			Localizer.Apply(CultureInfo.GetCultureInfo("fr"));
+			Localizer.Apply(CultureInfo.GetCultureInfo("kl"));
 			Assert.Equal("Copy Passkey", Strings.KeePass_EntryMenu_Copy);
 			Assert.Equal("The plugin could not be written.", Strings.Common_Install_Error_WriteFailed);
 		}
@@ -46,38 +46,46 @@ public class LocalizationTests
 		Assert.Null(rm.GetString("No_Such_Key", CultureInfo.GetCultureInfo("de")));
 	}
 
-	/// <summary>Iso6391Code and NameEnglish as the KeePass 2.x translation files report them.</summary>
+	/// <summary>Iso6391Code as the KeePass 2.x translation files report it.</summary>
 	[Theory]
-	[InlineData("", null, "en")]
-	[InlineData(null, null, "en")]
-	[InlineData("xx-not-a-culture-zz", "", "en")]
-	[InlineData("de", "German", "de")]
-	[InlineData("pt-BR", "Portuguese (Brazil)", "pt-BR")]
-	[InlineData("pt", "Portuguese", "pt")]
-	[InlineData("zh", "Chinese_Simplified", "zh-Hans")]
-	[InlineData("zh-tw", "Traditional Chinese", "zh-TW")]
-	[InlineData("sr", "Serbian Cyrillic", "sr-Cyrl")]
-	[InlineData("sr", "Serbian Latin", "sr-Latn")]
-	[InlineData("nb", "Norwegian Bokmal", "nb")]
-	public void PluginLanguage_Resolve(string? code, string? nameEnglish, string expected)
+	[InlineData("", "en")]
+	[InlineData(null, "en")]
+	[InlineData("xx-not-a-culture-zz", "en")]
+	[InlineData("de", "de")]
+	[InlineData("DE", "de")]
+	[InlineData("nb", "en")]
+	public void PluginLanguage_Resolve(string? code, string expected)
 	{
-		Assert.Equal(expected, PluginLanguage.Resolve(code!, nameEnglish!).Name, ignoreCase: true);
+		Assert.Equal(expected, PluginLanguage.Resolve(code!).Name);
 	}
 
-	/// <summary>A Simplified Chinese translation must reach KeePass in Simplified but not in Traditional Chinese.</summary>
+	/// <summary>Each language is reached from its own KeePass code, so no row shadows another.</summary>
 	[Fact]
-	public void PluginLanguage_ChineseScripts_StaySeparate()
+	public void SupportedLanguages_ResolveFromTheirKeePassCode()
 	{
-		Assert.Contains("zh-Hans", FallbackChain(PluginLanguage.Resolve("zh", "Chinese_Simplified")));
-		Assert.DoesNotContain("zh-Hans", FallbackChain(PluginLanguage.Resolve("zh-tw", "Traditional Chinese")));
+		foreach (var language in SupportedLanguages.All)
+			Assert.Equal(language.Tag, PluginLanguage.Resolve(language.KeePassCode).Name);
 	}
 
-	private static List<string> FallbackChain(CultureInfo culture)
+	/// <summary>A language needs both its file and its row; either alone does nothing or shows English.</summary>
+	[Fact]
+	public void SupportedLanguages_MatchResxFiles()
 	{
-		var chain = new List<string>();
-		for (var c = culture; !c.Equals(CultureInfo.InvariantCulture); c = c.Parent)
-			chain.Add(c.Name);
-		return chain;
+		var files = Directory.GetFiles(LocalizationDir(), "Strings.*.resx")
+			.Select(f => Path.GetFileName(f).Split('.')[1])
+			.OrderBy(t => t, StringComparer.Ordinal);
+		var rows = SupportedLanguages.All.Select(l => l.Tag).Where(t => t != "en").OrderBy(t => t, StringComparer.Ordinal);
+		Assert.Equal(files, rows);
+	}
+
+	/// <summary>Tags in .NET's spelling (the app compares them to culture names), English first, then sorted.</summary>
+	[Fact]
+	public void SupportedLanguages_AreCanonicalAndSorted()
+	{
+		var tags = SupportedLanguages.All.Select(l => l.Tag).ToList();
+		Assert.Equal("en", tags[0]);
+		Assert.Equal(tags.Skip(1).OrderBy(t => t, StringComparer.OrdinalIgnoreCase), tags.Skip(1));
+		Assert.All(tags, t => Assert.Equal(t, CultureInfo.GetCultureInfo(t).Name));
 	}
 
 	public static IEnumerable<object[]> ResxFiles() =>

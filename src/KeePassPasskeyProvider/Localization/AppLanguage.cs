@@ -11,9 +11,6 @@ namespace KeePassPasskeyProvider.Localization;
 /// </summary>
 internal static class AppLanguage
 {
-	/// <summary>Languages with a translation, as neutral culture names. English first.</summary>
-	internal static readonly string[] Supported = ["en", "de"];
-
 	private static readonly CultureInfo SystemCulture = CultureInfo.CurrentUICulture;
 
 	/// <summary>Raised on the UI thread after the language changed at runtime.</summary>
@@ -62,7 +59,7 @@ internal static class AppLanguage
 	{
 		for (var c = culture; !c.Equals(CultureInfo.InvariantCulture); c = c.Parent)
 		{
-			if (Array.IndexOf(Supported, c.Name) >= 0)
+			if (SupportedLanguages.All.Any(l => l.Tag == c.Name))
 				return true;
 		}
 		return false;

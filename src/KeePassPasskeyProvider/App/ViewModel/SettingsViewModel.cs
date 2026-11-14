@@ -231,7 +231,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
 	public IReadOnlyList<LanguageOption> Languages =>
 		[new(null, Strings.App_Settings_Language_OptionSystem),
-		 .. AppLanguage.Supported.Select(name => new LanguageOption(name, AppLanguage.NativeName(name)))];
+		 .. SupportedLanguages.All.Select(l => new LanguageOption(l.Tag, AppLanguage.NativeName(l.Tag)))];
 
 	public LanguageOption SelectedLanguage
 	{
