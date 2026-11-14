@@ -65,7 +65,7 @@ public sealed partial class RegistrationPromptViewModel : PromptViewModelBase
 	{
 		// rpId, not rpName: rpName is site-supplied and unverified.
 		WindowTitle = Strings.Prompt_Register_Title;
-		ConfirmText = Strings.Common_Save;
+		ConfirmText = Strings.Prompt_Register_ConfirmButton;
 		ShowAttestationHint = request.EnterpriseAttestationRequested;
 		SetSite(Localizer.Format(Strings.Prompt_Register_Headline, request.RpId),
 			request.UserName.Length > 0 ? Localizer.Format(Strings.Prompt_Register_AsUser, request.UserName) : "", request.RpId);

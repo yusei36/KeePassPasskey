@@ -48,7 +48,7 @@
 														<!-- Provider version row -->
 														<Grid ColumnDefinitions="180,*,28" ColumnSpacing="12" VerticalAlignment="Center">
 																<TextBlock Grid.Column="0"
-																					 Text="{x:Static loc:Strings.App_Label_PasskeyProvider}"
+																					 Text="{x:Static loc:Strings.App_Diagnostics_AppVersion_Label}"
 																					 FontFamily="Consolas,Courier New,monospace"
 																					 FontSize="12.5" FontWeight="SemiBold"
 																					 VerticalAlignment="Center" />

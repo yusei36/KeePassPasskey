@@ -25,11 +25,11 @@ public class LocalizationTests
 		{
 			Localizer.Apply(CultureInfo.GetCultureInfo("de-DE"));
 			Assert.Equal("Passkey kopieren", Strings.KeePass_EntryMenu_Copy);
-			Assert.Equal("Das Plugin konnte nicht geschrieben werden.", Strings.Common_Install_Error_WriteFailed);
+			Assert.Equal("Die Plugin Datei konnte nicht kopiert werden.", Strings.Common_Install_Error_WriteFailed);
 
 			Localizer.Apply(CultureInfo.GetCultureInfo("kl"));
 			Assert.Equal("Copy Passkey", Strings.KeePass_EntryMenu_Copy);
-			Assert.Equal("The plugin could not be written.", Strings.Common_Install_Error_WriteFailed);
+			Assert.Equal("The plugin file couldn't be copied.", Strings.Common_Install_Error_WriteFailed);
 		}
 		finally
 		{

@@ -26,16 +26,19 @@
     <value>Entwicklungsversion</value>
   </data>
   <data name="App_Channel_GitHub" xml:space="preserve">
-    <value>GitHub-Version</value>
+    <value>GitHub Version</value>
   </data>
   <data name="App_Channel_Store" xml:space="preserve">
-    <value>Aus dem Microsoft Store installiert</value>
+    <value>Microsoft Store Version</value>
+  </data>
+  <data name="App_Diagnostics_AppVersion_Label" xml:space="preserve">
+    <value>KeePassPasskey App</value>
   </data>
   <data name="App_Diagnostics_CopyPluginVersionTooltip" xml:space="preserve">
     <value>Plugin Version kopieren</value>
   </data>
   <data name="App_Diagnostics_CopyProviderVersionTooltip" xml:space="preserve">
-    <value>Provider-Version kopieren</value>
+    <value>App Version kopieren</value>
   </data>
   <data name="App_Diagnostics_IncompatibleVersion_Message" xml:space="preserve">
     <value>{0} Bis dahin funktionieren Passkeys nicht.</value>
@@ -44,10 +47,10 @@
     <value>Inkompatible Version</value>
   </data>
   <data name="App_Diagnostics_PluginNotConnected" xml:space="preserve">
-    <value>nicht verbunden</value>
+    <value>Nicht verbunden</value>
   </data>
   <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
-    <value>Den Schalter für den Passkey Provider in den Windows Einstellungen öffnen</value>
+    <value>Windows Einstellungen öffnen, um den Passkey Provider ein- oder auszuschalten</value>
   </data>
   <data name="App_Diagnostics_Registration_Label" xml:space="preserve">
     <value>Provider Registrierung</value>
@@ -56,7 +59,7 @@
     <value>Registrierung aufheben</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
-    <value>Diese App ({0}) und das KeePass Plugin ({1}) haben unterschiedliche, aber kompatible Versionen. Passkeys funktionieren weiter, neue Funktionen sind aber eventuell erst verfügbar, wenn die ältere Seite aktualisiert ist.</value>
+    <value>Diese App ({0}) und das KeePass Plugin ({1}) haben unterschiedliche, aber kompatible Versionen. Passkeys funktionieren weiter, neue Funktionen sind aber eventuell erst verfügbar, wenn Sie die ältere Version aktualisieren.</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
     <value>Unterschiedliche Versionen</value>
@@ -155,7 +158,7 @@
     <value>Das Plugin wurde entfernt.</value>
   </data>
   <data name="App_InstallDialog_Result_RemovedRestart" xml:space="preserve">
-    <value>Das Plugin wurde entfernt. Starten Sie KeePass neu, um die Änderung zu laden.</value>
+    <value>Das Plugin wurde entfernt. Starten Sie KeePass neu, um die Änderung zu übernehmen.</value>
   </data>
   <data name="App_InstallDialog_ShowPluginFileTooltip" xml:space="preserve">
     <value>KeePassPasskey.dll im Explorer anzeigen</value>
@@ -230,7 +233,7 @@
     <value>Windows hat beim Registrieren des Passkey Providers HRESULT {0} zurückgegeben.</value>
   </data>
   <data name="App_Registration_RegisterFailedTitle" xml:space="preserve">
-    <value>Registrieren fehlgeschlagen</value>
+    <value>Registrierung fehlgeschlagen</value>
   </data>
   <data name="App_Registration_UnregisterFailedMessage" xml:space="preserve">
     <value>Windows hat beim Aufheben der Registrierung des Passkey Providers HRESULT {0} zurückgegeben.</value>
@@ -348,10 +351,10 @@ Eine Website, die nur ausgeschaltete Algorithmen akzeptiert, kann keinen Passkey
     <value>Reihenfolge der Liste verwenden</value>
   </data>
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
-    <value>Vorgabe der Website beibehalten</value>
+    <value>Reihenfolge der Website verwenden</value>
   </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
-    <value>Darstellung, Design und Sprache der App</value>
+    <value>Design und Sprache</value>
   </data>
   <data name="App_Settings_Appearance_Header" xml:space="preserve">
     <value>Darstellung</value>
@@ -378,10 +381,10 @@ Eine Website, die nur ausgeschaltete Algorithmen akzeptiert, kann keinen Passkey
     <value>Änderungen verwerfen</value>
   </data>
   <data name="App_Settings_DuplicateCheck_Description" xml:space="preserve">
-    <value>Wo die Bitte einer Website durchgesetzt wird, keinen zweiten Passkey für ein Konto anzulegen, für das sie bereits einen hat.</value>
+    <value>Ob und in welchen Datenbanken die Bitte einer Website beachtet wird, keinen zweiten Passkey für ein Konto anzulegen, das bereits einen hat</value>
   </data>
   <data name="App_Settings_DuplicateCheck_Header" xml:space="preserve">
-    <value>Doppelte Passkeys zulassen</value>
+    <value>Prüfung auf doppelte Passkeys</value>
   </data>
   <data name="App_Settings_DuplicateCheck_OptionAllDatabases" xml:space="preserve">
     <value>Alle Datenbanken prüfen</value>
@@ -424,13 +427,13 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Eintragstitel</value>
   </data>
   <data name="App_Settings_ErrorNotifications_Description" xml:space="preserve">
-    <value>Zeigt eine ausführliche Benachrichtigung, wenn bei einem Passkey ein Fehler auftritt (Windows zeigt immer nur einen allgemeinen Fehler)</value>
+    <value>Zeigt eine ausführliche Benachrichtigung, wenn bei einem Passkey ein Fehler auftritt. Windows selbst zeigt nur einen allgemeinen Fehler.</value>
   </data>
   <data name="App_Settings_ErrorNotifications_Header" xml:space="preserve">
     <value>Fehlerbenachrichtigungen</value>
   </data>
   <data name="App_Settings_Expert_Description" xml:space="preserve">
-    <value>Erweiterte Optionen für ungewöhnliche Konfigurationen. Nur ändern, wenn Sie wissen, warum.</value>
+    <value>Optionen für ungewöhnliche Konfigurationen. Nur ändern, wenn Sie wissen, was sie bewirken.</value>
   </data>
   <data name="App_Settings_Expert_Header" xml:space="preserve">
     <value>Experte</value>
@@ -454,10 +457,10 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Die aktuellen Einstellungen konnten nicht aus KeePass geladen werden. Angezeigt werden die zuletzt bekannten Werte.</value>
   </data>
   <data name="App_Settings_Loading" xml:space="preserve">
-    <value>Einstellungen werden geladen…</value>
+    <value>Einstellungen werden geladen...</value>
   </data>
   <data name="App_Settings_LogLevel_Description" xml:space="preserve">
-    <value>Ausführlichkeit der Logdateien von Provider und Plugin</value>
+    <value>Ausführlichkeit der Logdateien von App und Plugin</value>
   </data>
   <data name="App_Settings_LogLevel_Header" xml:space="preserve">
     <value>Log-Level</value>
@@ -490,10 +493,10 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Intervall für die Statusaktualisierung</value>
   </data>
   <data name="App_Settings_RegistrationVerification_Description" xml:space="preserve">
-    <value>Wie Sie das Speichern eines neuen Passkeys bestätigen</value>
+    <value>Wie Sie das Erstellen eines neuen Passkeys bestätigen</value>
   </data>
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
-    <value>Registrierung</value>
+    <value>Erstellen von Passkeys</value>
   </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Auf Standardwerte zurücksetzen</value>
@@ -502,7 +505,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Ein: Platzhalter werden aufgelöst und der fertige Text im Titel gespeichert. Aus: KeePass löst sie bei jeder Anzeige des Eintrags auf. {RP_NAME} wird beim Speichern immer aufgelöst.</value>
   </data>
   <data name="App_Settings_ResolvePlaceholders_Header" xml:space="preserve">
-    <value>Aufgelöste Platzhalter im Titel speichern</value>
+    <value>Platzhalter im Titel beim Speichern auflösen</value>
   </data>
   <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
     <value>KeePass läuft nicht. Starten Sie KeePass mit dem KeePassPasskey Plugin, bevor Sie die Einstellungen speichern.</value>
@@ -511,7 +514,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Einstellungen konnten nicht gespeichert werden</value>
   </data>
   <data name="App_Settings_SaveToExisting_Description" xml:space="preserve">
-    <value>Bietet an, einen Passkey in einem passenden Eintrag zu speichern, statt immer einen neuen anzulegen. Erfordert den Bestätigungsdialog bei der Registrierung.</value>
+    <value>Bietet an, einen Passkey in einem passenden Eintrag zu speichern, statt immer einen neuen Eintrag anzulegen. Erfordert den Bestätigungsdialog für neue Passkeys.</value>
   </data>
   <data name="App_Settings_SaveToExisting_Header" xml:space="preserve">
     <value>Speichern in vorhandenem Eintrag anbieten</value>
@@ -526,16 +529,16 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Anmeldung</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
-    <value>Wenn KeePass gesperrt war und Sie es gerade für diese Anfrage entsperrt haben, wird Windows Hello nicht erneut abgefragt. Gilt nur, solange der Bestätigungsdialog eingeschaltet ist</value>
+    <value>Wenn Sie KeePass gerade für dieselbe Anfrage entsperrt haben, wird Windows Hello nicht erneut abgefragt. Gilt nur, solange der Bestätigungsdialog eingeschaltet ist.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
     <value>Windows Hello nach dem Entsperren von KeePass überspringen</value>
   </data>
   <data name="App_Settings_TagEntries_Description" xml:space="preserve">
-    <value>Fügt jedem Eintrag, der beim Registrieren eines neuen Passkeys angelegt wird, das Tag "Passkey" hinzu</value>
+    <value>Fügt jedem Eintrag, der für einen neuen Passkey angelegt wird, das Tag "Passkey" hinzu</value>
   </data>
   <data name="App_Settings_TagEntries_Header" xml:space="preserve">
-    <value>Neue Passkeys markieren</value>
+    <value>Neue Passkey Einträge markieren</value>
   </data>
   <data name="App_Settings_Theme_Header" xml:space="preserve">
     <value>Design</value>
@@ -568,13 +571,13 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Bestätigung und Benutzerüberprüfung beim Erstellen und Verwenden von Passkeys</value>
   </data>
   <data name="App_Settings_Verification_Header" xml:space="preserve">
-    <value>Benachrichtigungen und Benutzerüberprüfung</value>
+    <value>Bestätigung und Benutzerüberprüfung</value>
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>Bestätigungsdialog</value>
   </data>
   <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>Beides ist ausgeschaltet, daher werden Passkeys ohne Nachfrage erstellt und verwendet.</value>
+    <value>Bestätigungsdialog und Windows Hello sind ausgeschaltet, daher werden Passkeys ohne Nachfrage erstellt und verwendet.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (PIN, Fingerabdruck oder Gesicht)</value>
@@ -637,7 +640,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Klicken Sie auf "Registrieren", um KeePassPasskey als Passkey Provider einzurichten.</value>
   </data>
   <data name="App_Status_Hint_Ready" xml:space="preserve">
-    <value>Der Provider ist aktiviert und das KeePass Plugin ist verbunden.</value>
+    <value>Der Passkey Provider ist aktiviert und das KeePass Plugin ist verbunden.</value>
   </data>
   <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
     <value>Klicken Sie unten auf "Erweiterte Passkey Optionen", um KeePassPasskey zu aktivieren.</value>
@@ -703,7 +706,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Installationsskript nicht gefunden: {0}</value>
   </data>
   <data name="Common_Install_Error_WriteFailed" xml:space="preserve">
-    <value>Das Plugin konnte nicht geschrieben werden.</value>
+    <value>Die Plugin Datei konnte nicht kopiert werden.</value>
   </data>
   <data name="Common_OK" xml:space="preserve">
     <value>OK</value>
@@ -748,7 +751,7 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
     <value>Passkey hier einfügen</value>
   </data>
   <data name="KeePass_EntryMenu_PasteFrom" xml:space="preserve">
-    <value>Passkey aus „{0}“ einfügen</value>
+    <value>Passkey aus "{0}" einfügen</value>
   </data>
   <data name="KeePass_EntryMenu_Remove" xml:space="preserve">
     <value>Passkey entfernen</value>
@@ -786,10 +789,10 @@ Der bisherige Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wie
     <value>Der Eintrag, aus dem der Passkey stammt, ist nicht mehr verfügbar. Das Einfügen wurde abgebrochen.</value>
   </data>
   <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
-    <value>Ein anderer Prozess verwendet bereits den Pipe Namen für Passkeys. Passkeys funktionieren erst wieder, wenn Sie diesen Prozess beenden und KeePass neu starten.</value>
+    <value>Ein anderes Programm verwendet bereits den Verbindungsnamen (Named Pipe), den KeePassPasskey benötigt. Passkeys funktionieren erst wieder, wenn Sie dieses Programm beenden und KeePass neu starten.</value>
   </data>
   <data name="KeePass_Pipe_ClaimFailedTitle" xml:space="preserve">
-    <value>KeePassPasskey konnte seine Named Pipe nicht belegen.</value>
+    <value>KeePassPasskey konnte seine Named Pipe nicht belegen</value>
   </data>
   <data name="KeePass_Remove_Confirm" xml:space="preserve">
     <value>Passkey aus diesem Eintrag entfernen?
@@ -797,7 +800,7 @@ Der bisherige Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wie
 Der Eintrag selbst bleibt erhalten. Der Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wieder brauchen.</value>
   </data>
   <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
-    <value>Passkey aus „{0}“ entfernen?
+    <value>Passkey aus "{0}" entfernen?
 
 Der Eintrag selbst bleibt erhalten. Der Passkey bleibt im Verlauf des Eintrags erhalten, falls Sie ihn wieder brauchen.</value>
   </data>
@@ -808,13 +811,13 @@ Der Eintrag selbst bleibt erhalten. Der Passkey bleibt im Verlauf des Eintrags e
     <value>Das KeePassPasskey Plugin wurde aktualisiert. KeePass jetzt neu starten?</value>
   </data>
   <data name="KeePass_Restart_Heading" xml:space="preserve">
-    <value>Das Plugin wurde auf {0} aktualisiert.</value>
+    <value>Das Plugin wurde auf {0} aktualisiert</value>
   </data>
   <data name="KeePass_Restart_LaterNote" xml:space="preserve">
     <value>{0} bleibt in Verwendung, bis KeePass neu startet</value>
   </data>
   <data name="KeePass_Restart_Message" xml:space="preserve">
-    <value>KeePass muss neu starten, bevor die neue Version geladen wird.</value>
+    <value>KeePass muss neu starten, um die neue Version zu laden.</value>
   </data>
   <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
     <value>Jetzt neu starten</value>
@@ -837,7 +840,7 @@ Der Eintrag selbst bleibt erhalten. Der Passkey bleibt im Verlauf des Eintrags e
 Erneut versuchen?</value>
   </data>
   <data name="KeePass_UpdateFailed_Heading" xml:space="preserve">
-    <value>Das Plugin wurde nicht aktualisiert.</value>
+    <value>Das Plugin wurde nicht aktualisiert</value>
   </data>
   <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
     <value>Die Berechtigung wurde nicht erteilt, daher ist weiterhin Version {0} in Verwendung.</value>
@@ -888,7 +891,7 @@ Erneut versuchen?</value>
     <value>Jetzt aktualisieren</value>
   </data>
   <data name="KeePass_Update_UpdateNowNote" xml:space="preserve">
-    <value>KeePass muss danach neu starten, um es zu laden</value>
+    <value>KeePass muss danach neu starten, um die neue Version zu laden</value>
   </data>
   <data name="Notify_Error_DbLocked" xml:space="preserve">
     <value>Die KeePass Datenbank ist gesperrt. Bitte entsperren Sie KeePass und versuchen Sie es erneut.</value>
@@ -930,7 +933,7 @@ Erneut versuchen?</value>
     <value>(ohne Titel)</value>
   </data>
   <data name="Prompt_Register_AddToExisting" xml:space="preserve">
-    <value>Zu vorhandenem hinzufügen</value>
+    <value>Vorhandener Eintrag</value>
   </data>
   <data name="Prompt_Register_AsUser" xml:space="preserve">
     <value>als {0}</value>
@@ -938,8 +941,11 @@ Erneut versuchen?</value>
   <data name="Prompt_Register_AttestationHint" xml:space="preserve">
     <value>Diese Website hat eine Unternehmensbestätigung (Enterprise Attestation) angefordert, die KeePassPasskey nicht liefern kann. Möglicherweise akzeptiert sie den Passkey trotzdem.</value>
   </data>
+  <data name="Prompt_Register_ConfirmButton" xml:space="preserve">
+    <value>Passkey erstellen</value>
+  </data>
   <data name="Prompt_Register_CreateNew" xml:space="preserve">
-    <value>Neu erstellen</value>
+    <value>Neuer Eintrag</value>
   </data>
   <data name="Prompt_Register_DatabaseLabel" xml:space="preserve">
     <value>Datenbank</value>
@@ -957,7 +963,7 @@ Erneut versuchen?</value>
     <value>Dieser Eintrag hat bereits einen Passkey</value>
   </data>
   <data name="Prompt_Register_Headline" xml:space="preserve">
-    <value>{0} möchte einen Passkey speichern</value>
+    <value>{0} möchte einen Passkey erstellen</value>
   </data>
   <data name="Prompt_Register_NewEntryHint" xml:space="preserve">
     <value>Für diese Website wird ein neuer Eintrag angelegt.</value>
@@ -969,13 +975,13 @@ Erneut versuchen?</value>
     <value>Dieser Eintrag hat bereits einen Passkey. Beim Speichern wird er ersetzt.</value>
   </data>
   <data name="Prompt_Register_SearchPlaceholder" xml:space="preserve">
-    <value>Einträge durchsuchen…</value>
+    <value>Einträge durchsuchen...</value>
   </data>
   <data name="Prompt_Register_SelectedInKeePassTooltip" xml:space="preserve">
     <value>In KeePass ausgewählt</value>
   </data>
   <data name="Prompt_Register_Title" xml:space="preserve">
-    <value>Passkey speichern</value>
+    <value>Passkey erstellen</value>
   </data>
   <data name="Prompt_SignIn_ConfirmButton" xml:space="preserve">
     <value>Anmelden</value>
@@ -986,6 +992,9 @@ Erneut versuchen?</value>
   <data name="Prompt_SignIn_Title" xml:space="preserve">
     <value>Mit Passkey anmelden</value>
   </data>
+  <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
+    <value>Zu Eintrag</value>
+  </data>
   <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
     <value>Abbruch in {0} s</value>
   </data>
@@ -994,6 +1003,9 @@ Erneut versuchen?</value>
   </data>
   <data name="Prompt_Toast_ChooseEntry_Title" xml:space="preserve">
     <value>Eintrag zum Speichern wählen</value>
+  </data>
+  <data name="Prompt_Toast_CreateNew" xml:space="preserve">
+    <value>Neuer Eintrag</value>
   </data>
   <data name="Prompt_Toast_DatabasePicker" xml:space="preserve">
     <value>In Datenbank speichern</value>
@@ -1023,7 +1035,7 @@ Erneut versuchen?</value>
     <value>Als {0} bei {1} anmelden.</value>
   </data>
   <data name="Prompt_Toast_SignIn_ConfirmButton" xml:space="preserve">
-    <value>Zulassen</value>
+    <value>Anmelden</value>
   </data>
   <data name="Prompt_Toast_SignIn_EntryHint" xml:space="preserve">
     <value>KeePass-Eintrag: {0}</value>
@@ -1038,7 +1050,7 @@ Erneut versuchen?</value>
     <value>ausgewählt</value>
   </data>
   <data name="Prompt_WindowsHello_NoTitle" xml:space="preserve">
-    <value>(kein Titel)</value>
+    <value>(ohne Titel)</value>
   </data>
   <data name="Tray_Menu_Exit" xml:space="preserve">
     <value>Beenden</value>

@@ -172,7 +172,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 
 		if (offerAddToExisting)
 			builder.AddButton(new ToastButton()
-				.SetContent(Strings.Prompt_Register_AddToExisting)
+				.SetContent(Strings.Prompt_Toast_AddToExisting)
 				.AddArgument("action", "existing"));
 
 		builder.AddButton(new ToastButton()
@@ -253,7 +253,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 				.SetContent(Strings.Prompt_Toast_SaveToEntry)
 				.AddArgument("action", "allow"))
 			.AddButton(new ToastButton()
-				.SetContent(Strings.Prompt_Register_CreateNew)
+				.SetContent(Strings.Prompt_Toast_CreateNew)
 				.AddArgument("action", "new"))
 			.AddButton(new ToastButton()
 				.SetContent(Strings.Common_Cancel)
