@@ -35,7 +35,7 @@ public static class SupportedLanguages
 	{
 		new SupportedLanguage("en", "en", reviewed: true),
 		new SupportedLanguage("de", "de", reviewed: true),
-		new SupportedLanguage("pl", "pl", reviewed: false),
+		new SupportedLanguage("pl", "pl", reviewed: true),
 	};
 
 	/// <returns>The tag of the language KeePass runs in, or null when we have no translation for it.</returns>
