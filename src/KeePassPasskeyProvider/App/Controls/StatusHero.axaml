@@ -75,7 +75,7 @@
 										</Border>
 
 										<StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-												<TextBlock FontSize="18" FontWeight="SemiBold"
+												<TextBlock FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"
 																	 Text="{Binding Status, Converter={x:Static conv:ProviderStatusConverters.Headline}}" />
 												<TextBlock FontSize="12.5" Opacity="0.6" TextWrapping="Wrap"
 																	 Text="{Binding Subhead}" />

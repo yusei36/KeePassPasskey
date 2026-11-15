@@ -50,7 +50,7 @@
 																<TextBlock Grid.Column="0"
 																					 Text="{x:Static loc:Strings.App_Diagnostics_AppVersion_Label}"
 																					 FontFamily="Consolas,Courier New,monospace"
-																					 FontSize="12.5" FontWeight="SemiBold"
+																					 FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap"
 																					 VerticalAlignment="Center" />
 																<Border Grid.Column="1"
 																				Background="{DynamicResource ControlFillColorSecondaryBrush}"
@@ -84,7 +84,7 @@
 																<TextBlock Grid.Column="0"
 																					 Text="{x:Static loc:Strings.App_Label_KeePassPlugin}"
 																					 FontFamily="Consolas,Courier New,monospace"
-																					 FontSize="12.5" FontWeight="SemiBold"
+																					 FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap"
 																					 VerticalAlignment="Center" />
 																<Border Grid.Column="1"
 																				Background="{DynamicResource ControlFillColorSecondaryBrush}"
@@ -116,9 +116,9 @@
 																<TextBlock Grid.Column="0"
 																					 Text="{x:Static loc:Strings.App_Diagnostics_Registration_Label}"
 																					 FontFamily="Consolas,Courier New,monospace"
-																					 FontSize="12.5" FontWeight="SemiBold"
+																					 FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap"
 																					 VerticalAlignment="Center" />
-																<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+																<WrapPanel Grid.Column="1" ItemSpacing="6" LineSpacing="6">
 																		<Button Content="{x:Static loc:Strings.App_Action_Register}"
 																						Command="{Binding RegisterCommand}"
 																						Padding="8 3" FontSize="12" />
@@ -129,7 +129,7 @@
 																						Command="{Binding OpenPasskeySettingsCommand}"
 																						ToolTip.Tip="{x:Static loc:Strings.App_Diagnostics_Registration_AdvancedOptionsTooltip}"
 																						Padding="8 3" FontSize="12" />
-																</StackPanel>
+																</WrapPanel>
 														</Grid>
 
 														<!-- Credential cache actions -->
@@ -137,9 +137,9 @@
 																<TextBlock Grid.Column="0"
 																					 Text="{x:Static loc:Strings.App_Diagnostics_WindowsCache_Label}"
 																					 FontFamily="Consolas,Courier New,monospace"
-																					 FontSize="12.5" FontWeight="SemiBold"
+																					 FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap"
 																					 VerticalAlignment="Center" />
-																<StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+																<WrapPanel Grid.Column="1" ItemSpacing="6" LineSpacing="6">
 																		<Button Content="{x:Static loc:Strings.App_Diagnostics_WindowsCache_SyncButton}"
 																						Command="{Binding SyncCredentialsCommand}"
 																						ToolTip.Tip="{x:Static loc:Strings.App_Diagnostics_WindowsCache_SyncTooltip}"
@@ -152,7 +152,7 @@
 																						Command="{Binding ClearCredentialsCommand}"
 																						ToolTip.Tip="{x:Static loc:Strings.App_Diagnostics_WindowsCache_ClearTooltip}"
 																						Padding="8 3" FontSize="12" />
-																</StackPanel>
+																</WrapPanel>
 														</Grid>
 												</StackPanel>
 										</Border>
