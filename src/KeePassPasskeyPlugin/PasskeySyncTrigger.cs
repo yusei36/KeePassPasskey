@@ -73,7 +73,7 @@ internal sealed class PasskeySyncTrigger : IDisposable
 		{
 			if (!_settingsStorage.Load().IsCredentialSyncEnabled)
 			{
-				Log.Debug("credential sync disabled, skipping trigger");
+				Log.Debug("Credential sync disabled, skipping the trigger");
 				return;
 			}
 
@@ -82,7 +82,7 @@ internal sealed class PasskeySyncTrigger : IDisposable
 		}
 		catch (Exception ex)
 		{
-			Log.Warn("sync trigger error: " + ex.Message);
+			Log.Warn("Sync trigger error: " + ex.Message);
 		}
 	}
 
@@ -91,7 +91,7 @@ internal sealed class PasskeySyncTrigger : IDisposable
 		try { return _storage.ComputePasskeySignature(); }
 		catch (Exception ex)
 		{
-			Log.Warn("signature computation failed: " + ex.Message);
+			Log.Warn("Couldn't compute the passkey set signature: " + ex.Message);
 			return _lastSignature; // treat as unchanged so an error never spams syncs
 		}
 	}

@@ -37,7 +37,7 @@ internal static class ComServer
 			Log.Error($"RegisterClassFactory failed: {ex.Message}");
 			return Marshal.GetHRForException(ex);
 		}
-		Log.Info($"registered class factory cookie={cookie}");
+		Log.Info($"Registered class factory cookie={cookie}");
 
 		PluginRegistration.EnsureRegistered();
 
@@ -70,23 +70,23 @@ internal static class ComServer
 		{
 			if (ComActivity.IsIdle(IdleTimeout))
 			{
-				Log.Info("idle timeout reached, requesting shutdown");
+				Log.Info("Idle timeout reached, requesting shutdown");
 				Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);
 			}
 		}, null, IdleCheckInterval, IdleCheckInterval);
 
 		// Win32 message loop
-		Log.Info("entering message loop");
+		Log.Info("Entering message loop");
 		Win32Native.MSG msg;
 		while (Win32Native.GetMessage(out msg, 0, 0, 0) > 0)
 		{
 			Win32Native.TranslateMessage(in msg);
 			Win32Native.DispatchMessage(in msg);
 		}
-		Log.Info("message loop exited");
+		Log.Info("Message loop exited");
 
 		ComRegistration.RevokeClassFactory(cookie);
-		Log.Info("exiting");
+		Log.Info("Exiting");
 		return 0;
 	}
 }

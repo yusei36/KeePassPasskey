@@ -187,7 +187,7 @@ public sealed partial class PluginInstallViewModel : ObservableObject
 		try
 		{
 			var outcome = await Task.Run(action);
-			Log.Info($"plugin {pastTense}: {outcome.Result}{(outcome.Elevated ? " (elevated)" : "")}");
+			Log.Info($"Plugin {pastTense}: {outcome.Result}{(outcome.Elevated ? " (elevated)" : "")}");
 
 			if (outcome.Cancelled)
 			{

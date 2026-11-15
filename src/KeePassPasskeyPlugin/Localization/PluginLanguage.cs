@@ -27,7 +27,7 @@ internal static class PluginLanguage
 		}
 		catch (Exception ex)
 		{
-			Log.Warn("could not read the KeePass UI language: " + ex.Message);
+			Log.Warn("Couldn't read the KeePass UI language: " + ex.Message);
 			return null;
 		}
 	}

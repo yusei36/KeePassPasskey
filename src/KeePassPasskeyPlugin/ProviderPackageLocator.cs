@@ -189,7 +189,7 @@ internal static class ProviderPackageLocator
 		}
 		catch (Exception ex)
 		{
-			onWarn?.Invoke("provider enumeration failed for " + packageFamilyName + ": " + ex.Message);
+			onWarn?.Invoke("Provider enumeration failed for " + packageFamilyName + ": " + ex.Message);
 			return new string[0];
 		}
 	}

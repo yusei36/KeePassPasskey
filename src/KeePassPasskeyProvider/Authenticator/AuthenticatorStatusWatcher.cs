@@ -36,7 +36,7 @@ internal static unsafe class AuthenticatorStatusWatcher
 
 		_registration = token;
 		Volatile.Write(ref _registered, 1);
-		Log.Info($"watching authenticator status, registration={token}");
+		Log.Info($"Watching authenticator status, registration={token}");
 	}
 
 	public static void Stop()
@@ -81,12 +81,12 @@ internal static unsafe class AuthenticatorStatusWatcher
 			Interlocked.Exchange(ref _refreshQueued, 0);
 			try
 			{
-				Log.Info("authenticator status changed, refreshing the credential cache");
+				Log.Info("Authenticator status changed, refreshing the Windows credential cache");
 				CredentialCache.Refresh(PluginConstants.KeePassPasskeyProviderClsid);
 			}
 			catch (Exception ex)
 			{
-				Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+				Log.Error($"Exception {ex.GetType().Name}: {ex.Message}");
 			}
 		});
 	}
