@@ -945,7 +945,7 @@ Deseja tentar novamente?</value>
     <value>como {0}</value>
   </data>
   <data name="Prompt_Register_AttestationHint" xml:space="preserve">
-    <value>Este site solicitou um atestado corporativo, que o KeePassPasskey não pode fornecer. Mesmo assim, ele pode aceitar a chave de acesso.</value>
+    <value>Este site solicitou uma atestação corporativa, que o KeePassPasskey não pode fornecer. Mesmo assim, ele pode aceitar a chave de acesso.</value>
   </data>
   <data name="Prompt_Register_ConfirmButton" xml:space="preserve">
     <value>Criar chave de acesso</value>
@@ -999,7 +999,7 @@ Deseja tentar novamente?</value>
     <value>Entrar com uma chave de acesso</value>
   </data>
   <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
-    <value>Usar entrada</value>
+    <value>Usar existente</value>
   </data>
   <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
     <value>Cancelando em {0} s</value>
