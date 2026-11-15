@@ -965,7 +965,7 @@ Try again?</value>
     <comment>An English technical detail may follow on the next line</comment>
   </data>
   <data name="Notify_Error_UnsupportedAlgorithm" xml:space="preserve">
-    <value>None of the signing algorithms this website accepts is enabled in the settings.</value>
+    <value>None of the signing algorithms this website accepts is turned on in the settings.</value>
   </data>
   <data name="Notify_Title_CreateFailed" xml:space="preserve">
     <value>Passkey creation failed</value>
