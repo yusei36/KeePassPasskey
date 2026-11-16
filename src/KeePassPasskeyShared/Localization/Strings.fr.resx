@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App_Action_AdvancedPasskeyOptions" xml:space="preserve">
+    <value>Options avancées des clés d'accès</value>
+  </data>
+  <data name="App_Action_AdvancedPasskeyOptionsTooltip" xml:space="preserve">
+    <value>Ouvrir les options avancées des clés d'accès dans les Paramètres Windows</value>
+  </data>
+  <data name="App_Action_InstallPlugin" xml:space="preserve">
+    <value>Installer le greffon</value>
+  </data>
+  <data name="App_Action_InstallPluginTooltip" xml:space="preserve">
+    <value>Installer ou mettre à jour le greffon KeePass</value>
+  </data>
+  <data name="App_Action_Register" xml:space="preserve">
+    <value>Inscrire</value>
+  </data>
+  <data name="App_Action_ShowPluginFile" xml:space="preserve">
+    <value>Afficher le fichier du greffon</value>
+  </data>
+  <data name="App_Channel_Dev" xml:space="preserve">
+    <value>Version de développement</value>
+  </data>
+  <data name="App_Channel_GitHub" xml:space="preserve">
+    <value>Version GitHub</value>
+  </data>
+  <data name="App_Channel_Store" xml:space="preserve">
+    <value>Version Microsoft Store</value>
+  </data>
+  <data name="App_Diagnostics_AppVersion_Label" xml:space="preserve">
+    <value>Application KeePassPasskey</value>
+  </data>
+  <data name="App_Diagnostics_CopyPluginVersionTooltip" xml:space="preserve">
+    <value>Copier la version du greffon</value>
+  </data>
+  <data name="App_Diagnostics_CopyProviderVersionTooltip" xml:space="preserve">
+    <value>Copier la version de l'application</value>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Message" xml:space="preserve">
+    <value>{0} D'ici là, les opérations sur les clés d'accès sont bloquées.</value>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Title" xml:space="preserve">
+    <value>Version incompatible</value>
+  </data>
+  <data name="App_Diagnostics_PluginNotConnected" xml:space="preserve">
+    <value>Non connecté</value>
+  </data>
+  <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
+    <value>Ouvrir les Paramètres Windows pour activer ou désactiver le fournisseur de clés d'accès</value>
+  </data>
+  <data name="App_Diagnostics_Registration_Label" xml:space="preserve">
+    <value>Inscription du fournisseur</value>
+  </data>
+  <data name="App_Diagnostics_Registration_UnregisterButton" xml:space="preserve">
+    <value>Désinscrire</value>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
+    <value>Cette application ({0}) et le greffon KeePass ({1}) ont des versions différentes, mais compatibles. Les clés d'accès continuent de fonctionner, mais de nouvelles fonctionnalités peuvent rester indisponibles tant que vous n'avez pas mis à jour le plus ancien des deux.</value>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
+    <value>Versions différentes</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearButton" xml:space="preserve">
+    <value>Vider</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearTooltip" xml:space="preserve">
+    <value>Supprimer toutes les clés d'accès du cache Windows. Elles reviennent à la prochaine ouverture ou au prochain enregistrement d'une base de données.</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpButton" xml:space="preserve">
+    <value>Écrire dans le journal</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpTooltip" xml:space="preserve">
+    <value>Écrire le cache Windows et les clés d'accès de KeePass dans le journal</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_Label" xml:space="preserve">
+    <value>Cache d'identifiants Windows</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncButton" xml:space="preserve">
+    <value>Synchroniser maintenant</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncTooltip" xml:space="preserve">
+    <value>Actualiser maintenant le cache Windows à partir des bases de données KeePass ouvertes</value>
+  </data>
+  <data name="App_InfoBar_DevBuildMessage" xml:space="preserve">
+    <value>Ceci est une version de développement dotée d'une identité distincte. Elle s'installe à côté d'une éventuelle version stable. Ne pas utiliser en production.</value>
+  </data>
+  <data name="App_InfoBar_DevBuildTitle" xml:space="preserve">
+    <value>Version de développement</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedMessage" xml:space="preserve">
+    <value>Inscrire et Désinscrire ne fonctionneront pas correctement. Installez d'abord le package MSIX.</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
+    <value>Non installé en tant que package</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
+    <value>Installation...</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Removing" xml:space="preserve">
+    <value>Suppression...</value>
+  </data>
+  <data name="App_InstallDialog_CloseButton" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="App_InstallDialog_CopyYourselfLabel" xml:space="preserve">
+    <value>Ou copiez le fichier vous-même :</value>
+  </data>
+  <data name="App_InstallDialog_Detected_DefaultPath" xml:space="preserve">
+    <value>Détecté d'après le chemin d'installation par défaut.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Msi" xml:space="preserve">
+    <value>Détecté d'après l'installation MSI.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_NotFound" xml:space="preserve">
+    <value>KeePass est introuvable. Saisissez ou sélectionnez son dossier, ou son dossier Plugins.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Registry" xml:space="preserve">
+    <value>Détecté d'après l'entrée de registre du programme d'installation de KeePass.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_RunningKeePass" xml:space="preserve">
+    <value>Détecté d'après l'instance de KeePass en cours d'exécution.</value>
+  </data>
+  <data name="App_InstallDialog_FolderLabel" xml:space="preserve">
+    <value>Dossier KeePass ou dossier Plugins</value>
+  </data>
+  <data name="App_InstallDialog_FolderWillBeCreated" xml:space="preserve">
+    <value>Ce dossier n'existe pas encore et sera créé.</value>
+  </data>
+  <data name="App_InstallDialog_InstallButton" xml:space="preserve">
+    <value>Installer</value>
+  </data>
+  <data name="App_InstallDialog_NeedsAdmin" xml:space="preserve">
+    <value>La copie dans ce dossier nécessite des droits d'administrateur. Windows les demande lors de l'installation.</value>
+  </data>
+  <data name="App_InstallDialog_PickFolderTitle" xml:space="preserve">
+    <value>Sélectionner le dossier KeePass, son dossier Plugins ou l'un de ses sous-dossiers</value>
+  </data>
+  <data name="App_InstallDialog_ReinstallButton" xml:space="preserve">
+    <value>Réinstaller</value>
+  </data>
+  <data name="App_InstallDialog_RemoveButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="App_InstallDialog_Result_Cancelled" xml:space="preserve">
+    <value>Annulé lors de la demande des droits d'administrateur. Rien n'a été modifié.</value>
+  </data>
+  <data name="App_InstallDialog_Result_Installed" xml:space="preserve">
+    <value>Le greffon a été installé.</value>
+  </data>
+  <data name="App_InstallDialog_Result_InstalledRestart" xml:space="preserve">
+    <value>Le greffon a été installé. Redémarrez KeePass pour que la modification prenne effet.</value>
+  </data>
+  <data name="App_InstallDialog_Result_Removed" xml:space="preserve">
+    <value>Le greffon a été supprimé.</value>
+  </data>
+  <data name="App_InstallDialog_Result_RemovedRestart" xml:space="preserve">
+    <value>Le greffon a été supprimé. Redémarrez KeePass pour que la modification prenne effet.</value>
+  </data>
+  <data name="App_InstallDialog_ShowPluginFileTooltip" xml:space="preserve">
+    <value>Afficher KeePassPasskey.dll dans l'Explorateur de fichiers</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetButton" xml:space="preserve">
+    <value>Afficher le dossier cible</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetTooltip" xml:space="preserve">
+    <value>Ouvrir le dossier Plugins de KeePass dans l'Explorateur de fichiers</value>
+  </data>
+  <data name="App_InstallDialog_SourceCaption" xml:space="preserve">
+    <value>Installation depuis KeePassPasskey ({0}) {1}</value>
+  </data>
+  <data name="App_InstallDialog_Status_NoFolder" xml:space="preserve">
+    <value>Aucun dossier choisi.</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotInstalled" xml:space="preserve">
+    <value>Non installé.</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
+    <value>Ce n'est ni un dossier KeePass ni son dossier Plugins. Choisissez le dossier KeePass ou son sous-dossier Plugins.</value>
+  </data>
+  <data name="App_InstallDialog_Status_Outdated" xml:space="preserve">
+    <value>La version {0} est installée, la version {1} est disponible.</value>
+  </data>
+  <data name="App_InstallDialog_Status_PluginNewer" xml:space="preserve">
+    <value>La version {0} est installée. Cette application ne contient que la version {1}.</value>
+  </data>
+  <data name="App_InstallDialog_Status_UpToDate" xml:space="preserve">
+    <value>La version {0} est installée et à jour.</value>
+  </data>
+  <data name="App_InstallDialog_TargetLabel" xml:space="preserve">
+    <value>Installation dans</value>
+  </data>
+  <data name="App_InstallDialog_Title" xml:space="preserve">
+    <value>Greffon KeePass</value>
+  </data>
+  <data name="App_InstallDialog_UpdateButton" xml:space="preserve">
+    <value>Mettre à jour</value>
+  </data>
+  <data name="App_Label_KeePassPlugin" xml:space="preserve">
+    <value>Greffon KeePass</value>
+  </data>
+  <data name="App_Label_PasskeyProvider" xml:space="preserve">
+    <value>Fournisseur de clés d'accès</value>
+  </data>
+  <data name="App_Log_CopyTooltip" xml:space="preserve">
+    <value>Copier le journal dans le presse-papiers</value>
+  </data>
+  <data name="App_Log_NoFile" xml:space="preserve">
+    <value>(pas encore de fichier journal)</value>
+  </data>
+  <data name="App_Log_OpenFileTooltip" xml:space="preserve">
+    <value>Ouvrir le fichier journal</value>
+  </data>
+  <data name="App_Log_OpenFolderTooltip" xml:space="preserve">
+    <value>Ouvrir le dossier des journaux</value>
+  </data>
+  <data name="App_Log_ReadFailed" xml:space="preserve">
+    <value>(impossible de lire le journal : {0})</value>
+  </data>
+  <data name="App_Nav_Diagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="App_Nav_Settings" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="App_Nav_Status" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="App_Registration_RegisterFailedMessage" xml:space="preserve">
+    <value>Windows a renvoyé HRESULT {0} lors de l'inscription du fournisseur de clés d'accès.</value>
+  </data>
+  <data name="App_Registration_RegisterFailedTitle" xml:space="preserve">
+    <value>Échec de l'inscription</value>
+  </data>
+  <data name="App_Registration_UnregisterFailedMessage" xml:space="preserve">
+    <value>Windows a renvoyé HRESULT {0} lors de la désinscription du fournisseur de clés d'accès.</value>
+  </data>
+  <data name="App_Registration_UnregisterFailedTitle" xml:space="preserve">
+    <value>Échec de la désinscription</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyButton" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedMessage" xml:space="preserve">
+    <value>L'AAGUID n'a pas été modifié, car Windows a renvoyé HRESULT {0} au moment de l'appliquer.</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedTitle" xml:space="preserve">
+    <value>Impossible de mettre à jour l'authentificateur</value>
+  </data>
+  <data name="App_Settings_Aaguid_ClearTooltip" xml:space="preserve">
+    <value>Effacer le champ</value>
+  </data>
+  <data name="App_Settings_Aaguid_DefaultApplied" xml:space="preserve">
+    <value>L'AAGUID par défaut est utilisé.</value>
+  </data>
+  <data name="App_Settings_Aaguid_Description" xml:space="preserve">
+    <value>Remplace l'identifiant de l'authentificateur (AAGUID) que les sites web voient lorsque vous créez une clé d'accès. Laissez vide pour utiliser la valeur par défaut. Lorsque vous appliquez la valeur, l'authentificateur est réinscrit auprès de Windows.</value>
+  </data>
+  <data name="App_Settings_Aaguid_Header" xml:space="preserve">
+    <value>Usurper l'AAGUID</value>
+  </data>
+  <data name="App_Settings_Aaguid_Invalid" xml:space="preserve">
+    <value>Saisissez un GUID valide ou laissez vide pour utiliser la valeur par défaut.</value>
+  </data>
+  <data name="App_Settings_Aaguid_SpoofApplied" xml:space="preserve">
+    <value>L'AAGUID usurpé est appliqué.</value>
+  </data>
+  <data name="App_Settings_About_Contributors" xml:space="preserve">
+    <value>Contributeurs</value>
+  </data>
+  <data name="App_Settings_About_ContributorsTooltip" xml:space="preserve">
+    <value>Ouvrir la liste des contributeurs sur GitHub</value>
+  </data>
+  <data name="App_Settings_About_Copyright" xml:space="preserve">
+    <value>Copyright</value>
+  </data>
+  <data name="App_Settings_About_CopyrightNotice" xml:space="preserve">
+    <value>© 2026 Uwe Kögel et les contributeurs</value>
+  </data>
+  <data name="App_Settings_About_CopyVersionTooltip" xml:space="preserve">
+    <value>Copier la version</value>
+  </data>
+  <data name="App_Settings_About_Description" xml:space="preserve">
+    <value>Version, code source et licence</value>
+  </data>
+  <data name="App_Settings_About_Header" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="App_Settings_About_License" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="App_Settings_About_LicenseName" xml:space="preserve">
+    <value>GNU GPL v3.0 ou ultérieure</value>
+  </data>
+  <data name="App_Settings_About_LicenseTooltip" xml:space="preserve">
+    <value>Ouvrir le texte de la licence</value>
+  </data>
+  <data name="App_Settings_About_ReportBug" xml:space="preserve">
+    <value>Signaler un bug</value>
+  </data>
+  <data name="App_Settings_About_ReportBugTooltip" xml:space="preserve">
+    <value>Ouvrir le suivi des problèmes sur GitHub</value>
+  </data>
+  <data name="App_Settings_About_SourceCode" xml:space="preserve">
+    <value>Code source</value>
+  </data>
+  <data name="App_Settings_About_SourceCodeTooltip" xml:space="preserve">
+    <value>Ouvrir le code source sur GitHub</value>
+  </data>
+  <data name="App_Settings_About_ThirdParty" xml:space="preserve">
+    <value>Mentions des composants tiers</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyDescription" xml:space="preserve">
+    <value>Licences open source des bibliothèques incluses</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyTooltip" xml:space="preserve">
+    <value>Ouvrir les mentions des composants tiers</value>
+  </data>
+  <data name="App_Settings_About_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="App_Settings_About_Website" xml:space="preserve">
+    <value>Site web</value>
+  </data>
+  <data name="App_Settings_About_WebsiteTooltip" xml:space="preserve">
+    <value>Ouvrir le site web</value>
+  </data>
+  <data name="App_Settings_Advanced_Description" xml:space="preserve">
+    <value>Paramètres de comportement, de délais et de journalisation qu'il est rarement nécessaire de modifier</value>
+  </data>
+  <data name="App_Settings_Advanced_Header" xml:space="preserve">
+    <value>Avancé</value>
+  </data>
+  <data name="App_Settings_Algorithms_Description" xml:space="preserve">
+    <value>Algorithme attribué à une nouvelle clé d'accès lorsque le site web en accepte plusieurs.
+Un site web qui n'accepte que des algorithmes désactivés ne peut pas créer de clé d'accès.</value>
+  </data>
+  <data name="App_Settings_Algorithms_Header" xml:space="preserve">
+    <value>Algorithmes de signature</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveDownTooltip" xml:space="preserve">
+    <value>Descendre</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveUpTooltip" xml:space="preserve">
+    <value>Monter</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionListOrder" xml:space="preserve">
+    <value>Utiliser l'ordre de la liste</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
+    <value>Utiliser l'ordre du site web</value>
+  </data>
+  <data name="App_Settings_Appearance_Description" xml:space="preserve">
+    <value>Thème et langue</value>
+  </data>
+  <data name="App_Settings_Appearance_Header" xml:space="preserve">
+    <value>Apparence</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Description" xml:space="preserve">
+    <value>Durée pendant laquelle la demande de confirmation reste ouverte</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Header" xml:space="preserve">
+    <value>Délai de confirmation</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Description" xml:space="preserve">
+    <value>Si cette option est activée, les sites web sont informés qu'une nouvelle clé d'accès peut être sauvegardée et synchronisée avec vos autres appareils. Sinon, ils sont informés qu'elle n'est enregistrée que sur un seul appareil.</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Header" xml:space="preserve">
+    <value>Éligibilité à la sauvegarde (BE)</value>
+  </data>
+  <data name="App_Settings_BackupState_Description" xml:space="preserve">
+    <value>Si cette option est activée, les sites web sont informés qu'une nouvelle clé d'accès est déjà sauvegardée. Disponible uniquement tant que « Éligibilité à la sauvegarde » est activée.</value>
+  </data>
+  <data name="App_Settings_BackupState_Header" xml:space="preserve">
+    <value>État de sauvegarde (BS)</value>
+  </data>
+  <data name="App_Settings_DiscardTooltip" xml:space="preserve">
+    <value>Abandonner les modifications</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Description" xml:space="preserve">
+    <value>Détermine si la demande d'un site web de ne pas créer de seconde clé d'accès pour un compte qui en a déjà une est respectée, et quelles bases de données sont vérifiées</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Header" xml:space="preserve">
+    <value>Vérification des clés d'accès en double</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionAllDatabases" xml:space="preserve">
+    <value>Vérifier toutes les bases de données</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionNone" xml:space="preserve">
+    <value>Ne pas vérifier</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionTargetDatabase" xml:space="preserve">
+    <value>Vérifier la base de données cible</value>
+  </data>
+  <data name="App_Settings_Enforced_Message" xml:space="preserve">
+    <value>Ces paramètres proviennent de KeePass.config.enforced.xml et ne peuvent pas être modifiés ici.</value>
+  </data>
+  <data name="App_Settings_Enforced_Title" xml:space="preserve">
+    <value>Paramètres imposés par KeePass</value>
+  </data>
+  <data name="App_Settings_Entries_Description" xml:space="preserve">
+    <value>Manière dont les entrées des nouvelles clés d'accès sont créées</value>
+  </data>
+  <data name="App_Settings_Entries_Header" xml:space="preserve">
+    <value>Entrées de clés d'accès</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Description" xml:space="preserve">
+    <value>Groupe Passkeys : le groupe par défaut des clés d'accès.
+Groupe sélectionné : le groupe sélectionné dans KeePass au moment de la création de la clé d'accès.</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Header" xml:space="preserve">
+    <value>Enregistrer les nouvelles clés d'accès dans</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionPasskeys" xml:space="preserve">
+    <value>Groupe Passkeys</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionSelected" xml:space="preserve">
+    <value>Groupe sélectionné</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Description" xml:space="preserve">
+    <value>Titre des nouvelles entrées. Prend en charge {RP_NAME} et les paramètres substituables de KeePass tels que {USERNAME} ou {URL}.</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Header" xml:space="preserve">
+    <value>Titre de l'entrée</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Description" xml:space="preserve">
+    <value>Afficher une notification détaillée lorsqu'une erreur de clé d'accès se produit. Windows lui-même n'affiche qu'une erreur générique.</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Header" xml:space="preserve">
+    <value>Notifications d'erreur</value>
+  </data>
+  <data name="App_Settings_Expert_Description" xml:space="preserve">
+    <value>Options pour les configurations peu courantes. Ne les modifiez que si vous savez à quoi elles servent.</value>
+  </data>
+  <data name="App_Settings_Expert_Header" xml:space="preserve">
+    <value>Expert</value>
+  </data>
+  <data name="App_Settings_Language_Header" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="App_Settings_Language_NotReviewed" xml:space="preserve">
+    <value>Cette traduction a été générée automatiquement et n'a pas encore été relue par un locuteur natif.</value>
+  </data>
+  <data name="App_Settings_Language_OptionNotReviewed" xml:space="preserve">
+    <value>{0} (traduction non relue)</value>
+  </data>
+  <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
+    <value>Utiliser la langue de Windows</value>
+  </data>
+  <data name="App_Settings_Language_ReviewTooltip" xml:space="preserve">
+    <value>Aider à relire cette traduction</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
+    <value>Afficher les demandes de confirmation sous forme de notifications Windows plutôt que de boîtes de dialogue. Le mode Ne pas déranger masque les notifications sans avertissement, et leurs listes affichent au maximum 5 éléments.</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
+    <value>Utiliser les anciennes demandes par notification</value>
+  </data>
+  <data name="App_Settings_LoadFailed" xml:space="preserve">
+    <value>Impossible de charger les derniers paramètres depuis KeePass. Les dernières valeurs connues sont affichées.</value>
+  </data>
+  <data name="App_Settings_Loading" xml:space="preserve">
+    <value>Chargement des paramètres...</value>
+  </data>
+  <data name="App_Settings_LogLevel_Description" xml:space="preserve">
+    <value>Niveau de détail des fichiers journaux de l'application et du greffon</value>
+  </data>
+  <data name="App_Settings_LogLevel_Header" xml:space="preserve">
+    <value>Niveau de journalisation</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionDebug" xml:space="preserve">
+    <value>Débogage</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionError" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionInfo" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionOff" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionWarn" xml:space="preserve">
+    <value>Avertissement</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Description" xml:space="preserve">
+    <value>Au démarrage de KeePass, proposer de mettre à jour le greffon si cette application en contient un plus récent. Chaque mise à jour est confirmée dans une boîte de dialogue.</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
+    <value>Rechercher les mises à jour du greffon</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Description" xml:space="preserve">
+    <value>Fréquence à laquelle l'application vérifie l'état du fournisseur</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Header" xml:space="preserve">
+    <value>Intervalle d'actualisation de l'état</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Description" xml:space="preserve">
+    <value>Manière dont vous confirmez la création d'une nouvelle clé d'accès</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
+    <value>Création de clés d'accès</value>
+  </data>
+  <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
+    <value>Rétablir les valeurs par défaut</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Description" xml:space="preserve">
+    <value>Activé : les paramètres substituables sont résolus et le texte final est enregistré dans le titre. Désactivé : KeePass les résout à chaque affichage de l'entrée. {RP_NAME} est toujours résolu à l'enregistrement.</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Header" xml:space="preserve">
+    <value>Résoudre les paramètres substituables du titre à l'enregistrement</value>
+  </data>
+  <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
+    <value>KeePass n'est pas en cours d'exécution. Démarrez KeePass avec le greffon KeePassPasskey avant d'enregistrer les paramètres.</value>
+  </data>
+  <data name="App_Settings_SaveFailedTitle" xml:space="preserve">
+    <value>Impossible d'enregistrer les paramètres</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Description" xml:space="preserve">
+    <value>Proposer d'enregistrer une clé d'accès dans une entrée correspondante au lieu de toujours créer une nouvelle entrée. Nécessite la demande de confirmation pour les nouvelles clés d'accès.</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Header" xml:space="preserve">
+    <value>Proposer l'enregistrement dans une entrée existante</value>
+  </data>
+  <data name="App_Settings_SaveTooltip" xml:space="preserve">
+    <value>Enregistrer les paramètres</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Description" xml:space="preserve">
+    <value>Manière dont vous confirmez une connexion</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
+    <value>Connexion</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
+    <value>Ne pas redemander Windows Hello lorsque vous venez de déverrouiller KeePass pour la même opération. S'applique uniquement tant que la demande de confirmation est activée.</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
+    <value>Ignorer Windows Hello après le déverrouillage de KeePass</value>
+  </data>
+  <data name="App_Settings_TagEntries_Description" xml:space="preserve">
+    <value>Ajouter la balise « Passkey » à chaque entrée créée pour une nouvelle clé d'accès</value>
+  </data>
+  <data name="App_Settings_TagEntries_Header" xml:space="preserve">
+    <value>Ajouter une balise aux nouvelles entrées de clés d'accès</value>
+  </data>
+  <data name="App_Settings_Theme_Header" xml:space="preserve">
+    <value>Thème</value>
+  </data>
+  <data name="App_Settings_Theme_OptionDark" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="App_Settings_Theme_OptionLight" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="App_Settings_Theme_OptionSystem" xml:space="preserve">
+    <value>Utiliser le paramètre système</value>
+  </data>
+  <data name="App_Settings_ToggleOff" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="App_Settings_ToggleOn" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Description" xml:space="preserve">
+    <value>Afficher une icône d'état dans la zone de notification. Lorsque vous fermez la fenêtre, l'application continue de s'exécuter dans la zone de notification.</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Header" xml:space="preserve">
+    <value>Icône de la zone de notification</value>
+  </data>
+  <data name="App_Settings_UnsavedChangesTooltip" xml:space="preserve">
+    <value>Certaines modifications ne sont pas enregistrées</value>
+  </data>
+  <data name="App_Settings_Verification_Description" xml:space="preserve">
+    <value>Demandes de confirmation et vérification de l'utilisateur pour les opérations sur les clés d'accès</value>
+  </data>
+  <data name="App_Settings_Verification_Header" xml:space="preserve">
+    <value>Confirmation et vérification</value>
+  </data>
+  <data name="App_Settings_Verification_Prompt" xml:space="preserve">
+    <value>Demande de confirmation</value>
+  </data>
+  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
+    <value>La demande de confirmation et Windows Hello sont tous deux désactivés : les clés d'accès seront créées et utilisées sans rien vous demander.</value>
+  </data>
+  <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
+    <value>Windows Hello (code PIN, empreinte digitale ou visage)</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Description" xml:space="preserve">
+    <value>Partager avec Windows le site web et le nom d'utilisateur de vos clés d'accès (jamais les clés elles-mêmes), afin que Windows puisse les proposer lorsque vous vous connectez. Si cette option est désactivée, Windows ne connaît pas vos clés d'accès et la connexion échoue sur la plupart des sites web.</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Header" xml:space="preserve">
+    <value>Cache d'identifiants Windows</value>
+  </data>
+  <data name="App_SetupGuide_ShowPluginFileTooltip" xml:space="preserve">
+    <value>Afficher KeePassPasskey.dll dans l'Explorateur de fichiers pour le copier vous-même</value>
+  </data>
+  <data name="App_SetupGuide_Step1_Text" xml:space="preserve">
+    <value>Copiez **KeePassPasskey.dll** dans le dossier **Plugins** de KeePass, ou utilisez le bouton ci-dessous. Redémarrez ensuite KeePass.</value>
+  </data>
+  <data name="App_SetupGuide_Step1_Title" xml:space="preserve">
+    <value>Installer le greffon</value>
+  </data>
+  <data name="App_SetupGuide_Step2_Text" xml:space="preserve">
+    <value>Accédez à **Paramètres › Comptes › Clés d'accès › Options avancées**, ou utilisez le bouton ci-dessous.</value>
+  </data>
+  <data name="App_SetupGuide_Step2_Title" xml:space="preserve">
+    <value>Ouvrir les options avancées des clés d'accès</value>
+  </data>
+  <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
+    <value>Activez **KeePassPasskey** dans la liste des fournisseurs de clés d'accès.</value>
+  </data>
+  <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
+    <value>Activer KeePassPasskey</value>
+  </data>
+  <data name="App_SetupGuide_Step4_Text" xml:space="preserve">
+    <value>Les deux états ci-dessus doivent indiquer **Activé** / **Connecté**.</value>
+  </data>
+  <data name="App_SetupGuide_Step4_Title" xml:space="preserve">
+    <value>Vérifier</value>
+  </data>
+  <data name="App_SetupGuide_Title" xml:space="preserve">
+    <value>Prise en main</value>
+  </data>
+  <data name="App_SetupGuide_UserGuideTooltip" xml:space="preserve">
+    <value>Ouvrir le guide de l'utilisateur</value>
+  </data>
+  <data name="App_Status_Headline_AutoregisterFailed" xml:space="preserve">
+    <value>Échec de l'inscription automatique</value>
+  </data>
+  <data name="App_Status_Headline_Ready" xml:space="preserve">
+    <value>Tout est prêt</value>
+  </data>
+  <data name="App_Status_Hint_AutoregisterFailed" xml:space="preserve">
+    <value>Cliquez sur Inscrire pour réessayer.</value>
+  </data>
+  <data name="App_Status_Hint_KeePassNotConnected" xml:space="preserve">
+    <value>Démarrez KeePass avec le greffon KeePassPasskey installé.</value>
+  </data>
+  <data name="App_Status_Hint_NoDatabase" xml:space="preserve">
+    <value>Ouvrez une base de données KeePass pour utiliser les clés d'accès.</value>
+  </data>
+  <data name="App_Status_Hint_NotRegistered" xml:space="preserve">
+    <value>Cliquez sur Inscrire pour configurer KeePassPasskey comme fournisseur de clés d'accès.</value>
+  </data>
+  <data name="App_Status_Hint_Ready" xml:space="preserve">
+    <value>Le fournisseur de clés d'accès est activé et le greffon KeePass est connecté.</value>
+  </data>
+  <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
+    <value>Cliquez sur « Options avancées des clés d'accès » ci-dessous pour activer KeePassPasskey.</value>
+  </data>
+  <data name="App_Status_Pill_Connected" xml:space="preserve">
+    <value>Connecté</value>
+  </data>
+  <data name="App_Status_Pill_Enabled" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="App_Status_Pill_NotConnected" xml:space="preserve">
+    <value>Non connecté</value>
+  </data>
+  <data name="App_Status_Pill_Registered" xml:space="preserve">
+    <value>Inscrit</value>
+  </data>
+  <data name="App_Status_RefreshTooltip" xml:space="preserve">
+    <value>Actualiser l'état</value>
+  </data>
+  <data name="App_TrayOffer_AddButton" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="App_TrayOffer_Message" xml:space="preserve">
+    <value>Ajoutez KeePassPasskey à la zone de notification.</value>
+  </data>
+  <data name="App_TrayOffer_NoThanksButton" xml:space="preserve">
+    <value>Non, merci</value>
+  </data>
+  <data name="App_TrayOffer_Title" xml:space="preserve">
+    <value>Envie de garder un œil sur l'état ?</value>
+  </data>
+  <data name="App_UnsavedChanges_DiscardButton" xml:space="preserve">
+    <value>Ne pas enregistrer</value>
+  </data>
+  <data name="App_UnsavedChanges_Message" xml:space="preserve">
+    <value>Certains paramètres ne sont pas enregistrés. Les enregistrer avant de quitter ?</value>
+  </data>
+  <data name="App_UnsavedChanges_Title" xml:space="preserve">
+    <value>Modifications non enregistrées</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Common_Install_Error_AccessDenied" xml:space="preserve">
+    <value>L'accès au dossier Plugins de KeePass a été refusé.</value>
+  </data>
+  <data name="Common_Install_Error_BundledPluginNotFound" xml:space="preserve">
+    <value>Greffon fourni introuvable : {0}</value>
+  </data>
+  <data name="Common_Install_Error_FolderNotFound" xml:space="preserve">
+    <value>Dossier introuvable : {0}</value>
+  </data>
+  <data name="Common_Install_Error_NoBundledPlugin" xml:space="preserve">
+    <value>L'application KeePassPasskey installée ne contient aucun greffon à installer.</value>
+  </data>
+  <data name="Common_Install_Error_NoTargetFolder" xml:space="preserve">
+    <value>Aucun dossier cible indiqué.</value>
+  </data>
+  <data name="Common_Install_Error_NotKeePassFolder" xml:space="preserve">
+    <value>Le dossier choisi ne fait pas partie d'une installation de KeePass.</value>
+  </data>
+  <data name="Common_Install_Error_ScriptNotFound" xml:space="preserve">
+    <value>Script d'installation introuvable : {0}</value>
+  </data>
+  <data name="Common_Install_Error_WriteFailed" xml:space="preserve">
+    <value>Impossible de copier le fichier du greffon.</value>
+  </data>
+  <data name="Common_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="Common_Status_IncompatibleVersion" xml:space="preserve">
+    <value>Version incompatible</value>
+  </data>
+  <data name="Common_Status_KeePassNotConnected" xml:space="preserve">
+    <value>KeePass non connecté</value>
+  </data>
+  <data name="Common_Status_NoDatabase" xml:space="preserve">
+    <value>Aucune base de données ouverte</value>
+  </data>
+  <data name="Common_Status_NotRegistered" xml:space="preserve">
+    <value>Non inscrit</value>
+  </data>
+  <data name="Common_Status_VersionMismatch" xml:space="preserve">
+    <value>Versions différentes</value>
+  </data>
+  <data name="Common_Status_WaitingToBeEnabled" xml:space="preserve">
+    <value>En attente d'activation</value>
+  </data>
+  <data name="Common_Version_AppOlder" xml:space="preserve">
+    <value>Cette application ({0}) est plus ancienne que le greffon KeePass ({1}). Mettez à jour l'application KeePassPasskey.</value>
+  </data>
+  <data name="Common_Version_Incompatible" xml:space="preserve">
+    <value>L'application et le greffon KeePass ont des versions incompatibles. Mettez les deux à jour vers la dernière version.</value>
+  </data>
+  <data name="Common_Version_PluginOlder" xml:space="preserve">
+    <value>Le greffon KeePass ({0}) est plus ancien que cette application ({1}). Mettez à jour le greffon KeePassPasskey dans KeePass.</value>
+  </data>
+  <data name="KeePass_EntryMenu_Copy" xml:space="preserve">
+    <value>Copier la clé d'accès</value>
+  </data>
+  <data name="KeePass_EntryMenu_Cut" xml:space="preserve">
+    <value>Couper la clé d'accès</value>
+  </data>
+  <data name="KeePass_EntryMenu_Paste" xml:space="preserve">
+    <value>Coller la clé d'accès ici</value>
+  </data>
+  <data name="KeePass_EntryMenu_PasteFrom" xml:space="preserve">
+    <value>Coller la clé d'accès de « {0} »</value>
+  </data>
+  <data name="KeePass_EntryMenu_Remove" xml:space="preserve">
+    <value>Retirer la clé d'accès</value>
+  </data>
+  <data name="KeePass_EntryMenu_Root" xml:space="preserve">
+    <value>Clé d'accès</value>
+  </data>
+  <data name="KeePass_NoUpdate_AlreadyNewest" xml:space="preserve">
+    <value>La version {0} est déjà installée. L'application KeePassPasskey n'en contient pas de plus récente.</value>
+  </data>
+  <data name="KeePass_NoUpdate_AppNotInstalled" xml:space="preserve">
+    <value>L'application KeePassPasskey ne semble pas être installée.</value>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNewer" xml:space="preserve">
+    <value>La version {0} est installée. L'application KeePassPasskey ne contient que la version {1}. Mettez à jour l'application pour que les deux versions concordent.</value>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNotLocated" xml:space="preserve">
+    <value>Le fichier du greffon est introuvable ; il ne peut donc pas être mis à jour d'ici.</value>
+  </data>
+  <data name="KeePass_NoUpdate_Title" xml:space="preserve">
+    <value>Greffon KeePassPasskey</value>
+  </data>
+  <data name="KeePass_Paste_AlreadyOnEntry" xml:space="preserve">
+    <value>La clé d'accès se trouve déjà dans cette entrée.</value>
+  </data>
+  <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
+    <value>Cette entrée contient déjà une clé d'accès. La remplacer par celle que vous collez ?
+
+La clé d'accès actuelle reste dans l'historique de l'entrée ; vous pouvez la restaurer si nécessaire.</value>
+  </data>
+  <data name="KeePass_Paste_Failed" xml:space="preserve">
+    <value>La clé d'accès n'a pas pu être collée.</value>
+  </data>
+  <data name="KeePass_Paste_SourceUnavailable" xml:space="preserve">
+    <value>L'entrée d'où provient la clé d'accès n'est plus disponible ; le collage a été annulé.</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
+    <value>Un autre programme utilise déjà le nom de connexion (canal nommé) dont KeePassPasskey a besoin. Les clés d'accès ne fonctionneront pas tant que vous n'aurez pas fermé ce programme et redémarré KeePass.</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedTitle" xml:space="preserve">
+    <value>KeePassPasskey n'a pas pu réserver son canal nommé</value>
+  </data>
+  <data name="KeePass_Remove_Confirm" xml:space="preserve">
+    <value>Retirer la clé d'accès de cette entrée ?
+
+L'entrée elle-même n'est pas supprimée. La clé d'accès reste dans l'historique de l'entrée ; vous pouvez la restaurer si nécessaire.</value>
+  </data>
+  <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
+    <value>Retirer la clé d'accès de « {0} » ?
+
+L'entrée elle-même n'est pas supprimée. La clé d'accès reste dans l'historique de l'entrée ; vous pouvez la restaurer si nécessaire.</value>
+  </data>
+  <data name="KeePass_Remove_Failed" xml:space="preserve">
+    <value>La clé d'accès n'a pas pu être retirée.</value>
+  </data>
+  <data name="KeePass_Restart_FallbackQuestion" xml:space="preserve">
+    <value>Le greffon KeePassPasskey a été mis à jour. Redémarrer KeePass maintenant ?</value>
+  </data>
+  <data name="KeePass_Restart_Heading" xml:space="preserve">
+    <value>Le greffon a été mis à jour vers la version {0}</value>
+  </data>
+  <data name="KeePass_Restart_LaterNote" xml:space="preserve">
+    <value>La version {0} reste utilisée jusqu'au redémarrage de KeePass</value>
+  </data>
+  <data name="KeePass_Restart_Message" xml:space="preserve">
+    <value>KeePass doit redémarrer pour charger la nouvelle version.</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
+    <value>Redémarrer maintenant</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowNote" xml:space="preserve">
+    <value>KeePass se ferme puis se rouvre</value>
+  </data>
+  <data name="KeePass_ToolsMenu_AppOpenFailed" xml:space="preserve">
+    <value>L'application KeePassPasskey n'a pas pu être ouverte. Elle ne semble pas être installée.</value>
+  </data>
+  <data name="KeePass_ToolsMenu_Settings" xml:space="preserve">
+    <value>Paramètres des clés d'accès</value>
+  </data>
+  <data name="KeePass_ToolsMenu_UpdatePlugin" xml:space="preserve">
+    <value>Mettre à jour le greffon depuis l'application installée</value>
+  </data>
+  <data name="KeePass_UpdateFailed_FallbackQuestion" xml:space="preserve">
+    <value>{0}
+
+Réessayer ?</value>
+  </data>
+  <data name="KeePass_UpdateFailed_Heading" xml:space="preserve">
+    <value>Le greffon n'a pas été mis à jour</value>
+  </data>
+  <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
+    <value>L'autorisation n'a pas été accordée ; la version {0} reste donc utilisée.</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainButton" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainNote" xml:space="preserve">
+    <value>Relance la mise à jour</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainPermissionNote" xml:space="preserve">
+    <value>Redemande l'autorisation</value>
+  </data>
+  <data name="KeePass_Update_FallbackQuestion" xml:space="preserve">
+    <value>Un nouveau greffon KeePassPasskey est disponible (version {0}). L'installer maintenant ?</value>
+  </data>
+  <data name="KeePass_Update_FromLabel" xml:space="preserve">
+    <value>De :  KeePassPasskey ({0})</value>
+  </data>
+  <data name="KeePass_Update_Heading" xml:space="preserve">
+    <value>La version {0} est disponible. La version {1} est installée.</value>
+  </data>
+  <data name="KeePass_Update_LaterButton" xml:space="preserve">
+    <value>Plus tard</value>
+  </data>
+  <data name="KeePass_Update_LaterNote" xml:space="preserve">
+    <value>Redemander au prochain démarrage de KeePass</value>
+  </data>
+  <data name="KeePass_Update_Message" xml:space="preserve">
+    <value>La création et l'utilisation de clés d'accès risquent de ne pas fonctionner tant que les versions ne concordent pas.</value>
+  </data>
+  <data name="KeePass_Update_NeverCheckCheckbox" xml:space="preserve">
+    <value>Ne plus rechercher les mises à jour du greffon</value>
+  </data>
+  <data name="KeePass_Update_SkipVersionButton" xml:space="preserve">
+    <value>Ignorer la version {0}</value>
+  </data>
+  <data name="KeePass_Update_SkipVersionNote" xml:space="preserve">
+    <value>Ne plus demander pour cette version</value>
+  </data>
+  <data name="KeePass_Update_Title" xml:space="preserve">
+    <value>Mise à jour du greffon KeePassPasskey</value>
+  </data>
+  <data name="KeePass_Update_ToLabel" xml:space="preserve">
+    <value>Vers :  {0}</value>
+  </data>
+  <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
+    <value>Mettre à jour maintenant</value>
+  </data>
+  <data name="KeePass_Update_UpdateNowNote" xml:space="preserve">
+    <value>KeePass doit ensuite redémarrer pour charger la nouvelle version</value>
+  </data>
+  <data name="Notify_Error_DbLocked" xml:space="preserve">
+    <value>La base de données KeePass est verrouillée. Déverrouillez KeePass et réessayez.</value>
+  </data>
+  <data name="Notify_Error_Duplicate" xml:space="preserve">
+    <value>Une clé d'accès existe déjà pour {0}.</value>
+  </data>
+  <data name="Notify_Error_Internal" xml:space="preserve">
+    <value>Une erreur interne s'est produite dans KeePass :</value>
+  </data>
+  <data name="Notify_Error_KeePassNotReady" xml:space="preserve">
+    <value>KeePass n'est pas en cours d'exécution ou la base de données est verrouillée.</value>
+  </data>
+  <data name="Notify_Error_NotFound" xml:space="preserve">
+    <value>Aucune clé d'accès trouvée pour {0}.</value>
+  </data>
+  <data name="Notify_Error_NotFoundForUser" xml:space="preserve">
+    <value>Aucune clé d'accès trouvée pour {0} sur {1}.</value>
+  </data>
+  <data name="Notify_Error_Unexpected" xml:space="preserve">
+    <value>Une erreur inattendue s'est produite :</value>
+  </data>
+  <data name="Notify_Error_UnsupportedAlgorithm" xml:space="preserve">
+    <value>Aucun des algorithmes de signature acceptés par ce site web n'est activé dans les paramètres.</value>
+  </data>
+  <data name="Notify_Title_CreateFailed" xml:space="preserve">
+    <value>Échec de la création de la clé d'accès</value>
+  </data>
+  <data name="Notify_Title_SignInFailed" xml:space="preserve">
+    <value>Échec de la connexion</value>
+  </data>
+  <data name="Prompt_CountdownTooltip" xml:space="preserve">
+    <value>L'opération est annulée à l'expiration du délai</value>
+  </data>
+  <data name="Prompt_Entry_UnnamedDatabase" xml:space="preserve">
+    <value>(base de données sans nom)</value>
+  </data>
+  <data name="Prompt_Entry_Untitled" xml:space="preserve">
+    <value>(sans titre)</value>
+  </data>
+  <data name="Prompt_Register_AddToExisting" xml:space="preserve">
+    <value>Entrée existante</value>
+  </data>
+  <data name="Prompt_Register_AsUser" xml:space="preserve">
+    <value>en tant que {0}</value>
+  </data>
+  <data name="Prompt_Register_AttestationHint" xml:space="preserve">
+    <value>Ce site web a demandé une attestation d'entreprise, que KeePassPasskey ne peut pas fournir. Il se peut qu'il accepte tout de même la clé d'accès.</value>
+  </data>
+  <data name="Prompt_Register_ConfirmButton" xml:space="preserve">
+    <value>Créer la clé d'accès</value>
+  </data>
+  <data name="Prompt_Register_CreateNew" xml:space="preserve">
+    <value>Nouvelle entrée</value>
+  </data>
+  <data name="Prompt_Register_DatabaseLabel" xml:space="preserve">
+    <value>Base de données</value>
+  </data>
+  <data name="Prompt_Register_FilterAll" xml:space="preserve">
+    <value>Toutes les entrées sont affichées</value>
+  </data>
+  <data name="Prompt_Register_FilterWithoutPasskey" xml:space="preserve">
+    <value>Seules les entrées sans clé d'accès sont affichées</value>
+  </data>
+  <data name="Prompt_Register_FilterWithPasskey" xml:space="preserve">
+    <value>Seules les entrées ayant déjà une clé d'accès sont affichées</value>
+  </data>
+  <data name="Prompt_Register_HasPasskeyTooltip" xml:space="preserve">
+    <value>Cette entrée contient déjà une clé d'accès</value>
+  </data>
+  <data name="Prompt_Register_Headline" xml:space="preserve">
+    <value>{0} souhaite créer une clé d'accès</value>
+  </data>
+  <data name="Prompt_Register_NewEntryHint" xml:space="preserve">
+    <value>Une nouvelle entrée sera créée pour ce site web.</value>
+  </data>
+  <data name="Prompt_Register_NoMatches" xml:space="preserve">
+    <value>Aucune entrée ne correspond à votre recherche.</value>
+  </data>
+  <data name="Prompt_Register_ReplaceHint" xml:space="preserve">
+    <value>Cette entrée contient déjà une clé d'accès. L'enregistrement la remplacera.</value>
+  </data>
+  <data name="Prompt_Register_SearchPlaceholder" xml:space="preserve">
+    <value>Rechercher des entrées...</value>
+  </data>
+  <data name="Prompt_Register_SelectedInKeePassTooltip" xml:space="preserve">
+    <value>Sélectionnée dans KeePass</value>
+  </data>
+  <data name="Prompt_Register_Title" xml:space="preserve">
+    <value>Créer une clé d'accès</value>
+  </data>
+  <data name="Prompt_SignIn_ConfirmButton" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="Prompt_SignIn_Headline" xml:space="preserve">
+    <value>{0} vous demande de vous connecter</value>
+  </data>
+  <data name="Prompt_SignIn_Title" xml:space="preserve">
+    <value>Se connecter avec une clé d'accès</value>
+  </data>
+  <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
+    <value>À une entrée</value>
+  </data>
+  <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
+    <value>Annulation dans {0} s</value>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Body" xml:space="preserve">
+    <value>Créer une clé d'accès pour {0}.</value>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Title" xml:space="preserve">
+    <value>Choisir l'entrée où enregistrer</value>
+  </data>
+  <data name="Prompt_Toast_CreateNew" xml:space="preserve">
+    <value>Nouvelle</value>
+  </data>
+  <data name="Prompt_Toast_DatabasePicker" xml:space="preserve">
+    <value>Enregistrer dans la base de données</value>
+  </data>
+  <data name="Prompt_Toast_EntriesTruncated" xml:space="preserve">
+    <value>{0} entrées correspondantes affichées sur {1}.</value>
+  </data>
+  <data name="Prompt_Toast_Register_Body" xml:space="preserve">
+    <value>Créer une clé d'accès pour {0}.</value>
+  </data>
+  <data name="Prompt_Toast_Register_BodyForUser" xml:space="preserve">
+    <value>Créer une clé d'accès pour {0} sur {1}.</value>
+  </data>
+  <data name="Prompt_Toast_Register_ConfirmButton" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="Prompt_Toast_Register_Title" xml:space="preserve">
+    <value>Création d'une clé d'accès demandée</value>
+  </data>
+  <data name="Prompt_Toast_SaveToEntry" xml:space="preserve">
+    <value>Dans l'entrée</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_Body" xml:space="preserve">
+    <value>Se connecter à {0}.</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_BodyAsUser" xml:space="preserve">
+    <value>Se connecter à {1} en tant que {0}.</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_ConfirmButton" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_EntryHint" xml:space="preserve">
+    <value>Entrée KeePass : {0}</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_Title" xml:space="preserve">
+    <value>Connexion demandée</value>
+  </data>
+  <data name="Prompt_Toast_TagOverwrite" xml:space="preserve">
+    <value>la clé d'accès sera remplacée</value>
+  </data>
+  <data name="Prompt_Toast_TagSelected" xml:space="preserve">
+    <value>sélectionnée</value>
+  </data>
+  <data name="Prompt_WindowsHello_NoTitle" xml:space="preserve">
+    <value>(sans titre)</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Quitter</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Ouvrir KeePassPasskey</value>
+  </data>
+  <data name="Tray_Menu_Settings" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="Tray_Tooltip_Ready" xml:space="preserve">
+    <value>Prêt</value>
+  </data>
+  <data name="Tray_Tooltip_RegistrationFailed" xml:space="preserve">
+    <value>Échec de l'inscription</value>
+  </data>
+</root>
