@@ -823,7 +823,7 @@ Sam wpis nie zostanie usunięty. Klucz dostępu pozostanie w historii wpisu, wi�
     <value>Wersja {0} pozostaje w użyciu do ponownego uruchomienia programu KeePass</value>
   </data>
   <data name="KeePass_Restart_Message" xml:space="preserve">
-    <value>Aby załadować nową wersję, trzeba ponownie uruchomić program KeePass.</value>
+    <value>Aby załadować nową wersję, uruchom ponownie program KeePass.</value>
   </data>
   <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
     <value>Uruchom ponownie teraz</value>
