@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App_Action_AdvancedPasskeyOptions" xml:space="preserve">
+    <value>Дополнительные параметры ключей доступа</value>
+  </data>
+  <data name="App_Action_AdvancedPasskeyOptionsTooltip" xml:space="preserve">
+    <value>Открыть дополнительные параметры ключей доступа в Параметрах Windows</value>
+  </data>
+  <data name="App_Action_InstallPlugin" xml:space="preserve">
+    <value>Установить плагин</value>
+  </data>
+  <data name="App_Action_InstallPluginTooltip" xml:space="preserve">
+    <value>Установить или обновить плагин KeePass</value>
+  </data>
+  <data name="App_Action_Register" xml:space="preserve">
+    <value>Зарегистрировать</value>
+  </data>
+  <data name="App_Action_ShowPluginFile" xml:space="preserve">
+    <value>Показать файл плагина</value>
+  </data>
+  <data name="App_Channel_Dev" xml:space="preserve">
+    <value>Сборка для разработки</value>
+  </data>
+  <data name="App_Channel_GitHub" xml:space="preserve">
+    <value>Выпуск с GitHub</value>
+  </data>
+  <data name="App_Channel_Store" xml:space="preserve">
+    <value>Выпуск из Microsoft Store</value>
+  </data>
+  <data name="App_Diagnostics_AppVersion_Label" xml:space="preserve">
+    <value>Приложение KeePassPasskey</value>
+  </data>
+  <data name="App_Diagnostics_CopyPluginVersionTooltip" xml:space="preserve">
+    <value>Копировать версию плагина</value>
+  </data>
+  <data name="App_Diagnostics_CopyProviderVersionTooltip" xml:space="preserve">
+    <value>Копировать версию приложения</value>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Message" xml:space="preserve">
+    <value>{0} До тех пор операции с ключами доступа заблокированы.</value>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Title" xml:space="preserve">
+    <value>Несовместимая версия</value>
+  </data>
+  <data name="App_Diagnostics_PluginNotConnected" xml:space="preserve">
+    <value>Не подключен</value>
+  </data>
+  <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
+    <value>Открыть Параметры Windows, чтобы включить или отключить поставщика ключей доступа</value>
+  </data>
+  <data name="App_Diagnostics_Registration_Label" xml:space="preserve">
+    <value>Регистрация поставщика</value>
+  </data>
+  <data name="App_Diagnostics_Registration_UnregisterButton" xml:space="preserve">
+    <value>Отменить регистрацию</value>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
+    <value>Версии этого приложения ({0}) и плагина KeePass ({1}) различаются, но совместимы. Ключи доступа продолжают работать, но новые функции могут быть недоступны, пока вы не обновите более старый компонент.</value>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
+    <value>Версии различаются</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearButton" xml:space="preserve">
+    <value>Очистить</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearTooltip" xml:space="preserve">
+    <value>Удалить все ключи доступа из кэша Windows. Они появятся снова при следующем открытии или сохранении базы данных.</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpButton" xml:space="preserve">
+    <value>Записать в журнал</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpTooltip" xml:space="preserve">
+    <value>Записать кэш Windows и ключи доступа из KeePass в журнал</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_Label" xml:space="preserve">
+    <value>Кэш учетных данных Windows</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncButton" xml:space="preserve">
+    <value>Синхронизировать сейчас</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncTooltip" xml:space="preserve">
+    <value>Сейчас обновить кэш Windows по открытым базам данных KeePass</value>
+  </data>
+  <data name="App_InfoBar_DevBuildMessage" xml:space="preserve">
+    <value>Это сборка для разработки с отдельным идентификатором пакета. Ее можно установить рядом с любым стабильным выпуском. Не предназначена для повседневного использования.</value>
+  </data>
+  <data name="App_InfoBar_DevBuildTitle" xml:space="preserve">
+    <value>Сборка для разработки</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedMessage" xml:space="preserve">
+    <value>Кнопки Зарегистрировать и Отменить регистрацию не будут работать правильно. Сначала установите пакет MSIX.</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
+    <value>Приложение не установлено как пакет</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
+    <value>Установка...</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Removing" xml:space="preserve">
+    <value>Удаление...</value>
+  </data>
+  <data name="App_InstallDialog_CloseButton" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="App_InstallDialog_CopyYourselfLabel" xml:space="preserve">
+    <value>Или скопируйте файл самостоятельно:</value>
+  </data>
+  <data name="App_InstallDialog_Detected_DefaultPath" xml:space="preserve">
+    <value>Определено по пути установки по умолчанию.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Msi" xml:space="preserve">
+    <value>Определено по установке MSI.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_NotFound" xml:space="preserve">
+    <value>KeePass не найден. Введите путь к папке KeePass или к ее папке Plugins либо укажите одну из этих папок.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Registry" xml:space="preserve">
+    <value>Определено по данным установщика KeePass в реестре.</value>
+  </data>
+  <data name="App_InstallDialog_Detected_RunningKeePass" xml:space="preserve">
+    <value>Определено по запущенному KeePass.</value>
+  </data>
+  <data name="App_InstallDialog_FolderLabel" xml:space="preserve">
+    <value>Папка KeePass или папка Plugins</value>
+  </data>
+  <data name="App_InstallDialog_FolderWillBeCreated" xml:space="preserve">
+    <value>Эта папка еще не существует и будет создана.</value>
+  </data>
+  <data name="App_InstallDialog_InstallButton" xml:space="preserve">
+    <value>Установить</value>
+  </data>
+  <data name="App_InstallDialog_NeedsAdmin" xml:space="preserve">
+    <value>Для копирования в эту папку нужны права администратора. Windows запросит их при установке.</value>
+  </data>
+  <data name="App_InstallDialog_PickFolderTitle" xml:space="preserve">
+    <value>Выберите папку KeePass, ее папку Plugins или папку, вложенную в Plugins</value>
+  </data>
+  <data name="App_InstallDialog_ReinstallButton" xml:space="preserve">
+    <value>Переустановить</value>
+  </data>
+  <data name="App_InstallDialog_RemoveButton" xml:space="preserve">
+    <value>Удалить</value>
+  </data>
+  <data name="App_InstallDialog_Result_Cancelled" xml:space="preserve">
+    <value>Отменено в окне запроса прав администратора. Ничего не изменено.</value>
+  </data>
+  <data name="App_InstallDialog_Result_Installed" xml:space="preserve">
+    <value>Плагин установлен.</value>
+  </data>
+  <data name="App_InstallDialog_Result_InstalledRestart" xml:space="preserve">
+    <value>Плагин установлен. Перезапустите KeePass, чтобы загрузить изменение.</value>
+  </data>
+  <data name="App_InstallDialog_Result_Removed" xml:space="preserve">
+    <value>Плагин удален.</value>
+  </data>
+  <data name="App_InstallDialog_Result_RemovedRestart" xml:space="preserve">
+    <value>Плагин удален. Перезапустите KeePass, чтобы применить изменение.</value>
+  </data>
+  <data name="App_InstallDialog_ShowPluginFileTooltip" xml:space="preserve">
+    <value>Показать файл KeePassPasskey.dll в Проводнике</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetButton" xml:space="preserve">
+    <value>Показать папку установки</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetTooltip" xml:space="preserve">
+    <value>Открыть папку Plugins программы KeePass в Проводнике</value>
+  </data>
+  <data name="App_InstallDialog_SourceCaption" xml:space="preserve">
+    <value>Источник: KeePassPasskey ({0}) {1}</value>
+  </data>
+  <data name="App_InstallDialog_Status_NoFolder" xml:space="preserve">
+    <value>Папка не выбрана.</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotInstalled" xml:space="preserve">
+    <value>Не установлен.</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
+    <value>Это не папка KeePass и не ее папка Plugins. Выберите папку KeePass или вложенную в нее папку Plugins.</value>
+  </data>
+  <data name="App_InstallDialog_Status_Outdated" xml:space="preserve">
+    <value>Установлена версия {0}, доступна версия {1}.</value>
+  </data>
+  <data name="App_InstallDialog_Status_PluginNewer" xml:space="preserve">
+    <value>Установлена версия {0}. Это приложение содержит только версию {1}.</value>
+  </data>
+  <data name="App_InstallDialog_Status_UpToDate" xml:space="preserve">
+    <value>Установлена актуальная версия {0}.</value>
+  </data>
+  <data name="App_InstallDialog_TargetLabel" xml:space="preserve">
+    <value>Папка установки</value>
+  </data>
+  <data name="App_InstallDialog_Title" xml:space="preserve">
+    <value>Плагин KeePass</value>
+  </data>
+  <data name="App_InstallDialog_UpdateButton" xml:space="preserve">
+    <value>Обновить</value>
+  </data>
+  <data name="App_Label_KeePassPlugin" xml:space="preserve">
+    <value>Плагин KeePass</value>
+  </data>
+  <data name="App_Label_PasskeyProvider" xml:space="preserve">
+    <value>Поставщик ключей доступа</value>
+  </data>
+  <data name="App_Log_CopyTooltip" xml:space="preserve">
+    <value>Копировать содержимое журнала в буфер обмена</value>
+  </data>
+  <data name="App_Log_NoFile" xml:space="preserve">
+    <value>(файла журнала пока нет)</value>
+  </data>
+  <data name="App_Log_OpenFileTooltip" xml:space="preserve">
+    <value>Открыть файл журнала</value>
+  </data>
+  <data name="App_Log_OpenFolderTooltip" xml:space="preserve">
+    <value>Открыть папку журналов</value>
+  </data>
+  <data name="App_Log_ReadFailed" xml:space="preserve">
+    <value>(не удалось прочитать журнал: {0})</value>
+  </data>
+  <data name="App_Nav_Diagnostics" xml:space="preserve">
+    <value>Диагностика</value>
+  </data>
+  <data name="App_Nav_Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="App_Nav_Status" xml:space="preserve">
+    <value>Состояние</value>
+  </data>
+  <data name="App_Registration_RegisterFailedMessage" xml:space="preserve">
+    <value>Windows вернула HRESULT {0} при попытке регистрации поставщика ключей доступа.</value>
+  </data>
+  <data name="App_Registration_RegisterFailedTitle" xml:space="preserve">
+    <value>Регистрация не удалась</value>
+  </data>
+  <data name="App_Registration_UnregisterFailedMessage" xml:space="preserve">
+    <value>Windows вернула HRESULT {0} при попытке отменить регистрацию поставщика ключей доступа.</value>
+  </data>
+  <data name="App_Registration_UnregisterFailedTitle" xml:space="preserve">
+    <value>Не удалось отменить регистрацию</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyButton" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedMessage" xml:space="preserve">
+    <value>AAGUID не изменен, так как Windows вернула HRESULT {0} при его применении.</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedTitle" xml:space="preserve">
+    <value>Не удалось обновить аутентификатор</value>
+  </data>
+  <data name="App_Settings_Aaguid_ClearTooltip" xml:space="preserve">
+    <value>Очистить поле</value>
+  </data>
+  <data name="App_Settings_Aaguid_DefaultApplied" xml:space="preserve">
+    <value>Используется AAGUID по умолчанию.</value>
+  </data>
+  <data name="App_Settings_Aaguid_Description" xml:space="preserve">
+    <value>Подменяет идентификатор аутентификатора (AAGUID), который видят сайты при создании ключа доступа. Оставьте поле пустым, чтобы использовать значение по умолчанию. При применении аутентификатор заново регистрируется в Windows.</value>
+  </data>
+  <data name="App_Settings_Aaguid_Header" xml:space="preserve">
+    <value>Подмена AAGUID</value>
+  </data>
+  <data name="App_Settings_Aaguid_Invalid" xml:space="preserve">
+    <value>Введите допустимый GUID или оставьте поле пустым, чтобы использовать значение по умолчанию.</value>
+  </data>
+  <data name="App_Settings_Aaguid_SpoofApplied" xml:space="preserve">
+    <value>Подмена AAGUID применена.</value>
+  </data>
+  <data name="App_Settings_About_Contributors" xml:space="preserve">
+    <value>Участники</value>
+  </data>
+  <data name="App_Settings_About_ContributorsTooltip" xml:space="preserve">
+    <value>Открыть список участников на GitHub</value>
+  </data>
+  <data name="App_Settings_About_Copyright" xml:space="preserve">
+    <value>Авторские права</value>
+  </data>
+  <data name="App_Settings_About_CopyrightNotice" xml:space="preserve">
+    <value>© 2026 Uwe Kögel и участники проекта</value>
+  </data>
+  <data name="App_Settings_About_CopyVersionTooltip" xml:space="preserve">
+    <value>Копировать версию</value>
+  </data>
+  <data name="App_Settings_About_Description" xml:space="preserve">
+    <value>Версия, исходный код и лицензия</value>
+  </data>
+  <data name="App_Settings_About_Header" xml:space="preserve">
+    <value>О приложении</value>
+  </data>
+  <data name="App_Settings_About_License" xml:space="preserve">
+    <value>Лицензия</value>
+  </data>
+  <data name="App_Settings_About_LicenseName" xml:space="preserve">
+    <value>GNU GPL v3.0 или более поздняя версия</value>
+  </data>
+  <data name="App_Settings_About_LicenseTooltip" xml:space="preserve">
+    <value>Открыть текст лицензии</value>
+  </data>
+  <data name="App_Settings_About_ReportBug" xml:space="preserve">
+    <value>Сообщить об ошибке</value>
+  </data>
+  <data name="App_Settings_About_ReportBugTooltip" xml:space="preserve">
+    <value>Открыть список проблем на GitHub</value>
+  </data>
+  <data name="App_Settings_About_SourceCode" xml:space="preserve">
+    <value>Исходный код</value>
+  </data>
+  <data name="App_Settings_About_SourceCodeTooltip" xml:space="preserve">
+    <value>Открыть исходный код на GitHub</value>
+  </data>
+  <data name="App_Settings_About_ThirdParty" xml:space="preserve">
+    <value>Сторонние компоненты</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyDescription" xml:space="preserve">
+    <value>Лицензии библиотек с открытым исходным кодом, входящих в состав приложения</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyTooltip" xml:space="preserve">
+    <value>Открыть сведения о сторонних компонентах</value>
+  </data>
+  <data name="App_Settings_About_Version" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="App_Settings_About_Website" xml:space="preserve">
+    <value>Сайт</value>
+  </data>
+  <data name="App_Settings_About_WebsiteTooltip" xml:space="preserve">
+    <value>Открыть сайт</value>
+  </data>
+  <data name="App_Settings_Advanced_Description" xml:space="preserve">
+    <value>Настройки поведения, интервалов и ведения журнала, которые редко нужно менять</value>
+  </data>
+  <data name="App_Settings_Advanced_Header" xml:space="preserve">
+    <value>Дополнительно</value>
+  </data>
+  <data name="App_Settings_Algorithms_Description" xml:space="preserve">
+    <value>Какой алгоритм используется для нового ключа доступа, если сайт принимает несколько.
+Сайт, который принимает только отключенные алгоритмы, не сможет создать ключ доступа.</value>
+  </data>
+  <data name="App_Settings_Algorithms_Header" xml:space="preserve">
+    <value>Алгоритмы подписи</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveDownTooltip" xml:space="preserve">
+    <value>Переместить вниз</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveUpTooltip" xml:space="preserve">
+    <value>Переместить вверх</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionListOrder" xml:space="preserve">
+    <value>Использовать порядок списка</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
+    <value>Использовать порядок сайта</value>
+  </data>
+  <data name="App_Settings_Appearance_Description" xml:space="preserve">
+    <value>Тема и язык</value>
+  </data>
+  <data name="App_Settings_Appearance_Header" xml:space="preserve">
+    <value>Внешний вид</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Description" xml:space="preserve">
+    <value>Сколько времени запрос подтверждения остается открытым</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Header" xml:space="preserve">
+    <value>Время ожидания подтверждения</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Description" xml:space="preserve">
+    <value>Если параметр включен, сайтам сообщается, что для нового ключа доступа разрешены резервное копирование и синхронизация с другими вашими устройствами. Если отключен, им сообщается, что ключ доступа сохранен только на одном устройстве.</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Header" xml:space="preserve">
+    <value>Возможность резервного копирования (BE)</value>
+  </data>
+  <data name="App_Settings_BackupState_Description" xml:space="preserve">
+    <value>Если параметр включен, сайтам сообщается, что для нового ключа доступа уже создана резервная копия. Доступно, только если параметр "Возможность резервного копирования" включен.</value>
+  </data>
+  <data name="App_Settings_BackupState_Header" xml:space="preserve">
+    <value>Состояние резервного копирования (BS)</value>
+  </data>
+  <data name="App_Settings_DiscardTooltip" xml:space="preserve">
+    <value>Отменить изменения</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Description" xml:space="preserve">
+    <value>Учитывать ли запрос сайта не создавать второй ключ доступа для учетной записи, у которой он уже есть, и какие базы данных проверять</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Header" xml:space="preserve">
+    <value>Проверка дубликатов ключей доступа</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionAllDatabases" xml:space="preserve">
+    <value>Проверять все базы данных</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionNone" xml:space="preserve">
+    <value>Не проверять</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionTargetDatabase" xml:space="preserve">
+    <value>Проверять целевую базу данных</value>
+  </data>
+  <data name="App_Settings_Enforced_Message" xml:space="preserve">
+    <value>Эти настройки заданы в файле KeePass.config.enforced.xml, и изменить их здесь невозможно.</value>
+  </data>
+  <data name="App_Settings_Enforced_Title" xml:space="preserve">
+    <value>Настройки заданы принудительно в KeePass</value>
+  </data>
+  <data name="App_Settings_Entries_Description" xml:space="preserve">
+    <value>Как создаются записи для новых ключей доступа</value>
+  </data>
+  <data name="App_Settings_Entries_Header" xml:space="preserve">
+    <value>Записи с ключами доступа</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Description" xml:space="preserve">
+    <value>Группа Passkeys: группа по умолчанию для ключей доступа.
+Выбранная группа: группа, выбранная в KeePass при создании ключа доступа.</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Header" xml:space="preserve">
+    <value>Группа для новых ключей доступа</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionPasskeys" xml:space="preserve">
+    <value>Группа Passkeys</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionSelected" xml:space="preserve">
+    <value>Выбранная группа</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Description" xml:space="preserve">
+    <value>Название для новых записей. Поддерживаются {RP_NAME} и заполнители KeePass, например {USERNAME} или {URL}.</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Header" xml:space="preserve">
+    <value>Название записи</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Description" xml:space="preserve">
+    <value>Показывает подробное уведомление, если при работе с ключом доступа произошла ошибка. Сама Windows показывает только общую ошибку.</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Header" xml:space="preserve">
+    <value>Уведомления об ошибках</value>
+  </data>
+  <data name="App_Settings_Expert_Description" xml:space="preserve">
+    <value>Настройки для нестандартных конфигураций. Меняйте их, только если знаете, что они делают.</value>
+  </data>
+  <data name="App_Settings_Expert_Header" xml:space="preserve">
+    <value>Для опытных пользователей</value>
+  </data>
+  <data name="App_Settings_Language_Header" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="App_Settings_Language_NotReviewed" xml:space="preserve">
+    <value>Этот перевод создан автоматически и еще не проверен носителем языка.</value>
+  </data>
+  <data name="App_Settings_Language_OptionNotReviewed" xml:space="preserve">
+    <value>{0} (перевод еще не проверен)</value>
+  </data>
+  <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
+    <value>Использовать язык Windows</value>
+  </data>
+  <data name="App_Settings_Language_ReviewTooltip" xml:space="preserve">
+    <value>Помочь с проверкой этого перевода</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
+    <value>Показывает запросы подтверждения в виде уведомлений Windows вместо диалоговых окон. Режим "Не беспокоить" скрывает уведомления без предупреждения, а списки в уведомлениях содержат не более 5 элементов.</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
+    <value>Использовать классические уведомления для подтверждения</value>
+  </data>
+  <data name="App_Settings_LoadFailed" xml:space="preserve">
+    <value>Не удалось загрузить актуальные настройки из KeePass. Показаны последние известные значения.</value>
+  </data>
+  <data name="App_Settings_Loading" xml:space="preserve">
+    <value>Загрузка настроек...</value>
+  </data>
+  <data name="App_Settings_LogLevel_Description" xml:space="preserve">
+    <value>Степень детализации журналов приложения и плагина</value>
+  </data>
+  <data name="App_Settings_LogLevel_Header" xml:space="preserve">
+    <value>Уровень ведения журнала</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionDebug" xml:space="preserve">
+    <value>Отладка</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionError" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionInfo" xml:space="preserve">
+    <value>Сведения</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionOff" xml:space="preserve">
+    <value>Отключено</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionWarn" xml:space="preserve">
+    <value>Предупреждение</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Description" xml:space="preserve">
+    <value>Предлагает обновить плагин при запуске KeePass, если это приложение содержит более новую версию. Каждое обновление подтверждается в диалоговом окне.</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
+    <value>Проверять наличие обновлений плагина</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Description" xml:space="preserve">
+    <value>Как часто приложение проверяет состояние поставщика</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Header" xml:space="preserve">
+    <value>Интервал обновления состояния</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Description" xml:space="preserve">
+    <value>Как вы подтверждаете создание нового ключа доступа</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
+    <value>Создание ключей доступа</value>
+  </data>
+  <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
+    <value>Восстановить значения по умолчанию</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Description" xml:space="preserve">
+    <value>Вкл.: заполнители заменяются, и в названии сохраняется готовый текст. Выкл.: KeePass заменяет их при каждом показе записи. {RP_NAME} всегда заменяется при сохранении.</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Header" xml:space="preserve">
+    <value>Заменять заполнители в названии при сохранении</value>
+  </data>
+  <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
+    <value>KeePass не запущен. Запустите KeePass с плагином KeePassPasskey, прежде чем сохранять настройки.</value>
+  </data>
+  <data name="App_Settings_SaveFailedTitle" xml:space="preserve">
+    <value>Не удалось сохранить настройки</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Description" xml:space="preserve">
+    <value>Предлагает сохранить ключ доступа в подходящую запись, а не всегда создавать новую. Работает, только если включен запрос подтверждения для новых ключей доступа.</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Header" xml:space="preserve">
+    <value>Предлагать сохранение в существующую запись</value>
+  </data>
+  <data name="App_Settings_SaveTooltip" xml:space="preserve">
+    <value>Сохранить настройки</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Description" xml:space="preserve">
+    <value>Как вы подтверждаете вход</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
+    <value>Не запрашивает Windows Hello повторно, если вы только что разблокировали KeePass для той же операции. Действует, только если запрос подтверждения включен.</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
+    <value>Не запрашивать Windows Hello после разблокировки KeePass</value>
+  </data>
+  <data name="App_Settings_TagEntries_Description" xml:space="preserve">
+    <value>Добавляет тег "Passkey" к каждой записи, созданной для нового ключа доступа</value>
+  </data>
+  <data name="App_Settings_TagEntries_Header" xml:space="preserve">
+    <value>Добавлять тег к новым записям с ключами доступа</value>
+  </data>
+  <data name="App_Settings_Theme_Header" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="App_Settings_Theme_OptionDark" xml:space="preserve">
+    <value>Темная</value>
+  </data>
+  <data name="App_Settings_Theme_OptionLight" xml:space="preserve">
+    <value>Светлая</value>
+  </data>
+  <data name="App_Settings_Theme_OptionSystem" xml:space="preserve">
+    <value>Использовать тему Windows</value>
+  </data>
+  <data name="App_Settings_ToggleOff" xml:space="preserve">
+    <value>Выкл.</value>
+  </data>
+  <data name="App_Settings_ToggleOn" xml:space="preserve">
+    <value>Вкл.</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Description" xml:space="preserve">
+    <value>Показывает значок состояния в области уведомлений. После закрытия окна приложение продолжает работать в области уведомлений.</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Header" xml:space="preserve">
+    <value>Значок в области уведомлений</value>
+  </data>
+  <data name="App_Settings_UnsavedChangesTooltip" xml:space="preserve">
+    <value>Есть несохраненные изменения</value>
+  </data>
+  <data name="App_Settings_Verification_Description" xml:space="preserve">
+    <value>Запросы подтверждения и проверка пользователя для операций с ключами доступа</value>
+  </data>
+  <data name="App_Settings_Verification_Header" xml:space="preserve">
+    <value>Подтверждение и проверка пользователя</value>
+  </data>
+  <data name="App_Settings_Verification_Prompt" xml:space="preserve">
+    <value>Запрос подтверждения</value>
+  </data>
+  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
+    <value>Запрос подтверждения и Windows Hello отключены, поэтому ключи доступа будут создаваться и использоваться без вашего подтверждения.</value>
+  </data>
+  <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
+    <value>Windows Hello (ПИН-код, отпечаток пальца или лицо)</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Description" xml:space="preserve">
+    <value>Передает в Windows сайт и имя пользователя для каждого вашего ключа доступа (сами ключи никогда не передаются), чтобы Windows могла предлагать их при входе. Если параметр отключен, Windows не знает о ваших ключах доступа и вход на большинстве сайтов не удается.</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Header" xml:space="preserve">
+    <value>Кэш учетных данных Windows</value>
+  </data>
+  <data name="App_SetupGuide_ShowPluginFileTooltip" xml:space="preserve">
+    <value>Показать файл KeePassPasskey.dll в Проводнике, чтобы скопировать его самостоятельно</value>
+  </data>
+  <data name="App_SetupGuide_Step1_Text" xml:space="preserve">
+    <value>Скопируйте файл **KeePassPasskey.dll** в папку **Plugins** программы KeePass или воспользуйтесь кнопкой ниже. Затем перезапустите KeePass.</value>
+  </data>
+  <data name="App_SetupGuide_Step1_Title" xml:space="preserve">
+    <value>Установите плагин</value>
+  </data>
+  <data name="App_SetupGuide_Step2_Text" xml:space="preserve">
+    <value>Откройте **Параметры › Учетные записи › Ключи доступа › Дополнительные параметры** или воспользуйтесь кнопкой ниже.</value>
+  </data>
+  <data name="App_SetupGuide_Step2_Title" xml:space="preserve">
+    <value>Откройте дополнительные параметры ключей доступа</value>
+  </data>
+  <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
+    <value>Включите **KeePassPasskey** в списке поставщиков ключей доступа.</value>
+  </data>
+  <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
+    <value>Включите KeePassPasskey</value>
+  </data>
+  <data name="App_SetupGuide_Step4_Text" xml:space="preserve">
+    <value>Выше должны отображаться оба состояния: **Включен** / **Подключен**.</value>
+  </data>
+  <data name="App_SetupGuide_Step4_Title" xml:space="preserve">
+    <value>Проверьте</value>
+  </data>
+  <data name="App_SetupGuide_Title" xml:space="preserve">
+    <value>Начало работы</value>
+  </data>
+  <data name="App_SetupGuide_UserGuideTooltip" xml:space="preserve">
+    <value>Открыть руководство пользователя</value>
+  </data>
+  <data name="App_Status_Headline_AutoregisterFailed" xml:space="preserve">
+    <value>Автоматическая регистрация не удалась</value>
+  </data>
+  <data name="App_Status_Headline_Ready" xml:space="preserve">
+    <value>Все готово</value>
+  </data>
+  <data name="App_Status_Hint_AutoregisterFailed" xml:space="preserve">
+    <value>Нажмите кнопку Зарегистрировать, чтобы повторить попытку.</value>
+  </data>
+  <data name="App_Status_Hint_KeePassNotConnected" xml:space="preserve">
+    <value>Запустите KeePass с установленным плагином KeePassPasskey.</value>
+  </data>
+  <data name="App_Status_Hint_NoDatabase" xml:space="preserve">
+    <value>Откройте базу данных KeePass, чтобы использовать ключи доступа.</value>
+  </data>
+  <data name="App_Status_Hint_NotRegistered" xml:space="preserve">
+    <value>Нажмите кнопку Зарегистрировать, чтобы настроить KeePassPasskey в качестве поставщика ключей доступа.</value>
+  </data>
+  <data name="App_Status_Hint_Ready" xml:space="preserve">
+    <value>Поставщик ключей доступа включен, и плагин KeePass подключен.</value>
+  </data>
+  <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
+    <value>Нажмите кнопку "Дополнительные параметры ключей доступа" ниже, чтобы включить KeePassPasskey.</value>
+  </data>
+  <data name="App_Status_Pill_Connected" xml:space="preserve">
+    <value>Подключен</value>
+  </data>
+  <data name="App_Status_Pill_Enabled" xml:space="preserve">
+    <value>Включен</value>
+  </data>
+  <data name="App_Status_Pill_NotConnected" xml:space="preserve">
+    <value>Не подключен</value>
+  </data>
+  <data name="App_Status_Pill_Registered" xml:space="preserve">
+    <value>Зарегистрирован</value>
+  </data>
+  <data name="App_Status_RefreshTooltip" xml:space="preserve">
+    <value>Обновить состояние</value>
+  </data>
+  <data name="App_TrayOffer_AddButton" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="App_TrayOffer_Message" xml:space="preserve">
+    <value>Добавьте KeePassPasskey в область уведомлений.</value>
+  </data>
+  <data name="App_TrayOffer_NoThanksButton" xml:space="preserve">
+    <value>Нет, спасибо</value>
+  </data>
+  <data name="App_TrayOffer_Title" xml:space="preserve">
+    <value>Хотите следить за состоянием?</value>
+  </data>
+  <data name="App_UnsavedChanges_DiscardButton" xml:space="preserve">
+    <value>Не сохранять</value>
+  </data>
+  <data name="App_UnsavedChanges_Message" xml:space="preserve">
+    <value>Есть несохраненные изменения настроек. Сохранить их перед выходом?</value>
+  </data>
+  <data name="App_UnsavedChanges_Title" xml:space="preserve">
+    <value>Несохраненные изменения</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="Common_Install_Error_AccessDenied" xml:space="preserve">
+    <value>Отказано в доступе к папке Plugins программы KeePass.</value>
+  </data>
+  <data name="Common_Install_Error_BundledPluginNotFound" xml:space="preserve">
+    <value>Плагин из комплекта приложения не найден: {0}</value>
+  </data>
+  <data name="Common_Install_Error_FolderNotFound" xml:space="preserve">
+    <value>Папка не найдена: {0}</value>
+  </data>
+  <data name="Common_Install_Error_NoBundledPlugin" xml:space="preserve">
+    <value>Установленное приложение KeePassPasskey не содержит плагина для установки.</value>
+  </data>
+  <data name="Common_Install_Error_NoTargetFolder" xml:space="preserve">
+    <value>Папка установки не указана.</value>
+  </data>
+  <data name="Common_Install_Error_NotKeePassFolder" xml:space="preserve">
+    <value>Выбранная папка не относится к установке KeePass.</value>
+  </data>
+  <data name="Common_Install_Error_ScriptNotFound" xml:space="preserve">
+    <value>Сценарий установки не найден: {0}</value>
+  </data>
+  <data name="Common_Install_Error_WriteFailed" xml:space="preserve">
+    <value>Не удалось скопировать файл плагина.</value>
+  </data>
+  <data name="Common_OK" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Common_Status_IncompatibleVersion" xml:space="preserve">
+    <value>Несовместимая версия</value>
+  </data>
+  <data name="Common_Status_KeePassNotConnected" xml:space="preserve">
+    <value>KeePass не подключен</value>
+  </data>
+  <data name="Common_Status_NoDatabase" xml:space="preserve">
+    <value>Нет открытой базы данных</value>
+  </data>
+  <data name="Common_Status_NotRegistered" xml:space="preserve">
+    <value>Не зарегистрирован</value>
+  </data>
+  <data name="Common_Status_VersionMismatch" xml:space="preserve">
+    <value>Версии различаются</value>
+  </data>
+  <data name="Common_Status_WaitingToBeEnabled" xml:space="preserve">
+    <value>Ожидание включения</value>
+  </data>
+  <data name="Common_Version_AppOlder" xml:space="preserve">
+    <value>Версия этого приложения ({0}) ниже версии плагина KeePass ({1}). Обновите приложение KeePassPasskey.</value>
+  </data>
+  <data name="Common_Version_Incompatible" xml:space="preserve">
+    <value>Версии приложения и плагина KeePass несовместимы. Обновите оба компонента до последней версии.</value>
+  </data>
+  <data name="Common_Version_PluginOlder" xml:space="preserve">
+    <value>Версия плагина KeePass ({0}) ниже версии этого приложения ({1}). Обновите плагин KeePassPasskey в KeePass.</value>
+  </data>
+  <data name="KeePass_EntryMenu_Copy" xml:space="preserve">
+    <value>Копировать ключ доступа</value>
+  </data>
+  <data name="KeePass_EntryMenu_Cut" xml:space="preserve">
+    <value>Вырезать ключ доступа</value>
+  </data>
+  <data name="KeePass_EntryMenu_Paste" xml:space="preserve">
+    <value>Вставить ключ доступа сюда</value>
+  </data>
+  <data name="KeePass_EntryMenu_PasteFrom" xml:space="preserve">
+    <value>Вставить ключ доступа из записи "{0}"</value>
+  </data>
+  <data name="KeePass_EntryMenu_Remove" xml:space="preserve">
+    <value>Удалить ключ доступа</value>
+  </data>
+  <data name="KeePass_EntryMenu_Root" xml:space="preserve">
+    <value>Ключ доступа</value>
+  </data>
+  <data name="KeePass_NoUpdate_AlreadyNewest" xml:space="preserve">
+    <value>Версия {0} уже установлена. Приложение KeePassPasskey не содержит более новой версии.</value>
+  </data>
+  <data name="KeePass_NoUpdate_AppNotInstalled" xml:space="preserve">
+    <value>Похоже, приложение KeePassPasskey не установлено.</value>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNewer" xml:space="preserve">
+    <value>Установлена версия {0}. Приложение KeePassPasskey содержит только версию {1}. Обновите приложение, чтобы версии совпадали.</value>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNotLocated" xml:space="preserve">
+    <value>Не удалось найти файл плагина, поэтому обновить его отсюда невозможно.</value>
+  </data>
+  <data name="KeePass_NoUpdate_Title" xml:space="preserve">
+    <value>Плагин KeePassPasskey</value>
+  </data>
+  <data name="KeePass_Paste_AlreadyOnEntry" xml:space="preserve">
+    <value>Ключ доступа уже находится в этой записи.</value>
+  </data>
+  <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
+    <value>В этой записи уже есть ключ доступа. Заменить его вставляемым ключом доступа?
+
+Текущий ключ доступа останется в истории записи, и при необходимости его можно будет восстановить.</value>
+  </data>
+  <data name="KeePass_Paste_Failed" xml:space="preserve">
+    <value>Не удалось вставить ключ доступа.</value>
+  </data>
+  <data name="KeePass_Paste_SourceUnavailable" xml:space="preserve">
+    <value>Запись, из которой взят ключ доступа, больше недоступна, поэтому вставка отменена.</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
+    <value>Другая программа уже использует имя подключения (именованный канал), которое нужно плагину KeePassPasskey. Ключи доступа не будут работать, пока вы не закроете эту программу и не перезапустите KeePass.</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedTitle" xml:space="preserve">
+    <value>Плагину KeePassPasskey не удалось занять свой именованный канал</value>
+  </data>
+  <data name="KeePass_Remove_Confirm" xml:space="preserve">
+    <value>Удалить ключ доступа из этой записи?
+
+Сама запись не удаляется. Ключ доступа останется в истории записи, и при необходимости его можно будет восстановить.</value>
+  </data>
+  <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
+    <value>Удалить ключ доступа из записи "{0}"?
+
+Сама запись не удаляется. Ключ доступа останется в истории записи, и при необходимости его можно будет восстановить.</value>
+  </data>
+  <data name="KeePass_Remove_Failed" xml:space="preserve">
+    <value>Не удалось удалить ключ доступа.</value>
+  </data>
+  <data name="KeePass_Restart_FallbackQuestion" xml:space="preserve">
+    <value>Плагин KeePassPasskey обновлен. Перезапустить KeePass сейчас?</value>
+  </data>
+  <data name="KeePass_Restart_Heading" xml:space="preserve">
+    <value>Плагин обновлен до версии {0}</value>
+  </data>
+  <data name="KeePass_Restart_LaterNote" xml:space="preserve">
+    <value>Версия {0} используется до перезапуска KeePass</value>
+  </data>
+  <data name="KeePass_Restart_Message" xml:space="preserve">
+    <value>Чтобы загрузить новую версию, KeePass нужно перезапустить.</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
+    <value>Перезапустить сейчас</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowNote" xml:space="preserve">
+    <value>KeePass закроется и откроется снова</value>
+  </data>
+  <data name="KeePass_ToolsMenu_AppOpenFailed" xml:space="preserve">
+    <value>Не удалось открыть приложение KeePassPasskey. Похоже, оно не установлено.</value>
+  </data>
+  <data name="KeePass_ToolsMenu_Settings" xml:space="preserve">
+    <value>Настройки ключей доступа</value>
+  </data>
+  <data name="KeePass_ToolsMenu_UpdatePlugin" xml:space="preserve">
+    <value>Обновить плагин из установленного приложения</value>
+  </data>
+  <data name="KeePass_UpdateFailed_FallbackQuestion" xml:space="preserve">
+    <value>{0}
+
+Повторить попытку?</value>
+  </data>
+  <data name="KeePass_UpdateFailed_Heading" xml:space="preserve">
+    <value>Плагин не обновлен</value>
+  </data>
+  <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
+    <value>Разрешение не предоставлено, поэтому по-прежнему используется версия {0}.</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainButton" xml:space="preserve">
+    <value>Повторить попытку</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainNote" xml:space="preserve">
+    <value>Повторяет обновление</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainPermissionNote" xml:space="preserve">
+    <value>Повторно запрашивает разрешение</value>
+  </data>
+  <data name="KeePass_Update_FallbackQuestion" xml:space="preserve">
+    <value>Доступен новый плагин KeePassPasskey (версия {0}). Установить его сейчас?</value>
+  </data>
+  <data name="KeePass_Update_FromLabel" xml:space="preserve">
+    <value>Откуда:  KeePassPasskey ({0})</value>
+  </data>
+  <data name="KeePass_Update_Heading" xml:space="preserve">
+    <value>Доступна версия {0}. Установлена версия {1}.</value>
+  </data>
+  <data name="KeePass_Update_LaterButton" xml:space="preserve">
+    <value>Позже</value>
+  </data>
+  <data name="KeePass_Update_LaterNote" xml:space="preserve">
+    <value>Спросить снова при следующем запуске KeePass</value>
+  </data>
+  <data name="KeePass_Update_Message" xml:space="preserve">
+    <value>Ключи доступа могут не создаваться и не работать, пока версии не совпадут.</value>
+  </data>
+  <data name="KeePass_Update_NeverCheckCheckbox" xml:space="preserve">
+    <value>Больше не проверять наличие обновлений плагина</value>
+  </data>
+  <data name="KeePass_Update_SkipVersionButton" xml:space="preserve">
+    <value>Пропустить версию {0}</value>
+  </data>
+  <data name="KeePass_Update_SkipVersionNote" xml:space="preserve">
+    <value>Больше не спрашивать об этой версии</value>
+  </data>
+  <data name="KeePass_Update_Title" xml:space="preserve">
+    <value>Обновление плагина KeePassPasskey</value>
+  </data>
+  <data name="KeePass_Update_ToLabel" xml:space="preserve">
+    <value>Куда:  {0}</value>
+  </data>
+  <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
+    <value>Обновить сейчас</value>
+  </data>
+  <data name="KeePass_Update_UpdateNowNote" xml:space="preserve">
+    <value>После этого KeePass нужно перезапустить, чтобы загрузить новую версию</value>
+  </data>
+  <data name="Notify_Error_DbLocked" xml:space="preserve">
+    <value>База данных KeePass заблокирована. Разблокируйте KeePass и попробуйте еще раз.</value>
+  </data>
+  <data name="Notify_Error_Duplicate" xml:space="preserve">
+    <value>Ключ доступа для сайта {0} уже существует.</value>
+  </data>
+  <data name="Notify_Error_Internal" xml:space="preserve">
+    <value>В KeePass произошла внутренняя ошибка:</value>
+  </data>
+  <data name="Notify_Error_KeePassNotReady" xml:space="preserve">
+    <value>KeePass не запущен, или база данных заблокирована.</value>
+  </data>
+  <data name="Notify_Error_NotFound" xml:space="preserve">
+    <value>Ключ доступа для сайта {0} не найден.</value>
+  </data>
+  <data name="Notify_Error_NotFoundForUser" xml:space="preserve">
+    <value>Ключ доступа для пользователя {0} на сайте {1} не найден.</value>
+  </data>
+  <data name="Notify_Error_Unexpected" xml:space="preserve">
+    <value>Произошла непредвиденная ошибка:</value>
+  </data>
+  <data name="Notify_Error_UnsupportedAlgorithm" xml:space="preserve">
+    <value>Ни один из алгоритмов подписи, которые принимает этот сайт, не включен в настройках.</value>
+  </data>
+  <data name="Notify_Title_CreateFailed" xml:space="preserve">
+    <value>Не удалось создать ключ доступа</value>
+  </data>
+  <data name="Notify_Title_SignInFailed" xml:space="preserve">
+    <value>Не удалось войти</value>
+  </data>
+  <data name="Prompt_CountdownTooltip" xml:space="preserve">
+    <value>Операция будет отменена по истечении времени</value>
+  </data>
+  <data name="Prompt_Entry_UnnamedDatabase" xml:space="preserve">
+    <value>(база данных без имени)</value>
+  </data>
+  <data name="Prompt_Entry_Untitled" xml:space="preserve">
+    <value>(без названия)</value>
+  </data>
+  <data name="Prompt_Register_AddToExisting" xml:space="preserve">
+    <value>Существующая запись</value>
+  </data>
+  <data name="Prompt_Register_AsUser" xml:space="preserve">
+    <value>как {0}</value>
+  </data>
+  <data name="Prompt_Register_AttestationHint" xml:space="preserve">
+    <value>Этот сайт запросил корпоративную аттестацию, которую KeePassPasskey не может предоставить. Возможно, он все равно примет ключ доступа.</value>
+  </data>
+  <data name="Prompt_Register_ConfirmButton" xml:space="preserve">
+    <value>Создать ключ доступа</value>
+  </data>
+  <data name="Prompt_Register_CreateNew" xml:space="preserve">
+    <value>Новая запись</value>
+  </data>
+  <data name="Prompt_Register_DatabaseLabel" xml:space="preserve">
+    <value>База данных</value>
+  </data>
+  <data name="Prompt_Register_FilterAll" xml:space="preserve">
+    <value>Показаны все записи</value>
+  </data>
+  <data name="Prompt_Register_FilterWithoutPasskey" xml:space="preserve">
+    <value>Показаны только записи без ключа доступа</value>
+  </data>
+  <data name="Prompt_Register_FilterWithPasskey" xml:space="preserve">
+    <value>Показаны только записи с ключом доступа</value>
+  </data>
+  <data name="Prompt_Register_HasPasskeyTooltip" xml:space="preserve">
+    <value>У этой записи уже есть ключ доступа</value>
+  </data>
+  <data name="Prompt_Register_Headline" xml:space="preserve">
+    <value>Сайт {0} хочет создать ключ доступа</value>
+  </data>
+  <data name="Prompt_Register_NewEntryHint" xml:space="preserve">
+    <value>Для этого сайта будет создана новая запись.</value>
+  </data>
+  <data name="Prompt_Register_NoMatches" xml:space="preserve">
+    <value>Записи не найдены.</value>
+  </data>
+  <data name="Prompt_Register_ReplaceHint" xml:space="preserve">
+    <value>У этой записи уже есть ключ доступа. При сохранении он будет заменен.</value>
+  </data>
+  <data name="Prompt_Register_SearchPlaceholder" xml:space="preserve">
+    <value>Поиск записей...</value>
+  </data>
+  <data name="Prompt_Register_SelectedInKeePassTooltip" xml:space="preserve">
+    <value>Выбрана в KeePass</value>
+  </data>
+  <data name="Prompt_Register_Title" xml:space="preserve">
+    <value>Создание ключа доступа</value>
+  </data>
+  <data name="Prompt_SignIn_ConfirmButton" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Prompt_SignIn_Headline" xml:space="preserve">
+    <value>Сайт {0} просит вас войти</value>
+  </data>
+  <data name="Prompt_SignIn_Title" xml:space="preserve">
+    <value>Вход с помощью ключа доступа</value>
+  </data>
+  <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
+    <value>Выбрать запись</value>
+  </data>
+  <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
+    <value>Отмена через {0} с</value>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Body" xml:space="preserve">
+    <value>Создайте ключ доступа для сайта {0}.</value>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Title" xml:space="preserve">
+    <value>Выберите запись для сохранения</value>
+  </data>
+  <data name="Prompt_Toast_CreateNew" xml:space="preserve">
+    <value>Новая запись</value>
+  </data>
+  <data name="Prompt_Toast_DatabasePicker" xml:space="preserve">
+    <value>Сохранить в базу данных</value>
+  </data>
+  <data name="Prompt_Toast_EntriesTruncated" xml:space="preserve">
+    <value>Показано подходящих записей: {0} из {1}.</value>
+  </data>
+  <data name="Prompt_Toast_Register_Body" xml:space="preserve">
+    <value>Создайте ключ доступа для сайта {0}.</value>
+  </data>
+  <data name="Prompt_Toast_Register_BodyForUser" xml:space="preserve">
+    <value>Создайте ключ доступа для пользователя {0} на сайте {1}.</value>
+  </data>
+  <data name="Prompt_Toast_Register_ConfirmButton" xml:space="preserve">
+    <value>Создать</value>
+  </data>
+  <data name="Prompt_Toast_Register_Title" xml:space="preserve">
+    <value>Запрос на создание ключа доступа</value>
+  </data>
+  <data name="Prompt_Toast_SaveToEntry" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_Body" xml:space="preserve">
+    <value>Войдите на сайт {0}.</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_BodyAsUser" xml:space="preserve">
+    <value>Войдите на сайт {1} как {0}.</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_ConfirmButton" xml:space="preserve">
+    <value>Войти</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_EntryHint" xml:space="preserve">
+    <value>Запись KeePass: {0}</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_Title" xml:space="preserve">
+    <value>Запрос на вход</value>
+  </data>
+  <data name="Prompt_Toast_TagOverwrite" xml:space="preserve">
+    <value>заменит ключ доступа</value>
+  </data>
+  <data name="Prompt_Toast_TagSelected" xml:space="preserve">
+    <value>выбрана</value>
+  </data>
+  <data name="Prompt_WindowsHello_NoTitle" xml:space="preserve">
+    <value>(без названия)</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>Открыть KeePassPasskey</value>
+  </data>
+  <data name="Tray_Menu_Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Tray_Tooltip_Ready" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="Tray_Tooltip_RegistrationFailed" xml:space="preserve">
+    <value>Регистрация не удалась</value>
+  </data>
+</root>
