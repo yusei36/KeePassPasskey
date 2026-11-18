@@ -59,7 +59,7 @@
     <value>Registratie opheffen</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
-    <value>Deze app ({0}) en de KeePass-plug-in ({1}) hebben verschillende versies, maar ze zijn compatibel. Wachtwoordsleutels blijven werken, maar nieuwe functies zijn mogelijk pas beschikbaar nadat u de oudste van de twee hebt bijgewerkt.</value>
+    <value>Deze app ({0}) en de KeePass-plug-in ({1}) hebben verschillende versies, maar ze zijn compatibel. Wachtwoordsleutels blijven werken, maar nieuwe functies zijn mogelijk pas beschikbaar nadat je de oudste van de twee hebt bijgewerkt.</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
     <value>Versies verschillen</value>
@@ -257,7 +257,7 @@
     <value>De standaard-AAGUID wordt gebruikt.</value>
   </data>
   <data name="App_Settings_Aaguid_Description" xml:space="preserve">
-    <value>Vervangt de authenticator-id (AAGUID) die websites zien wanneer u een wachtwoordsleutel maakt. Laat het veld leeg om de standaardwaarde te gebruiken. Bij het toepassen wordt de authenticator opnieuw bij Windows geregistreerd.</value>
+    <value>Vervangt de authenticator-id (AAGUID) die websites zien wanneer je een wachtwoordsleutel maakt. Laat het veld leeg om de standaardwaarde te gebruiken. Bij het toepassen wordt de authenticator opnieuw bij Windows geregistreerd.</value>
   </data>
   <data name="App_Settings_Aaguid_Header" xml:space="preserve">
     <value>AAGUID nabootsen</value>
@@ -329,7 +329,7 @@
     <value>Website openen</value>
   </data>
   <data name="App_Settings_Advanced_Description" xml:space="preserve">
-    <value>Gedrag, timing en logboek-instellingen die u zelden hoeft te wijzigen</value>
+    <value>Gedrag, timing en logboek-instellingen die je zelden hoeft te wijzigen</value>
   </data>
   <data name="App_Settings_Advanced_Header" xml:space="preserve">
     <value>Geavanceerd</value>
@@ -514,7 +514,7 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
     <value>Invulvelden in de titel vervangen bij opslaan</value>
   </data>
   <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
-    <value>KeePass is niet actief. Start KeePass met de KeePassPasskey-plug-in voordat u de instellingen opslaat.</value>
+    <value>KeePass is niet actief. Start KeePass met de KeePassPasskey-plug-in voordat je de instellingen opslaat.</value>
   </data>
   <data name="App_Settings_SaveFailedTitle" xml:space="preserve">
     <value>Kan de instellingen niet opslaan</value>
@@ -529,13 +529,13 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
     <value>Instellingen opslaan</value>
   </data>
   <data name="App_Settings_SignInVerification_Description" xml:space="preserve">
-    <value>Hoe u het aanmelden goedkeurt</value>
+    <value>Hoe je het aanmelden goedkeurt</value>
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Aanmelden</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
-    <value>Vraag niet opnieuw om Windows Hello als u KeePass zojuist voor dezelfde bewerking hebt ontgrendeld. Werkt alleen als de bevestigingsmelding is ingeschakeld.</value>
+    <value>Vraag niet opnieuw om Windows Hello als je KeePass zojuist voor dezelfde bewerking hebt ontgrendeld. Werkt alleen als de bevestigingsmelding is ingeschakeld.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
     <value>Windows Hello overslaan na ontgrendelen van KeePass</value>
@@ -565,13 +565,13 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
     <value>Aan</value>
   </data>
   <data name="App_Settings_TrayIcon_Description" xml:space="preserve">
-    <value>Toont een statuspictogram in het systeemvak. Als u het venster sluit, blijft de app actief in het systeemvak.</value>
+    <value>Toont een statuspictogram in het systeemvak. Als je het venster sluit, blijft de app actief in het systeemvak.</value>
   </data>
   <data name="App_Settings_TrayIcon_Header" xml:space="preserve">
     <value>Systeemvakpictogram</value>
   </data>
   <data name="App_Settings_UnsavedChangesTooltip" xml:space="preserve">
-    <value>U hebt niet-opgeslagen wijzigingen</value>
+    <value>Je hebt niet-opgeslagen wijzigingen</value>
   </data>
   <data name="App_Settings_Verification_Description" xml:space="preserve">
     <value>Bevestigingsmeldingen en gebruikersverificatie voor wachtwoordsleutel-acties</value>
@@ -676,13 +676,13 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
     <value>Nee, bedankt</value>
   </data>
   <data name="App_TrayOffer_Title" xml:space="preserve">
-    <value>Wilt u de status in de gaten houden?</value>
+    <value>Wil je de status in de gaten houden?</value>
   </data>
   <data name="App_UnsavedChanges_DiscardButton" xml:space="preserve">
     <value>Niet opslaan</value>
   </data>
   <data name="App_UnsavedChanges_Message" xml:space="preserve">
-    <value>U hebt niet-opgeslagen instellingen. Wilt u deze opslaan?</value>
+    <value>Je hebt niet-opgeslagen instellingen. Wil je deze opslaan?</value>
   </data>
   <data name="App_UnsavedChanges_Title" xml:space="preserve">
     <value>Niet-opgeslagen wijzigingen</value>
@@ -786,7 +786,7 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
   <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
     <value>Dit item bevat al een wachtwoordsleutel. Wil je deze vervangen door de wachtwoordsleutel die je plakt?
 
-De huidige wachtwoordsleutel blijft in de geschiedenis van de invoer staan, zodat je deze indien nodig kunt herstellen.</value>
+De huidige wachtwoordsleutel blijft in de geschiedenis van het item staan, zodat je deze indien nodig kunt herstellen.</value>
   </data>
   <data name="KeePass_Paste_Failed" xml:space="preserve">
     <value>De wachtwoordsleutel kan niet worden geplakt.</value>
@@ -801,7 +801,7 @@ De huidige wachtwoordsleutel blijft in de geschiedenis van de invoer staan, zoda
     <value>KeePassPasskey kan zijn named pipe niet in gebruik nemen</value>
   </data>
   <data name="KeePass_Remove_Confirm" xml:space="preserve">
-    <value>Wilt u de wachtwoordsleutel uit dit item verwijderen?
+    <value>Wil je de wachtwoordsleutel uit dit item verwijderen?
 
 Het item zelf wordt niet verwijderd. De wachtwoordsleutel blijft in de geschiedenis van het item staan, zodat je deze indien nodig kunt herstellen.</value>
   </data>
@@ -939,7 +939,7 @@ Wil je het opnieuw proberen?</value>
     <value>(geen titel)</value>
   </data>
   <data name="Prompt_Register_AddToExisting" xml:space="preserve">
-    <value>Bestaande invoer</value>
+    <value>Bestaand item</value>
   </data>
   <data name="Prompt_Register_AsUser" xml:space="preserve">
     <value>als {0}</value>
@@ -993,7 +993,7 @@ Wil je het opnieuw proberen?</value>
     <value>Aanmelden</value>
   </data>
   <data name="Prompt_SignIn_Headline" xml:space="preserve">
-    <value>{0} wil dat u zich aanmeldt</value>
+    <value>{0} wil dat je je aanmeldt</value>
   </data>
   <data name="Prompt_SignIn_Title" xml:space="preserve">
     <value>Aanmelden met een wachtwoordsleutel</value>
@@ -1044,7 +1044,7 @@ Wil je het opnieuw proberen?</value>
     <value>Aanmelden</value>
   </data>
   <data name="Prompt_Toast_SignIn_EntryHint" xml:space="preserve">
-    <value>KeePass-invoer: {0}</value>
+    <value>KeePass item: {0}</value>
   </data>
   <data name="Prompt_Toast_SignIn_Title" xml:space="preserve">
     <value>Verzoek om aan te melden</value>
