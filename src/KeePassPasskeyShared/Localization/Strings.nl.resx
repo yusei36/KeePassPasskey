@@ -8,7 +8,7 @@
     <value>Geavanceerde opties voor wachtwoordsleutels</value>
   </data>
   <data name="App_Action_AdvancedPasskeyOptionsTooltip" xml:space="preserve">
-    <value>Geavanceerde opties voor wachtwoordsleutels openen in Windows-instellingen</value>
+    <value>Windows-instellingen met geavanceerde opties voor wachtwoordsleutels openen</value>
   </data>
   <data name="App_Action_InstallPlugin" xml:space="preserve">
     <value>Plug-in installeren</value>
@@ -29,7 +29,7 @@
     <value>GitHub-release</value>
   </data>
   <data name="App_Channel_Store" xml:space="preserve">
-    <value>Microsoft Store-release</value>
+    <value>Geïnstalleerd uit de Microsoft Store</value>
   </data>
   <data name="App_Diagnostics_AppVersion_Label" xml:space="preserve">
     <value>KeePassPasskey-app</value>
@@ -41,7 +41,7 @@
     <value>Versie van de app kopiëren</value>
   </data>
   <data name="App_Diagnostics_IncompatibleVersion_Message" xml:space="preserve">
-    <value>{0} Tot die tijd zijn wachtwoordsleutelbewerkingen geblokkeerd.</value>
+    <value>{0} Tot die tijd zijn wachtwoordsleutel-acties geblokkeerd.</value>
   </data>
   <data name="App_Diagnostics_IncompatibleVersion_Title" xml:space="preserve">
     <value>Incompatibele versie</value>
@@ -50,7 +50,7 @@
     <value>Niet verbonden</value>
   </data>
   <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
-    <value>Windows-instellingen openen om de wachtwoordsleutelprovider in of uit te schakelen</value>
+    <value>Windows-instellingen openen om de wachtwoordsleutelbeheerder in of uit te schakelen</value>
   </data>
   <data name="App_Diagnostics_Registration_Label" xml:space="preserve">
     <value>Providerregistratie</value>
@@ -107,10 +107,10 @@
     <value>Sluiten</value>
   </data>
   <data name="App_InstallDialog_CopyYourselfLabel" xml:space="preserve">
-    <value>Of kopieer het bestand zelf:</value>
+    <value>Of kopieer het bestand handmatig:</value>
   </data>
   <data name="App_InstallDialog_Detected_DefaultPath" xml:space="preserve">
-    <value>Gevonden via het standaardinstallatiepad.</value>
+    <value>Gevonden via het standaard installatiepad.</value>
   </data>
   <data name="App_InstallDialog_Detected_Msi" xml:space="preserve">
     <value>Gevonden via de MSI-installatie.</value>
@@ -128,19 +128,19 @@
     <value>KeePass-map of map Plugins</value>
   </data>
   <data name="App_InstallDialog_FolderWillBeCreated" xml:space="preserve">
-    <value>Deze map bestaat nog niet en wordt gemaakt.</value>
+    <value>Deze map bestaat nog niet en zal worden gemaakt.</value>
   </data>
   <data name="App_InstallDialog_InstallButton" xml:space="preserve">
     <value>Installeren</value>
   </data>
   <data name="App_InstallDialog_NeedsAdmin" xml:space="preserve">
-    <value>Voor het kopiëren naar deze map zijn beheerdersrechten nodig. Windows vraagt hierom bij het installeren.</value>
+    <value>Voor het kopiëren naar deze map zijn beheerdersrechten nodig. Windows zal hierom vragen bij het installeren.</value>
   </data>
   <data name="App_InstallDialog_PickFolderTitle" xml:space="preserve">
-    <value>De KeePass-map, de map Plugins daarin of een submap daarvan selecteren</value>
+    <value>Selecteer de KeePass-map, de Plugins-map daarin, of een submap daarvan</value>
   </data>
   <data name="App_InstallDialog_ReinstallButton" xml:space="preserve">
-    <value>Opnieuw installeren</value>
+    <value>Herinstalleren</value>
   </data>
   <data name="App_InstallDialog_RemoveButton" xml:space="preserve">
     <value>Verwijderen</value>
@@ -179,19 +179,19 @@
     <value>Niet geïnstalleerd.</value>
   </data>
   <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
-    <value>Dit is geen KeePass-map en ook geen map Plugins daarvan. Kies de KeePass-map of de submap Plugins.</value>
+    <value>Dit is niet de KeePass-map of de Plugins-map daarin. Kies de KeePass-map of de Plugins-map.</value>
   </data>
   <data name="App_InstallDialog_Status_Outdated" xml:space="preserve">
     <value>Versie {0} is geïnstalleerd, versie {1} is beschikbaar.</value>
   </data>
   <data name="App_InstallDialog_Status_PluginNewer" xml:space="preserve">
-    <value>Versie {0} is geïnstalleerd. Deze app bevat alleen versie {1}.</value>
+    <value>Versie {0} is geïnstalleerd, welke nieuwer is dan versie {1} in deze app.</value>
   </data>
   <data name="App_InstallDialog_Status_UpToDate" xml:space="preserve">
     <value>Versie {0} is geïnstalleerd en up-to-date.</value>
   </data>
   <data name="App_InstallDialog_TargetLabel" xml:space="preserve">
-    <value>Installatie in</value>
+    <value>Wordt geïnstalleerd in</value>
   </data>
   <data name="App_InstallDialog_Title" xml:space="preserve">
     <value>KeePass-plug-in</value>
@@ -203,7 +203,7 @@
     <value>KeePass-plug-in</value>
   </data>
   <data name="App_Label_PasskeyProvider" xml:space="preserve">
-    <value>Wachtwoordsleutelprovider</value>
+    <value>Wachtwoordsleutelbeheerder</value>
   </data>
   <data name="App_Log_CopyTooltip" xml:space="preserve">
     <value>Logboek naar klembord kopiëren</value>
@@ -221,7 +221,7 @@
     <value>(kan het logboek niet lezen: {0})</value>
   </data>
   <data name="App_Nav_Diagnostics" xml:space="preserve">
-    <value>Diagnose</value>
+    <value>Softwaregegevens</value>
   </data>
   <data name="App_Nav_Settings" xml:space="preserve">
     <value>Instellingen</value>
@@ -236,7 +236,7 @@
     <value>Registratie mislukt</value>
   </data>
   <data name="App_Registration_UnregisterFailedMessage" xml:space="preserve">
-    <value>Windows heeft HRESULT {0} geretourneerd bij het opheffen van de registratie van de wachtwoordsleutelprovider.</value>
+    <value>Windows retourneerde HRESULT {0} bij het opheffen van de registratie van de wachtwoordsleutelbeheerder.</value>
   </data>
   <data name="App_Registration_UnregisterFailedTitle" xml:space="preserve">
     <value>Kan de registratie niet opheffen</value>
@@ -245,10 +245,10 @@
     <value>Toepassen</value>
   </data>
   <data name="App_Settings_Aaguid_ApplyFailedMessage" xml:space="preserve">
-    <value>De AAGUID is niet gewijzigd, omdat Windows HRESULT {0} heeft geretourneerd bij het toepassen.</value>
+    <value>De AAGUID is niet gewijzigd, Windows retourneerde HRESULT {0} bij het wijzigen.</value>
   </data>
   <data name="App_Settings_Aaguid_ApplyFailedTitle" xml:space="preserve">
-    <value>Kan de authenticator niet bijwerken</value>
+    <value>Kan de authenticator niet wijzigen</value>
   </data>
   <data name="App_Settings_Aaguid_ClearTooltip" xml:space="preserve">
     <value>Veld wissen</value>
@@ -329,14 +329,14 @@
     <value>Website openen</value>
   </data>
   <data name="App_Settings_Advanced_Description" xml:space="preserve">
-    <value>Instellingen voor gedrag, timing en logboekregistratie die u zelden hoeft te wijzigen</value>
+    <value>Gedrag, timing en logboek-instellingen die u zelden hoeft te wijzigen</value>
   </data>
   <data name="App_Settings_Advanced_Header" xml:space="preserve">
     <value>Geavanceerd</value>
   </data>
   <data name="App_Settings_Algorithms_Description" xml:space="preserve">
-    <value>Welk algoritme een nieuwe wachtwoordsleutel krijgt als de website er meerdere accepteert.
-Een website die alleen uitgeschakelde algoritmen accepteert, kan geen wachtwoordsleutel maken.</value>
+    <value>Kies het algoritme dat een nieuwe wachtwoordsleutel krijgt als de website er meerdere accepteert.
+Als een website geen van de ingeschakelde algoritmen accepteert, kan die geen wachtwoordsleutel maken.</value>
   </data>
   <data name="App_Settings_Algorithms_Header" xml:space="preserve">
     <value>Handtekeningalgoritmen</value>
@@ -360,22 +360,22 @@ Een website die alleen uitgeschakelde algoritmen accepteert, kan geen wachtwoord
     <value>Weergave</value>
   </data>
   <data name="App_Settings_ApprovalTimeout_Description" xml:space="preserve">
-    <value>Hoe lang de bevestigingsvraag open blijft</value>
+    <value>Hoe lang de bevestigingsmelding open blijft</value>
   </data>
   <data name="App_Settings_ApprovalTimeout_Header" xml:space="preserve">
     <value>Time-out voor bevestiging</value>
   </data>
   <data name="App_Settings_BackupEligibility_Description" xml:space="preserve">
-    <value>Als deze optie is ingeschakeld, wordt aan websites doorgegeven dat van een nieuwe wachtwoordsleutel een back-up mag worden gemaakt en dat deze met uw andere apparaten mag worden gesynchroniseerd. Als deze optie is uitgeschakeld, wordt doorgegeven dat de wachtwoordsleutel op slechts één apparaat is opgeslagen.</value>
+    <value>Bij Aan wordt aan websites doorgegeven dat van een nieuwe wachtwoordsleutel een back-up mag worden gemaakt en met je andere apparaten mag worden gesynchroniseerd. Bij Uit wordt doorgegeven dat de wachtwoordsleutel op maar één apparaat wordt opgeslagen.</value>
   </data>
   <data name="App_Settings_BackupEligibility_Header" xml:space="preserve">
-    <value>Geschikt voor back-up (BE)</value>
+    <value>Geschikt voor back-up (BE, Backup Eligibility)</value>
   </data>
   <data name="App_Settings_BackupState_Description" xml:space="preserve">
-    <value>Als deze optie is ingeschakeld, wordt aan websites doorgegeven dat van een nieuwe wachtwoordsleutel al een back-up is gemaakt. Alleen beschikbaar als 'Geschikt voor back-up' is ingeschakeld.</value>
+    <value>Bij Aan wordt aan websites doorgegeven dat van een nieuwe wachtwoordsleutel gelijk een back-up wordt gemaakt. Alleen beschikbaar als 'Geschikt voor back-up' is ingeschakeld.</value>
   </data>
   <data name="App_Settings_BackupState_Header" xml:space="preserve">
-    <value>Back-upstatus (BS)</value>
+    <value>Back-upstatus (BS, Backup State)</value>
   </data>
   <data name="App_Settings_DiscardTooltip" xml:space="preserve">
     <value>Wijzigingen niet opslaan</value>
@@ -399,17 +399,17 @@ Een website die alleen uitgeschakelde algoritmen accepteert, kan geen wachtwoord
     <value>Deze instellingen komen uit KeePass.config.enforced.xml en kunnen hier niet worden gewijzigd.</value>
   </data>
   <data name="App_Settings_Enforced_Title" xml:space="preserve">
-    <value>Instellingen afgedwongen door KeePass</value>
+    <value>Instellingen vanuit KeePass</value>
   </data>
   <data name="App_Settings_Entries_Description" xml:space="preserve">
-    <value>Hoe invoer voor nieuwe wachtwoordsleutels wordt gemaakt</value>
+    <value>Hoe items voor wachtwoordsleutels worden gemaakt</value>
   </data>
   <data name="App_Settings_Entries_Header" xml:space="preserve">
-    <value>Invoer met wachtwoordsleutels</value>
+    <value>Items met wachtwoordsleutels</value>
   </data>
   <data name="App_Settings_EntryGroup_Description" xml:space="preserve">
     <value>Groep Passkeys: de standaardgroep voor wachtwoordsleutels.
-Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wachtwoordsleutel.</value>
+Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleutel.</value>
   </data>
   <data name="App_Settings_EntryGroup_Header" xml:space="preserve">
     <value>Nieuwe wachtwoordsleutels opslaan in</value>
@@ -418,22 +418,22 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Groep Passkeys</value>
   </data>
   <data name="App_Settings_EntryGroup_OptionSelected" xml:space="preserve">
-    <value>Gekozen groep</value>
+    <value>Groep kiezen</value>
   </data>
   <data name="App_Settings_EntryTitle_Description" xml:space="preserve">
-    <value>Titel voor nieuwe invoer. Ondersteunt {RP_NAME} en tijdelijke aanduidingen van KeePass zoals {USERNAME} of {URL}.</value>
+    <value>Titel voor nieuwe items. Ondersteunt {RP_NAME} en KeePass invulvelden zoals {USERNAME} of {URL}.</value>
   </data>
   <data name="App_Settings_EntryTitle_Header" xml:space="preserve">
-    <value>Titel van nieuwe invoer</value>
+    <value>Item titel</value>
   </data>
   <data name="App_Settings_ErrorNotifications_Description" xml:space="preserve">
-    <value>Toont een gedetailleerde melding als er een fout optreedt bij een wachtwoordsleutel. Windows zelf toont alleen een algemene fout.</value>
+    <value>Toon een gedetailleerde melding als er een fout optreedt bij een wachtwoordsleutel (Windows toont alleen een algemene fout).</value>
   </data>
   <data name="App_Settings_ErrorNotifications_Header" xml:space="preserve">
     <value>Foutmeldingen</value>
   </data>
   <data name="App_Settings_Expert_Description" xml:space="preserve">
-    <value>Opties voor ongebruikelijke configuraties. Wijzig ze alleen als u weet wat ze doen.</value>
+    <value>Geavanceerde opties voor ongebruikelijke omstandigheden. Wijzig ze alleen als je weet waarom.</value>
   </data>
   <data name="App_Settings_Expert_Header" xml:space="preserve">
     <value>Voor experts</value>
@@ -454,7 +454,7 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Help mee deze vertaling te controleren</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
-    <value>Toont bevestigingsvragen als Windows-meldingen in plaats van dialoogvensters. Bij Niet storen worden meldingen zonder waarschuwing verborgen, en lijsten in een melding tonen maximaal 5 items.</value>
+    <value>Toon bevestigingsmeldingen als Windows-meldingen in plaats van dialoogvensters. Bij Niet storen worden meldingen zonder waarschuwing verborgen, en er blijven maximaal 5 items zichtbaar.</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
     <value>Klassieke meldingen gebruiken voor bevestiging</value>
@@ -466,7 +466,7 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Instellingen laden...</value>
   </data>
   <data name="App_Settings_LogLevel_Description" xml:space="preserve">
-    <value>Detailniveau van de logbestanden van de app en de plug-in</value>
+    <value>Detailniveau van de logbestanden van de wachtwoordsleutelbeheerder (provider) en de plug-in</value>
   </data>
   <data name="App_Settings_LogLevel_Header" xml:space="preserve">
     <value>Logniveau</value>
@@ -490,28 +490,28 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Biedt bij het starten van KeePass aan om de plug-in bij te werken als deze app een nieuwere versie bevat. Elke update wordt in een dialoogvenster bevestigd.</value>
   </data>
   <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
-    <value>Controleren op updates voor de plug-in</value>
+    <value>Controleer op updates voor de plug-in</value>
   </data>
   <data name="App_Settings_RefreshInterval_Description" xml:space="preserve">
-    <value>Hoe vaak de app de status van de provider controleert</value>
+    <value>Hoe vaak de app de status van de wachtwoordsleutelbeheerder controleert</value>
   </data>
   <data name="App_Settings_RefreshInterval_Header" xml:space="preserve">
-    <value>Vernieuwingsinterval van de status</value>
+    <value>Vernieuwingsinterval</value>
   </data>
   <data name="App_Settings_RegistrationVerification_Description" xml:space="preserve">
-    <value>Hoe u het maken van een nieuwe wachtwoordsleutel bevestigt</value>
+    <value>Hoe je het opslaan van een nieuwe wachtwoordsleutel bevestigt</value>
   </data>
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
-    <value>Wachtwoordsleutels maken</value>
+    <value>Registratie</value>
   </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Standaardwaarden herstellen</value>
   </data>
   <data name="App_Settings_ResolvePlaceholders_Description" xml:space="preserve">
-    <value>Aan: tijdelijke aanduidingen worden vervangen en de uiteindelijke tekst wordt in de titel opgeslagen. Uit: KeePass vervangt ze telkens wanneer de invoer wordt weergegeven. {RP_NAME} wordt bij opslaan altijd vervangen.</value>
+    <value>Bij Aan worden invulvelden vervangen en wordt de nieuwe tekst opgeslagen in de titel. Bij Uit vervangt KeePass ze telkens wanneer het item wordt weergegeven. {RP_NAME} wordt altijd vervangen bij het opslaan.</value>
   </data>
   <data name="App_Settings_ResolvePlaceholders_Header" xml:space="preserve">
-    <value>Tijdelijke aanduidingen in de titel vervangen bij opslaan</value>
+    <value>Invulvelden in de titel vervangen bij opslaan</value>
   </data>
   <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
     <value>KeePass is niet actief. Start KeePass met de KeePassPasskey-plug-in voordat u de instellingen opslaat.</value>
@@ -520,31 +520,31 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Kan de instellingen niet opslaan</value>
   </data>
   <data name="App_Settings_SaveToExisting_Description" xml:space="preserve">
-    <value>Biedt aan om een wachtwoordsleutel op te slaan in een overeenkomende invoer in plaats van altijd een nieuwe invoer te maken. Werkt alleen als de bevestigingsvraag voor nieuwe wachtwoordsleutels is ingeschakeld.</value>
+    <value>Biedt aan om een wachtwoordsleutel op te slaan in een overeenkomend item in plaats van altijd een nieuw item te maken. Werkt alleen als de bevestigingsmelding voor nieuwe wachtwoordsleutels is ingeschakeld.</value>
   </data>
   <data name="App_Settings_SaveToExisting_Header" xml:space="preserve">
-    <value>Opslaan in bestaande invoer aanbieden</value>
+    <value>Opslaan in bestaand item aanbieden</value>
   </data>
   <data name="App_Settings_SaveTooltip" xml:space="preserve">
     <value>Instellingen opslaan</value>
   </data>
   <data name="App_Settings_SignInVerification_Description" xml:space="preserve">
-    <value>Hoe u het aanmelden bevestigt</value>
+    <value>Hoe u het aanmelden goedkeurt</value>
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Aanmelden</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
-    <value>Vraagt niet opnieuw om Windows Hello als u KeePass zojuist voor dezelfde bewerking hebt ontgrendeld. Werkt alleen als de bevestigingsvraag is ingeschakeld.</value>
+    <value>Vraag niet opnieuw om Windows Hello als u KeePass zojuist voor dezelfde bewerking hebt ontgrendeld. Werkt alleen als de bevestigingsmelding is ingeschakeld.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
     <value>Windows Hello overslaan na ontgrendelen van KeePass</value>
   </data>
   <data name="App_Settings_TagEntries_Description" xml:space="preserve">
-    <value>Voegt de tag 'Passkey' toe aan elke invoer die voor een nieuwe wachtwoordsleutel wordt gemaakt</value>
+    <value>Voegt de tag 'Passkey' toe aan het item waar een nieuwe wachtwoordsleutel in wordt opgeslagen</value>
   </data>
   <data name="App_Settings_TagEntries_Header" xml:space="preserve">
-    <value>Tag toevoegen aan nieuwe invoer</value>
+    <value>Tag toevoegen aan nieuwe wachtwoordsleutels</value>
   </data>
   <data name="App_Settings_Theme_Header" xml:space="preserve">
     <value>Thema</value>
@@ -574,28 +574,28 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>U hebt niet-opgeslagen wijzigingen</value>
   </data>
   <data name="App_Settings_Verification_Description" xml:space="preserve">
-    <value>Bevestigingsvragen en gebruikersverificatie voor wachtwoordsleutelbewerkingen</value>
+    <value>Bevestigingsmeldingen en gebruikersverificatie voor wachtwoordsleutel-acties</value>
   </data>
   <data name="App_Settings_Verification_Header" xml:space="preserve">
     <value>Bevestiging en verificatie</value>
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
-    <value>Bevestigingsvraag</value>
+    <value>Bevestigingsmelding</value>
   </data>
   <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>De bevestigingsvraag en Windows Hello zijn beide uitgeschakeld. Wachtwoordsleutels worden daarom gemaakt en gebruikt zonder dat er iets wordt gevraagd.</value>
+    <value>De bevestigingsmelding en Windows Hello zijn allebei uitgeschakeld. Wachtwoordsleutels worden daarom gemaakt en gebruikt zonder dat er iets wordt gevraagd.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (pincode, vingerafdruk of gezicht)</value>
   </data>
   <data name="App_Settings_WindowsCache_Description" xml:space="preserve">
-    <value>Deelt de website en gebruikersnaam van de wachtwoordsleutels met Windows (nooit de sleutels zelf), zodat Windows ze kan aanbieden wanneer u zich aanmeldt. Als deze optie is uitgeschakeld, kent Windows de wachtwoordsleutels niet en mislukt het aanmelden bij de meeste websites.</value>
+    <value>Deel de website en gebruikersnaam van de wachtwoordsleutels met Windows (nooit de sleutels zelf), zodat Windows ze kan aanbieden wanneer je je aanmeldt. Als deze optie is uitgeschakeld, kent Windows de wachtwoordsleutels niet en mislukt het aanmelden bij de meeste websites.</value>
   </data>
   <data name="App_Settings_WindowsCache_Header" xml:space="preserve">
     <value>Windows-referentiecache</value>
   </data>
   <data name="App_SetupGuide_ShowPluginFileTooltip" xml:space="preserve">
-    <value>KeePassPasskey.dll weergeven in Verkenner om het bestand zelf te kopiëren</value>
+    <value>KeePassPasskey.dll openen in Verkenner om het bestand handmatig te kopiëren</value>
   </data>
   <data name="App_SetupGuide_Step1_Text" xml:space="preserve">
     <value>Kopieer **KeePassPasskey.dll** naar de map **Plugins** van KeePass of gebruik de knop hieronder. Start KeePass daarna opnieuw.</value>
@@ -610,7 +610,7 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Geavanceerde opties voor wachtwoordsleutels openen</value>
   </data>
   <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
-    <value>Schakel in de lijst met wachtwoordsleutelproviders **KeePassPasskey** in.</value>
+    <value>Schakel in de lijst met wachtwoordsleutelbeheerders **KeePassPasskey** in.</value>
   </data>
   <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
     <value>KeePassPasskey inschakelen</value>
@@ -643,10 +643,10 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Open een KeePass-database om wachtwoordsleutels te gebruiken.</value>
   </data>
   <data name="App_Status_Hint_NotRegistered" xml:space="preserve">
-    <value>Klik op Registreren om KeePassPasskey in te stellen als wachtwoordsleutelprovider.</value>
+    <value>Klik op Registreren om KeePassPasskey in te stellen als wachtwoordsleutelbeheerder.</value>
   </data>
   <data name="App_Status_Hint_Ready" xml:space="preserve">
-    <value>De wachtwoordsleutelprovider is ingeschakeld en de KeePass-plug-in is verbonden.</value>
+    <value>De wachtwoordsleutelbeheerder is ingeschakeld en de KeePass-plug-in is verbonden.</value>
   </data>
   <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
     <value>Klik hieronder op 'Geavanceerde opties voor wachtwoordsleutels' om KeePassPasskey in te schakelen.</value>
@@ -682,7 +682,7 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>Niet opslaan</value>
   </data>
   <data name="App_UnsavedChanges_Message" xml:space="preserve">
-    <value>U hebt niet-opgeslagen instellingen. Wilt u deze eerst opslaan?</value>
+    <value>U hebt niet-opgeslagen instellingen. Wilt u deze opslaan?</value>
   </data>
   <data name="App_UnsavedChanges_Title" xml:space="preserve">
     <value>Niet-opgeslagen wijzigingen</value>
@@ -781,40 +781,40 @@ Gekozen groep: de groep die in KeePass is geselecteerd bij het maken van de wach
     <value>KeePassPasskey-plug-in</value>
   </data>
   <data name="KeePass_Paste_AlreadyOnEntry" xml:space="preserve">
-    <value>De wachtwoordsleutel staat al in deze invoer.</value>
+    <value>De wachtwoordsleutel is al in dit item.</value>
   </data>
   <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
-    <value>Deze invoer bevat al een wachtwoordsleutel. Wilt u deze vervangen door de wachtwoordsleutel die u plakt?
+    <value>Dit item bevat al een wachtwoordsleutel. Wil je deze vervangen door de wachtwoordsleutel die je plakt?
 
-De huidige wachtwoordsleutel blijft in de geschiedenis van de invoer staan, zodat u deze indien nodig kunt herstellen.</value>
+De huidige wachtwoordsleutel blijft in de geschiedenis van de invoer staan, zodat je deze indien nodig kunt herstellen.</value>
   </data>
   <data name="KeePass_Paste_Failed" xml:space="preserve">
     <value>De wachtwoordsleutel kan niet worden geplakt.</value>
   </data>
   <data name="KeePass_Paste_SourceUnavailable" xml:space="preserve">
-    <value>De invoer waaruit de wachtwoordsleutel afkomstig is, is niet meer beschikbaar. Het plakken is daarom geannuleerd.</value>
+    <value>Het item waaruit de wachtwoordsleutel afkomstig is, is niet meer beschikbaar. Het plakken is daarom geannuleerd.</value>
   </data>
   <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
-    <value>Een ander programma gebruikt al de verbindingsnaam (named pipe) die KeePassPasskey nodig heeft. Wachtwoordsleutels werken pas weer nadat u dat programma hebt gesloten en KeePass opnieuw hebt gestart.</value>
+    <value>Een ander programma gebruikt al de verbindingsnaam (named pipe) die KeePassPasskey nodig heeft. Wachtwoordsleutels werken pas weer nadat je dat programma hebt gesloten en KeePass opnieuw hebt gestart.</value>
   </data>
   <data name="KeePass_Pipe_ClaimFailedTitle" xml:space="preserve">
     <value>KeePassPasskey kan zijn named pipe niet in gebruik nemen</value>
   </data>
   <data name="KeePass_Remove_Confirm" xml:space="preserve">
-    <value>Wilt u de wachtwoordsleutel uit deze invoer verwijderen?
+    <value>Wilt u de wachtwoordsleutel uit dit item verwijderen?
 
-De invoer zelf wordt niet verwijderd. De wachtwoordsleutel blijft in de geschiedenis van de invoer staan, zodat u deze indien nodig kunt herstellen.</value>
+Het item zelf wordt niet verwijderd. De wachtwoordsleutel blijft in de geschiedenis van het item staan, zodat je deze indien nodig kunt herstellen.</value>
   </data>
   <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
-    <value>Wilt u de wachtwoordsleutel uit '{0}' verwijderen?
+    <value>Wil je de wachtwoordsleutel uit '{0}' verwijderen?
 
-De invoer zelf wordt niet verwijderd. De wachtwoordsleutel blijft in de geschiedenis van de invoer staan, zodat u deze indien nodig kunt herstellen.</value>
+Het item zelf wordt niet verwijderd. De wachtwoordsleutel blijft in de geschiedenis van het item staan, zodat je deze indien nodig kunt herstellen.</value>
   </data>
   <data name="KeePass_Remove_Failed" xml:space="preserve">
     <value>De wachtwoordsleutel kan niet worden verwijderd.</value>
   </data>
   <data name="KeePass_Restart_FallbackQuestion" xml:space="preserve">
-    <value>De KeePassPasskey-plug-in is bijgewerkt. Wilt u KeePass nu opnieuw starten?</value>
+    <value>De KeePassPasskey-plug-in is bijgewerkt. Wil je KeePass nu opnieuw starten?</value>
   </data>
   <data name="KeePass_Restart_Heading" xml:space="preserve">
     <value>De plug-in is bijgewerkt naar versie {0}</value>
@@ -843,7 +843,7 @@ De invoer zelf wordt niet verwijderd. De wachtwoordsleutel blijft in de geschied
   <data name="KeePass_UpdateFailed_FallbackQuestion" xml:space="preserve">
     <value>{0}
 
-Wilt u het opnieuw proberen?</value>
+Wil je het opnieuw proberen?</value>
   </data>
   <data name="KeePass_UpdateFailed_Heading" xml:space="preserve">
     <value>De plug-in is niet bijgewerkt</value>
@@ -861,10 +861,10 @@ Wilt u het opnieuw proberen?</value>
     <value>Vraagt nogmaals om toestemming</value>
   </data>
   <data name="KeePass_Update_FallbackQuestion" xml:space="preserve">
-    <value>Er is een nieuwe KeePassPasskey-plug-in beschikbaar (versie {0}). Wilt u deze nu installeren?</value>
+    <value>Er is een nieuwe KeePassPasskey-plug-in beschikbaar (versie {0}). Wil je deze nu installeren?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>Van:  KeePassPasskey ({0})</value>
+    <value>Van: KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>Versie {0} is beschikbaar. Versie {1} is geïnstalleerd.</value>
@@ -891,7 +891,7 @@ Wilt u het opnieuw proberen?</value>
     <value>Update voor de KeePassPasskey-plug-in</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>Naar:  {0}</value>
+    <value>Naar: {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>Nu bijwerken</value>
@@ -945,49 +945,49 @@ Wilt u het opnieuw proberen?</value>
     <value>als {0}</value>
   </data>
   <data name="Prompt_Register_AttestationHint" xml:space="preserve">
-    <value>Deze website heeft om bedrijfsattestatie (enterprise attestation) gevraagd, maar KeePassPasskey ondersteunt die niet. Mogelijk accepteert de website de wachtwoordsleutel toch.</value>
+    <value>Deze website heeft om enterprise attestatie gevraagd, maar KeePassPasskey ondersteunt dit niet. Mogelijk accepteert de website de wachtwoordsleutel toch.</value>
   </data>
   <data name="Prompt_Register_ConfirmButton" xml:space="preserve">
     <value>Wachtwoordsleutel maken</value>
   </data>
   <data name="Prompt_Register_CreateNew" xml:space="preserve">
-    <value>Nieuwe invoer</value>
+    <value>Nieuw item</value>
   </data>
   <data name="Prompt_Register_DatabaseLabel" xml:space="preserve">
     <value>Database</value>
   </data>
   <data name="Prompt_Register_FilterAll" xml:space="preserve">
-    <value>Alle invoer wordt weergegeven</value>
+    <value>Alle items worden weergegeven</value>
   </data>
   <data name="Prompt_Register_FilterWithoutPasskey" xml:space="preserve">
-    <value>Alleen invoer zonder wachtwoordsleutel wordt weergegeven</value>
+    <value>Alleen items zonder wachtwoordsleutel worden weergegeven</value>
   </data>
   <data name="Prompt_Register_FilterWithPasskey" xml:space="preserve">
-    <value>Alleen invoer die al een wachtwoordsleutel heeft, wordt weergegeven</value>
+    <value>Alleen items die al een wachtwoordsleutel hebben, worden weergegeven</value>
   </data>
   <data name="Prompt_Register_HasPasskeyTooltip" xml:space="preserve">
-    <value>Deze invoer heeft al een wachtwoordsleutel</value>
+    <value>Dit item heeft al een wachtwoordsleutel</value>
   </data>
   <data name="Prompt_Register_Headline" xml:space="preserve">
     <value>{0} wil een wachtwoordsleutel maken</value>
   </data>
   <data name="Prompt_Register_NewEntryHint" xml:space="preserve">
-    <value>Voor deze website wordt een nieuwe invoer gemaakt.</value>
+    <value>Een nieuw item wordt gemaakt voor deze website.</value>
   </data>
   <data name="Prompt_Register_NoMatches" xml:space="preserve">
-    <value>Er is geen invoer die overeenkomt met de zoekopdracht.</value>
+    <value>Geen items die overeenkomen met de zoekopdracht.</value>
   </data>
   <data name="Prompt_Register_ReplaceHint" xml:space="preserve">
-    <value>Deze invoer heeft al een wachtwoordsleutel. Bij opslaan wordt deze wachtwoordsleutel vervangen.</value>
+    <value>Dit item heeft al een wachtwoordsleutel. Bij het opslaan wordt die vervangen.</value>
   </data>
   <data name="Prompt_Register_SearchPlaceholder" xml:space="preserve">
-    <value>Invoer zoeken...</value>
+    <value>Item zoeken...</value>
   </data>
   <data name="Prompt_Register_SelectedInKeePassTooltip" xml:space="preserve">
     <value>Geselecteerd in KeePass</value>
   </data>
   <data name="Prompt_Register_Title" xml:space="preserve">
-    <value>Wachtwoordsleutel maken</value>
+    <value>Wachtwoordsleutel opslaan</value>
   </data>
   <data name="Prompt_SignIn_ConfirmButton" xml:space="preserve">
     <value>Aanmelden</value>
@@ -999,7 +999,7 @@ Wilt u het opnieuw proberen?</value>
     <value>Aanmelden met een wachtwoordsleutel</value>
   </data>
   <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
-    <value>Invoer kiezen</value>
+    <value>Item kiezen</value>
   </data>
   <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
     <value>Wordt geannuleerd over {0} s</value>
@@ -1008,16 +1008,16 @@ Wilt u het opnieuw proberen?</value>
     <value>Maak een wachtwoordsleutel voor {0}.</value>
   </data>
   <data name="Prompt_Toast_ChooseEntry_Title" xml:space="preserve">
-    <value>Kies een invoer voor de wachtwoordsleutel</value>
+    <value>Kies een item om naar op te slaan</value>
   </data>
   <data name="Prompt_Toast_CreateNew" xml:space="preserve">
-    <value>Nieuwe invoer</value>
+    <value>Nieuw item</value>
   </data>
   <data name="Prompt_Toast_DatabasePicker" xml:space="preserve">
     <value>Opslaan in database</value>
   </data>
   <data name="Prompt_Toast_EntriesTruncated" xml:space="preserve">
-    <value>{0} van {1} overeenkomende invoer weergegeven.</value>
+    <value>{0} van {1} overeenkomende items weergegeven.</value>
   </data>
   <data name="Prompt_Toast_Register_Body" xml:space="preserve">
     <value>Maak een wachtwoordsleutel voor {0}.</value>
@@ -1032,13 +1032,13 @@ Wilt u het opnieuw proberen?</value>
     <value>Verzoek om een wachtwoordsleutel te maken</value>
   </data>
   <data name="Prompt_Toast_SaveToEntry" xml:space="preserve">
-    <value>Opslaan</value>
+    <value>Opslaan naar item</value>
   </data>
   <data name="Prompt_Toast_SignIn_Body" xml:space="preserve">
-    <value>Meld u aan bij {0}.</value>
+    <value>Meld je aan bij {0}.</value>
   </data>
   <data name="Prompt_Toast_SignIn_BodyAsUser" xml:space="preserve">
-    <value>Meld u aan bij {1} als {0}.</value>
+    <value>Meld je aan bij {1} als {0}.</value>
   </data>
   <data name="Prompt_Toast_SignIn_ConfirmButton" xml:space="preserve">
     <value>Aanmelden</value>
