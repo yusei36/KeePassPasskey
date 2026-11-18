@@ -61,6 +61,8 @@ internal static class ProviderPackageLocator
 	{
 #if DEBUG
 		new Channel { PackageFamilyName = "KeePassPasskeyProvider_hdweypz22wfyt", DisplayName = "Dev", SelfUpdating = false },
+		// Unsigned CI build, whose publisher carries the unsigned-namespace OID.
+		new Channel { PackageFamilyName = "KeePassPasskeyProvider_r8pv5xhh8z05r", DisplayName = "Dev (unsigned)", SelfUpdating = false },
 #else
 		new Channel { PackageFamilyName = "KeePassPasskeyProvider_rcm79ea08mqe4", DisplayName = "GitHub", SelfUpdating = false },
 		new Channel { PackageFamilyName = "51133UweKgel.KeePassPasskey_2xyhjw5z6d8g4", DisplayName = "Microsoft Store", SelfUpdating = true },
