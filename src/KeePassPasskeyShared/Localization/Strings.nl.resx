@@ -97,6 +97,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>Niet als pakket geïnstalleerd</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>KeePass-map selecteren</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>Installeren...</value>
   </data>
@@ -353,6 +356,9 @@ Als een website geen van de ingeschakelde algoritmen accepteert, kan die geen wa
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>Volgorde van de website gebruiken</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>Volgorde</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>Thema en taal</value>
   </data>
@@ -504,6 +510,9 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>Registratie</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>De bevestigingsmelding en Windows Hello zijn allebei uitgeschakeld. Wachtwoordsleutels worden daarom gemaakt zonder dat er iets wordt gevraagd.</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Standaardwaarden herstellen</value>
   </data>
@@ -533,6 +542,9 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Aanmelden</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>De bevestigingsmelding en Windows Hello zijn allebei uitgeschakeld. Wachtwoordsleutels worden daarom gebruikt om je aan te melden zonder dat er iets wordt gevraagd.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>Vraag niet opnieuw om Windows Hello als je KeePass zojuist voor dezelfde bewerking hebt ontgrendeld. Werkt alleen als de bevestigingsmelding is ingeschakeld.</value>
@@ -581,9 +593,6 @@ Groep kiezen: selecteer de groep in KeePass bij het maken van de wachtwoordsleut
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>Bevestigingsmelding</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>De bevestigingsmelding en Windows Hello zijn allebei uitgeschakeld. Wachtwoordsleutels worden daarom gemaakt en gebruikt zonder dat er iets wordt gevraagd.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (pincode, vingerafdruk of gezicht)</value>
