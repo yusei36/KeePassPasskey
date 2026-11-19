@@ -63,7 +63,7 @@ public sealed class KeePassPasskeyExt : Plugin
 		var buildVersion = GetRealWindowsBuildNumber();
 		if (buildVersion < 26100)
 		{
-			Log.Error("Unsupported Windows version: build = " + buildVersion + " but plugin requires build >= 26100 (Windows 11 24H2)");
+			Log.Error("Unsupported Windows version: build " + buildVersion + ", but the plugin requires build 26100 (Windows 11 24H2) or later");
 			return false;
 		}
 
@@ -94,7 +94,7 @@ public sealed class KeePassPasskeyExt : Plugin
 		}
 		catch (Exception ex)
 		{
-			Log.Error("Failed to start pipe server: " + ex.Message);
+			Log.Error("Failed to start the pipe server: " + ex.Message);
 			throw;
 		}
 
