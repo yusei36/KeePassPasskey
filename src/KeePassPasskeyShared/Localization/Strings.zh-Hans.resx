@@ -97,6 +97,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>未以 MSIX 包形式安装</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>选择 KeePass 文件夹</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>正在安装...</value>
   </data>
@@ -353,6 +356,9 @@
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>按网站指定的顺序</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>顺序</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>主题和语言</value>
   </data>
@@ -504,6 +510,9 @@
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>创建通行密钥</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>确认提示和 Windows Hello 均已关闭，因此创建通行密钥时不会询问你。</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>恢复默认值</value>
   </data>
@@ -533,6 +542,9 @@
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>登录</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>确认提示和 Windows Hello 均已关闭，因此使用通行密钥登录时不会询问你。</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>刚刚为同一操作解锁 KeePass 后，不再要求使用 Windows Hello。仅在开启“确认提示”时生效。</value>
@@ -581,9 +593,6 @@
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>确认提示</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>确认提示和 Windows Hello 均已关闭，因此创建和使用通行密钥时不会询问你。</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (PIN、指纹或人脸)</value>
