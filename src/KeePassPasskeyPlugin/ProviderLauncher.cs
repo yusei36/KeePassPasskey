@@ -64,12 +64,12 @@ internal static class ProviderLauncher
 				UseShellExecute = false,
 				CreateNoWindow = true,
 			});
-			Log.Debug("launched " + DevProviderAlias + " " + arguments);
+			Log.Debug("Launched " + DevProviderAlias + " " + arguments);
 			return true;
 		}
 		catch (Exception ex)
 		{
-			Log.Warn("failed to launch provider (" + DevProviderAlias + " " + arguments + "): " + ex.Message);
+			Log.Warn("Failed to launch provider (" + DevProviderAlias + " " + arguments + "): " + ex.Message);
 			return false;
 		}
 	}
@@ -82,7 +82,7 @@ internal static class ProviderLauncher
 				launched++;
 
 		if (launched == 0)
-			Log.Debug("no installed provider package found to sync");
+			Log.Debug("No installed provider package found to sync");
 	}
 
 	private static bool Launch(string exe, string arguments, string packageFamilyName)
@@ -91,7 +91,7 @@ internal static class ProviderLauncher
 		{
 			if (!File.Exists(exe))
 			{
-				Log.Warn("provider exe not found: " + exe);
+				Log.Warn("Provider exe not found: " + exe);
 				return false;
 			}
 
@@ -102,12 +102,12 @@ internal static class ProviderLauncher
 				UseShellExecute = false,
 				CreateNoWindow = true,
 			});
-			Log.Debug("launched provider " + arguments + ": " + exe);
+			Log.Debug("Launched provider " + arguments + ": " + exe);
 			return true;
 		}
 		catch (Exception ex)
 		{
-			Log.Warn("failed to launch provider " + arguments + " (" + packageFamilyName + "): " + ex.Message);
+			Log.Warn("Failed to launch provider " + arguments + " (" + packageFamilyName + "): " + ex.Message);
 			return false;
 		}
 	}

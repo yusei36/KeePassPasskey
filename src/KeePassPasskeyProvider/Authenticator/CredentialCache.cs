@@ -52,7 +52,7 @@ internal static unsafe class CredentialCache
 	{
 		if (!KeePassPasskeySettings.Current.IsCredentialSyncEnabled)
 		{
-			Log.Info("credential sync disabled, clearing Windows cache");
+			Log.Info("Credential sync disabled, clearing the Windows credential cache");
 			ClearWindowsCache(pluginClsid);
 			return;
 		}
@@ -72,13 +72,13 @@ internal static unsafe class CredentialCache
 			int hrState = PluginRegistration.GetState(out var state);
 			if (hrState < HResults.S_OK)
 			{
-				Log.Warn($"authenticator state unavailable hr=0x{hrState:X8}, skipping credential sync");
+				Log.Warn($"Authenticator state unavailable hr=0x{hrState:X8}, skipping credential sync");
 				return false;
 			}
 
 			if (state != AuthenticatorState.AuthenticatorState_Enabled)
 			{
-				Log.Info("provider disabled in Windows, clearing the credential cache instead of syncing");
+				Log.Info("Passkey provider disabled in Windows, clearing the Windows credential cache instead of syncing");
 				return ClearCredentialCache(pluginClsid);
 			}
 
@@ -100,7 +100,7 @@ internal static unsafe class CredentialCache
 		if (crossProcess == null)
 		{
 			_syncGate.Release();
-			Log.Warn($"could not acquire cross-process cache lock, skipping {operation}");
+			Log.Warn($"Couldn't acquire the cross-process cache lock, skipping {operation}");
 			return false;
 		}
 		try
@@ -109,7 +109,7 @@ internal static unsafe class CredentialCache
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+			Log.Error($"Exception {ex.GetType().Name}: {ex.Message}");
 			return false;
 		}
 		finally
@@ -142,7 +142,7 @@ internal static unsafe class CredentialCache
 		ReadCache(pluginClsid, out var afterFallback);
 		if (afterFallback.Count > 0)
 		{
-			Log.Error($"cache still holds {afterFallback.Count} credential(s) after RemoveAllCredentials");
+			Log.Error($"Cache still holds {afterFallback.Count} credential(s) after RemoveAllCredentials");
 			return false;
 		}
 
@@ -201,7 +201,7 @@ internal static unsafe class CredentialCache
 		var response = pipeClient.GetCredentials(new GetCredentialsRequest { OmitIcons = true });
 		if (response == null)
 		{
-			Log.Info("KeePass unavailable or error, skipping credential sync");
+			Log.Info("KeePass unavailable or returned an error, skipping credential sync");
 			return false;
 		}
 		if (response.ErrorCode != null)
@@ -275,7 +275,7 @@ internal static unsafe class CredentialCache
 			ApplyAdd(pluginClsid, toAdd);
 		}
 
-		Log.Info($"sync done removed={toRemove.Count} added={toAdd.Count} unchanged={unchanged}");
+		Log.Info($"Sync done: removed={toRemove.Count} added={toAdd.Count} unchanged={unchanged}");
 		return true;
 	}
 
@@ -370,7 +370,7 @@ internal static unsafe class CredentialCache
 			// is still one row; offering it twice is rejected with NTE_EXISTS.
 			if (!seen.Add(c.CredentialId))
 			{
-				Log.Debug($"skipping duplicate credential id for rpId={c.RpId}");
+				Log.Debug($"Skipping duplicate credential ID for rpId={c.RpId}");
 				continue;
 			}
 

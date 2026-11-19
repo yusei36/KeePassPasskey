@@ -77,14 +77,14 @@ jobs:
       - name: Upload artifact (Debug, optimized)
         uses: actions/upload-artifact@v7
         with:
-          name: KeePassPasskey-debug-unsigned
+          archive: false
           path: build\KeePassPasskey-*-debug-unsigned.zip
 
       - name: Upload artifact (Release)
         if: inputs.build_release
         uses: actions/upload-artifact@v7
         with:
-          name: KeePassPasskey-release-unsigned
+          archive: false
           path: |
             build\KeePassPasskey-*.zip
             !build\KeePassPasskey-*-debug-*.zip
@@ -93,5 +93,5 @@ jobs:
         if: inputs.build_store
         uses: actions/upload-artifact@v7
         with:
-          name: KeePassPasskey-store-msix
+          archive: false
           path: build\KeePassPasskeyProvider.Package_*_x64_Store.msix

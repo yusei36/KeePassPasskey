@@ -139,7 +139,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"status refresh failed: {ex.Message}");
+			Log.Warn($"Status refresh failed: {ex.Message}");
 		}
 	}
 
@@ -170,7 +170,7 @@ public sealed partial class MainWindowViewModel : ObservableObject
 		Diagnostics.PingStatus = _pingStatus;
 		UpdateChildren();
 
-		Log.Info($"status: {_pingStatus}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
+		Log.Info($"Status: {_pingStatus}, clientVersion: {PipeConstants.Version}, serverVersion: {pingResponse?.Version}");
 	}
 
 	private void UpdateChildren()

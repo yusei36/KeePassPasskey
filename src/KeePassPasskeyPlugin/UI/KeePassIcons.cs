@@ -59,7 +59,7 @@ internal static class KeePassIcons
 			int i = (int)icon;
 			if (images != null && i >= 0 && i < images.Count) return images[i];
 		}
-		catch (Exception ex) { Log.Warn($"entry icon {icon} unavailable: {ex.Message}"); }
+		catch (Exception ex) { Log.Warn($"Entry icon {icon} unavailable: {ex.Message}"); }
 		return null;
 	}
 
@@ -84,7 +84,7 @@ internal static class KeePassIcons
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"entry icon could not be encoded: {ex.Message}");
+			Log.Warn($"Couldn't encode the entry icon: {ex.Message}");
 			return null;
 		}
 	}

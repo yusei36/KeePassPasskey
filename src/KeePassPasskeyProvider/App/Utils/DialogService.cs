@@ -76,7 +76,7 @@ internal static class DialogService
 	{
 		if (Application.AppWindow is not { } mainWindow)
 		{
-			Log.Error($"Could not show error dialog: {title} - {message}");
+			Log.Error($"Couldn't show the error dialog: {title} - {message}");
 			return;
 		}
 
