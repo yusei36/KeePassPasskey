@@ -22,7 +22,7 @@ internal static class PromptActivation
 	{
 		bool ownerValid = ownerHwnd != 0 && Win32Native.IsWindow(ownerHwnd);
 		if (!ownerValid && ownerHwnd != 0)
-			Log.Warn($"caller window 0x{ownerHwnd:X} is gone, showing unowned", nameof(PromptActivation));
+			Log.Warn($"Caller window 0x{ownerHwnd:X} is gone, showing unowned", nameof(PromptActivation));
 
 		// Avalonia creates the native window with the Window object, so the handle already exists.
 		nint hwnd = window.TryGetPlatformHandle()?.Handle ?? 0;
@@ -41,13 +41,13 @@ internal static class PromptActivation
 
 		if (!ownerSet && ownerValid && hwnd != 0)
 		{
-			Log.Warn("no window handle before Show, setting owner late", nameof(PromptActivation));
+			Log.Warn("No window handle before Show, setting the owner late", nameof(PromptActivation));
 			SetOwner(hwnd, ownerHwnd);
 		}
 
 		bool foreground = hwnd != 0 && Win32Native.GetForegroundWindow() == hwnd;
 		Log.Debug(
-			$"window shown in {shown.ElapsedMilliseconds} ms (ownerSet={ownerSet} foreground={foreground})",
+			$"Window shown in {shown.ElapsedMilliseconds} ms (ownerSet={ownerSet} foreground={foreground})",
 			nameof(PromptActivation));
 
 		if (!foreground && hwnd != 0 && ownerValid && TryTakeForeground(hwnd, ownerHwnd))
@@ -92,7 +92,7 @@ internal static class PromptActivation
 			if (Win32Native.GetForegroundWindow() != hwnd || !Win32Native.IsWindow(ownerHwnd)) return;
 
 			bool restored = Win32Native.SetForegroundWindow(ownerHwnd);
-			Log.Debug($"returning foreground to {Describe(ownerHwnd)}: {restored}", nameof(PromptActivation));
+			Log.Debug($"Returning foreground to {Describe(ownerHwnd)}: {restored}", nameof(PromptActivation));
 		};
 	}
 
@@ -106,7 +106,7 @@ internal static class PromptActivation
 		nint foregroundHwnd = Win32Native.GetForegroundWindow();
 		if (foregroundHwnd != ownerHwnd)
 		{
-			Log.Debug($"foreground is {Describe(foregroundHwnd)}, not the ceremony owner; leaving it alone", nameof(PromptActivation));
+			Log.Debug($"Foreground is {Describe(foregroundHwnd)}, not the ceremony owner; leaving it alone", nameof(PromptActivation));
 			return false;
 		}
 
@@ -125,7 +125,7 @@ internal static class PromptActivation
 		}
 
 		bool ours = Win32Native.GetForegroundWindow() == hwnd;
-		Log.Info($"foreground handoff from {Describe(ownerHwnd)}: attached={attached} ours={ours}", nameof(PromptActivation));
+		Log.Info($"Foreground handoff from {Describe(ownerHwnd)}: attached={attached} ours={ours}", nameof(PromptActivation));
 		return ours;
 	}
 
@@ -146,7 +146,7 @@ internal static class PromptActivation
 		nint previous = Win32Native.SetWindowLongPtr(hwnd, Win32Native.GWLP_HWNDPARENT, ownerHwnd);
 		if (previous != 0 || Marshal.GetLastWin32Error() == 0) return true;
 
-		Log.Warn($"could not set prompt owner: error {Marshal.GetLastWin32Error()}", nameof(PromptActivation));
+		Log.Warn($"Couldn't set the prompt owner: error {Marshal.GetLastWin32Error()}", nameof(PromptActivation));
 		return false;
 	}
 }

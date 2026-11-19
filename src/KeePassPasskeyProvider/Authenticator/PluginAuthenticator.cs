@@ -52,7 +52,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		try
 		{
 			var cts = BeginOperation(transactionId, pRequest->pbEncodedRequest, pRequest->cbEncodedRequest);
-			Log.Info("entry");
+			Log.Info("Start");
 
 			// 1. Decode CBOR request
 			WebAuthnCtapCborMakeCredentialRequest* pDecoded = null;
@@ -68,7 +68,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
 				if (sigResult < 0) return sigResult;
 
-				if (cts.IsCancellationRequested) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
+				if (cts.IsCancellationRequested) { Log.Info("Canceled"); return HResults.NTE_USER_CANCELLED; }
 
 				// 3. Build JSON request for KeePass
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -78,7 +78,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				// Always return "none"; warn when a site asks for enterprise attestation so a rejection is traceable.
 				bool enterpriseAttestation = pDecoded->dwEnterpriseAttestation != WebAuthnConstants.EnterpriseAttestationNone;
 				if (enterpriseAttestation)
-					Log.Warn($"Relying party {rpIdUtf8} requested enterprise attestation ({pDecoded->dwEnterpriseAttestation}); KeePassPasskey can't provide this and will return none. The site may reject the passkey if enterprise attestation is required.");
+					Log.Warn($"Relying party {rpIdUtf8} requested enterprise attestation ({pDecoded->dwEnterpriseAttestation}); KeePassPasskey can't provide it and returns none. The website may reject the passkey if it requires enterprise attestation.");
 
 				string userIdB64 = string.Empty;
 				string userNameStr = string.Empty;
@@ -105,7 +105,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				var databases = dbResponse?.Databases ?? new List<DatabaseInfo>();
 				if (databases.Count == 0)
 				{
-					Log.Warn("no database open");
+					Log.Warn("No database open");
 					Notifier.ShowPipeError(Strings.Notify_Title_CreateFailed);
 					return HResults.E_FAIL;
 				}
@@ -147,11 +147,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				};
 
 				// 5. Send to KeePass plugin
-				Log.Info($"sending pipe request rpId={rpIdUtf8}");
+				Log.Info($"Sending pipe request rpId={rpIdUtf8}");
 				var response = _pipeClient.MakeCredential(request);
 				if (response == null)
 				{
-					Log.Warn("pipe failed");
+					Log.Warn("Pipe request failed");
 					Notifier.ShowPipeError(Strings.Notify_Title_CreateFailed);
 					return HResults.E_FAIL;
 				}
@@ -174,7 +174,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				pResponse->cbEncodedResponse = cbEncoded;
 				pResponse->pbEncodedResponse = pbEncoded; // ownership transferred to caller (platform frees)
 
-				Log.Info("success");
+				Log.Info("Succeeded");
 				return HResults.S_OK;
 			}
 			finally
@@ -184,7 +184,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+			Log.Error($"Exception {ex.GetType().Name}: {ex.Message}");
 			return Marshal.GetHRForException(ex);
 		}
 		finally
@@ -214,7 +214,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		try
 		{
 			var cts = BeginOperation(transactionId, pRequest->pbEncodedRequest, pRequest->cbEncodedRequest);
-			Log.Info("entry");
+			Log.Info("Start");
 
 			// 1. Decode CBOR request
 			WebAuthnCtapCborGetAssertionRequest* pDecoded = null;
@@ -230,7 +230,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				Log.Info($"SignatureVerifier hr=0x{sigResult:X8}");
 				if (sigResult < 0) return sigResult;
 
-				if (cts.IsCancellationRequested) { Log.Info("cancelled"); return HResults.NTE_USER_CANCELLED; }
+				if (cts.IsCancellationRequested) { Log.Info("Canceled"); return HResults.NTE_USER_CANCELLED; }
 
 				// 3. Extract fields
 				string rpIdUtf8 = Encoding.UTF8.GetString(pDecoded->pbRpId, (int)pDecoded->cbRpId);
@@ -248,7 +248,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				// 4. User verification
 				var entry = LookupCredential(rpIdUtf8, allowList);
 				string uvUsername = entry?.UserName ?? string.Empty;
-				Log.Info($"credential lookup userName={uvUsername} title={entry?.Title ?? "(none)"}");
+				Log.Info($"Credential lookup userName={uvUsername} title={entry?.Title ?? "(none)"}");
 
 				int hrUv = UserVerifierDispatcher.VerifyForSignIn(
 					new SignInVerification((nint)pRequest, pRequest->transactionId, rpIdUtf8, uvUsername,
@@ -267,11 +267,11 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				};
 
 				// 6. Send to KeePass plugin
-				Log.Info("sending pipe request");
+				Log.Info("Sending pipe request");
 				var response = _pipeClient.GetAssertion(request);
 				if (response == null)
 				{
-					Log.Warn("pipe failed");
+					Log.Warn("Pipe request failed");
 					Notifier.ShowPipeError(Strings.Notify_Title_SignInFailed);
 					return HResults.E_FAIL;
 				}
@@ -293,7 +293,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 				pResponse->cbEncodedResponse = cbEncoded;
 				pResponse->pbEncodedResponse = pbEncoded;
 
-				Log.Info("success");
+				Log.Info("Succeeded");
 				return HResults.S_OK;
 			}
 			finally
@@ -303,7 +303,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+			Log.Error($"Exception {ex.GetType().Name}: {ex.Message}");
 			return Marshal.GetHRForException(ex);
 		}
 		finally
@@ -378,7 +378,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"exception {ex.Message}");
+			Log.Warn($"Exception: {ex.Message}");
 			*pLockStatus = PluginLockStatus.PluginLocked;
 			return HResults.S_OK;
 		}
@@ -400,14 +400,14 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 		var ping = _pipeClient.Ping();
 		if (ping == null)
 		{
-			Log.Warn("ping pipe failed");
+			Log.Warn("Ping failed");
 			Notifier.ShowPipeError(failureTitle);
 			return HResults.E_FAIL;
 		}
 
 		if (ping.Status == PingStatus.IncompatibleVersion)
 		{
-			Log.Warn($"version mismatch clientVersion={PipeConstants.Version} serverVersion={ping.Version}");
+			Log.Warn($"Version mismatch clientVersion={PipeConstants.Version} serverVersion={ping.Version}");
 			Notifier.ShowVersionMismatch(failureTitle, PipeConstants.Version, ping.Version);
 			return HResults.E_FAIL;
 		}
@@ -444,7 +444,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 	private int UnlockDatabase(CancellationToken cancellation, out bool unlocked)
 	{
 		unlocked = false;
-		Log.Info("database locked, asking KeePass to unlock");
+		Log.Info("Database locked, asking KeePass to unlock it");
 		bool loggedBusy = false;
 		bool bringToFront = true;
 		while (true)
@@ -458,7 +458,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 			}
 			catch (OperationCanceledException)
 			{
-				Log.Info("cancelled while waiting for the unlock");
+				Log.Info("Canceled while waiting for the unlock");
 				return HResults.NTE_USER_CANCELLED;
 			}
 
@@ -482,7 +482,7 @@ public sealed class PluginAuthenticator : IPluginAuthenticator
 
 		if (cancellation.IsCancellationRequested)
 		{
-			Log.Info("cancelled while waiting for the unlock");
+			Log.Info("Canceled while waiting for the unlock");
 			unlocked = false;
 			return HResults.NTE_USER_CANCELLED;
 		}

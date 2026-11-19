@@ -43,7 +43,7 @@ internal static class UserVerifierDispatcher
 		if (!unlockedNow || !KeePassPasskeySettings.Current.SkipWindowsHelloAfterUnlock
 			|| !mode.HasFlag(UserVerificationMode.WindowsHello)
 			|| !mode.HasFlag(UserVerificationMode.Notification)) return mode;
-		Log.Info("database was just unlocked, skipping Windows Hello");
+		Log.Info("Database was just unlocked, skipping Windows Hello");
 		return mode & ~UserVerificationMode.WindowsHello;
 	}
 

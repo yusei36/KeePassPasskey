@@ -19,7 +19,7 @@ internal static class IconImage
 		}
 		catch (Exception ex)
 		{
-			Log.Debug($"entry icon could not be decoded: {ex.GetType().Name}: {ex.Message}", nameof(IconImage));
+			Log.Debug($"Couldn't decode the entry icon: {ex.GetType().Name}: {ex.Message}", nameof(IconImage));
 			return null;
 		}
 	}
