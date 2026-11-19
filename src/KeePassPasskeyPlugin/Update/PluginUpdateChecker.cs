@@ -61,7 +61,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 			string installedVersion = PluginLocation.InstalledVersion;
 			if (targetDirectory == null || installedVersion == null)
 			{
-				Log.Debug("plugin update check skipped: plugin location unknown");
+				Log.Debug("Plugin update check skipped: plugin location unknown");
 				if (force) ReportNoUpdate(Strings.KeePass_NoUpdate_PluginNotLocated);
 				return;
 			}
@@ -70,7 +70,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 			string availableVersion = package?.BundledPluginVersion;
 			if (availableVersion == null)
 			{
-				Log.Debug("plugin update check: no installed package ships a plugin");
+				Log.Debug("Plugin update check: no installed package includes a plugin");
 				if (force) ReportNoUpdate(Strings.KeePass_NoUpdate_AppNotInstalled);
 				return;
 			}
@@ -86,7 +86,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 
 			if (!force && SameVersion(availableVersion, _settingsStorage.LoadSkippedPluginVersion()))
 			{
-				Log.Debug("plugin update " + availableVersion + " skipped by the user");
+				Log.Debug("Plugin update " + availableVersion + " skipped by the user");
 				return;
 			}
 
@@ -101,13 +101,13 @@ internal sealed class PluginUpdateChecker : IDisposable
 		}
 		catch (Exception ex)
 		{
-			Log.Warn("plugin update check failed: " + ex.Message);
+			Log.Warn("Plugin update check failed: " + ex.Message);
 		}
 	}
 
 	private void Prompt(ProviderPackage package, PluginUpdateInfo info)
 	{
-		Log.Info("offering plugin update " + info.InstalledVersion + " -> " + info.AvailableVersion
+		Log.Info("Offering plugin update " + info.InstalledVersion + " -> " + info.AvailableVersion
 			+ " from " + package.PackageFamilyName);
 
 		var choice = PluginUpdatePrompt.ShowUpdate(info, _host.MainWindow, out bool neverCheck);
@@ -129,7 +129,7 @@ internal sealed class PluginUpdateChecker : IDisposable
 		while (true)
 		{
 			var outcome = Install(package, info);
-			Log.Info("plugin update result: " + outcome.Result
+			Log.Info("Plugin update result: " + outcome.Result
 				+ (outcome.Elevated ? " (elevated)" : "")
 				+ (outcome.Error != null ? " - " + outcome.Error : ""));
 

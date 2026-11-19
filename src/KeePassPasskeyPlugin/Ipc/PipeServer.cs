@@ -76,7 +76,7 @@ internal sealed class PipeServer : IDisposable
 					  "Close the other process and restart KeePass.");
 			return false;
 		}
-		Log.Info($"listening on '{_pipeName}'");
+		Log.Info($"Listening on '{_pipeName}'");
 
 		_running = true;
 		_listenThread = new Thread(ListenLoop) { IsBackground = true, Name = "KeePass-Passkey-PipeServer" };
@@ -224,7 +224,7 @@ internal sealed class PipeServer : IDisposable
 		// ERROR_PIPE_BUSY instead of ERROR_ACCESS_DENIED when the owner has no free instance left.
 		catch (Win32Exception ex) when (ex.NativeErrorCode == ERROR_ACCESS_DENIED || ex.NativeErrorCode == ERROR_PIPE_BUSY)
 		{
-			Log.Info($"pipe name '{name}' is already in use");
+			Log.Info($"Pipe name '{name}' is already in use");
 			return null;
 		}
 	}
@@ -294,7 +294,7 @@ internal sealed class PipeServer : IDisposable
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not build pipe security descriptor, using default ACL: {ex.Message}");
+			Log.Warn($"Couldn't build the pipe security descriptor, using the default ACL: {ex.Message}");
 			return null;
 		}
 	}
