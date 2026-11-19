@@ -97,6 +97,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>Приложение не установлено как пакет</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>Выбрать папку KeePass</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>Установка...</value>
   </data>
@@ -353,6 +356,9 @@
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>Использовать порядок сайта</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>Тема и язык</value>
   </data>
@@ -504,6 +510,9 @@
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>Создание ключей доступа</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>Запрос подтверждения и Windows Hello отключены, поэтому ключи доступа будут создаваться без вашего подтверждения.</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Восстановить значения по умолчанию</value>
   </data>
@@ -533,6 +542,9 @@
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Вход</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>Запрос подтверждения и Windows Hello отключены, поэтому ключи доступа будут использоваться для входа без вашего подтверждения.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>Не запрашивает Windows Hello повторно, если вы только что разблокировали KeePass для той же операции. Действует, только если запрос подтверждения включен.</value>
@@ -581,9 +593,6 @@
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>Запрос подтверждения</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>Запрос подтверждения и Windows Hello отключены, поэтому ключи доступа будут создаваться и использоваться без вашего подтверждения.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (ПИН-код, отпечаток пальца или лицо)</value>
