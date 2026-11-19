@@ -167,7 +167,7 @@
 																				VerticalAlignment="Center"
 																				IsVisible="{Binding IsRegistrationSilent}"
 																				Foreground="{DynamicResource SystemFillColorCautionBrush}"
-																				ToolTip.Tip="{x:Static loc:Strings.App_Settings_Verification_SilentWarning}" />
+																				ToolTip.Tip="{x:Static loc:Strings.App_Settings_RegistrationVerification_SilentWarning}" />
 																</StackPanel>
 																<TextBlock Text="{x:Static loc:Strings.App_Settings_RegistrationVerification_Description}"
 																		Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -199,7 +199,7 @@
 																				VerticalAlignment="Center"
 																				IsVisible="{Binding IsSignInSilent}"
 																				Foreground="{DynamicResource SystemFillColorCautionBrush}"
-																				ToolTip.Tip="{x:Static loc:Strings.App_Settings_Verification_SilentWarning}" />
+																				ToolTip.Tip="{x:Static loc:Strings.App_Settings_SignInVerification_SilentWarning}" />
 																</StackPanel>
 																<TextBlock Text="{x:Static loc:Strings.App_Settings_SignInVerification_Description}"
 																		Foreground="{DynamicResource TextFillColorSecondaryBrush}"
@@ -405,14 +405,16 @@
 								<ui:FASettingsExpanderItem IsEnabled="{Binding !SettingsEnforced}">
 										<ui:FASettingsExpanderItem.Content>
 												<StackPanel Spacing="8" Margin="0 4">
-														<Grid ColumnDefinitions="*,Auto">
-																<StackPanel Spacing="2" VerticalAlignment="Center" Margin="0 0 16 0">
-																		<TextBlock Text="{x:Static loc:Strings.App_Settings_Algorithms_Header}" />
-																		<TextBlock Text="{x:Static loc:Strings.App_Settings_Algorithms_Description}"
-																							 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-																							 FontSize="12"
-																							 TextWrapping="Wrap" />
-																</StackPanel>
+														<StackPanel Spacing="2">
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Algorithms_Header}" />
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Algorithms_Description}"
+																					 Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+																					 FontSize="12"
+																					 TextWrapping="Wrap" />
+														</StackPanel>
+														<Grid ColumnDefinitions="*,Auto" MinHeight="32">
+																<TextBlock Text="{x:Static loc:Strings.App_Settings_Algorithms_OrderLabel}"
+																					 VerticalAlignment="Center" Margin="0 0 16 0" />
 																<ComboBox Grid.Column="1"
 																					SelectedItem="{Binding AlgorithmSelectionMode}"
 																					ItemsSource="{Binding AlgorithmSelectionModes}"

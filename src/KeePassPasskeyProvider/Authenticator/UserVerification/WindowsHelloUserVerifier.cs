@@ -43,7 +43,7 @@ internal sealed class WindowsHelloUserVerifier : IUserVerifier
 		byte[]? uvKey = SignatureVerifier.GetUserVerificationPublicKey();
 		if (uvKey == null)
 		{
-			Log.Error("UV public key unavailable, rejecting operation");
+			Log.Error("UV public key unavailable, rejecting the operation");
 			return HResults.NTE_BAD_SIGNATURE;
 		}
 

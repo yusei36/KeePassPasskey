@@ -282,7 +282,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not update tray startup task: {ex.Message}");
+			Log.Warn($"Couldn't update the tray startup task: {ex.Message}");
 		}
 	}
 

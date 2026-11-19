@@ -29,7 +29,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		var setting = ToastNotificationManagerCompat.CreateToastNotifier().Setting;
 		if (setting == NotificationSetting.Enabled) return false;
 
-		Log.Warn($"Notifications disabled ({setting}); use the dialog prompts instead", nameof(NotificationUserVerifier));
+		Log.Warn($"Notifications disabled ({setting}); use the dialog prompt instead", nameof(NotificationUserVerifier));
 		return true;
 	}
 
@@ -161,7 +161,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 			for (int i = 0; i < dbCount; i++)
 				selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(CultureInfo.InvariantCulture), databases[i].Name));
 			if (databases.Count > MaxToastSelectionItems)
-				Log.Warn($"Database picker truncated to {MaxToastSelectionItems} of {databases.Count} open databases", nameof(NotificationUserVerifier));
+				Log.Warn($"Database list truncated to {MaxToastSelectionItems} of {databases.Count} open databases", nameof(NotificationUserVerifier));
 			builder.AddToastInput(selectionBox);
 		}
 
@@ -245,7 +245,7 @@ internal sealed class NotificationUserVerifier : IUserVerifier
 		for (int i = 0; i < shown; i++)
 			selectionBox.Items.Add(new ToastSelectionBoxItem(i.ToString(CultureInfo.InvariantCulture), EntryLabel(candidates[i], showDbName)));
 		if (truncated)
-			Log.Warn($"Entry picker truncated to {MaxToastSelectionItems} of {candidates.Count} matching entries", nameof(NotificationUserVerifier));
+			Log.Warn($"Entry list truncated to {MaxToastSelectionItems} of {candidates.Count} matching entries", nameof(NotificationUserVerifier));
 		builder.AddToastInput(selectionBox);
 
 		builder.AddVisualChild(ProgressBar())

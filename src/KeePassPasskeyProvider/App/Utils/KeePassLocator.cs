@@ -118,7 +118,7 @@ internal static class KeePassLocator
 			}
 			catch (Exception ex)
 			{
-				Log.Debug($"uninstall key lookup failed: {ex.Message}");
+				Log.Debug($"Uninstall key lookup failed: {ex.Message}");
 			}
 		}
 		return null;

@@ -102,7 +102,7 @@ internal sealed class PasskeyEntryStorage
 
 		if (entry == null || db == null || !db.IsOpen)
 		{
-			Log.Warn($"Target entry {target.EntryUuid} not found for passkey save", nameof(AddPasskeyToExistingEntry));
+			Log.Warn($"Target entry {target.EntryUuid} not found for saving the passkey", nameof(AddPasskeyToExistingEntry));
 			return false;
 		}
 
@@ -423,7 +423,7 @@ internal sealed class PasskeyEntryStorage
 		}
 		catch (Exception ex)
 		{
-			Log.Warn("failed to read selected entries: " + ex.Message, nameof(GetSelectedEntryUuids));
+			Log.Warn("Failed to read the selected entries: " + ex.Message, nameof(GetSelectedEntryUuids));
 		}
 		return set;
 	}
@@ -471,7 +471,7 @@ internal sealed class PasskeyEntryStorage
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not parse entry uuid '{hex}': {ex.Message}", nameof(ParseEntryUuid));
+			Log.Warn($"Couldn't parse entry UUID '{hex}': {ex.Message}", nameof(ParseEntryUuid));
 			return null;
 		}
 	}
@@ -627,7 +627,7 @@ internal sealed class PasskeyEntryStorage
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"Could not read the selected group: {ex.Message}", nameof(GetSelectedGroup));
+			Log.Warn($"Couldn't read the selected group: {ex.Message}", nameof(GetSelectedGroup));
 			return null;
 		}
 	}
@@ -731,7 +731,7 @@ internal sealed class PasskeyEntryStorage
 
 		if (firstMatch != null) return firstMatch;
 
-		Log.Warn($"Target database {target.Id} not found, falling back to active database", callerName);
+		Log.Warn($"Target database {target.Id} not found, falling back to the active database", callerName);
 		return _host.Database;
 	}
 }
