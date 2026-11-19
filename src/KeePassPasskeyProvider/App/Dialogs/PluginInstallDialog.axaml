@@ -49,8 +49,11 @@
 																			 Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
 										</TextBox.InnerRightContent>
 								</TextBox>
-								<Button Grid.Column="1" Content="Browse..." Click="OnBrowse"
-												IsEnabled="{Binding !IsBusy}" />
+								<Button Grid.Column="1" Click="OnBrowse" IsEnabled="{Binding !IsBusy}"
+												ToolTip.Tip="{x:Static loc:Strings.App_InstallDialog_BrowseTooltip}"
+												AutomationProperties.Name="{x:Static loc:Strings.App_InstallDialog_BrowseTooltip}">
+										<fa:FAFontIcon Glyph="&#xE8DA;" FontSize="16" />
+								</Button>
 						</Grid>
 						<TextBlock Text="{Binding DetectionSource}" Classes="caption"
 											 IsVisible="{Binding DetectionSource, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />

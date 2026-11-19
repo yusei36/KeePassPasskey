@@ -14,7 +14,7 @@ internal static class PromptDemo
 	{
 		// Stands in for the browser window a real ceremony hands us.
 		nint owner = Util.Win32Native.GetForegroundWindow();
-		Log.Info($"demo owner window 0x{owner:X}", nameof(PromptDemo));
+		Log.Info($"Demo owner window 0x{owner:X}", nameof(PromptDemo));
 
 		// Mirrors ComServer, so the demo warms up the way a ceremony does.
 		PromptHost.WarmUp();
@@ -50,9 +50,9 @@ internal static class PromptDemo
 					viewModel.TargetEntry?.EntryUuid ?? viewModel.TargetDatabase?.Name ?? "(none)"));
 				return window;
 			},
-			owner, (false, "(cancelled)"), CancellationToken.None);
+			owner, (false, "(canceled)"), CancellationToken.None);
 
-		Log.Info($"registration prompt: approved={choice.Approved} target={choice.Target}", nameof(PromptDemo));
+		Log.Info($"Passkey creation prompt: approved={choice.Approved} target={choice.Target}", nameof(PromptDemo));
 
 		bool signedIn = PromptHost.Show(
 			tcs =>
@@ -66,7 +66,7 @@ internal static class PromptDemo
 			},
 			owner, false, CancellationToken.None);
 
-		Log.Info($"sign-in prompt: approved={signedIn}", nameof(PromptDemo));
+		Log.Info($"Sign-in prompt: approved={signedIn}", nameof(PromptDemo));
 		return 0;
 	}
 

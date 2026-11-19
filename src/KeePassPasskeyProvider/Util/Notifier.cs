@@ -65,7 +65,7 @@ internal static class Notifier
 		}
 		catch (Exception ex)
 		{
-			Log.Warn($"toast failed: {ex.Message}");
+			Log.Warn($"Toast failed: {ex.Message}");
 		}
 	}
 }
