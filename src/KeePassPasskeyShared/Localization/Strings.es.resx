@@ -97,6 +97,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>No instalada como paquete</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>Seleccionar la carpeta de KeePass</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>Instalando...</value>
   </data>
@@ -353,6 +356,9 @@ Un sitio web que solo acepta algoritmos desactivados no puede crear una clave de
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>Usar el orden del sitio web</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>Orden</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>Tema e idioma</value>
   </data>
@@ -504,6 +510,9 @@ Grupo seleccionado: el grupo seleccionado en KeePass al crear la clave de paso.<
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>Creación de claves de paso</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>La solicitud de confirmación y Windows Hello están desactivados, por lo que las claves de paso se crearán sin preguntarte.</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Restablecer valores predeterminados</value>
   </data>
@@ -533,6 +542,9 @@ Grupo seleccionado: el grupo seleccionado en KeePass al crear la clave de paso.<
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Inicio de sesión</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>La solicitud de confirmación y Windows Hello están desactivados, por lo que las claves de paso se usarán para iniciar sesión sin preguntarte.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>No volver a pedir Windows Hello cuando acabas de desbloquear KeePass para la misma operación. Solo se aplica mientras la solicitud de confirmación esté activada.</value>
@@ -581,9 +593,6 @@ Grupo seleccionado: el grupo seleccionado en KeePass al crear la clave de paso.<
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>Solicitud de confirmación</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>La solicitud de confirmación y Windows Hello están desactivados, por lo que las claves de paso se crearán y usarán sin preguntarte.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (PIN, huella digital o reconocimiento facial)</value>
