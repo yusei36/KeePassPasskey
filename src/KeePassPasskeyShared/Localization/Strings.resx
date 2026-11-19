@@ -99,6 +99,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>Not installed as a package</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>Choose the KeePass folder</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>Installing...</value>
   </data>
@@ -363,6 +366,9 @@ A website that accepts only algorithms that are off can't create a passkey.</val
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>Use website's order</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>Order</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>Theme and language</value>
   </data>
@@ -515,6 +521,9 @@ Selected group: the group selected in KeePass when creating the passkey.</value>
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>Creating passkeys</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>The confirmation prompt and Windows Hello are both off, so passkeys will be created without asking you.</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Reset to defaults</value>
   </data>
@@ -544,6 +553,9 @@ Selected group: the group selected in KeePass when creating the passkey.</value>
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Sign-in</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>The confirmation prompt and Windows Hello are both off, so you'll be signed in with passkeys without being asked.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>Don't ask for Windows Hello again when you have just unlocked KeePass for the same request. Only applies while the confirmation prompt is on.</value>
@@ -592,9 +604,6 @@ Selected group: the group selected in KeePass when creating the passkey.</value>
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>Confirmation prompt</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>The confirmation prompt and Windows Hello are both off, so passkeys will be created and used without asking you.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (PIN, fingerprint, or face)</value>
@@ -965,7 +974,7 @@ Try again?</value>
     <comment>An English technical detail may follow on the next line</comment>
   </data>
   <data name="Notify_Error_UnsupportedAlgorithm" xml:space="preserve">
-    <value>None of the signing algorithms this website accepts is enabled in the settings.</value>
+    <value>None of the signing algorithms this website accepts is turned on in the settings.</value>
   </data>
   <data name="Notify_Title_CreateFailed" xml:space="preserve">
     <value>Passkey creation failed</value>

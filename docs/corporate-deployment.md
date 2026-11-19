@@ -13,7 +13,7 @@ KeePassPasskey consists of two parts, which are deployed separately:
 
 Both must be present, and both must be on compatible versions (see [Keeping the app and plugin versions matched](#keeping-the-app-and-plugin-versions-matched)).
 
-Passkeys are stored in the KeePass database (KDBX) as ordinary entries. Nothing is stored in the cloud, and neither part makes network connections of its own. The only data that leaves KeePass is passkey metadata (credential ID, site and user name, never the private key) written to the Windows credential cache so Windows can offer the passkeys in its sign-in dialogs.
+Passkeys are stored in the KeePass database (KDBX) as ordinary entries. Nothing is stored in the cloud, and neither part makes network connections of its own. The only data that leaves KeePass is passkey metadata (credential ID, website and user name, never the private key) written to the Windows credential cache so Windows can offer the passkeys in its sign-in dialogs.
 
 ## Prerequisites
 
@@ -21,16 +21,16 @@ Check these on your client baseline before anything else, because none of them c
 
 | Requirement | Notes |
 |---|---|
-| Windows 11 24H2 or later | The Windows passkey plugin API does not exist in earlier versions. Installation fails with `0x80073CFD` otherwise |
+| Windows 11 24H2 or later | The Windows passkey plugin API doesn't exist in earlier versions. Installation fails with `0x80073CFD` otherwise |
 | TPM enabled | Windows creates a TPM-backed key for every third-party passkey provider. See [Why is a TPM required?](troubleshooting-faq.md#why-is-a-tpm-required) |
 | Windows Hello set up for the user | At least a PIN. Windows refuses to register any third-party passkey provider without it (`0x80090029`). See [Why is Windows Hello required?](troubleshooting-faq.md#why-is-windows-hello-required) |
 | KeePass 2.54 or later | Installed or portable |
 
 Things to look out for in managed environments:
 
-- **Windows Hello policies.** If Windows Hello or Windows Hello for Business is disabled by Group Policy or Intune, users cannot set up a PIN and KeePassPasskey cannot register. Windows Hello for Business is fine; the regular Windows Hello PIN is enough as well.
-- **Remote Desktop and VDI.** Windows does not offer PIN setup over a Remote Desktop session. Virtual machines need a virtual TPM. See [I cannot set up a Windows Hello PIN](troubleshooting-faq.md#i-cannot-set-up-a-windows-hello-pin).
-- **Feature update rollout.** If your organisation holds back feature updates, PCs may still be on 23H2.
+- **Windows Hello policies.** If Windows Hello or Windows Hello for Business is disabled by Group Policy or Intune, users can't set up a PIN and KeePassPasskey can't register. Windows Hello for Business is fine; the regular Windows Hello PIN is enough as well.
+- **Remote Desktop and VDI.** Windows doesn't offer PIN setup over a Remote Desktop session. Virtual machines need a virtual TPM. See [I can't set up a Windows Hello PIN](troubleshooting-faq.md#i-cant-set-up-a-windows-hello-pin).
+- **Feature update rollout.** If your organization holds back feature updates, PCs may still be on 23H2.
 
 ## Choosing a distribution channel
 
@@ -86,7 +86,7 @@ Add-AppxPackage -Path KeePassPasskeyProvider.Package_<version>_x64.msix
 
 Sideloading must be allowed, which is the default on Windows 11 unless a policy turns it off (*Allow all trusted apps to install*).
 
-The `InstallMsix.bat` script from the release zip is meant for interactive installs on a single PC. It installs for the signed-in user through a scheduled task, so do not use it from a deployment tool that runs as SYSTEM.
+The `InstallMsix.bat` script from the release zip is meant for interactive installs on a single PC. It installs for the signed-in user through a scheduled task, so don't use it from a deployment tool that runs as SYSTEM.
 
 **3. Updates.** Deploy each new release the same way. A newer version installs over the old one and keeps the users' settings.
 
@@ -94,7 +94,7 @@ The `InstallMsix.bat` script from the release zip is meant for interactive insta
 
 Copy `KeePassPasskey.dll` into KeePass's `Plugins` folder, for example `C:\Program Files\KeePass Password Safe 2\Plugins\`. KeePass loads it at its next start.
 
-The DLL is in the GitHub release zip. It also ships inside the app package, in its `KeePassPasskeyPlugin\` folder, so the plugin always matches the app installed on the PC:
+The DLL is in the GitHub release zip. It is also included in the app package, in its `KeePassPasskeyPlugin\` folder, so the plugin always matches the app installed on the PC:
 
 ```powershell
 $pkg = Get-AppxPackage -AllUsers -Name '*KeePassPasskey*' | Select-Object -First 1
@@ -108,7 +108,7 @@ For KeePass Portable or per-user installations, users can install the plugin the
 
 ### Application control
 
-The plugin DLL is not code-signed. If you use **AppLocker** DLL rules or **App Control for Business** (WDAC), allow `KeePassPasskey.dll` by path or by file hash. The hash changes with every release.
+The plugin DLL isn't code-signed. If you use **AppLocker** DLL rules or **App Control for Business** (WDAC), allow `KeePassPasskey.dll` by path or by file hash. The hash changes with every release.
 
 **Smart App Control** may block the plugin until Microsoft has cleared a new release, see [Smart App Control blocks KeePassPasskey.dll](troubleshooting-faq.md#smart-app-control-blocks-keepasspasskeydll). Smart App Control is usually off on managed PCs.
 
@@ -119,14 +119,14 @@ The app and the plugin check each other's protocol version on every request:
 - **Version mismatch** (yellow): different but compatible versions. Passkeys keep working.
 - **Incompatible version** (red): passkey operations are blocked until the older side is updated.
 
-Most releases are compatible with the previous ones, but plan for the case where they are not:
+Most releases are compatible with the previous ones, but plan for the case where they aren't:
 
-- **Users without administrator rights cannot update a plugin under `C:\Program Files\`.** KeePass offers the update from the installed app at its next start, but writing to `Program Files` needs elevation. Without it the user sees an administrator prompt they cannot complete.
+- **Users without administrator rights can't update a plugin under `C:\Program Files\`.** KeePass offers the update from the installed app at its next start, but writing to `Program Files` needs elevation. Without it the user sees an administrator prompt they can't complete.
 - **Store installs update the app on their own**, while the plugin only changes when someone copies it. Over time the app gets ahead of the plugin.
 
-The simplest setup is to **deploy the app and the plugin together** in the same job, with the plugin copied from the installed package as shown above, and to rerun that job whenever the app changes. With the Store channel, an Intune remediation script or a scheduled task that compares the two versions and copies the DLL works well. If that is not practical, the GitHub channel gives you full control over when the app version changes.
+The simplest setup is to **deploy the app and the plugin together** in the same job, with the plugin copied from the installed package as shown above, and to rerun that job whenever the app changes. With the Store channel, an Intune remediation script or a scheduled task that compares the two versions and copies the DLL works well. If that isn't practical, the GitHub channel gives you full control over when the app version changes.
 
-When IT owns plugin updates, turn off the in-KeePass update prompt so users are not asked to do something they cannot do (`checkForPluginUpdates`, see below).
+When IT owns plugin updates, turn off the in-KeePass update prompt so users aren't asked to do something they can't do (`checkForPluginUpdates`, see below).
 
 ## Enabling the provider for each user
 
@@ -158,7 +158,7 @@ To **enforce** settings, add them to `KeePass.config.enforced.xml` next to `KeeP
 Keep in mind:
 
 - **The value is all or nothing.** It holds every KeePassPasskey setting at once, so enforcing it locks all of them. Settings left out of the JSON fall back to their defaults, with one exception: the Spoof AAGUID option is turned off unless the JSON sets `"allowAaguidSpoofing":true`.
-- **Users cannot change them in the app.** The app's Settings page shows a **Settings enforced by KeePass** notice and greys out every setting stored in KeePass. A change saved by other means, such as an older version of the app, is stored in the user's configuration but not applied: KeePassPasskey keeps using the enforced values.
+- **Users can't change them in the app.** The app's Settings page shows a **Settings enforced by KeePass** notice and grays out every setting stored in KeePass. A change saved by other means, such as an older version of the app, is stored in the user's configuration but not applied: KeePassPasskey keeps using the enforced values.
 - The JSON must be valid and XML-escaped where needed (`&`, `<`).
 - **Users must not be able to write to the KeePass folder**, or they can simply edit the enforced file. That rules out enforcing settings for KeePass Portable in a user-writable location.
 
@@ -169,7 +169,7 @@ The settings you are most likely to care about:
 | `registrationVerification`, `signInVerification` | `3` | `3` both, `1` Windows Hello only, `2` confirmation prompt only, `0` none | How the user is verified when creating or using a passkey. With `2` or `0` the user is no longer verified by Windows Hello, but KeePassPasskey still reports the user as verified to the website. Keep `3` or `1` unless you have a reason not to |
 | `skipWindowsHelloAfterUnlock` | `false` | `true`, `false` | Skips Windows Hello when the user has just unlocked KeePass for the same request |
 | `checkForPluginUpdates` | `true` | `true`, `false` | Set to `false` when IT deploys plugin updates |
-| `syncCredentialsToWindows` | `true` | `true`, `false` | Leave on. Without it, passkeys do not appear in the Windows sign-in prompt |
+| `syncCredentialsToWindows` | `true` | `true`, `false` | Leave on. Without it, passkeys don't appear in the Windows sign-in prompt |
 | `newPasskeyBackupEligible`, `newPasskeyBackupState` | `true` | `true`, `false` | The backup flags written to new passkeys, see [Backup flags](#backup-flags-and-attestation) |
 | `logLevel` | `Info` | `Off`, `Error`, `Warn`, `Info`, `Debug` | Log verbosity |
 | `notificationVerificationTimeoutMilliseconds` | `60000` | number | How long the confirmation prompt waits |
@@ -177,7 +177,7 @@ The settings you are most likely to care about:
 
 The full list of settings is described in [Settings](user-guide.md#settings) in the User Guide.
 
-Settings that belong to the app window only (theme, tray icon) are stored per user in the app's own storage and cannot be preset this way.
+Settings that belong to the app window only (theme, tray icon) are stored per user in the app's own storage and can't be preset this way.
 
 ## Security considerations
 
@@ -187,14 +187,14 @@ Questions security teams usually ask, with short answers:
 
 **Who can talk to the plugin?** Only the official KeePassPasskey package (checked by package family name), running as the same user at medium integrity. Other users on the same PC, including with fast user switching, each get their own connection.
 
-**Can passkeys leave the PC?** Yes, together with the database. That is by design: passkeys in KeePass are portable, can be backed up, and can be opened with other compatible KDBX software like KeePassXC. If your policy requires device-bound passkeys, KeePassPasskey is not the right authenticator for those accounts.
+**Can passkeys leave the PC?** Yes, together with the database. That is by design: passkeys in KeePass are portable, can be backed up, and can be opened with other compatible KDBX software like KeePassXC. If your policy requires device-bound passkeys, KeePassPasskey isn't the right authenticator for those accounts.
 
 ### Backup flags and attestation
 
 Relying parties, including your own identity provider, may look at two properties of a passkey:
 
-- **Backup flags (BE/BS).** By default, KeePassPasskey marks new passkeys as backed up (synced), which is accurate for a passkey stored in a database file. Some services accept only device-bound passkeys. You can change the default for new passkeys (`newPasskeyBackupEligible`, `newPasskeyBackupState`), but marking a portable passkey as device-bound is a claim KeePassPasskey cannot back up.
-- **Attestation.** KeePassPasskey creates passkeys without attestation, since a software authenticator has no manufacturer-signed key to prove its identity with. Services that **enforce** attestation, as identity providers such as Microsoft Entra ID can be configured to, will reject KeePassPasskey passkeys. See [A site asks for enterprise attestation](troubleshooting-faq.md#a-site-asks-for-enterprise-attestation).
+- **Backup flags (BE/BS).** By default, KeePassPasskey marks new passkeys as backed up (synced), which is accurate for a passkey stored in a database file. Some services accept only device-bound passkeys. You can change the default for new passkeys (`newPasskeyBackupEligible`, `newPasskeyBackupState`), but marking a portable passkey as device-bound is a claim KeePassPasskey can't back up.
+- **Attestation.** KeePassPasskey creates passkeys without attestation, since a software authenticator has no manufacturer-signed key to prove its identity with. Services that **enforce** attestation, as identity providers such as Microsoft Entra ID can be configured to, will reject KeePassPasskey passkeys. See [A website asks for enterprise attestation](troubleshooting-faq.md#a-website-asks-for-enterprise-attestation).
 
 If your identity provider restricts passkeys by authenticator model (AAGUID), KeePassPasskey's AAGUID is:
 
@@ -206,7 +206,7 @@ Whether to allow it there is a policy decision: an AAGUID is a claim by the auth
 
 - **Browser extensions** of other password managers can intercept passkey requests before they reach Windows. If you deploy such an extension by policy, KeePassPasskey is never called in that browser. See [Passkey prompts never show the Windows provider selection](troubleshooting-faq.md#passkey-prompts-never-show-the-windows-provider-selection-or-keepasspasskey).
 - **Other passkey providers** can be enabled at the same time. Windows asks the user which one to use.
-- **Focus Assist / Do Not Disturb** only matters if the legacy notification prompts are turned on; the default dialog prompts are not affected.
+- **Do not disturb** only matters if the legacy notification prompts are turned on; the default dialog prompts aren't affected.
 
 ## Removing KeePassPasskey
 
@@ -234,7 +234,7 @@ The users' passkeys stay in their databases as ordinary entries.
 | App log | `%LOCALAPPDATA%\Packages\<package family name>\LocalCache\Provider.log` |
 | App and plugin versions, registration state | The **Diagnostics** page of the KeePassPasskey app |
 
-The **Diagnostics** page also shows both logs live and can write the state of the Windows credential cache to the log, which is the most useful thing to attach to a support ticket. Usernames are not written to the log in full.
+The **Diagnostics** page also shows both logs live and can write the state of the Windows credential cache to the log, which is the most useful thing to attach to a support ticket. User names aren't written to the log in full.
 
 ### Command-line options
 
@@ -242,9 +242,9 @@ The app installs the command `KeePassPasskeyProvider.exe` for every user it is i
 
 | Command | What it does |
 |---|---|
-| `KeePassPasskeyProvider.exe /status` | Prints whether KeePassPasskey is `Enabled` or `Disabled` in **Settings → Accounts → Passkeys → Advanced options**. Fails if it is not registered with Windows at all |
+| `KeePassPasskeyProvider.exe /status` | Prints whether KeePassPasskey is `Enabled` or `Disabled` in **Settings → Accounts → Passkeys → Advanced options**. Fails if it isn't registered with Windows at all |
 | `KeePassPasskeyProvider.exe /register` | Registers KeePassPasskey as a passkey provider with Windows. Normally happens automatically; use it if the provider is missing from the Windows settings page |
-| `KeePassPasskeyProvider.exe /unregister` | Removes the registration with Windows. Run `/register` afterwards to add it again |
+| `KeePassPasskeyProvider.exe /unregister` | Removes the registration with Windows. Run `/register` afterward to add it again |
 | `KeePassPasskeyProvider.exe /synccredential` | Refreshes the Windows credential cache from the databases open in KeePass, like **Sync now**. KeePass runs this itself whenever a database is opened, saved or closed |
 | `KeePassPasskeyProvider.exe /dumpcredentials` | Lists the passkeys in the Windows credential cache next to the passkeys KeePass currently has open, to spot entries that are missing or stale. KeePass must be running with the database open for the KeePass side |
 | `KeePassPasskeyProvider.exe /clearcredentials` | Empties the Windows credential cache. It is filled again the next time KeePass opens or saves a database |
@@ -253,6 +253,6 @@ The app installs the command `KeePassPasskeyProvider.exe` for every user it is i
 
 The commands return exit code `0` on success and `1` on failure, so they can be used in scripts such as Intune remediations.
 
-Everything here is per user: registration, the provider switch and the credential cache all belong to the signed-in user. Run the commands **as that user and not elevated**. From a tool that runs as SYSTEM, or as an administrator account, they report on that account, not on the user.
+Everything here is per user: registration, the provider switch and the Windows credential cache all belong to the signed-in user. Run the commands **as that user and not elevated**. From a tool that runs as SYSTEM, or as an administrator account, they report on that account, not on the user.
 
 For specific error messages, see [FAQ & Troubleshooting](troubleshooting-faq.md).

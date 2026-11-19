@@ -20,7 +20,7 @@ A KeePass plugin that turns KeePass into a native Windows 11 passkey provider. W
 
 ## How it works
 
-When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You approve the request, and the passkey is created in your unlocked KeePass database as an ordinary entry. If KeePass is locked, it asks you to unlock it first. Signing in takes the same path, with the entry already there. Keys never leave your database file, and all cryptography runs locally.
+When a website asks for a passkey, Windows offers KeePassPasskey as a provider. You confirm the request, and the passkey is created in your unlocked KeePass database as an ordinary entry. If KeePass is locked, it asks you to unlock it first. Signing in takes the same path, with the entry already there. Keys never leave your database file, and all cryptography runs locally.
 
 <details>
 <summary><b>Diagram: where a passkey request goes</b></summary>
@@ -35,7 +35,7 @@ offers your passkey providers`"]
 
     subgraph KPP ["KeePassPasskey"]
         Prompt["`**Passkey prompts**
-create and sign-in, you approve`"]
+create and sign-in, you confirm`"]
         UI["`**App window**
 status, settings, plugin install`"]
         Plug["`**KeePass plugin**
@@ -55,9 +55,9 @@ the passkey is a normal entry`")]
 
 </details>
 
-You meet KeePassPasskey twice: as the prompt you approve during a request, and as the app window you open yourself for status, settings and installing the plugin. Both are the same installed app, started two different ways, and neither runs permanently.
+You meet KeePassPasskey twice: as the prompt you confirm during a request, and as the app window you open yourself for status, settings and installing the plugin. Both are the same installed app, started two different ways, and neither runs permanently.
 
-So that Windows can offer your passkeys in its sign-in dialogs, the passkey metadata (site and user name, never the keys themselves) is written to the Windows credential cache as you open or save your database.
+So that Windows can offer your passkeys in its sign-in dialogs, the passkey metadata (website and user name, never the keys themselves) is written to the Windows credential cache as you open or save your database.
 
 Entries use KeePassXC-compatible `KPEX_PASSKEY_*` fields, so KeePassXC can read them and vice versa.
 
@@ -81,14 +81,14 @@ Install the app, add the plugin to KeePass, enable the provider in Windows. Each
 [<img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200" alt="Get it from Microsoft Store">](https://apps.microsoft.com/detail/9nwnfhjpspgz?mode=direct)
 
 1. Install [KeePassPasskey](https://apps.microsoft.com/detail/9nwnfhjpspgz) from the Microsoft Store and launch it.
-2. Follow the built-in **Setup Guide**: click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
-3. Continue the Setup Guide to open Windows **Advanced passkey options** and enable **KeePassPasskey**.
+2. Follow the built-in **Getting started** guide: click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can show the plugin file in File Explorer instead.
+3. Continue the guide: click **Advanced passkey options** and enable **KeePassPasskey** in Windows Settings.
 4. Both status indicators in the **KeePassPasskey** app should show green.
 
 <img src="docs/images/keepasspasskey-app-status.png" width="450" alt="KeePassPasskey app showing both status indicators green">
 
 > [!NOTE]
-> The app updates automatically, the plugin does not. After the app moves to a newer version, KeePass offers to update the plugin at its next start, see [Updates](docs/user-guide.md#updates).
+> The app updates automatically, the plugin doesn't. After the app moves to a newer version, KeePass offers to update the plugin at its next start, see [Updates](docs/user-guide.md#updates).
 
 Prefer the command line? `winget install 9NWNFHJPSPGZ --source msstore` (or by name: `winget install --name "KeePassPasskey" --source msstore`) installs the same package.
 
@@ -96,8 +96,8 @@ Prefer the command line? `winget install 9NWNFHJPSPGZ --source msstore` (or by n
 
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Run `InstallMsix.bat` as Administrator, it trusts the included certificate, installs the MSIX, and starts the **KeePassPasskey** provider app.
-3. In the app, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
-4. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+3. In the app, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can show the plugin file in File Explorer instead.
+4. Click **Advanced passkey options** in the app and enable **KeePassPasskey**.
 5. Both status indicators in the **KeePassPasskey** app should show green.
 
 ### Option C - GitHub manual installation
@@ -105,8 +105,8 @@ Prefer the command line? `winget install 9NWNFHJPSPGZ --source msstore` (or by n
 1. Download `KeePassPasskey-<version>.zip` from the [releases page](https://github.com/yusei36/KeePassPasskey/releases) and extract it.
 2. Trust the certificate: right-click `KeePassPasskey.cer` → **Install Certificate** → **Local Machine** → place it in the **Trusted People** store.
 3. Install the MSIX: double-click `KeePassPasskeyProvider.Package_<version>_x64.msix` and click **Install**.
-4. Launch **KeePassPasskey** from the Start menu, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can reveal the plugin file in Explorer instead.
-5. Click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+4. Launch **KeePassPasskey** from the Start menu, click **Install plugin**, check the detected KeePass folder, and click **Install**. Restart KeePass if it is running. Would rather copy the file yourself? The app can show the plugin file in File Explorer instead.
+5. Click **Advanced passkey options** in the app and enable **KeePassPasskey**.
 6. Both status indicators in the **KeePassPasskey** app should show green.
 7. (Optional) Remove the certificate: open **certlm.msc** → **Trusted People** → **Certificates**, find **KeePassPasskey**, and delete it. The certificate is only needed during installation.
 
@@ -119,20 +119,20 @@ Passkeys are stored as standard KeePass entries using [KeePassXC's passkey field
 | `KPEX_PASSKEY_CREDENTIAL_ID` | Base64url credential ID |
 | `KPEX_PASSKEY_PRIVATE_KEY_PEM` | PKCS#8 private key (PEM) |
 | `KPEX_PASSKEY_RELYING_PARTY` | Relying party ID (e.g. `github.com`) |
-| `KPEX_PASSKEY_USERNAME` | User name from registration |
+| `KPEX_PASSKEY_USERNAME` | User name given when the passkey was created |
 | `KPEX_PASSKEY_USER_HANDLE` | Base64url user handle |
-| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag (`1`/`0`, default `1`) |
-| `KPEX_PASSKEY_FLAG_BS` | Backup State flag (`1`/`0`, default `1`) |
+| `KPEX_PASSKEY_FLAG_BE` | Backup eligibility flag (`1`/`0`, default `1`) |
+| `KPEX_PASSKEY_FLAG_BS` | Backup state flag (`1`/`0`, default `1`) |
 
 Credentials created here can be read by KeePassXC and vice versa. Three algorithms are supported: **ES256** (EC P-256), **EdDSA** (Ed25519), and **RS256** (RSA-2048); which ones new passkeys may use, and in what order, is configurable (see the [user guide](docs/user-guide.md#signing-algorithms)). The algorithm is encoded in the PKCS#8 OID and requires no separate field, matching KeePassXC's storage format exactly.
 
-`FLAG_BE` and `FLAG_BS` correspond to bits 3 and 4 of the WebAuthn authenticatorData flags byte. `BE=1` means the credential is eligible to be synced across devices; `BS=1` means it currently is. Both default to `1`, matching KeePassXC's behaviour. The default for new passkeys is configurable and can be overridden per entry, see the [user guide](docs/user-guide.md#expert).
+`FLAG_BE` and `FLAG_BS` correspond to bits 3 and 4 of the WebAuthn authenticatorData flags byte. `BE=1` means the credential is eligible to be synced across devices; `BS=1` means it currently is. Both default to `1`, matching KeePassXC's behavior. The default for new passkeys is configurable and can be overridden per entry, see the [user guide](docs/user-guide.md#expert).
 
 ## Security
 
 - All signing happens inside KeePass, so private keys are never sent over the pipe. In KeePass they stay under its in-memory protection and are only decrypted for the signature itself, see [How is the private key protected?](docs/troubleshooting-faq.md#how-is-the-private-key-protected)
 - The KeePass plugin verifies the connecting COM server before any request is processed: in production (MSIX-installed) it checks the client's package family name and rejects non-MSIX processes.
-- The named pipe is restricted by ACL to the current user at medium integrity, so other users and lower-integrity processes cannot connect.
+- The named pipe is restricted by ACL to the current user at medium integrity, so other users and lower-integrity processes can't connect.
 
 ## AAGUID
 
@@ -182,7 +182,7 @@ Then run the build script as Administrator - builds the MSIX, signs it, and inst
 .\scripts\Install-Provider.ps1 -Configuration Release
 ```
 
-Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass. Then click **Advanced Passkey Options** in the app and enable **KeePassPasskey**.
+Copy the DLLs from `build\Release\` to a `KeePassPasskeyPlugin` folder inside your KeePass `Plugins` folder (e.g. `C:\Program Files\KeePass Password Safe 2\Plugins\KeePassPasskeyPlugin\`) and (re)start KeePass. Then click **Advanced passkey options** in the app and enable **KeePassPasskey**.
 
 ### Running the tests
 
@@ -194,7 +194,7 @@ dotnet test --project src/KeePassPasskeyPlugin.Tests/KeePassPasskeyPlugin.Tests.
 
 All UI text of the app and the KeePass plugin lives in one file, `src/KeePassPasskeyShared/Localization/Strings.resx` (English), with one file per language next to it, e.g. `Strings.de.resx`. Keys are named after where the text appears: `App_` (app window), `Prompt_` (passkey prompts), `Notify_` (error notifications), `Tray_` (tray icon), `KeePass_` (plugin menus and dialogs inside KeePass) and `Common_` (used in several of these).
 
-To add a language, copy `Strings.resx` to `Strings.<language>.resx` (for example `Strings.fr.resx`), translate the `<value>` elements and keep `{0}`-style placeholders and `**marked**` parts intact; the `<comment>` elements explain them. Add a line for the language to `SupportedLanguages.All` in `src/KeePassPasskeyShared/Localization/SupportedLanguages.cs`, with its language tag and the code KeePass uses for it (the `Iso6391Code` of the KeePass translation, usually the same), so the app lists it and the plugin picks it up when KeePass runs in that language. Set `reviewed` to `true` if you are a native speaker or one has checked the translation; otherwise the app marks the language as not yet reviewed. Missing entries fall back to English, and the tests check that every translation uses the same keys and placeholders as the English file. Please open one pull request per language so native speakers can review it.
+To add a language, copy `Strings.resx` to `Strings.<language>.resx` (for example `Strings.fr.resx`), translate the `<value>` elements and keep `{0}`-style placeholders and `**marked**` parts intact; the `<comment>` elements explain them. Add a line for the language to `SupportedLanguages.All` in `src/KeePassPasskeyShared/Localization/SupportedLanguages.cs`, with its language tag and the code KeePass uses for it (the `Iso6391Code` of the KeePass translation, usually the same), so the app lists it and the plugin picks it up when KeePass runs in that language. Set `reviewed` to `true` if you are a native speaker or one has checked the translation; otherwise the app marks the language as not yet reviewed. Missing entries fall back to English, and the tests check that every translation uses the same keys and placeholders as the English file. Open one pull request per language so native speakers can review it.
 
 ### Manual registration (CLI alternative)
 
@@ -205,7 +205,7 @@ KeePassPasskeyProvider.exe /register
 KeePassPasskeyProvider.exe /status   # verify
 ```
 
-Then open Settings manually: **Settings → Accounts → Passkeys → Advanced Options** → enable **KeePassPasskey**.
+Then open Settings manually: **Settings → Accounts → Passkeys → Advanced options** → enable **KeePassPasskey**.
 
 ## License
 

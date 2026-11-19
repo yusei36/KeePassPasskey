@@ -338,14 +338,14 @@ internal sealed class RequestHandler
 		var locked = mw.DocumentManager.Documents.FirstOrDefault(mw.IsFileLocked);
 		if (locked == null)
 		{
-			Log.Info("no locked database to unlock");
+			Log.Info("No locked database to unlock");
 			return true;
 		}
 
 		if (mw.DocumentManager.ActiveDocument != locked)
 			mw.MakeDocumentActive(locked);
 
-		Log.Info("prompting to unlock the database");
+		Log.Info("Prompting to unlock the database");
 		var previous = KeePassForeground.BringToFront(mw);
 		mw.ProcessAppMessage((IntPtr)Program.AppMessage.Unlock, IntPtr.Zero);
 		KeePassForeground.Restore(previous);

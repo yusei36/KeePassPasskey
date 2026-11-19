@@ -115,7 +115,7 @@ internal static class Program
 		var response = new PipeClient(msg => Log.Debug(msg, nameof(PipeClient))).GetSettings();
 		if (response == null || response.ErrorCode != null)
 		{
-			Log.Warn($"Could not refresh settings from KeePass, keeping the cached ones: {response?.ErrorMessage ?? "no response"}");
+			Log.Warn($"Couldn't refresh settings from KeePass, keeping the cached ones: {response?.ErrorMessage ?? "no response"}");
 			return;
 		}
 		if (response.Settings.Equals(KeePassPasskeySettings.Current)) return;
@@ -168,7 +168,7 @@ internal static class Program
 			if (!mutex.WaitOne(0))
 			{
 				// Another instance is running; activate its window if this is a normal launch
-				Log.Info("Another instance is already running; activating existing window");
+				Log.Info("Another instance is already running; activating the existing window");
 				if (!startHidden)
 					ActivateExistingWindow(startOnSettings);
 				return 0;
@@ -200,7 +200,7 @@ internal static class Program
 
 		if (existing == null)
 		{
-			Log.Warn("Could not find existing process");
+			Log.Warn("Couldn't find the existing process");
 			return;
 		}
 
@@ -224,7 +224,7 @@ internal static class Program
 
 		// Window is hidden to tray — signal the running instance to show itself
 		if (!SignalRunningInstance(PluginConstants.ShowEventName))
-			Log.Warn("Could not find existing window or show-window event");
+			Log.Warn("Couldn't find the existing window or show-window event");
 	}
 
 	private static bool SignalRunningInstance(string eventName)
@@ -234,7 +234,7 @@ internal static class Program
 
 		Win32Native.SetEvent(ev);
 		Win32Native.CloseHandle(ev);
-		Log.Info("Signalled running instance: " + eventName);
+		Log.Info("Signaled the running instance: " + eventName);
 		return true;
 	}
 

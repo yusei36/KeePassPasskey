@@ -9,13 +9,13 @@ KeePassPasskey turns KeePass into a native Windows 11 passkey provider. Once ins
 
 ## Installation
 
-See the [installation instructions in the README](../README.md#installation) for the full setup steps. After installation, both status indicators in the KeePassPasskey app should show green. You can open the app at any time from the Start menu by searching for "KeePassPasskey" to check or adjust the configuration, or for debugging purposes. You do not need to keep it open: the passkey provider runs as a Windows integration in the background and is activated by Windows whenever a passkey operation is requested.
+See the [installation instructions in the README](../README.md#installation) for the full setup steps. After installation, both status indicators in the KeePassPasskey app should show green. You can open the app at any time from the Start menu by searching for "KeePassPasskey" to check or adjust the configuration, or for debugging purposes. You don't need to keep it open: the passkey provider runs as a Windows integration in the background and is activated by Windows whenever a passkey operation is requested.
 
 ## Updates
 
-The app and the plugin are two separate pieces and are updated separately. The app knows which plugin version it ships, so once it has been updated, KeePass takes care of the rest.
+The app and the plugin are two separate pieces and are updated separately. The app knows which plugin version it includes, so once it has been updated, KeePass takes care of the rest.
 
-**The plugin update prompt.** When KeePass starts and the installed KeePassPasskey app contains a newer plugin than the one loaded, a dialog offers three choices:
+**The plugin update prompt.** When KeePass starts and the installed KeePassPasskey app includes a newer plugin than the one loaded, a dialog offers three choices:
 
 | Choice | What it does |
 |---|---|
@@ -25,23 +25,23 @@ The app and the plugin are two separate pieces and are updated separately. The a
 
 Below them sits a **Don't check for plugin updates again** checkbox. It applies alongside whichever choice you make, so you can tick it and still install this update, and the check can be turned back on under [Advanced](#advanced) settings. Closing the dialog without choosing counts as Later.
 
-The dialog names the version you have, the version on offer, which installed app it comes from and the folder it will be written to. Updating a KeePass installed under `C:\Program Files\` asks for administrator rights once; portable and per-user installations update with no prompt at all. That prompt names **Windows Command Processor**, because Windows does not allow a Store app to request administrator rights for itself, so the copy is carried out by a script that ships inside the app. Expanding the prompt's details shows the script path inside the KeePassPasskey app folder.
+The dialog names the version you have, the version on offer, which installed app it comes from and the folder it will be written to. Updating a KeePass installed under `C:\Program Files\` asks for administrator rights once; portable and per-user installations update with no prompt at all. That prompt names **Windows Command Processor**, because Windows doesn't allow a Store app to request administrator rights for itself, so the copy is carried out by a script included with the app. Expanding the prompt's details shows the script path inside the KeePassPasskey app folder.
 
-If you dismiss the administrator prompt, or the copy fails for some other reason, the dialog reports it and offers **Try again**. Nothing is changed, your current plugin keeps running, and you are asked again at the next KeePass start. You can also trigger the check yourself at any time from **Tools -> KeePassPasskey -> Update plugin from installed app** in KeePass, which asks even if you chose Skip or Never earlier. Nothing is downloaded: the plugin only ever comes from the KeePassPasskey app already installed on this PC. The same submenu has **Passkey settings**, which opens the KeePassPasskey app on its Settings page, bringing it back from the system tray if it is already running there.
+If you dismiss the administrator prompt, or the copy fails for some other reason, the dialog reports it and offers **Try again**. Nothing is changed, your current plugin keeps running, and you are asked again at the next KeePass start. You can also trigger the check yourself at any time from **Tools → KeePassPasskey → Update Plugin from Installed App** in KeePass, which asks even if you chose Skip or Never earlier. Nothing is downloaded: the plugin only ever comes from the KeePassPasskey app already installed on this PC. The same submenu has **Passkey Settings**, which opens the KeePassPasskey app on its Settings page, bringing it back from the system tray if it is already running there.
 
 **Microsoft Store installs** update the app automatically in the background, so the plugin prompt is usually the first sign of a new version.
 
-**GitHub installs** update the app by running `InstallMsix.bat` as an administrator or installing the MSIX package. The plugin is then offered by the prompt above at the next KeePass start; the installer itself never writes to your KeePass plugins folder.
+**GitHub installs** update the app by running `InstallMsix.bat` as an administrator or installing the MSIX package. The plugin is then offered by the prompt above at the next KeePass start; the installer itself never writes to your KeePass `Plugins` folder.
 
-**Installing or removing the plugin from the app.** The app can install, update and remove the plugin for you. It detects your KeePass folder (you can correct it or browse for it, and its `Plugins` folder, or any folder inside it, is accepted just as well) and shows exactly which file will be written where before anything happens. If you would rather do it yourself, it can instead reveal that file in Explorer for you to copy into the `Plugins` folder by hand. This is the route for a first installation, when no plugin is loaded yet to prompt anything.
+**Installing or removing the plugin from the app.** The app can install, update and remove the plugin for you. It detects your KeePass folder (you can correct it or browse for it, and its `Plugins` folder, or any folder inside it, is accepted just as well) and shows exactly which file will be written where before anything happens. If you would rather do it yourself, it can instead show that file in File Explorer for you to copy into the `Plugins` folder by hand. This is the route for a first installation, when no plugin is loaded yet to prompt anything.
 
-Either way, the KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and does not need to be re-enabled after an update.
+Either way, the KeePassPasskey passkey provider in Windows Settings remains enabled from the initial installation and doesn't need to be re-enabled after an update.
 
 ## Uninstalling
 
-**The app.** Uninstall it under **Settings → Apps → Installed apps → KeePassPasskey → Uninstall**. Windows then removes KeePassPasskey as a passkey provider by itself, together with the app's settings and log files, which live in the app's own storage. If you want to be extra thorough, you can first click **Clear** under **Credential cache** and **Unregister** under **Provider registration** on the [Diagnostics](#diagnostics) page, but Windows normally takes care of both.
+**The app.** Uninstall it under **Settings → Apps → Installed apps → KeePassPasskey → Uninstall**. Windows then removes KeePassPasskey as a passkey provider by itself, together with the app's settings and log files, which live in the app's own storage. If you want to be extra thorough, you can first click **Clear** under **Windows credential cache** and **Unregister** under **Provider registration** on the [Diagnostics](#diagnostics) page, but Windows normally takes care of both.
 
-For a GitHub installation, you can also delete the certificate trusted during installation, if you have not already: open **certlm.msc → Trusted People → Certificates**, find **KeePassPasskey**, and delete it.
+For a GitHub installation, you can also delete the certificate trusted during installation, if you haven't already: open **certlm.msc → Trusted People → Certificates**, find **KeePassPasskey**, and delete it.
 
 **The plugin.** Close KeePass and delete `KeePassPasskey.dll` from KeePass's `Plugins` folder, or use **Remove** in the app's **Install plugin** dialog before uninstalling the app. Optionally, also remove:
 
@@ -56,7 +56,7 @@ When a website or app asks you to create a passkey, Windows will show a dialog t
 
 **Step 1: Click Change to select a different provider**
 
-Windows shows a "Saving your passkey" dialog. If KeePassPasskey is not listed as the destination, click **Change**.
+Windows shows a "Saving your passkey" dialog. If KeePassPasskey isn't listed as the destination, click **Change**.
 
 <img src="images/passkey-creation-step1.png" width="450" alt="Windows Save your passkey dialog showing the destination with the Change button">
 
@@ -68,11 +68,11 @@ A list of available passkey providers appears. Select **KeePassPasskey**.
 
 **Step 3: Confirm in the KeePassPasskey dialog**
 
-A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants to save a passkey"**. Pick the database you want to save to from the **Database** dropdown, then click **Save**. Every unlocked database is listed. **Cancel** declines the request, and so does the close button or the Escape key.
+A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants to create a passkey"**. Pick the database you want to save to from the **Database** dropdown, then click **Create passkey**. Every unlocked database is listed. **Cancel** declines the request, and so does the close button or the Escape key.
 
-The dialog counts down in its title bar and cancels the request when it runs out (see [Approval timeout](#notifications--user-verification)).
+The dialog counts down in its title bar and cancels the request when it runs out (see [Confirmation timeout](#confirmation-and-verification)).
 
-<img src="images/passkey-creation-step3.png" width="400" alt="KeePassPasskey dialog asking to save a passkey, with the database dropdown and the Save button">
+<img src="images/passkey-creation-step3.png" width="400" alt="KeePassPasskey dialog asking to create a passkey, with the database dropdown and the Create passkey button">
 
 **Step 4: Passkey saved in KeePass**
 
@@ -82,65 +82,65 @@ The passkey is now stored as an entry in the **Passkeys** group in your open Kee
 
 ### Saving a passkey to an existing entry
 
-If you already have an entry for the website (for example your username and password login), KeePassPasskey can save the new passkey **onto that existing entry** instead of creating a separate one, so the passkey lives next to your login.
+If you already have an entry for the website (for example your user name and password login), KeePassPasskey can save the new passkey **onto that existing entry** instead of creating a separate one, so the passkey lives next to your login.
 
-When matching entries are found, the creation dialog shows a **Create new** / **Add to existing** switch above the database dropdown. It starts on **Create new**, so nothing changes unless you choose otherwise. Switch to **Add to existing** to see the matching entries, grouped by the database they live in, then pick one and click **Save** to write the passkey onto it.
+When matching entries are found, the creation dialog shows a **New entry** / **Existing entry** switch above the database dropdown. It starts on **New entry**, so nothing changes unless you choose otherwise. Switch to **Existing entry** to see the matching entries, grouped by the database they live in, then pick one and click **Create passkey** to save the passkey to it.
 
-Every matching entry is listed, however many there are. Type in the search box to narrow the list by title, username or database. The key button beside it cycles through three filters: all entries, only entries that already hold a passkey, and only entries that do not. Collapse a database group by clicking its name.
+Every matching entry is listed, however many there are. Type in the search box to narrow the list by title, user name or database. The key button beside it cycles through three filters: all entries, only entries that already hold a passkey, and only entries that don't. Collapse a database group by clicking its name.
 
-Each entry shows its KeePass icon, title and username. The entry you currently have selected in KeePass is listed first and marked with a dot; entries that already hold a passkey are marked with a key. Selecting an entry that already holds a passkey shows a warning, because saving replaces the passkey it already has.
+Each entry shows its KeePass icon, title and user name. The entry you currently have selected in KeePass is listed first and marked with a dot; entries that already hold a passkey are marked with a key. Selecting an entry that already holds a passkey shows a warning, because saving replaces the passkey it already has.
 
-<img src="images/passkey-creation-add-existing.png" width="400" alt="KeePassPasskey dialog on Add to existing, listing matching entries with the search box, the filter button and the replace warning">
+<img src="images/passkey-creation-add-existing.png" width="400" alt="KeePassPasskey dialog on Existing entry, listing matching entries with the search box, the filter button and the replace warning">
 
-Matching is by website: an entry qualifies when it already holds a passkey for this site, or when its **URL** field points at the same site (the same domain or a subdomain). If you overwrite an entry that already had a passkey, the previous version is kept in that entry's **History** tab so you can restore it.
+Matching is by website: an entry qualifies when it already holds a passkey for this website, or when its **URL** field points at the same website (the same domain or a subdomain). If you replace the passkey of an entry that already had one, the previous version is kept in that entry's **History** tab so you can restore it.
 
-This is controlled by the **Offer saving to an existing entry** setting (on by default). Turn it off to always create new entries.
+This is controlled by the **Offer to save to an existing entry** setting (on by default). Turn it off to always create new entries.
 
 ## Signing in with a passkey
 
-KeePassPasskey searches all open databases during sign-in, so you do not need to switch to a particular database first.
+KeePassPasskey searches all open databases during sign-in, so you don't need to switch to a particular database first.
 
 ### Login with a passkey instead of a password
 
-Some sites let you sign in with a passkey directly, without entering a password. The site may ask for your username first, or offer a dedicated "Sign in with a passkey" button.
+Some websites let you sign in with a passkey directly, without entering a password. The website may ask for your user name first, or offer a dedicated "Sign in with a passkey" button.
 
-**Step 1: Select your passkey from autofill or enter your username**
+**Step 1: Select your passkey from autofill or enter your user name**
 
-Click on the username field. The browser may show a list of saved passkeys as autofill suggestions. Select your passkey from the list, or enter your username and click the passkey sign-in option.
+Click on the user name field. The browser may show a list of saved passkeys as autofill suggestions. Select your passkey from the list, or enter your user name and click the passkey sign-in option.
 
 <img src="images/passkey-signin-autofill.png" width="450" alt="Browser autofill dropdown showing saved passkeys for the site">
 
-**Step 2: Select a passkey (only if multiple are saved for this site)**
+**Step 2: Select a passkey (only if multiple are saved for this website)**
 
-If you did not use autofill and have multiple passkeys for this site, Windows shows a list. Select the one you want to use.
+If you didn't use autofill and have multiple passkeys for this website, Windows shows a list. Select the one you want to use.
 
 <img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
-**Step 3: Approve in the KeePassPasskey dialog**
+**Step 3: Confirm in the KeePassPasskey dialog**
 
-A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants you to sign in"**, and showing the KeePass entry Windows picked with its icon, title, username and database. Click **Sign in** to confirm, or **Cancel** to decline.
+A KeePassPasskey dialog appears, headed with the website's address, for example **"github.com wants you to sign in"**, and showing the KeePass entry Windows picked with its icon, title, user name and database. Click **Sign in** to confirm, or **Cancel** to decline.
 
 <img src="images/passkey-signin-approve.png" width="400" alt="KeePassPasskey dialog asking to sign in, showing the selected passkey and the Sign in button">
 
 ### Login with a password and passkey as a second factor
 
-Some sites use a passkey as a second factor after you have entered your password.
+Some websites use a passkey as a second factor after you have entered your password.
 
-**Step 1: Enter your username and password**
+**Step 1: Enter your user name and password**
 
-Enter your username and password as usual and submit the login form.
+Enter your user name and password as usual and submit the login form.
 
 **Step 2: Select the passkey option as second factor**
 
 When prompted for a second factor, select the passkey option.
 
-**Step 3: Select a passkey (only if multiple are saved for this site)**
+**Step 3: Select a passkey (only if multiple are saved for this website)**
 
-If you have multiple passkeys for this site, Windows shows a list. Select the one you want to use.
+If you have multiple passkeys for this website, Windows shows a list. Select the one you want to use.
 
 <img src="images/passkey-signin-select.png" width="450" alt="Windows passkey selection showing multiple saved passkeys for a site">
 
-**Step 4: Approve in the KeePassPasskey dialog**
+**Step 4: Confirm in the KeePassPasskey dialog**
 
 A KeePassPasskey dialog appears, showing the KeePass entry Windows picked. Click **Sign in** to confirm.
 
@@ -150,27 +150,27 @@ A KeePassPasskey dialog appears, showing the KeePass entry Windows picked. Click
 
 If a passkey is requested while your KeePass database is locked, KeePass comes to the front and asks you to unlock it, the same prompt its own unlock command shows. With a quick unlock plugin such as KeePassWinHello, that is its Windows Hello prompt. Once the database is open, the passkey operation continues and the focus returns to the window that asked for the passkey, usually your browser.
 
-KeePassPasskey still asks for Windows Hello afterwards as usual. If unlocking KeePass already verifies you (for example with KeePassWinHello) and you find the second prompt redundant, turn on **Skip Windows Hello after unlocking KeePass** in the settings (see [Notifications & User Verification](#notifications--user-verification)).
+KeePassPasskey still asks for Windows Hello afterward as usual. If unlocking KeePass already verifies you (for example with KeePassWinHello) and you find the second prompt redundant, turn on **Skip Windows Hello after unlocking KeePass** in the settings (see [Confirmation and verification](#confirmation-and-verification)).
 
 If KeePass already shows a dialog when the request arrives, for example its unlock prompt that you opened yourself, KeePass comes to the front with that dialog instead of opening a second prompt. KeePassPasskey waits until the dialog closes and continues once the database is open.
 
-If you cancel the unlock, the operation fails with the usual "database is locked" notification. If the website or browser cancels the request while KeePass is still waiting to be unlocked, KeePassPasskey stops right away; unlocking afterwards only unlocks KeePass. KeePass itself must be running; KeePassPasskey does not start it.
+If you cancel the unlock, the operation fails with the usual "database is locked" notification. If the website or browser cancels the request while KeePass is still waiting to be unlocked, KeePassPasskey stops right away; unlocking afterward only unlocks KeePass. KeePass itself must be running; KeePassPasskey doesn't start it.
 
 ## Managing passkeys in KeePass
 
 Passkeys are stored as standard KeePass entries in the **Passkeys** group.
 
-### Organising passkey entries
+### Organizing passkey entries
 
 Passkey entries can be freely renamed or moved to any group in KeePass without affecting functionality. The **Passkeys** group itself can also be renamed.
 
-If a group has searching disabled in KeePass, passkey entries inside it will not be found by KeePassPasskey.
+If a group has searching disabled in KeePass, passkey entries inside it won't be found by KeePassPasskey.
 
-If multiple entries exist for the same site, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **Passkeys** group before registering again on a site.
+If multiple entries exist for the same website, KeePassPasskey uses the first one it finds during sign-in. Avoid duplicates by checking the **Passkeys** group before creating another passkey for a website.
 
 ### Moving or copying a passkey between entries
 
-You can move or copy the passkey data from one entry to another, for example to attach a passkey to your existing login entry for a site, or to relocate one that was saved to the wrong entry or database. Right-click a passkey entry to open the **Passkey** submenu:
+You can move or copy the passkey data from one entry to another, for example to attach a passkey to your existing login entry for a website, or to relocate one that was saved to the wrong entry or database. Right-click a passkey entry to open the **Passkey** submenu:
 
 - **Cut Passkey**, then right-click the destination entry and choose **Paste Passkey Here**, moves the passkey. It is removed from the source entry only after the paste succeeds.
 - **Copy Passkey**, then **Paste Passkey Here**, duplicates the passkey and leaves it on the source entry. The passkey stays on the clipboard, so you can paste it onto several entries in a row.
@@ -189,7 +189,7 @@ Deleted entries move to the KeePass Recycle Bin, which has searching disabled by
 
 ### Passkey entry format
 
-KeePassPasskey identifies an entry as a passkey by the presence of the `KPEX_PASSKEY_CREDENTIAL_ID` and `KPEX_PASSKEY_RELYING_PARTY` fields. An entry without these fields will not be recognised as a passkey, regardless of which group it is in.
+KeePassPasskey identifies an entry as a passkey by the presence of the `KPEX_PASSKEY_CREDENTIAL_ID` and `KPEX_PASSKEY_RELYING_PARTY` fields. An entry without these fields won't be recognized as a passkey, regardless of which group it is in.
 
 Each passkey entry contains these custom fields:
 
@@ -198,10 +198,10 @@ Each passkey entry contains these custom fields:
 | `KPEX_PASSKEY_CREDENTIAL_ID` | Passkey identifier |
 | `KPEX_PASSKEY_PRIVATE_KEY_PEM` | Private key (keep this secret) |
 | `KPEX_PASSKEY_RELYING_PARTY` | Website domain (e.g. `github.com`) |
-| `KPEX_PASSKEY_USERNAME` | Username used during registration |
+| `KPEX_PASSKEY_USERNAME` | User name given when the passkey was created |
 | `KPEX_PASSKEY_USER_HANDLE` | User identifier from the website |
-| `KPEX_PASSKEY_FLAG_BE` | Backup Eligibility flag (`1`/`0`, default `1`) |
-| `KPEX_PASSKEY_FLAG_BS` | Backup State flag (`1`/`0`, default `1`) |
+| `KPEX_PASSKEY_FLAG_BE` | Backup eligibility flag (`1`/`0`, default `1`) |
+| `KPEX_PASSKEY_FLAG_BS` | Backup state flag (`1`/`0`, default `1`) |
 
 Passkeys created by [KeePassXC](https://keepassxc.org/) are stored in the same format and are fully compatible.
 
@@ -213,50 +213,50 @@ If the page shows **Settings enforced by KeePass**, these settings come from Kee
 
 ### Appearance
 
-**Theme**: choose between System (follows Windows), Light, or Dark.
+**Theme**: choose between Use system setting (follows Windows), Light, or Dark.
 
 **Language**: the language of the app, its passkey prompts and its notifications. **Use Windows language** (the default) follows the Windows display language when KeePassPasskey has a translation for it, and English otherwise. The change applies right away; a passkey prompt that is already open keeps its language. The KeePass plugin's menus and dialogs follow the language set in KeePass instead (**View → Change Language** in KeePass).
 
-**System tray icon**: when enabled, closing the window keeps the app running in the tray. The passkey provider continues to work regardless of whether the app is open.
+**System tray icon**: when on, closing the window keeps the app running in the tray. The passkey provider continues to work regardless of whether the app is open.
 
-### Notifications & User Verification
+### Confirmation and verification
 
-Controls how KeePassPasskey confirms your identity before completing a passkey operation. **Registration** (creating a passkey) and **Sign-in** (using a passkey) are configured separately, and each has two independent switches:
+Controls how KeePassPasskey confirms your identity before completing a passkey operation. **Creating passkeys** and **Sign-in** (using a passkey) are configured separately, and each has two independent switches:
 
 | Switch | Behavior |
 |---|---|
 | Windows Hello | Requires Windows Hello (PIN, fingerprint, or face) |
-| Confirmation prompt | Shows a KeePassPasskey dialog you must approve |
+| Confirmation prompt | Shows a KeePassPasskey dialog you must confirm |
 
 Both are on by default. Turning both off for an operation lets it complete silently, without asking you at all; a warning icon appears beside the switches while that is the case.
 
-**Skip Windows Hello after unlocking KeePass** (off by default): when KeePass was locked and you just unlocked it for the same request, the Windows Hello step is skipped, since unlocking already verified you. It only applies while the confirmation prompt is on; with Windows Hello as the only verification it is kept, since it is then the step that shows which site asked. See [When KeePass is locked](#when-keepass-is-locked).
+**Skip Windows Hello after unlocking KeePass** (off by default): when KeePass was locked and you just unlocked it for the same request, the Windows Hello step is skipped, since unlocking already verified you. It only applies while the confirmation prompt is on; with Windows Hello as the only verification it is kept, since it is then the step that shows which website asked. See [When KeePass is locked](#when-keepass-is-locked).
 
-The **Approval timeout** controls how long the confirmation prompt stays open before the operation is cancelled (default: 60 seconds). It only applies when the confirmation prompt is on.
+The **Confirmation timeout** controls how long the confirmation prompt stays open before the operation is canceled (default: 60 seconds). It only applies when the confirmation prompt is on.
 
-**Show error notifications**: when enabled, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
+**Error notifications**: when on, KeePassPasskey shows a detailed notification if a passkey operation fails. Windows always shows its own generic error regardless of this setting.
 
-### Passkey Entries
+### Passkey entries
 
 Controls how new passkey entries are created in your database.
 
-**Save new passkeys in**: where a newly created passkey entry is placed. **Passkeys group** (default) stores it in the dedicated **Passkeys** group, which is created automatically if it does not exist. **Selected group** stores it in the group currently selected in the KeePass group tree, which is handy if you organise passkeys alongside related entries. If no group is selected, KeePassPasskey falls back to the **Passkeys** group.
+**Save new passkeys in**: where a newly created passkey entry is placed. **Passkeys group** (default) stores it in the dedicated **Passkeys** group, which is created automatically if it doesn't exist. **Selected group** stores it in the group currently selected in the KeePass group tree, which is handy if you organize passkeys alongside related entries. If no group is selected, KeePassPasskey falls back to the **Passkeys** group.
 
 **Entry title**: the title given to each new passkey entry. The default is `{RP_NAME} (Passkey)`. You can use `{RP_NAME}` for the website's display name, plus any KeePass placeholder such as `{USERNAME}`, `{URL}`, or `{S:KPEX_PASSKEY_RELYING_PARTY}`. Only unprotected fields are resolved in the title. Protected fields such as the password or private key are never exposed.
 
-**Resolve title placeholders**: when enabled (default), placeholders are resolved when the passkey is created and the resulting text is stored as the title. When disabled, the placeholders are stored as-is so KeePass resolves them each time the entry is shown (useful if you later edit a referenced field). `{RP_NAME}` is always resolved, because it has no underlying entry field.
+**Resolve title placeholders when saving**: when on (default), placeholders are resolved when the passkey is created and the resulting text is stored as the title. When off, the placeholders are stored as-is so KeePass resolves them each time the entry is shown (useful if you later edit a referenced field). `{RP_NAME}` is always resolved, because it has no underlying entry field.
 
-**Tag new passkeys**: when enabled (default), a `Passkey` tag is added to each entry created when a new passkey is registered.
+**Tag new passkey entries**: when on (default), a `Passkey` tag is added to each entry created for a new passkey.
 
-**Allow duplicate passkeys**: a website can ask not to register a second passkey for an account it already has one for. This setting controls where that request is enforced:
+**Duplicate passkey check**: a website can ask not to create a second passkey for an account that already has one. This setting controls whether that request is honored, and which databases are checked:
 
-| Option | Behaviour |
+| Option | Behavior |
 |---|---|
 | Don't check | Always allow a duplicate, even when the website asks not to. |
 | Check target database (default) | Block only when the existing passkey is in the database the new one would be saved to. |
 | Check all databases | Block when the existing passkey is in any open database. |
 
-Relax this if you deliberately keep the same account's passkey in more than one database and a site refuses to register it again.
+Relax this if you deliberately keep the same account's passkey in more than one database and a website refuses to create it again.
 
 ### Advanced
 
@@ -265,20 +265,20 @@ These settings are rarely needed. Leave them at their defaults unless you are tr
 | Setting | Description |
 |---|---|
 | Log level | Verbosity of log files. Increase to Debug when reporting a bug, or set to Off to disable logging entirely. |
-| Status refresh interval | How often the app polls for connection status. |
-| Check for plugin updates | When on (default), KeePass offers to update the plugin at startup if the installed app ships a newer one. Every update is still confirmed in a dialog, nothing is replaced without your click. Turn this off to never be asked; see [Updates](#updates). |
-| Offer saving to an existing entry | When on (default), passkey creation offers an **Add to existing** option so you can save the passkey onto a matching entry (by website) instead of always creating a new one. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Overwriting an entry's existing passkey keeps the previous version in the entry's History. Requires the registration confirmation prompt. |
-| Use legacy notification prompts | Show confirmation prompts as Windows notifications instead of dialogs, the way earlier versions did. Off by default. Notifications are silently hidden by Focus Assist and Do Not Disturb, and their database and entry pickers are limited to 5 items, so only turn this on if the dialogs cause you trouble. |
+| Status refresh interval | How often the app checks the provider status. |
+| Check for plugin updates | When on (default), KeePass offers to update the plugin at startup if the installed app includes a newer one. Every update is still confirmed in a dialog, nothing is replaced without your click. Turn this off to never be asked; see [Updates](#updates). |
+| Offer to save to an existing entry | When on (default), passkey creation offers an **Existing entry** option so you can save the passkey to a matching entry (by website) instead of always creating a new entry. See [Saving a passkey to an existing entry](#saving-a-passkey-to-an-existing-entry). Replacing an entry's existing passkey keeps the previous version in the entry's History. Requires the confirmation prompt for new passkeys. |
+| Use legacy notification prompts | Show confirmation prompts as Windows notifications instead of dialogs, the way earlier versions did. Off by default. Do not disturb hides notifications without warning, and their database and entry lists show at most 5 items, so only turn this on if the dialogs cause you trouble. |
 
 ### Expert
 
-Advanced options for uncommon setups. Leave them at their defaults unless you specifically need a different value.
+Options for uncommon setups. Leave them at their defaults unless you specifically need a different value.
 
 #### Windows credential cache
 
 | Setting | Description |
 |---|---|
-| Windows credential cache | Shares the website and user name of each passkey with Windows (never the keys themselves), so Windows can offer them in its sign-in prompt. **Be aware:** when off, passkeys will not appear in autofill suggestions or in the selection list, which prevents sign-in on most sites. Turning it off removes them from Windows immediately. |
+| Windows credential cache | Shares the website and user name of each passkey with Windows (never the keys themselves), so Windows can offer them in its sign-in prompt. **Be aware:** when off, passkeys won't appear in autofill suggestions or in the selection list, which prevents sign-in on most websites. Turning it off removes them from Windows immediately. |
 
 Leave this **On**. It is the switch that puts your passkeys in front of Windows at all, so turning it off disables passkey sign-in almost everywhere. It is here for the rare case where you want KeePassPasskey installed but invisible to Windows.
 
@@ -288,8 +288,8 @@ These control the **backup flags** (`BE`/`BS`) written to newly created passkeys
 
 | Setting | Description |
 |---|---|
-| Backup Eligibility (BE) | When **On** (default), websites are told that new passkeys are allowed to be backed up and synced to your other devices. When **Off**, they are told the passkey is saved on a single device only. |
-| Backup State (BS) | When **On** (default), websites are told that new passkeys are backed up right now. Only available while **Backup Eligibility** is On; turning eligibility off automatically turns this off too. |
+| Backup eligibility (BE) | When **On** (default), websites are told that new passkeys are allowed to be backed up and synced to your other devices. When **Off**, they are told the passkey is saved on a single device only. |
+| Backup state (BS) | When **On** (default), websites are told that new passkeys are already backed up. Only available while **Backup eligibility** is On; turning eligibility off automatically turns this off too. |
 
 These are the defaults for *new* passkeys. Each passkey stores its own `KPEX_PASSKEY_FLAG_BE`/`KPEX_PASSKEY_FLAG_BS` values, which are replayed on every sign-in. To change the flags on an existing passkey, edit those fields directly in the entry's **Advanced** tab in KeePass (`1` = on, `0` = off).
 
@@ -297,7 +297,7 @@ These are the defaults for *new* passkeys. Each passkey stores its own `KPEX_PAS
 
 A website lists the signing algorithms it accepts when you create a passkey. KeePassPasskey supports three: **ES256** (EC P-256), **EdDSA** (Ed25519) and **RS256** (RSA-2048). A new passkey only ever uses an algorithm the website asked for; these settings choose between them when it offers more than one.
 
-- **Order**: **Use list order** (default) picks the topmost enabled algorithm in the list that the website accepts; use the arrows to reorder the list. **Keep website preference** picks the first enabled algorithm in the website's own preference order, which is what the passkey standard (CTAP2) specifies.
+- **Order**: **Use list order** (default) picks the topmost algorithm in the list that's on and that the website accepts; use the arrows to reorder the list. **Use website's order** picks the first algorithm that's on, in the website's own preference order, which is what the passkey standard (CTAP2) specifies.
 - **On/off switches**: an algorithm that is off is never used for new passkeys, so if a website accepts only algorithms you turned off, creating a passkey there fails. At least one algorithm always stays on. The switches apply with either order.
 
 The default list is ES256, EdDSA, RS256.
@@ -308,23 +308,23 @@ For example, to prefer EdDSA but still work everywhere, move EdDSA to the top. T
 
 The **AAGUID** is a fixed identifier that tells a website which authenticator created a passkey. By default KeePassPasskey reports its own AAGUID. This setting lets you override it, for example to report a neutral all-zero value or to match another authenticator model.
 
-To change it, type a GUID into the field and click **Apply**. Applying re-registers the authenticator with Windows with the new value. Leave the field empty and click **Apply** to go back to the built-in default. The value is saved on this device only; it is not stored in your database and does not follow the database to other machines.
+To change it, type a GUID into the field and click **Apply**. Applying re-registers the authenticator with Windows with the new value. Leave the field empty and click **Apply** to go back to the built-in default. The value is saved on this device only; it isn't stored in your database and doesn't follow the database to other machines.
 
 | Field | Description |
 |---|---|
 | Spoof AAGUID | The GUID to report. Must be a valid GUID (for example `00000000-0000-0000-0000-000000000000`), or empty to use the default. |
 
-The AAGUID is only sent when a passkey is **created**; it is never sent during sign-in, so changing it has no effect on passkeys you already have. **A few websites that enforce attestation may reject a passkey whose AAGUID they do not recognise**, so change this only if you know why you need to.
+The AAGUID is only sent when a passkey is **created**; it is never sent during sign-in, so changing it has no effect on passkeys you already have. **A few websites that enforce attestation may reject a passkey whose AAGUID they don't recognize**, so change this only if you know why you need to.
 
 ## Diagnostics
 
-The **Diagnostics** page shows the app and plugin versions, the provider registration state, and a live view of both log files. You normally never need it; it is there for when something is not working.
+The **Diagnostics** page shows the app and plugin versions, the provider registration state, and a live view of both log files. You normally never need it; it is there for when something isn't working.
 
 ### Provider registration
 
-**Register** and **Unregister** add or remove KeePassPasskey as a passkey provider in Windows. Use them only if the app is missing from **Settings → Accounts → Passkeys → Advanced options**, or if support asks you to. **Advanced passkey settings** opens that Windows page, which also holds the switch that turns KeePassPasskey on or off.
+**Register** and **Unregister** add or remove KeePassPasskey as a passkey provider in Windows. Use them only if the app is missing from **Settings → Accounts → Passkeys → Advanced options**, or if support asks you to. **Advanced passkey options** opens that Windows page, which also holds the switch that turns KeePassPasskey on or off.
 
-### Credential cache
+### Windows credential cache
 
 To offer your passkeys in the sign-in prompt, Windows keeps its own copy of them. It is refreshed automatically whenever you open, save or close a database, or add or change a passkey, so these buttons are only needed when something looks wrong.
 
@@ -333,17 +333,17 @@ The copy exists only while KeePassPasskey is switched on in **Settings → Accou
 | Button | Description |
 |---|---|
 | Sync now | Refreshes the Windows copy from the databases currently open in KeePass. |
-| Write to log | Writes the Windows copy and your KeePass passkeys to the log, side by side, for troubleshooting and bug reports. Usernames are not written in full. |
-| Clear | Removes every passkey from the Windows copy. They come back on the next sync, so use this together with **Sync now** to rebuild it from scratch. |
+| Write to log | Writes the Windows copy and your KeePass passkeys to the log, side by side, for troubleshooting and bug reports. User names aren't written in full. |
+| Clear | Removes all passkeys from the Windows copy. They come back on the next sync, so use this together with **Sync now** to rebuild it from scratch. |
 
-If your passkeys are not offered at sign-in, see [The website says there are no passkeys on this device](troubleshooting-faq.md#the-website-says-there-are-no-passkeys-on-this-device).
+If your passkeys aren't offered at sign-in, see [The website says there are no passkeys on this device](troubleshooting-faq.md#the-website-says-there-are-no-passkeys-on-this-device).
 
 ## Limitations
 
-**No attestation.** Some websites ask the authenticator for a certificate-signed proof (attestation) of which device created the passkey, so they can accept only approved hardware. KeePassPasskey creates every passkey without attestation, because it is software and has no manufacturer-signed key to prove anything with. Most websites do not ask for attestation, but the few that require it, usually workplace or government logins, will refuse the passkey. See [A site asks for enterprise attestation](troubleshooting-faq.md#a-site-asks-for-enterprise-attestation).
+**No attestation.** Some websites ask the authenticator for a certificate-signed proof (attestation) of which device created the passkey, so they can accept only approved hardware. KeePassPasskey creates every passkey without attestation, because it is software and has no manufacturer-signed key to prove anything with. Most websites don't ask for attestation, but the few that require it, usually workplace or government logins, will refuse the passkey. See [A website asks for enterprise attestation](troubleshooting-faq.md#a-website-asks-for-enterprise-attestation).
 
-**No PRF extension.** Some websites and apps use a passkey not only to sign in but also to derive an encryption key from it (the PRF extension), for example to unlock an encrypted vault without a password. KeePassPasskey does not support this yet; progress is tracked in [issue #24](https://github.com/yusei36/KeePassPasskey/issues/24). Signing in with the passkey still works; only the encryption feature is unavailable, so you need the site's other unlock method, such as a master password.
+**No PRF extension.** Some websites and apps use a passkey not only to sign in but also to derive an encryption key from it (the PRF extension), for example to unlock an encrypted vault without a password. KeePassPasskey doesn't support this yet; progress is tracked in [issue #24](https://github.com/yusei36/KeePassPasskey/issues/24). Signing in with the passkey still works; only the encryption feature is unavailable, so you need the website's other unlock method, such as a master password.
 
 ## FAQ & Troubleshooting
 
-If something is not working, the [FAQ & Troubleshooting](troubleshooting-faq.md) page covers the most common questions and fixes, such as [why a TPM is required](troubleshooting-faq.md#why-is-a-tpm-required) and [KeePassPasskey not appearing in the provider list](troubleshooting-faq.md#keepasspasskey-does-not-appear-in-the-provider-list).
+If something isn't working, the [FAQ & Troubleshooting](troubleshooting-faq.md) page covers the most common questions and fixes, such as [why a TPM is required](troubleshooting-faq.md#why-is-a-tpm-required) and [KeePassPasskey not appearing in the provider list](troubleshooting-faq.md#keepasspasskey-doesnt-appear-in-the-provider-list).

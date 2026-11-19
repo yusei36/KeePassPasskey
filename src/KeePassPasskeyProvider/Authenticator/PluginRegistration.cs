@@ -21,7 +21,7 @@ internal static unsafe class PluginRegistration
 		if (stateHr >= HResults.S_OK) return true;
 
 		int hr = Register();
-		if (hr < HResults.S_OK) Log.Error($"auto-registration failed hr=0x{hr:X8}");
+		if (hr < HResults.S_OK) Log.Error($"Auto-registration failed hr=0x{hr:X8}");
 		return hr >= HResults.S_OK;
 	}
 
@@ -73,7 +73,7 @@ internal static unsafe class PluginRegistration
 			WebAuthnPluginApi.WebAuthNPluginFreeAddAuthenticatorResponse(pResponse);
 		}
 
-		Log.Info("succeeded");
+		Log.Info("Succeeded");
 		return HResults.S_OK;
 	}
 
@@ -87,7 +87,7 @@ internal static unsafe class PluginRegistration
 	{
 		if (!EnsureRegistered())
 		{
-			Log.Error("cannot update details, authenticator is not registered");
+			Log.Error("Can't update details, the authenticator isn't registered");
 			return HResults.E_FAIL;
 		}
 
@@ -129,7 +129,7 @@ internal static unsafe class PluginRegistration
 			}
 		}
 
-		Log.Info("succeeded");
+		Log.Info("Succeeded");
 		return HResults.S_OK;
 	}
 
@@ -142,7 +142,7 @@ internal static unsafe class PluginRegistration
 			Log.Error($"WebAuthNPluginRemoveAuthenticator failed hr=0x{hr:X8}");
 			return hr;
 		}
-		Log.Info($"succeeded");
+		Log.Info("Succeeded");
 		return hr;
 	}
 

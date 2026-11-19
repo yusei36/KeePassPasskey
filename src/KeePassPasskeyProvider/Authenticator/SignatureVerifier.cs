@@ -24,7 +24,7 @@ internal static unsafe class SignatureVerifier
 		byte[]? keyBlob = GetOperationSigningPublicKey();
 		if (keyBlob == null)
 		{
-			Log.Error("no key available, rejecting operation");
+			Log.Error("No key available, rejecting the operation");
 			return HResults.NTE_BAD_SIGNATURE;
 		}
 
@@ -46,7 +46,7 @@ internal static unsafe class SignatureVerifier
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"exception {ex.GetType().Name}: {ex.Message}");
+			Log.Error($"Exception {ex.GetType().Name}: {ex.Message}");
 			return Marshal.GetHRForException(ex);
 		}
 	}
@@ -59,7 +59,7 @@ internal static unsafe class SignatureVerifier
 		// RSA vs EC from the key blob magic (first 4 bytes)
 		uint magic = keyBlob.Length >= 4 ? BitConverter.ToUInt32(keyBlob, 0) : 0;
 		bool isRsa = magic == BCRYPT_RSAPUBLIC_MAGIC;
-		Log.Debug($"key blob magic=0x{magic:X8} len={keyBlob.Length} -> {(isRsa ? "RSA" : "EC")}");
+		Log.Debug($"Key blob magic=0x{magic:X8} len={keyBlob.Length} -> {(isRsa ? "RSA" : "EC")}");
 
 		CngKey cngKey = CngKey.Import(keyBlob, CngKeyBlobFormat.GenericPublicBlob);
 		byte[] hash = SHA256.HashData(data);
@@ -117,7 +117,7 @@ internal static unsafe class SignatureVerifier
 		try
 		{
 			byte[] blob = new ReadOnlySpan<byte>(pb, (int)cb).ToArray();
-			Log.Info($"fetched {label} key blob {blob.Length} bytes");
+			Log.Info($"Fetched {label} key blob {blob.Length} bytes");
 			return blob;
 		}
 		finally
