@@ -4,8 +4,10 @@ using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.App;
+using KeePassPasskeyProvider.App.Prompts;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
+using KeePassPasskeyProvider.Localization;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
@@ -47,16 +49,26 @@ internal static class ComServer
 		// Capture main thread ID so the idle timer can post WM_QUIT here to wake GetMessage.
 		uint mainThreadId = Win32Native.GetCurrentThreadId();
 
-		// Pick up settings changes (the management app writes the cache file on save).
+		// Pick up settings changes the management app saves while this server stays alive between
+		// ceremonies: the cached KeePass settings and the device-local ones (language, theme).
 		Directory.CreateDirectory(AppPaths.SettingsDir);
 		using var settingsFileWatcher = new FileSystemWatcher(AppPaths.SettingsDir)
 		{
-			Filter = SettingsCache.SettingsFileName,
 			NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
-			EnableRaisingEvents = true,
 		};
-		void ReloadSettings(object? _, FileSystemEventArgs __)
+		settingsFileWatcher.Filters.Add(SettingsCache.SettingsFileName);
+		settingsFileWatcher.Filters.Add(AppSettings.FileName);
+		void ReloadSettings(object? _, FileSystemEventArgs e)
 		{
+			if (string.Equals(e.Name, AppSettings.FileName, StringComparison.OrdinalIgnoreCase))
+			{
+				if (AppSettings.TryLoad() is not { } appSettings)
+					return;
+				AppSettings.Current = appSettings;
+				AppLanguage.Apply(appSettings.Language);
+				PromptApplication.ApplyThemeFromSettings();
+				return;
+			}
 			var updatedSettings = SettingsCache.TryLoad();
 			if (updatedSettings != null)
 				KeePassPasskeySettings.Current = updatedSettings;
@@ -64,6 +76,7 @@ internal static class ComServer
 		settingsFileWatcher.Changed += ReloadSettings;
 		settingsFileWatcher.Created += ReloadSettings;
 		settingsFileWatcher.Renamed += (s, e) => ReloadSettings(s, e);
+		settingsFileWatcher.EnableRaisingEvents = true;
 
 		// Quit once idle (see ComActivity), waking the message loop via WM_QUIT.
 		using var idleTimer = new System.Threading.Timer(_ =>
