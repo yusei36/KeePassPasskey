@@ -356,6 +356,9 @@ Eine Website, die nur ausgeschaltete Algorithmen akzeptiert, kann keinen Passkey
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>Reihenfolge der Website verwenden</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>Reihenfolge</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>Design und Sprache</value>
   </data>
@@ -501,6 +504,9 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>Erstellen von Passkeys</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>Bestätigungsdialog und Windows Hello sind ausgeschaltet, daher werden Passkeys ohne Nachfrage erstellt.</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Auf Standardwerte zurücksetzen</value>
   </data>
@@ -530,6 +536,9 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Anmeldung</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>Bestätigungsdialog und Windows Hello sind ausgeschaltet, daher werden Passkeys ohne Nachfrage für die Anmeldung verwendet.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>Wenn Sie KeePass gerade für dieselbe Anfrage entsperrt haben, wird Windows Hello nicht erneut abgefragt. Gilt nur, solange der Bestätigungsdialog eingeschaltet ist.</value>
@@ -578,9 +587,6 @@ Ausgewählte Gruppe: die beim Erstellen des Passkeys in KeePass ausgewählte Gru
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>Bestätigungsdialog</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>Bestätigungsdialog und Windows Hello sind ausgeschaltet, daher werden Passkeys ohne Nachfrage erstellt und verwendet.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (PIN, Fingerabdruck oder Gesicht)</value>
