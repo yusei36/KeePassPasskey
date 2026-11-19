@@ -11,8 +11,9 @@ internal sealed class AppSettings
 {
 	internal static AppSettings Current { get; set; } = new();
 
-	private static readonly string FilePath = Path.Combine(
-		AppPaths.SettingsDir, "AppSettings.json");
+	internal const string FileName = "AppSettings.json";
+
+	private static readonly string FilePath = Path.Combine(AppPaths.SettingsDir, FileName);
 
 	[JsonProperty("enableTrayIcon")]
 	internal bool EnableTrayIcon { get; set; }

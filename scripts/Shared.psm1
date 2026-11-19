@@ -4,6 +4,8 @@ Set-StrictMode -Version Latest
 
 $script:CertSubject    = 'CN=KeePassPasskey'
 $script:DevCertSubject = 'CN=KeePassPasskey Dev'
+# Unsigned Debug builds (CI) carry Windows' unsigned-namespace OID, which Add-AppxPackage -AllowUnsigned requires.
+$script:UnsignedDevPublisher = "$script:DevCertSubject, OID.2.25.311729368913984317654407730594956997722=1"
 # Debug builds use a dev publisher + dev CLSID so they coexist with a Release install.
 # These must match the #if DEBUG values in PluginConstants.cs.
 $script:ReleaseClsid = '4bff0a65-fdd6-4f97-ac44-7741ecaa5d7e'
@@ -98,7 +100,8 @@ function Invoke-BuildWapproj {
 		[string]$Configuration,
 		[string]$MSBuild,
 		[switch]$Optimized,
-		[switch]$Store
+		[switch]$Store,
+		[switch]$Unsigned
 	)
 	# Optimized and plain builds share one output dir and the publish step never overwrites what is
 	# staged there, so a stale trimmed runtime otherwise survives into the MSIX.
@@ -125,7 +128,8 @@ function Invoke-BuildWapproj {
 	# Debug builds get the dev publisher + dev CLSID so they install and register beside a Release
 	# build, plus a "Dev" display name so they are distinguishable in the Start menu / Settings.
 	if ($Configuration -eq 'Debug') {
-		$patchedContent = $patchedContent -replace 'Publisher="CN=KeePassPasskey"', "Publisher=`"$script:DevCertSubject`""
+		$devPublisher   = if ($Unsigned) { $script:UnsignedDevPublisher } else { $script:DevCertSubject }
+		$patchedContent = $patchedContent -replace 'Publisher="CN=KeePassPasskey"', "Publisher=`"$devPublisher`""
 		$patchedContent = $patchedContent -replace [regex]::Escape($script:ReleaseClsid), $script:DevClsid
 		$patchedContent = $patchedContent -replace '<DisplayName>KeePassPasskey</DisplayName>', '<DisplayName>KeePassPasskey Dev</DisplayName>'
 		$patchedContent = $patchedContent -replace 'DisplayName="KeePassPasskey"', 'DisplayName="KeePassPasskey Dev"'
