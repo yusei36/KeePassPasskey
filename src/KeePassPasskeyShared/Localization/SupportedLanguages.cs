@@ -39,7 +39,7 @@ public static class SupportedLanguages
 		new SupportedLanguage("fr", "fr", reviewed: false),
 		new SupportedLanguage("it", "it", reviewed: false),
 		new SupportedLanguage("ja", "ja", reviewed: false),
-		new SupportedLanguage("nl", "nl", reviewed: false),
+		new SupportedLanguage("nl", "nl", reviewed: true),
 		new SupportedLanguage("pl", "pl", reviewed: true),
 		new SupportedLanguage("pt-BR", "pt-BR", reviewed: true),
 		new SupportedLanguage("ru", "ru", reviewed: false),
