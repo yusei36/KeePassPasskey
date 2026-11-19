@@ -99,6 +99,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>Not installed as a package</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>Choose the KeePass folder</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>Installing...</value>
   </data>
