@@ -97,6 +97,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>Aplikacja nie jest zainstalowana jako pakiet</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>Wybierz folder programu KeePass</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>Trwa instalowanie...</value>
   </data>
@@ -353,6 +356,9 @@ Witryna, która akceptuje tylko wyłączone algorytmy, nie może utworzyć klucz
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>Użyj kolejności witryny</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>Kolejność</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>Motyw i język</value>
   </data>
@@ -504,6 +510,9 @@ Wybrana grupa: grupa wybrana w programie KeePass podczas tworzenia klucza dostę
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>Tworzenie kluczy dostępu</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>Monit o potwierdzenie i funkcja Windows Hello są wyłączone, więc klucze dostępu będą tworzone bez pytania.</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Przywróć ustawienia domyślne</value>
   </data>
@@ -533,6 +542,9 @@ Wybrana grupa: grupa wybrana w programie KeePass podczas tworzenia klucza dostę
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>Logowanie</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>Monit o potwierdzenie i funkcja Windows Hello są wyłączone, więc klucze dostępu będą używane do logowania bez pytania.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>Nie prosi ponownie o weryfikację za pomocą funkcji Windows Hello tuż po odblokowaniu programu KeePass w ramach tej samej operacji. Działa tylko wtedy, gdy monit o potwierdzenie jest włączony.</value>
@@ -581,9 +593,6 @@ Wybrana grupa: grupa wybrana w programie KeePass podczas tworzenia klucza dostę
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>Monit o potwierdzenie</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>Monit o potwierdzenie i funkcja Windows Hello są wyłączone, więc klucze dostępu będą tworzone i używane bez pytania.</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (kod PIN, odcisk palca lub twarz)</value>
@@ -823,7 +832,7 @@ Sam wpis nie zostanie usunięty. Klucz dostępu pozostanie w historii wpisu, wi�
     <value>Wersja {0} pozostaje w użyciu do ponownego uruchomienia programu KeePass</value>
   </data>
   <data name="KeePass_Restart_Message" xml:space="preserve">
-    <value>Aby załadować nową wersję, trzeba ponownie uruchomić program KeePass.</value>
+    <value>Aby załadować nową wersję, uruchom ponownie program KeePass.</value>
   </data>
   <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
     <value>Uruchom ponownie teraz</value>
