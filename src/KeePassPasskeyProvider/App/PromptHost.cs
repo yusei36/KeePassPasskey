@@ -36,7 +36,7 @@ internal static class PromptHost
 		var settings = KeePassPasskeySettings.Current;
 		if (settings.UseLegacyNotificationPrompts)
 		{
-			Log.Debug("legacy notification prompts selected, not starting the UI host", nameof(PromptHost));
+			Log.Debug("Legacy notification prompts selected, not starting the UI host", nameof(PromptHost));
 			_prewarmed.Set();
 			return;
 		}
@@ -44,7 +44,7 @@ internal static class PromptHost
 		if (!settings.RegistrationVerification.HasFlag(UserVerificationMode.Notification)
 			&& !settings.SignInVerification.HasFlag(UserVerificationMode.Notification))
 		{
-			Log.Debug("confirmation prompts disabled, not starting the UI host", nameof(PromptHost));
+			Log.Debug("Confirmation prompt disabled, not starting the UI host", nameof(PromptHost));
 			_prewarmed.Set();
 			return;
 		}
@@ -71,7 +71,7 @@ internal static class PromptHost
 		try
 		{
 			if (!_prewarmed.Wait(PrewarmTimeout, cancellation))
-				Log.Debug("prewarm did not finish in time, showing anyway", nameof(PromptHost));
+				Log.Debug("Prewarm didn't finish in time, showing anyway", nameof(PromptHost));
 		}
 		catch (OperationCanceledException)
 		{
@@ -84,7 +84,7 @@ internal static class PromptHost
 		{
 			var built = Stopwatch.StartNew();
 			var window = Dispatcher.UIThread.Invoke(() => factory(tcs));
-			Log.Debug($"window built in {built.ElapsedMilliseconds} ms", nameof(PromptHost));
+			Log.Debug($"Window built in {built.ElapsedMilliseconds} ms", nameof(PromptHost));
 
 			// Posted before the cancellation registration so Show always runs before a Close.
 			Dispatcher.UIThread.Post(() =>
@@ -96,7 +96,7 @@ internal static class PromptHost
 				catch (Exception ex)
 				{
 					// Never leave the COM thread waiting on a window that failed to open.
-					Log.Error($"could not show prompt: {ex.GetType().Name}: {ex.Message}", nameof(PromptHost));
+					Log.Error($"Couldn't show the prompt: {ex.GetType().Name}: {ex.Message}", nameof(PromptHost));
 					tcs.TrySetResult(cancelledResult);
 				}
 			});
@@ -121,7 +121,7 @@ internal static class PromptHost
 		}
 		catch (Exception ex)
 		{
-			Log.Error($"prompt failed: {ex.GetType().Name}: {ex.Message}", nameof(PromptHost));
+			Log.Error($"Prompt failed: {ex.GetType().Name}: {ex.Message}", nameof(PromptHost));
 			return cancelledResult;
 		}
 	}
@@ -152,16 +152,16 @@ internal static class PromptHost
 			DispatcherTimer.RunOnce(
 				() =>
 				{
-					try { window.Close(); } catch (Exception ex) { Log.Debug($"prewarm close failed: {ex.Message}", nameof(PromptHost)); }
+					try { window.Close(); } catch (Exception ex) { Log.Debug($"Prewarm close failed: {ex.Message}", nameof(PromptHost)); }
 					_prewarmed.Set();
-					Log.Debug($"prompt window prewarmed in {warmed.ElapsedMilliseconds} ms", nameof(PromptHost));
+					Log.Debug($"Prompt window prewarmed in {warmed.ElapsedMilliseconds} ms", nameof(PromptHost));
 				},
 				TimeSpan.FromMilliseconds(200));
 		}
 		catch (Exception ex)
 		{
 			// Only an optimisation; the real prompt builds its own window either way.
-			Log.Debug($"prompt prewarm failed: {ex.GetType().Name}: {ex.Message}", nameof(PromptHost));
+			Log.Debug($"Prompt prewarm failed: {ex.GetType().Name}: {ex.Message}", nameof(PromptHost));
 			_prewarmed.Set();
 		}
 	}
@@ -179,7 +179,7 @@ internal static class PromptHost
 				return true;
 			}
 
-			Log.Error($"UI host did not start within {StartupTimeout.TotalSeconds}s", nameof(PromptHost));
+			Log.Error($"UI host didn't start within {StartupTimeout.TotalSeconds}s", nameof(PromptHost));
 			return false;
 		}
 		catch (Exception ex)
@@ -226,7 +226,7 @@ internal static class PromptHost
 			};
 			_uiThread.SetApartmentState(ApartmentState.STA);
 			_uiThread.Start();
-			Log.Info("starting Avalonia prompt host", nameof(PromptHost));
+			Log.Info("Starting Avalonia prompt host", nameof(PromptHost));
 
 			return ready;
 		}

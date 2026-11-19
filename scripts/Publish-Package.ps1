@@ -33,7 +33,8 @@
 
 .PARAMETER SkipSign
 	Skip signing and cert export. The zip will contain an unsigned MSIX and no .cer or InstallMsix.bat.
-	Intended for CI/unsigned builds.
+	Intended for CI/unsigned builds. With Debug, the publisher gets the unsigned-namespace OID so the
+	MSIX installs with Add-AppxPackage -AllowUnsigned (developer mode required).
 
 .PARAMETER Dev
 	Build the dev-identity package (maps to Configuration Debug): optimized like a release, signed with
@@ -124,7 +125,7 @@ if (-not $SkipBuild) {
 	Invoke-ILRepack -BuildDir "$RepoRoot\build\$Configuration" -Configuration $Configuration
 
 	Write-Step "Building MSIX package"
-	Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized -Store:$Store
+	Invoke-BuildWapproj -RepoRoot $RepoRoot -Configuration $Configuration -MSBuild $msbuild -Optimized:$optimized -Store:$Store -Unsigned:$SkipSign
 }
 
 # -- 3. Locate build artifacts --------------------------------------------------

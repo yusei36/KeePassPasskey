@@ -4,8 +4,10 @@ using System.Runtime.InteropServices;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.App;
+using KeePassPasskeyProvider.App.Prompts;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
+using KeePassPasskeyProvider.Localization;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
@@ -37,7 +39,7 @@ internal static class ComServer
 			Log.Error($"RegisterClassFactory failed: {ex.Message}");
 			return Marshal.GetHRForException(ex);
 		}
-		Log.Info($"registered class factory cookie={cookie}");
+		Log.Info($"Registered class factory cookie={cookie}");
 
 		PluginRegistration.EnsureRegistered();
 
@@ -47,16 +49,26 @@ internal static class ComServer
 		// Capture main thread ID so the idle timer can post WM_QUIT here to wake GetMessage.
 		uint mainThreadId = Win32Native.GetCurrentThreadId();
 
-		// Pick up settings changes (the management app writes the cache file on save).
+		// Pick up settings changes the management app saves while this server stays alive between
+		// ceremonies: the cached KeePass settings and the device-local ones (language, theme).
 		Directory.CreateDirectory(AppPaths.SettingsDir);
 		using var settingsFileWatcher = new FileSystemWatcher(AppPaths.SettingsDir)
 		{
-			Filter = SettingsCache.SettingsFileName,
 			NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
-			EnableRaisingEvents = true,
 		};
-		void ReloadSettings(object? _, FileSystemEventArgs __)
+		settingsFileWatcher.Filters.Add(SettingsCache.SettingsFileName);
+		settingsFileWatcher.Filters.Add(AppSettings.FileName);
+		void ReloadSettings(object? _, FileSystemEventArgs e)
 		{
+			if (string.Equals(e.Name, AppSettings.FileName, StringComparison.OrdinalIgnoreCase))
+			{
+				if (AppSettings.TryLoad() is not { } appSettings)
+					return;
+				AppSettings.Current = appSettings;
+				AppLanguage.Apply(appSettings.Language);
+				PromptApplication.ApplyThemeFromSettings();
+				return;
+			}
 			var updatedSettings = SettingsCache.TryLoad();
 			if (updatedSettings != null)
 				KeePassPasskeySettings.Current = updatedSettings;
@@ -64,29 +76,30 @@ internal static class ComServer
 		settingsFileWatcher.Changed += ReloadSettings;
 		settingsFileWatcher.Created += ReloadSettings;
 		settingsFileWatcher.Renamed += (s, e) => ReloadSettings(s, e);
+		settingsFileWatcher.EnableRaisingEvents = true;
 
 		// Quit once idle (see ComActivity), waking the message loop via WM_QUIT.
 		using var idleTimer = new System.Threading.Timer(_ =>
 		{
 			if (ComActivity.IsIdle(IdleTimeout))
 			{
-				Log.Info("idle timeout reached, requesting shutdown");
+				Log.Info("Idle timeout reached, requesting shutdown");
 				Win32Native.PostThreadMessage(mainThreadId, Win32Native.WM_QUIT, 0, 0);
 			}
 		}, null, IdleCheckInterval, IdleCheckInterval);
 
 		// Win32 message loop
-		Log.Info("entering message loop");
+		Log.Info("Entering message loop");
 		Win32Native.MSG msg;
 		while (Win32Native.GetMessage(out msg, 0, 0, 0) > 0)
 		{
 			Win32Native.TranslateMessage(in msg);
 			Win32Native.DispatchMessage(in msg);
 		}
-		Log.Info("message loop exited");
+		Log.Info("Message loop exited");
 
 		ComRegistration.RevokeClassFactory(cookie);
-		Log.Info("exiting");
+		Log.Info("Exiting");
 		return 0;
 	}
 }
