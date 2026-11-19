@@ -97,6 +97,9 @@
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
     <value>パッケージとしてインストールされていません</value>
   </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>KeePass のフォルダーを選択</value>
+  </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
     <value>インストールしています...</value>
   </data>
@@ -353,6 +356,9 @@
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
     <value>Web サイトの指定順を使用</value>
   </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>順序</value>
+  </data>
   <data name="App_Settings_Appearance_Description" xml:space="preserve">
     <value>テーマと言語</value>
   </data>
@@ -504,6 +510,9 @@
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>パスキーの作成</value>
   </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>[確認プロンプト] と Windows Hello が両方ともオフのため、パスキーの作成が確認なしで行われます。</value>
+  </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>既定値に戻す</value>
   </data>
@@ -533,6 +542,9 @@
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
     <value>サインイン</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>[確認プロンプト] と Windows Hello が両方ともオフのため、パスキーでのサインインが確認なしで行われます。</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>同じ操作のために KeePass のロックを解除した直後は、Windows Hello による確認をもう一度求めません。[確認プロンプト] がオンの場合にのみ適用されます。</value>
@@ -581,9 +593,6 @@
   </data>
   <data name="App_Settings_Verification_Prompt" xml:space="preserve">
     <value>確認プロンプト</value>
-  </data>
-  <data name="App_Settings_Verification_SilentWarning" xml:space="preserve">
-    <value>[確認プロンプト] と Windows Hello が両方ともオフのため、パスキーの作成と使用が確認なしで行われます。</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
     <value>Windows Hello (PIN、指紋、顔)</value>
