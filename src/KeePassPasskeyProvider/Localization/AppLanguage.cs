@@ -43,6 +43,9 @@ internal static class AppLanguage
 	{
 		var culture = Resolve(language);
 		Localizer.Apply(culture);
+		// Avalonia picks fallback fonts by CurrentUICulture; left on the Windows language, text gets
+		// another language's fonts and glyph shapes. The default reaches every thread.
+		CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 		bool changed = !culture.Equals(_current);
 		_current = culture;
