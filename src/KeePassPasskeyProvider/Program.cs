@@ -9,6 +9,7 @@ using KeePassPasskeyShared.Settings;
 using KeePassPasskeyProvider.Authenticator;
 using KeePassPasskeyProvider.Authenticator.Native;
 using KeePassPasskeyProvider.App;
+using KeePassPasskeyProvider.Localization;
 using KeePassPasskeyProvider.Util;
 
 namespace KeePassPasskeyProvider;
@@ -241,6 +242,7 @@ internal static class Program
 	private static AppBuilder BuildAvaloniaApp()
 		=> AppBuilder.Configure<Application>()
 			.UsePlatformDetect()
+			.With(AppFontFallbacks.Options)
 			.LogToTrace();
 
 	/// <summary>
