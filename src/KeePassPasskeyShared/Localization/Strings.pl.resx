@@ -873,7 +873,7 @@ Czy spróbować ponownie?</value>
     <value>Dostępna jest nowa wersja wtyczki KeePassPasskey ({0}). Czy zainstalować ją teraz?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>Źródło:  KeePassPasskey ({0})</value>
+    <value>Źródło: KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>Dostępna jest wersja {0}. Zainstalowana jest wersja {1}.</value>
@@ -900,7 +900,7 @@ Czy spróbować ponownie?</value>
     <value>Aktualizacja wtyczki KeePassPasskey</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>Cel:  {0}</value>
+    <value>Cel: {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>Zaktualizuj teraz</value>
