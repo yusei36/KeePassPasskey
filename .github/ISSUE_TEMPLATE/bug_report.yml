@@ -64,7 +64,19 @@ body:
     id: plugin_version
     attributes:
       label: KeePassPasskey Version
-      placeholder: "e.g. 1.2.0"
+      placeholder: "e.g. 1.7.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install_channel
+    attributes:
+      label: Installed From
+      description: In the KeePassPasskey app, hover over the icon next to the app version on the Diagnostics page.
+      options:
+        - Microsoft Store release
+        - GitHub release
+        - Not sure
     validations:
       required: true
 
