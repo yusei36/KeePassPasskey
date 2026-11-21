@@ -8,13 +8,13 @@
     <value>通行密钥高级选项</value>
   </data>
   <data name="App_Action_AdvancedPasskeyOptionsTooltip" xml:space="preserve">
-    <value>在 Windows 设置中打开通行密钥高级选项</value>
+    <value>打开Windows设置中的通行密钥高级选项</value>
   </data>
   <data name="App_Action_InstallPlugin" xml:space="preserve">
     <value>安装插件</value>
   </data>
   <data name="App_Action_InstallPluginTooltip" xml:space="preserve">
-    <value>安装或更新 KeePass 插件</value>
+    <value>安装或更新KeePass插件</value>
   </data>
   <data name="App_Action_Register" xml:space="preserve">
     <value>注册</value>
@@ -26,13 +26,13 @@
     <value>开发版</value>
   </data>
   <data name="App_Channel_GitHub" xml:space="preserve">
-    <value>GitHub 版</value>
+    <value>GitHub版</value>
   </data>
   <data name="App_Channel_Store" xml:space="preserve">
-    <value>Microsoft Store 版</value>
+    <value>Microsoft Store版</value>
   </data>
   <data name="App_Diagnostics_AppVersion_Label" xml:space="preserve">
-    <value>KeePassPasskey 应用</value>
+    <value>KeePassPasskey应用</value>
   </data>
   <data name="App_Diagnostics_CopyPluginVersionTooltip" xml:space="preserve">
     <value>复制插件版本</value>
@@ -41,7 +41,7 @@
     <value>复制应用版本</value>
   </data>
   <data name="App_Diagnostics_IncompatibleVersion_Message" xml:space="preserve">
-    <value>{0}在此之前，通行密钥操作将被阻止。</value>
+    <value>{0}更新前，通行密钥的相关操作均不会执行。</value>
   </data>
   <data name="App_Diagnostics_IncompatibleVersion_Title" xml:space="preserve">
     <value>版本不兼容</value>
@@ -50,7 +50,7 @@
     <value>未连接</value>
   </data>
   <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
-    <value>打开 Windows 设置，以启用或禁用通行密钥提供程序</value>
+    <value>打开Windows设置，启用或禁用通行密钥提供程序</value>
   </data>
   <data name="App_Diagnostics_Registration_Label" xml:space="preserve">
     <value>提供程序注册</value>
@@ -59,151 +59,151 @@
     <value>取消注册</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
-    <value>此应用({0})和 KeePass 插件({1})的版本不同，但相互兼容。通行密钥可继续使用，但在更新较旧的版本之前，新功能可能无法使用。</value>
+    <value>应用版本：{0}，KeePass插件版本：{1}。二者版本不同但互相兼容。通行密钥仍可使用，一些新功能可能要更新后才能运行。</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
-    <value>版本不一致</value>
+    <value>版本不匹配</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_ClearButton" xml:space="preserve">
     <value>清除</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_ClearTooltip" xml:space="preserve">
-    <value>从 Windows 缓存中移除所有通行密钥。下次打开或保存数据库时，这些通行密钥会恢复。</value>
+    <value>清除Windows缓存中的所有通行密钥，下次打开或保存数据库后恢复。</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_DumpButton" xml:space="preserve">
-    <value>写入日志</value>
+    <value>写入至日志</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_DumpTooltip" xml:space="preserve">
-    <value>将 Windows 缓存和 KeePass 中的通行密钥写入日志</value>
+    <value>将Windows缓存和KeePass通行密钥写入日志</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_Label" xml:space="preserve">
-    <value>Windows 凭据缓存</value>
+    <value>Windows凭据缓存</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_SyncButton" xml:space="preserve">
     <value>立即同步</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_SyncTooltip" xml:space="preserve">
-    <value>立即根据已打开的 KeePass 数据库刷新 Windows 缓存</value>
+    <value>立即用已打开的KeePass数据库刷新Windows缓存</value>
   </data>
   <data name="App_InfoBar_DevBuildMessage" xml:space="preserve">
-    <value>这是具有独立标识的开发版，可与任何稳定版并存安装。不适用于生产环境。</value>
+    <value>此开发版有独立的应用ID，可以与稳定版共存。请勿用于生产环境。</value>
   </data>
   <data name="App_InfoBar_DevBuildTitle" xml:space="preserve">
     <value>开发版</value>
   </data>
   <data name="App_InfoBar_NotPackagedMessage" xml:space="preserve">
-    <value>“注册”和“取消注册”无法正常工作。请先安装 MSIX 包。</value>
+    <value>注册和取消注册无法正常使用，请用MSIX安装包方式安装。</value>
   </data>
   <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
-    <value>未以 MSIX 包形式安装</value>
+    <value>未使用MSIX安装包方式安装</value>
   </data>
   <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
-    <value>选择 KeePass 文件夹</value>
+    <value>选择KeePass文件夹</value>
   </data>
   <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
-    <value>正在安装...</value>
+    <value>正在安装……</value>
   </data>
   <data name="App_InstallDialog_Busy_Removing" xml:space="preserve">
-    <value>正在移除...</value>
+    <value>正在删除……</value>
   </data>
   <data name="App_InstallDialog_CloseButton" xml:space="preserve">
     <value>关闭</value>
   </data>
   <data name="App_InstallDialog_CopyYourselfLabel" xml:space="preserve">
-    <value>或自行复制文件:</value>
+    <value>或自行复制文件：</value>
   </data>
   <data name="App_InstallDialog_Detected_DefaultPath" xml:space="preserve">
-    <value>根据默认安装路径检测到。</value>
+    <value>检测自默认安装路径。</value>
   </data>
   <data name="App_InstallDialog_Detected_Msi" xml:space="preserve">
-    <value>根据 MSI 安装检测到。</value>
+    <value>检测自MSI安装包的安装记录。</value>
   </data>
   <data name="App_InstallDialog_Detected_NotFound" xml:space="preserve">
-    <value>未找到 KeePass。请输入或浏览选择 KeePass 文件夹或其 Plugins 文件夹。</value>
+    <value>找不到KeePass。请点击浏览或手动输入，填写KeePass本体或KeePass Plugins所在的文件夹。</value>
   </data>
   <data name="App_InstallDialog_Detected_Registry" xml:space="preserve">
-    <value>根据 KeePass 安装程序的注册表项检测到。</value>
+    <value>检测自KeePass安装程序的注册表。</value>
   </data>
   <data name="App_InstallDialog_Detected_RunningKeePass" xml:space="preserve">
-    <value>根据正在运行的 KeePass 检测到。</value>
+    <value>检测自正在运行的KeePass。</value>
   </data>
   <data name="App_InstallDialog_FolderLabel" xml:space="preserve">
-    <value>KeePass 文件夹或 Plugins 文件夹</value>
+    <value>KeePass本体或KeePass Plugins所在的文件夹</value>
   </data>
   <data name="App_InstallDialog_FolderWillBeCreated" xml:space="preserve">
-    <value>此文件夹尚不存在，将会创建。</value>
+    <value>文件夹不存在，将自动新建相应的文件夹。</value>
   </data>
   <data name="App_InstallDialog_InstallButton" xml:space="preserve">
     <value>安装</value>
   </data>
   <data name="App_InstallDialog_NeedsAdmin" xml:space="preserve">
-    <value>复制到此文件夹需要管理员权限。安装时 Windows 会请求该权限。</value>
+    <value>复制到此文件夹需要管理员权限，点击安装后Windows将弹出提示框。</value>
   </data>
   <data name="App_InstallDialog_PickFolderTitle" xml:space="preserve">
-    <value>选择 KeePass 文件夹、其 Plugins 文件夹或其中的子文件夹</value>
+    <value>请选择KeePass本体文件夹、KeePass Plugins文件夹或Plugins下的子文件夹</value>
   </data>
   <data name="App_InstallDialog_ReinstallButton" xml:space="preserve">
-    <value>重新安装</value>
+    <value>重装</value>
   </data>
   <data name="App_InstallDialog_RemoveButton" xml:space="preserve">
     <value>移除</value>
   </data>
   <data name="App_InstallDialog_Result_Cancelled" xml:space="preserve">
-    <value>已在用户帐户控制提示中取消。未做任何更改。</value>
+    <value>未授予管理员权限，操作已取消。</value>
   </data>
   <data name="App_InstallDialog_Result_Installed" xml:space="preserve">
     <value>插件已安装。</value>
   </data>
   <data name="App_InstallDialog_Result_InstalledRestart" xml:space="preserve">
-    <value>插件已安装。重启 KeePass 后生效。</value>
+    <value>插件已安装，重启KeePass生效。</value>
   </data>
   <data name="App_InstallDialog_Result_Removed" xml:space="preserve">
     <value>插件已移除。</value>
   </data>
   <data name="App_InstallDialog_Result_RemovedRestart" xml:space="preserve">
-    <value>插件已移除。重启 KeePass 后生效。</value>
+    <value>插件已移除，重启KeePass生效。</value>
   </data>
   <data name="App_InstallDialog_ShowPluginFileTooltip" xml:space="preserve">
-    <value>在文件资源管理器中显示 KeePassPasskey.dll</value>
+    <value>在文件资源管理器中查看KeePassPasskey.dll</value>
   </data>
   <data name="App_InstallDialog_ShowTargetButton" xml:space="preserve">
-    <value>显示目标文件夹</value>
+    <value>查看目标文件夹</value>
   </data>
   <data name="App_InstallDialog_ShowTargetTooltip" xml:space="preserve">
-    <value>在文件资源管理器中打开 KeePass 的 Plugins 文件夹</value>
+    <value>在文件资源管理器中打开KeePass Plugins所在的文件夹</value>
   </data>
   <data name="App_InstallDialog_SourceCaption" xml:space="preserve">
-    <value>安装来源: KeePassPasskey ({0}) {1}</value>
+    <value>安装自KeePassPasskey（{0}）{1}</value>
   </data>
   <data name="App_InstallDialog_Status_NoFolder" xml:space="preserve">
-    <value>未选择文件夹。</value>
+    <value>尚未选择文件夹。</value>
   </data>
   <data name="App_InstallDialog_Status_NotInstalled" xml:space="preserve">
-    <value>未安装。</value>
+    <value>尚未安装。</value>
   </data>
   <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
-    <value>这不是 KeePass 文件夹或其 Plugins 文件夹。请选择 KeePass 文件夹或其 Plugins 子文件夹。</value>
+    <value>此处不是KeePass本体或KeePass Plugins所在的文件夹，请选择KeePass文件夹或Plugins下的子文件夹。</value>
   </data>
   <data name="App_InstallDialog_Status_Outdated" xml:space="preserve">
-    <value>已安装版本 {0}，可用版本 {1}。</value>
+    <value>当前版本{0}，新版本{1}。</value>
   </data>
   <data name="App_InstallDialog_Status_PluginNewer" xml:space="preserve">
-    <value>已安装版本 {0}。此应用只包含版本 {1}。</value>
+    <value>当前版本{0}，高于应用自带插件版本{1}。</value>
   </data>
   <data name="App_InstallDialog_Status_UpToDate" xml:space="preserve">
-    <value>已安装版本 {0}，已是最新。</value>
+    <value>当前版本{0}已是最新版。</value>
   </data>
   <data name="App_InstallDialog_TargetLabel" xml:space="preserve">
-    <value>安装位置</value>
+    <value>安装至</value>
   </data>
   <data name="App_InstallDialog_Title" xml:space="preserve">
-    <value>KeePass 插件</value>
+    <value>KeePass插件</value>
   </data>
   <data name="App_InstallDialog_UpdateButton" xml:space="preserve">
     <value>更新</value>
   </data>
   <data name="App_Label_KeePassPlugin" xml:space="preserve">
-    <value>KeePass 插件</value>
+    <value>KeePass插件</value>
   </data>
   <data name="App_Label_PasskeyProvider" xml:space="preserve">
     <value>通行密钥提供程序</value>
@@ -212,7 +212,7 @@
     <value>将日志复制到剪贴板</value>
   </data>
   <data name="App_Log_NoFile" xml:space="preserve">
-    <value>(尚无日志文件)</value>
+    <value>（暂无日志）</value>
   </data>
   <data name="App_Log_OpenFileTooltip" xml:space="preserve">
     <value>打开日志文件</value>
@@ -221,7 +221,7 @@
     <value>打开日志文件夹</value>
   </data>
   <data name="App_Log_ReadFailed" xml:space="preserve">
-    <value>(无法读取日志: {0})</value>
+    <value>（无法读取日志：{0}）</value>
   </data>
   <data name="App_Nav_Diagnostics" xml:space="preserve">
     <value>诊断</value>
@@ -233,13 +233,13 @@
     <value>状态</value>
   </data>
   <data name="App_Registration_RegisterFailedMessage" xml:space="preserve">
-    <value>Windows 在尝试注册通行密钥提供程序时返回了 HRESULT {0}。</value>
+    <value>尝试注册通行密钥提供程序时出错，Windows返回错误代码HRESULT {0}。</value>
   </data>
   <data name="App_Registration_RegisterFailedTitle" xml:space="preserve">
     <value>注册失败</value>
   </data>
   <data name="App_Registration_UnregisterFailedMessage" xml:space="preserve">
-    <value>Windows 在尝试取消注册通行密钥提供程序时返回了 HRESULT {0}。</value>
+    <value>尝试取消注册通行密钥提供程序时出错，Windows返回错误代码HRESULT {0}。</value>
   </data>
   <data name="App_Registration_UnregisterFailedTitle" xml:space="preserve">
     <value>无法取消注册</value>
@@ -248,46 +248,46 @@
     <value>应用</value>
   </data>
   <data name="App_Settings_Aaguid_ApplyFailedMessage" xml:space="preserve">
-    <value>AAGUID 未更改，因为 Windows 在应用时返回了 HRESULT {0}。</value>
+    <value>AAGUID修改失败，Windows返回错误代码HRESULT {0}。</value>
   </data>
   <data name="App_Settings_Aaguid_ApplyFailedTitle" xml:space="preserve">
-    <value>无法更新身份验证器</value>
+    <value>无法更新认证器</value>
   </data>
   <data name="App_Settings_Aaguid_ClearTooltip" xml:space="preserve">
-    <value>清除字段</value>
+    <value>清空字段</value>
   </data>
   <data name="App_Settings_Aaguid_DefaultApplied" xml:space="preserve">
-    <value>当前使用默认 AAGUID。</value>
+    <value>正在使用默认AAGUID。</value>
   </data>
   <data name="App_Settings_Aaguid_Description" xml:space="preserve">
-    <value>覆盖创建通行密钥时网站看到的身份验证器标识符(AAGUID)。留空则使用默认值。应用时会向 Windows 重新注册身份验证器。</value>
+    <value>创建通行密钥时，网站看到的认证器标识符（AAGUID）。留空则使用默认值。修改此值会向Windows重新注册认证器。</value>
   </data>
   <data name="App_Settings_Aaguid_Header" xml:space="preserve">
-    <value>伪装 AAGUID</value>
+    <value>伪装AAGUID</value>
   </data>
   <data name="App_Settings_Aaguid_Invalid" xml:space="preserve">
-    <value>请输入有效的 GUID，或留空以使用默认值。</value>
+    <value>请输入有效的GUID，或留空保持默认。</value>
   </data>
   <data name="App_Settings_Aaguid_SpoofApplied" xml:space="preserve">
-    <value>已应用伪装的 AAGUID。</value>
+    <value>AAGUID伪装已生效。</value>
   </data>
   <data name="App_Settings_About_Contributors" xml:space="preserve">
     <value>贡献者</value>
   </data>
   <data name="App_Settings_About_ContributorsTooltip" xml:space="preserve">
-    <value>在 GitHub 上打开贡献者列表</value>
+    <value>在GitHub上打开贡献者名单</value>
   </data>
   <data name="App_Settings_About_Copyright" xml:space="preserve">
     <value>版权</value>
   </data>
   <data name="App_Settings_About_CopyrightNotice" xml:space="preserve">
-    <value>© 2026 Uwe Kögel 及贡献者</value>
+    <value>© 2026 Uwe Kögel及众多贡献者</value>
   </data>
   <data name="App_Settings_About_CopyVersionTooltip" xml:space="preserve">
-    <value>复制版本</value>
+    <value>复制版本号</value>
   </data>
   <data name="App_Settings_About_Description" xml:space="preserve">
-    <value>版本、源代码和许可证</value>
+    <value>版本号、源代码和许可证</value>
   </data>
   <data name="App_Settings_About_Header" xml:space="preserve">
     <value>关于</value>
@@ -296,7 +296,7 @@
     <value>许可证</value>
   </data>
   <data name="App_Settings_About_LicenseName" xml:space="preserve">
-    <value>GNU GPL v3.0 或更高版本</value>
+    <value>GNU GPL v3.0 or later</value>
   </data>
   <data name="App_Settings_About_LicenseTooltip" xml:space="preserve">
     <value>打开许可证文本</value>
@@ -305,25 +305,25 @@
     <value>报告问题</value>
   </data>
   <data name="App_Settings_About_ReportBugTooltip" xml:space="preserve">
-    <value>在 GitHub 上打开问题跟踪页面</value>
+    <value>在GitHub上打开issue跟踪页面</value>
   </data>
   <data name="App_Settings_About_SourceCode" xml:space="preserve">
     <value>源代码</value>
   </data>
   <data name="App_Settings_About_SourceCodeTooltip" xml:space="preserve">
-    <value>在 GitHub 上打开源代码</value>
+    <value>在GitHub上打开源代码</value>
   </data>
   <data name="App_Settings_About_ThirdParty" xml:space="preserve">
     <value>第三方声明</value>
   </data>
   <data name="App_Settings_About_ThirdPartyDescription" xml:space="preserve">
-    <value>随附库的开源许可证</value>
+    <value>自带库的开源许可证</value>
   </data>
   <data name="App_Settings_About_ThirdPartyTooltip" xml:space="preserve">
     <value>打开第三方声明</value>
   </data>
   <data name="App_Settings_About_Version" xml:space="preserve">
-    <value>版本</value>
+    <value>版本号</value>
   </data>
   <data name="App_Settings_About_Website" xml:space="preserve">
     <value>网站</value>
@@ -332,14 +332,14 @@
     <value>打开网站</value>
   </data>
   <data name="App_Settings_Advanced_Description" xml:space="preserve">
-    <value>很少需要更改的行为、计时和日志设置</value>
+    <value>不常修改的行为、时间间隔和日志设置</value>
   </data>
   <data name="App_Settings_Advanced_Header" xml:space="preserve">
     <value>高级</value>
   </data>
   <data name="App_Settings_Algorithms_Description" xml:space="preserve">
-    <value>网站接受多种算法时，新通行密钥所用的算法。
-如果网站只接受已关闭的算法，则无法创建通行密钥。</value>
+    <value>提供给网站新建通行密钥的算法。
+如果网站只接受已关闭的算法，通行密钥将创建失败。</value>
   </data>
   <data name="App_Settings_Algorithms_Header" xml:space="preserve">
     <value>签名算法</value>
@@ -351,10 +351,10 @@
     <value>向上移动</value>
   </data>
   <data name="App_Settings_Algorithms_OptionListOrder" xml:space="preserve">
-    <value>按列表顺序</value>
+    <value>按下方列表顺序</value>
   </data>
   <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
-    <value>按网站指定的顺序</value>
+    <value>按网站指定顺序</value>
   </data>
   <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
     <value>顺序</value>
@@ -366,31 +366,31 @@
     <value>外观</value>
   </data>
   <data name="App_Settings_ApprovalTimeout_Description" xml:space="preserve">
-    <value>确认提示保持打开的时长</value>
+    <value>确认提示的显示时间</value>
   </data>
   <data name="App_Settings_ApprovalTimeout_Header" xml:space="preserve">
-    <value>确认超时时间</value>
+    <value>确认提示超时时间</value>
   </data>
   <data name="App_Settings_BackupEligibility_Description" xml:space="preserve">
-    <value>开启时，会告知网站新通行密钥可以备份并同步到你的其他设备。关闭时，会告知网站新通行密钥仅保存在一台设备上。</value>
+    <value>表示新通行密钥能否被备份的信息，供网站参考。开启时，反馈“可备份且可同步到其他设备”。关闭时，反馈“只储存在单台设备上”。</value>
   </data>
   <data name="App_Settings_BackupEligibility_Header" xml:space="preserve">
-    <value>可备份(BE)</value>
+    <value>可备份性（Backup Eligibility，BE）</value>
   </data>
   <data name="App_Settings_BackupState_Description" xml:space="preserve">
-    <value>开启时，会告知网站新通行密钥已备份。仅在开启“可备份”时可用。</value>
+    <value>开启时，向网站反馈“新通行密钥已备份”。仅在可备份性启用时有效。</value>
   </data>
   <data name="App_Settings_BackupState_Header" xml:space="preserve">
-    <value>备份状态(BS)</value>
+    <value>备份状态（Backup State，BS）</value>
   </data>
   <data name="App_Settings_DiscardTooltip" xml:space="preserve">
     <value>放弃更改</value>
   </data>
   <data name="App_Settings_DuplicateCheck_Description" xml:space="preserve">
-    <value>网站要求不为已有通行密钥的帐户再创建通行密钥时，是否遵从该要求，以及检查哪些数据库</value>
+    <value>按网站要求检测相应的数据库，不为已有账户创建重复的通行密钥。</value>
   </data>
   <data name="App_Settings_DuplicateCheck_Header" xml:space="preserve">
-    <value>重复通行密钥检查</value>
+    <value>通行密钥重复检查</value>
   </data>
   <data name="App_Settings_DuplicateCheck_OptionAllDatabases" xml:space="preserve">
     <value>检查所有数据库</value>
@@ -402,44 +402,44 @@
     <value>检查目标数据库</value>
   </data>
   <data name="App_Settings_Enforced_Message" xml:space="preserve">
-    <value>这些设置来自 KeePass.config.enforced.xml，无法在此更改。</value>
+    <value>这些设置来自KeePass.config.enforced.xml，无法在此处更改。</value>
   </data>
   <data name="App_Settings_Enforced_Title" xml:space="preserve">
-    <value>由 KeePass 强制的设置</value>
+    <value>由KeePass强制的设置</value>
   </data>
   <data name="App_Settings_Entries_Description" xml:space="preserve">
-    <value>新通行密钥记录的创建方式</value>
+    <value>调整新通行密钥记录的创建方式</value>
   </data>
   <data name="App_Settings_Entries_Header" xml:space="preserve">
     <value>通行密钥记录</value>
   </data>
   <data name="App_Settings_EntryGroup_Description" xml:space="preserve">
-    <value>Passkeys 群组: 通行密钥的默认群组。
-已选群组: 创建通行密钥时在 KeePass 中选择的群组。</value>
+    <value>Passkeys群组：通行密钥的默认群组。
+已选中的群组：创建通行密钥时，已在KeePass选中的群组。</value>
   </data>
   <data name="App_Settings_EntryGroup_Header" xml:space="preserve">
     <value>将新通行密钥保存到</value>
   </data>
   <data name="App_Settings_EntryGroup_OptionPasskeys" xml:space="preserve">
-    <value>Passkeys 群组</value>
+    <value>Passkeys群组</value>
   </data>
   <data name="App_Settings_EntryGroup_OptionSelected" xml:space="preserve">
-    <value>已选群组</value>
+    <value>已选中的群组</value>
   </data>
   <data name="App_Settings_EntryTitle_Description" xml:space="preserve">
-    <value>新记录的标题。支持 {RP_NAME} 以及 {USERNAME} 或 {URL} 等 KeePass 占位符。</value>
+    <value>新记录的标题。支持{RP_NAME}，以及{USERNAME}、{URL}等KeePass占位符。</value>
   </data>
   <data name="App_Settings_EntryTitle_Header" xml:space="preserve">
     <value>记录标题</value>
   </data>
   <data name="App_Settings_ErrorNotifications_Description" xml:space="preserve">
-    <value>在发生通行密钥错误时显示详细通知。Windows 本身只显示通用错误。</value>
+    <value>在发生通行密钥相关错误时显示详细通知，Windows本身只会显示笼统的错误信息。</value>
   </data>
   <data name="App_Settings_ErrorNotifications_Header" xml:space="preserve">
-    <value>错误通知</value>
+    <value>报错通知</value>
   </data>
   <data name="App_Settings_Expert_Description" xml:space="preserve">
-    <value>适用于不常见配置的选项。仅在了解其作用时才更改。</value>
+    <value>用于非常规配置的高级选项，请只在充分理解其中内容时才修改选项。</value>
   </data>
   <data name="App_Settings_Expert_Header" xml:space="preserve">
     <value>专家</value>
@@ -448,31 +448,31 @@
     <value>语言</value>
   </data>
   <data name="App_Settings_Language_NotReviewed" xml:space="preserve">
-    <value>此翻译是自动生成的，尚未经过中文母语人士审阅。</value>
+    <value>此翻译是自动生成的，尚未经过母语者审阅。</value>
   </data>
   <data name="App_Settings_Language_OptionNotReviewed" xml:space="preserve">
-    <value>{0}(尚未审阅)</value>
+    <value>{0}（尚未审阅）</value>
   </data>
   <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
-    <value>使用 Windows 语言</value>
+    <value>跟随Windows语言</value>
   </data>
   <data name="App_Settings_Language_ReviewTooltip" xml:space="preserve">
-    <value>帮助审阅此翻译</value>
+    <value>帮助审阅翻译</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
-    <value>以 Windows 通知而不是对话框的形式显示确认提示。在“请勿打扰”模式下，通知会被隐藏且不作任何提醒，并且通知中的列表最多显示 5 项。</value>
+    <value>调整显示确认提示的方式。开启时使用Windows通知，关闭则使用对话框。请勿打扰会隐藏通知，通知内选项最多显示五条。</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
-    <value>使用经典通知进行确认</value>
+    <value>旧版确认提示（Windows通知）</value>
   </data>
   <data name="App_Settings_LoadFailed" xml:space="preserve">
-    <value>无法从 KeePass 加载最新设置。显示的是上次已知的值。</value>
+    <value>无法从KeePass中获取设置，正在显示上次成功加载的值。</value>
   </data>
   <data name="App_Settings_Loading" xml:space="preserve">
-    <value>正在加载设置...</value>
+    <value>正在加载设置……</value>
   </data>
   <data name="App_Settings_LogLevel_Description" xml:space="preserve">
-    <value>应用和插件日志文件的详细程度</value>
+    <value>应用日志和插件日志的详尽程度</value>
   </data>
   <data name="App_Settings_LogLevel_Header" xml:space="preserve">
     <value>日志级别</value>
@@ -481,7 +481,7 @@
     <value>Debug</value>
   </data>
   <data name="App_Settings_LogLevel_OptionError" xml:space="preserve">
-    <value>错误</value>
+    <value>Error</value>
   </data>
   <data name="App_Settings_LogLevel_OptionInfo" xml:space="preserve">
     <value>Info</value>
@@ -490,70 +490,70 @@
     <value>关闭</value>
   </data>
   <data name="App_Settings_LogLevel_OptionWarn" xml:space="preserve">
-    <value>警告</value>
+    <value>Warning</value>
   </data>
   <data name="App_Settings_PluginUpdates_Description" xml:space="preserve">
-    <value>KeePass 启动时，如果此应用包含较新的插件版本，则提示更新插件。每次更新都需在对话框中确认。</value>
+    <value>KeePass启动且应用中有新版插件时，弹出对话框提示更新。</value>
   </data>
   <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
     <value>检查插件更新</value>
   </data>
   <data name="App_Settings_RefreshInterval_Description" xml:space="preserve">
-    <value>应用检查提供程序状态的频率</value>
+    <value>应用对提供程序状态的检测频率</value>
   </data>
   <data name="App_Settings_RefreshInterval_Header" xml:space="preserve">
     <value>状态刷新间隔</value>
   </data>
   <data name="App_Settings_RegistrationVerification_Description" xml:space="preserve">
-    <value>确认创建新通行密钥的方式</value>
+    <value>选择创建新通行密钥时的确认方式</value>
   </data>
   <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
     <value>创建通行密钥</value>
   </data>
   <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
-    <value>确认提示和 Windows Hello 均已关闭，因此创建通行密钥时不会询问你。</value>
+    <value>确认提示和Windows Hello均已关闭，创建通行密钥时将不会弹出任何提示。</value>
   </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>恢复默认值</value>
   </data>
   <data name="App_Settings_ResolvePlaceholders_Description" xml:space="preserve">
-    <value>开启时: 替换占位符，并将最终文本保存到标题中。关闭时: KeePass 在每次显示记录时替换占位符。{RP_NAME} 始终在保存时替换。</value>
+    <value>开启：解析占位符，并将最终文本保存到标题中。关闭：让KeePass在每次显示记录时自行解析占位符。{RP_NAME}将始终在保存时被替换。</value>
   </data>
   <data name="App_Settings_ResolvePlaceholders_Header" xml:space="preserve">
-    <value>保存时替换标题中的占位符</value>
+    <value>在保存时替换标题中的占位符</value>
   </data>
   <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
-    <value>KeePass 未运行。请先启动装有 KeePassPasskey 插件的 KeePass，再保存设置。</value>
+    <value>KeePass未运行。请先启动装有KeePassPasskey插件的KeePass，再保存设置。</value>
   </data>
   <data name="App_Settings_SaveFailedTitle" xml:space="preserve">
     <value>无法保存设置</value>
   </data>
   <data name="App_Settings_SaveToExisting_Description" xml:space="preserve">
-    <value>提供将通行密钥保存到匹配记录的选项，而不是始终创建新记录。仅在为新通行密钥开启“确认提示”时生效。</value>
+    <value>开启后，不仅能将通行密钥保存至新记录，还能保存至已有的、符合条件的记录中。此选项需要启用创建通行密钥下的确认提示选项。</value>
   </data>
   <data name="App_Settings_SaveToExisting_Header" xml:space="preserve">
-    <value>提供保存到现有记录的选项</value>
+    <value>允许保存至已有记录</value>
   </data>
   <data name="App_Settings_SaveTooltip" xml:space="preserve">
     <value>保存设置</value>
   </data>
   <data name="App_Settings_SignInVerification_Description" xml:space="preserve">
-    <value>确认登录的方式</value>
+    <value>选择登入时的确认方式</value>
   </data>
   <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
-    <value>登录</value>
+    <value>登入</value>
   </data>
   <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
-    <value>确认提示和 Windows Hello 均已关闭，因此使用通行密钥登录时不会询问你。</value>
+    <value>确认提示和Windows Hello均已关闭，使用通行密钥登入时将不会弹出任何提示。</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
-    <value>刚刚为同一操作解锁 KeePass 后，不再要求使用 Windows Hello。仅在开启“确认提示”时生效。</value>
+    <value>若已为当前请求解锁了KeePass，则跳过Windows Hello。仅在开启确认提示时生效。</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
-    <value>解锁 KeePass 后跳过 Windows Hello</value>
+    <value>解锁KeePass后跳过Windows Hello</value>
   </data>
   <data name="App_Settings_TagEntries_Description" xml:space="preserve">
-    <value>为每条新建的通行密钥记录添加 "Passkey" 标记</value>
+    <value>为每条新通行密钥记录添加“Passkey”标记</value>
   </data>
   <data name="App_Settings_TagEntries_Header" xml:space="preserve">
     <value>为新通行密钥记录添加标记</value>
@@ -568,7 +568,7 @@
     <value>浅色</value>
   </data>
   <data name="App_Settings_Theme_OptionSystem" xml:space="preserve">
-    <value>使用系统设置</value>
+    <value>跟随系统设置</value>
   </data>
   <data name="App_Settings_ToggleOff" xml:space="preserve">
     <value>关</value>
@@ -586,7 +586,7 @@
     <value>有未保存的更改</value>
   </data>
   <data name="App_Settings_Verification_Description" xml:space="preserve">
-    <value>通行密钥操作的确认提示和用户验证</value>
+    <value>通行密钥操作相关的确认提示和用户验证</value>
   </data>
   <data name="App_Settings_Verification_Header" xml:space="preserve">
     <value>确认和验证</value>
@@ -595,43 +595,43 @@
     <value>确认提示</value>
   </data>
   <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
-    <value>Windows Hello (PIN、指纹或人脸)</value>
+    <value>Windows Hello（PIN、指纹或人脸）</value>
   </data>
   <data name="App_Settings_WindowsCache_Description" xml:space="preserve">
-    <value>与 Windows 共享通行密钥的网站和用户名(绝不共享密钥本身)，以便 Windows 在登录时提供这些通行密钥。关闭时，Windows 无法获知你的通行密钥，在大多数网站上登录会失败。</value>
+    <value>与Windows共享现有通行密钥的网址和用户名（绝不会泄露密钥本身），以便在登入时提供相关的通行密钥。关闭后，Windows将无法得知通行密钥的具体情况，大多数网站的登入将会失败。</value>
   </data>
   <data name="App_Settings_WindowsCache_Header" xml:space="preserve">
-    <value>Windows 凭据缓存</value>
+    <value>Windows凭据缓存</value>
   </data>
   <data name="App_SetupGuide_ShowPluginFileTooltip" xml:space="preserve">
-    <value>在文件资源管理器中显示 KeePassPasskey.dll，以便自行复制</value>
+    <value>在文件资源管理器中显示KeePassPasskey.dll，以便自行复制文件</value>
   </data>
   <data name="App_SetupGuide_Step1_Text" xml:space="preserve">
-    <value>将 **KeePassPasskey.dll** 复制到 KeePass 的 **Plugins** 文件夹，或使用下方的按钮。然后重启 KeePass。</value>
+    <value>将**KeePassPasskey.dll**复制到KeePass的**Plugins**文件夹，或点击下方按钮。然后重启KeePass。</value>
   </data>
   <data name="App_SetupGuide_Step1_Title" xml:space="preserve">
     <value>安装插件</value>
   </data>
   <data name="App_SetupGuide_Step2_Text" xml:space="preserve">
-    <value>转到**设置 › 帐户 › 通行密钥 › 高级选项**，或使用下方的按钮。</value>
+    <value>转到**设置 › 帐户 › 通行密钥 › 高级选项**，或点击下方按钮。</value>
   </data>
   <data name="App_SetupGuide_Step2_Title" xml:space="preserve">
     <value>打开通行密钥高级选项</value>
   </data>
   <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
-    <value>在通行密钥提供程序列表中开启 **KeePassPasskey** 的开关。</value>
+    <value>在通行密钥提供程序列表中开启**KeePassPasskey**的开关。</value>
   </data>
   <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
-    <value>启用 KeePassPasskey</value>
+    <value>启用KeePassPasskey</value>
   </data>
   <data name="App_SetupGuide_Step4_Text" xml:space="preserve">
-    <value>上方两项状态都应显示为**已启用** / **已连接**。</value>
+    <value>上方两项状态应分别显示为**已启用**和**已连接**。</value>
   </data>
   <data name="App_SetupGuide_Step4_Title" xml:space="preserve">
     <value>检查</value>
   </data>
   <data name="App_SetupGuide_Title" xml:space="preserve">
-    <value>入门</value>
+    <value>开始使用</value>
   </data>
   <data name="App_SetupGuide_UserGuideTooltip" xml:space="preserve">
     <value>打开用户指南</value>
@@ -643,22 +643,22 @@
     <value>一切就绪</value>
   </data>
   <data name="App_Status_Hint_AutoregisterFailed" xml:space="preserve">
-    <value>选择“注册”以重试。</value>
+    <value>点击注册重试。</value>
   </data>
   <data name="App_Status_Hint_KeePassNotConnected" xml:space="preserve">
-    <value>启动装有 KeePassPasskey 插件的 KeePass。</value>
+    <value>请启动装有KeePassPasskey插件的KeePass。</value>
   </data>
   <data name="App_Status_Hint_NoDatabase" xml:space="preserve">
-    <value>打开 KeePass 数据库以使用通行密钥。</value>
+    <value>打开KeePass数据库以使用通行密钥。</value>
   </data>
   <data name="App_Status_Hint_NotRegistered" xml:space="preserve">
-    <value>选择“注册”，将 KeePassPasskey 设置为通行密钥提供程序。</value>
+    <value>请点击注册，将KeePassPasskey设置为通行密钥提供程序。</value>
   </data>
   <data name="App_Status_Hint_Ready" xml:space="preserve">
-    <value>通行密钥提供程序已启用，KeePass 插件已连接。</value>
+    <value>通行密钥提供程序已启用，KeePass插件已连接。</value>
   </data>
   <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
-    <value>选择下方的“通行密钥高级选项”以启用 KeePassPasskey。</value>
+    <value>点击下方的“通行密钥高级选项”启用KeePassPasskey。</value>
   </data>
   <data name="App_Status_Pill_Connected" xml:space="preserve">
     <value>已连接</value>
@@ -679,19 +679,19 @@
     <value>添加</value>
   </data>
   <data name="App_TrayOffer_Message" xml:space="preserve">
-    <value>将 KeePassPasskey 添加到系统托盘。</value>
+    <value>将KeePassPasskey添加到系统托盘。</value>
   </data>
   <data name="App_TrayOffer_NoThanksButton" xml:space="preserve">
     <value>不用了</value>
   </data>
   <data name="App_TrayOffer_Title" xml:space="preserve">
-    <value>想随时查看状态吗?</value>
+    <value>想随时查看KeePassPasskey的状态吗？</value>
   </data>
   <data name="App_UnsavedChanges_DiscardButton" xml:space="preserve">
     <value>不保存</value>
   </data>
   <data name="App_UnsavedChanges_Message" xml:space="preserve">
-    <value>你有未保存的设置。是否在离开前保存?</value>
+    <value>您有未保存的设置，要在离开前保存吗？</value>
   </data>
   <data name="App_UnsavedChanges_Title" xml:space="preserve">
     <value>未保存的更改</value>
@@ -700,25 +700,25 @@
     <value>取消</value>
   </data>
   <data name="Common_Install_Error_AccessDenied" xml:space="preserve">
-    <value>无权访问 KeePass 的 Plugins 文件夹。</value>
+    <value>访问KeePass Plugins文件夹被拒绝。</value>
   </data>
   <data name="Common_Install_Error_BundledPluginNotFound" xml:space="preserve">
-    <value>未找到随附的插件: {0}</value>
+    <value>找不到自带的插件：{0}</value>
   </data>
   <data name="Common_Install_Error_FolderNotFound" xml:space="preserve">
-    <value>未找到文件夹: {0}</value>
+    <value>找不到文件夹：{0}</value>
   </data>
   <data name="Common_Install_Error_NoBundledPlugin" xml:space="preserve">
-    <value>已安装的 KeePassPasskey 应用不包含可安装的插件。</value>
+    <value>已安装的KeePassPasskey应用中未包含可安装的插件。</value>
   </data>
   <data name="Common_Install_Error_NoTargetFolder" xml:space="preserve">
     <value>未指定目标文件夹。</value>
   </data>
   <data name="Common_Install_Error_NotKeePassFolder" xml:space="preserve">
-    <value>所选文件夹不属于任何 KeePass 安装。</value>
+    <value>所选文件夹不属于任何一种安装方式的KeePass。</value>
   </data>
   <data name="Common_Install_Error_ScriptNotFound" xml:space="preserve">
-    <value>未找到安装脚本: {0}</value>
+    <value>找不到安装脚本：{0}</value>
   </data>
   <data name="Common_Install_Error_WriteFailed" xml:space="preserve">
     <value>无法复制插件文件。</value>
@@ -733,28 +733,28 @@
     <value>版本不兼容</value>
   </data>
   <data name="Common_Status_KeePassNotConnected" xml:space="preserve">
-    <value>KeePass 未连接</value>
+    <value>KeePass未连接</value>
   </data>
   <data name="Common_Status_NoDatabase" xml:space="preserve">
-    <value>未打开数据库</value>
+    <value>数据库未打开</value>
   </data>
   <data name="Common_Status_NotRegistered" xml:space="preserve">
     <value>未注册</value>
   </data>
   <data name="Common_Status_VersionMismatch" xml:space="preserve">
-    <value>版本不一致</value>
+    <value>版本不匹配</value>
   </data>
   <data name="Common_Status_WaitingToBeEnabled" xml:space="preserve">
     <value>等待启用</value>
   </data>
   <data name="Common_Version_AppOlder" xml:space="preserve">
-    <value>此应用({0})的版本低于 KeePass 插件({1})。请更新 KeePassPasskey 应用。</value>
+    <value>应用版本（{0}）低于KeePass插件版本（{1}），请更新KeePassPasskey应用。</value>
   </data>
   <data name="Common_Version_Incompatible" xml:space="preserve">
-    <value>应用和 KeePass 插件的版本不兼容。请将两者都更新到最新版本。</value>
+    <value>应用版本与KeePass插件版本不兼容，请将两者都更新到最新版本。</value>
   </data>
   <data name="Common_Version_PluginOlder" xml:space="preserve">
-    <value>KeePass 插件({0})的版本低于此应用({1})。请在 KeePass 中更新 KeePassPasskey 插件。</value>
+    <value>KeePass插件版本（{0}）低于当前应用版本（{1}），请更新KeePass中的KeePassPasskey插件。</value>
   </data>
   <data name="KeePass_EntryMenu_Copy" xml:space="preserve">
     <value>复制通行密钥</value>
@@ -775,73 +775,73 @@
     <value>通行密钥</value>
   </data>
   <data name="KeePass_NoUpdate_AlreadyNewest" xml:space="preserve">
-    <value>已安装版本 {0}。KeePassPasskey 应用不包含较新的版本。</value>
+    <value>已安装版本{0}，KeePassPasskey应用中没有更新的版本。</value>
   </data>
   <data name="KeePass_NoUpdate_AppNotInstalled" xml:space="preserve">
-    <value>KeePassPasskey 应用似乎未安装。</value>
+    <value>您似乎没有安装KeePassPasskey应用。</value>
   </data>
   <data name="KeePass_NoUpdate_PluginNewer" xml:space="preserve">
-    <value>已安装版本 {0}。KeePassPasskey 应用只包含版本 {1}。请更新应用，使两个版本一致。</value>
+    <value>已安装版本{0}，KeePassPasskey应用只包含版本{1}。请更新应用来匹配两者版本。</value>
   </data>
   <data name="KeePass_NoUpdate_PluginNotLocated" xml:space="preserve">
-    <value>未找到插件文件，因此无法从此处更新。</value>
+    <value>找不到插件文件，故不能从此处更新。</value>
   </data>
   <data name="KeePass_NoUpdate_Title" xml:space="preserve">
-    <value>KeePassPasskey 插件</value>
+    <value>KeePassPasskey插件</value>
   </data>
   <data name="KeePass_Paste_AlreadyOnEntry" xml:space="preserve">
     <value>该通行密钥已在此记录中。</value>
   </data>
   <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
-    <value>此记录已包含通行密钥。是否替换为要粘贴的通行密钥？
+    <value>此记录已存有一个通行密钥，是否粘贴并替换通行密钥？
 
-当前的通行密钥会保留在该记录的历史中，需要时可以恢复。</value>
+被替换的通行密钥会保留在该记录的历史中，您随时都可以恢复。</value>
   </data>
   <data name="KeePass_Paste_Failed" xml:space="preserve">
     <value>无法粘贴通行密钥。</value>
   </data>
   <data name="KeePass_Paste_SourceUnavailable" xml:space="preserve">
-    <value>通行密钥原先所在的记录已不可用，因此已取消粘贴。</value>
+    <value>通行密钥所在的记录不可用，粘贴已取消。</value>
   </data>
   <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
-    <value>其他程序已在使用 KeePassPasskey 所需的连接名称(命名管道)。在关闭该程序并重启 KeePass 之前，通行密钥无法使用。</value>
+    <value>其他程序正在占用KeePassPasskey所需的连接名称（命名管道）。在关闭该程序并重启KeePass之前，通行密钥将无法使用。</value>
   </data>
   <data name="KeePass_Pipe_ClaimFailedTitle" xml:space="preserve">
-    <value>KeePassPasskey 无法占用其命名管道</value>
+    <value>无法占用KeePassPasskey命名管道</value>
   </data>
   <data name="KeePass_Remove_Confirm" xml:space="preserve">
-    <value>是否从此记录中移除通行密钥？
+    <value>是否将此记录中的通行密钥移除？
 
-记录本身不会被删除。通行密钥会保留在该记录的历史中，需要时可以恢复。</value>
+记录本身不会被删除。通行密钥会保留在该记录的历史中，您随时都可以恢复。</value>
   </data>
   <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
     <value>是否从“{0}”中移除通行密钥？
 
-记录本身不会被删除。通行密钥会保留在该记录的历史中，需要时可以恢复。</value>
+记录本身不会被删除。通行密钥会保留在该记录的历史中，您随时都可以恢复。</value>
   </data>
   <data name="KeePass_Remove_Failed" xml:space="preserve">
     <value>无法移除通行密钥。</value>
   </data>
   <data name="KeePass_Restart_FallbackQuestion" xml:space="preserve">
-    <value>KeePassPasskey 插件已更新。是否立即重启 KeePass？</value>
+    <value>KeePassPasskey插件已更新，是否立即重启KeePass？</value>
   </data>
   <data name="KeePass_Restart_Heading" xml:space="preserve">
-    <value>插件已更新到版本 {0}</value>
+    <value>插件版本已更新至{0}</value>
   </data>
   <data name="KeePass_Restart_LaterNote" xml:space="preserve">
-    <value>在 KeePass 重启之前继续使用版本 {0}</value>
+    <value>在KeePass重启之前继续使用版本{0}</value>
   </data>
   <data name="KeePass_Restart_Message" xml:space="preserve">
-    <value>KeePass 必须重启才能加载新版本。</value>
+    <value>KeePass必须重启才能加载新版本。</value>
   </data>
   <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
     <value>立即重启</value>
   </data>
   <data name="KeePass_Restart_RestartNowNote" xml:space="preserve">
-    <value>KeePass 将关闭并重新打开</value>
+    <value>KeePass将关闭并重新打开</value>
   </data>
   <data name="KeePass_ToolsMenu_AppOpenFailed" xml:space="preserve">
-    <value>无法打开 KeePassPasskey 应用。该应用似乎未安装。</value>
+    <value>无法打开KeePassPasskey应用，您似乎没有安装KeePassPasskey。</value>
   </data>
   <data name="KeePass_ToolsMenu_Settings" xml:space="preserve">
     <value>通行密钥设置</value>
@@ -858,181 +858,181 @@
     <value>插件未更新</value>
   </data>
   <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
-    <value>未授予权限，因此仍在使用版本 {0}。</value>
+    <value>未授予权限，将继续使用版本{0}。</value>
   </data>
   <data name="KeePass_UpdateFailed_TryAgainButton" xml:space="preserve">
     <value>重试</value>
   </data>
   <data name="KeePass_UpdateFailed_TryAgainNote" xml:space="preserve">
-    <value>重新运行更新</value>
+    <value>再次运行更新</value>
   </data>
   <data name="KeePass_UpdateFailed_TryAgainPermissionNote" xml:space="preserve">
     <value>再次请求权限</value>
   </data>
   <data name="KeePass_Update_FallbackQuestion" xml:space="preserve">
-    <value>有新的 KeePassPasskey 插件可用(版本 {0})。是否立即安装？</value>
+    <value>KeePassPasskey插件有新版本（版本{0}），立即安装？</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>来源:  KeePassPasskey ({0})</value>
+    <value>安装自：KeePassPasskey（{0}）</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
-    <value>版本 {0} 可用。已安装版本 {1}。</value>
+    <value>已安装版本{1}，版本{0}可用。</value>
   </data>
   <data name="KeePass_Update_LaterButton" xml:space="preserve">
     <value>稍后</value>
   </data>
   <data name="KeePass_Update_LaterNote" xml:space="preserve">
-    <value>下次启动 KeePass 时再询问</value>
+    <value>下次启动KeePass时再询问</value>
   </data>
   <data name="KeePass_Update_Message" xml:space="preserve">
-    <value>在版本一致之前，创建和使用通行密钥可能无法正常工作。</value>
+    <value>您可能会因为版本不匹配而无法创建或使用通行密钥。</value>
   </data>
   <data name="KeePass_Update_NeverCheckCheckbox" xml:space="preserve">
-    <value>不再检查插件更新</value>
+    <value>永不检查插件更新</value>
   </data>
   <data name="KeePass_Update_SkipVersionButton" xml:space="preserve">
-    <value>跳过版本 {0}</value>
+    <value>跳过版本{0}</value>
   </data>
   <data name="KeePass_Update_SkipVersionNote" xml:space="preserve">
     <value>此版本不再询问</value>
   </data>
   <data name="KeePass_Update_Title" xml:space="preserve">
-    <value>KeePassPasskey 插件更新</value>
+    <value>KeePassPasskey插件更新</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>目标:  {0}</value>
+    <value>安装至：{0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>立即更新</value>
   </data>
   <data name="KeePass_Update_UpdateNowNote" xml:space="preserve">
-    <value>之后 KeePass 必须重启才能加载新版本</value>
+    <value>更新后，KeePass必须重启一次才能加载新版本</value>
   </data>
   <data name="Notify_Error_DbLocked" xml:space="preserve">
-    <value>KeePass 数据库已锁定。请解锁 KeePass 后重试。</value>
+    <value>KeePass数据库已锁定，请解锁KeePass后重试。</value>
   </data>
   <data name="Notify_Error_Duplicate" xml:space="preserve">
-    <value>已存在 {0} 的通行密钥。</value>
+    <value>{0}已有一个通行密钥。</value>
   </data>
   <data name="Notify_Error_Internal" xml:space="preserve">
-    <value>KeePass 中发生内部错误:</value>
+    <value>KeePass内部发生错误：</value>
   </data>
   <data name="Notify_Error_KeePassNotReady" xml:space="preserve">
-    <value>KeePass 未运行或数据库已锁定。</value>
+    <value>KeePass未运行或数据库已锁定。</value>
   </data>
   <data name="Notify_Error_NotFound" xml:space="preserve">
-    <value>未找到 {0} 的通行密钥。</value>
+    <value>找不到{0}的通行密钥。</value>
   </data>
   <data name="Notify_Error_NotFoundForUser" xml:space="preserve">
-    <value>未找到 {1} 上 {0} 的通行密钥。</value>
+    <value>找不到网站为{1}且用户名为{0}的通行密钥。</value>
   </data>
   <data name="Notify_Error_Unexpected" xml:space="preserve">
-    <value>发生意外错误:</value>
+    <value>发生意外错误：</value>
   </data>
   <data name="Notify_Error_UnsupportedAlgorithm" xml:space="preserve">
-    <value>此网站接受的签名算法在设置中均未开启。</value>
+    <value>未在设置中启用此网站所需的签名算法。</value>
   </data>
   <data name="Notify_Title_CreateFailed" xml:space="preserve">
-    <value>创建通行密钥失败</value>
+    <value>通行密钥创建失败</value>
   </data>
   <data name="Notify_Title_SignInFailed" xml:space="preserve">
-    <value>登录失败</value>
+    <value>登入失败</value>
   </data>
   <data name="Prompt_CountdownTooltip" xml:space="preserve">
-    <value>时间用完后将取消操作</value>
+    <value>超时后，相应请求将被取消</value>
   </data>
   <data name="Prompt_Entry_UnnamedDatabase" xml:space="preserve">
-    <value>(未命名数据库)</value>
+    <value>（未命名数据库）</value>
   </data>
   <data name="Prompt_Entry_Untitled" xml:space="preserve">
-    <value>(无标题)</value>
+    <value>（无标题）</value>
   </data>
   <data name="Prompt_Register_AddToExisting" xml:space="preserve">
-    <value>现有记录</value>
+    <value>已有记录</value>
   </data>
   <data name="Prompt_Register_AsUser" xml:space="preserve">
-    <value>以 {0} 身份</value>
+    <value>用户名：{0}</value>
   </data>
   <data name="Prompt_Register_AttestationHint" xml:space="preserve">
-    <value>此网站请求了企业证明(enterprise attestation)，但 KeePassPasskey 无法提供。网站仍可能接受该通行密钥。</value>
+    <value>KeePassPasskey无法提供企业证明。此网站请求了企业证明，但仍可能接受无企业证明的通行密钥。</value>
   </data>
   <data name="Prompt_Register_ConfirmButton" xml:space="preserve">
     <value>创建通行密钥</value>
   </data>
   <data name="Prompt_Register_CreateNew" xml:space="preserve">
-    <value>新记录</value>
+    <value>新建记录</value>
   </data>
   <data name="Prompt_Register_DatabaseLabel" xml:space="preserve">
     <value>数据库</value>
   </data>
   <data name="Prompt_Register_FilterAll" xml:space="preserve">
-    <value>当前显示所有记录</value>
+    <value>正在显示所有记录</value>
   </data>
   <data name="Prompt_Register_FilterWithoutPasskey" xml:space="preserve">
-    <value>当前仅显示没有通行密钥的记录</value>
+    <value>正在显示没有通行密钥的记录</value>
   </data>
   <data name="Prompt_Register_FilterWithPasskey" xml:space="preserve">
-    <value>当前仅显示已有通行密钥的记录</value>
+    <value>正在显示已有通行密钥的记录</value>
   </data>
   <data name="Prompt_Register_HasPasskeyTooltip" xml:space="preserve">
     <value>此记录已有通行密钥</value>
   </data>
   <data name="Prompt_Register_Headline" xml:space="preserve">
-    <value>{0} 请求创建通行密钥</value>
+    <value>{0}请求创建通行密钥</value>
   </data>
   <data name="Prompt_Register_NewEntryHint" xml:space="preserve">
     <value>将为此网站创建一条新记录。</value>
   </data>
   <data name="Prompt_Register_NoMatches" xml:space="preserve">
-    <value>没有与搜索匹配的记录。</value>
+    <value>找不到相关的记录。</value>
   </data>
   <data name="Prompt_Register_ReplaceHint" xml:space="preserve">
     <value>此记录已有通行密钥。保存后将替换该通行密钥。</value>
   </data>
   <data name="Prompt_Register_SearchPlaceholder" xml:space="preserve">
-    <value>搜索记录...</value>
+    <value>在记录中搜索……</value>
   </data>
   <data name="Prompt_Register_SelectedInKeePassTooltip" xml:space="preserve">
-    <value>已在 KeePass 中选中</value>
+    <value>在KeePass内选中的项</value>
   </data>
   <data name="Prompt_Register_Title" xml:space="preserve">
     <value>创建通行密钥</value>
   </data>
   <data name="Prompt_SignIn_ConfirmButton" xml:space="preserve">
-    <value>登录</value>
+    <value>登入</value>
   </data>
   <data name="Prompt_SignIn_Headline" xml:space="preserve">
-    <value>{0} 请求你登录</value>
+    <value>{0}请求登入</value>
   </data>
   <data name="Prompt_SignIn_Title" xml:space="preserve">
-    <value>使用通行密钥登录</value>
+    <value>使用通行密钥登入</value>
   </data>
   <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
-    <value>选择记录</value>
+    <value>添加到记录中</value>
   </data>
   <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
-    <value>{0} 秒后取消</value>
+    <value>{0}秒后取消</value>
   </data>
   <data name="Prompt_Toast_ChooseEntry_Body" xml:space="preserve">
-    <value>为 {0} 创建通行密钥。</value>
+    <value>为{0}创建通行密钥。</value>
   </data>
   <data name="Prompt_Toast_ChooseEntry_Title" xml:space="preserve">
-    <value>选择要保存到的记录</value>
+    <value>选择作为保存目标的记录</value>
   </data>
   <data name="Prompt_Toast_CreateNew" xml:space="preserve">
     <value>新建记录</value>
   </data>
   <data name="Prompt_Toast_DatabasePicker" xml:space="preserve">
-    <value>保存到数据库</value>
+    <value>保存至数据库</value>
   </data>
   <data name="Prompt_Toast_EntriesTruncated" xml:space="preserve">
-    <value>共 {1} 条匹配记录，仅显示 {0} 条。</value>
+    <value>共{1}条匹配记录，已显示{0}条。</value>
   </data>
   <data name="Prompt_Toast_Register_Body" xml:space="preserve">
-    <value>为 {0} 创建通行密钥。</value>
+    <value>为{0}创建通行密钥。</value>
   </data>
   <data name="Prompt_Toast_Register_BodyForUser" xml:space="preserve">
-    <value>为 {1} 上的 {0} 创建通行密钥。</value>
+    <value>为{1}上的用户{0}创建通行密钥。</value>
   </data>
   <data name="Prompt_Toast_Register_ConfirmButton" xml:space="preserve">
     <value>创建</value>
@@ -1041,37 +1041,37 @@
     <value>通行密钥创建请求</value>
   </data>
   <data name="Prompt_Toast_SaveToEntry" xml:space="preserve">
-    <value>保存</value>
+    <value>保存至记录中</value>
   </data>
   <data name="Prompt_Toast_SignIn_Body" xml:space="preserve">
-    <value>登录到 {0}。</value>
+    <value>登入到{0}。</value>
   </data>
   <data name="Prompt_Toast_SignIn_BodyAsUser" xml:space="preserve">
-    <value>以 {0} 身份登录到 {1}。</value>
+    <value>以{0}的身份登入到{1}。</value>
   </data>
   <data name="Prompt_Toast_SignIn_ConfirmButton" xml:space="preserve">
-    <value>登录</value>
+    <value>登入</value>
   </data>
   <data name="Prompt_Toast_SignIn_EntryHint" xml:space="preserve">
-    <value>KeePass 记录: {0}</value>
+    <value>KeePass记录：{0}</value>
   </data>
   <data name="Prompt_Toast_SignIn_Title" xml:space="preserve">
-    <value>登录请求</value>
+    <value>登入请求</value>
   </data>
   <data name="Prompt_Toast_TagOverwrite" xml:space="preserve">
     <value>将替换通行密钥</value>
   </data>
   <data name="Prompt_Toast_TagSelected" xml:space="preserve">
-    <value>已选择</value>
+    <value>已选中</value>
   </data>
   <data name="Prompt_WindowsHello_NoTitle" xml:space="preserve">
-    <value>(无标题)</value>
+    <value>（无标题）</value>
   </data>
   <data name="Tray_Menu_Exit" xml:space="preserve">
     <value>退出</value>
   </data>
   <data name="Tray_Menu_Open" xml:space="preserve">
-    <value>打开 KeePassPasskey</value>
+    <value>打开KeePassPasskey</value>
   </data>
   <data name="Tray_Menu_Settings" xml:space="preserve">
     <value>设置</value>
