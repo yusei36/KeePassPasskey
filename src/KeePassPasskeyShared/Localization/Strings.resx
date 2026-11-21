@@ -907,7 +907,7 @@ Try again?</value>
     <comment>{0} = available version</comment>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>From:  KeePassPasskey ({0})</value>
+    <value>From: KeePassPasskey ({0})</value>
     <comment>{0} = channel name (GitHub, Microsoft Store); a folder path follows on the next line</comment>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
@@ -938,7 +938,7 @@ Try again?</value>
     <comment>Window title of the update dialogs</comment>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>To:  {0}</value>
+    <value>To: {0}</value>
     <comment>{0} = folder path</comment>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">

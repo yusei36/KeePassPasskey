@@ -40,6 +40,7 @@ internal static class AppLanguage
 	{
 		var culture = Resolve(language);
 		Localizer.Apply(culture);
+		AppFontFallbacks.Instance.Apply(culture);
 
 		bool changed = !culture.Equals(_current);
 		_current = culture;
