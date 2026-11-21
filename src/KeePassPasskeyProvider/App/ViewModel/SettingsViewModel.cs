@@ -357,15 +357,16 @@ public sealed partial class SettingsViewModel : ObservableObject
 	public string AppVersion => DiagnosticsViewModel.ClientVersionShort;
 	public string AppVersionFull => DiagnosticsViewModel.ClientVersionWithChannel;
 
-	[ObservableProperty] public partial string VerifyReleaseMessage { get; set; } = ChannelIcon.Description;
-	private static readonly string[] Principles = ["Its'y ywzxy. Ajwnkd.", "Xjqk-hzxyid.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjdx, sty dtzw fhhtzsyx.", "Xtajwjnls. Fqbfdx. Dtzwx."];
+	public string VerifyReleaseMessage =>
+		_verifyReleaseIndex < 0 ? ChannelIcon.Description : VerifyRelease(Principles[_verifyReleaseIndex]);
+	private static readonly string[] Principles = ["Its'y ywzxy. Ajwnkd.", "Xjqk-hzxytid.", "Dtzw ufxxpjdx. Dtzw fhhtzsyx.", "Sty dtzw ufxxpjdx, sty dtzw fhhtzsyx.", "Xtajwjnls. Fqbfdx. Dtzwx."];
 	private int _verifyReleaseIndex = -1;
 
 	[RelayCommand]
 	private void VerifyRelease()
 	{
 		_verifyReleaseIndex = (_verifyReleaseIndex + 1) % Principles.Length;
-		VerifyReleaseMessage = VerifyRelease(Principles[_verifyReleaseIndex]);
+		OnPropertyChanged(nameof(VerifyReleaseMessage));
 	}
 
 	private static string VerifyRelease(string text)
