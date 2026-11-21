@@ -867,7 +867,7 @@ Erneut versuchen?</value>
     <value>Ein neues KeePassPasskey Plugin ist verfügbar (Version {0}). Jetzt installieren?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>Von:  KeePassPasskey ({0})</value>
+    <value>Von: KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>Version {0} ist verfügbar. Installiert ist Version {1}.</value>
@@ -894,7 +894,7 @@ Erneut versuchen?</value>
     <value>KeePassPasskey Plugin Update</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>Nach:  {0}</value>
+    <value>Nach: {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>Jetzt aktualisieren</value>
