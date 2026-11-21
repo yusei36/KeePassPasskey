@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using KeePassPasskeyProvider.App.Prompts;
 using KeePassPasskeyProvider.App.ViewModel;
 using KeePassPasskeyProvider.Authenticator.UserVerification;
+using KeePassPasskeyProvider.Localization;
 using KeePassPasskeyShared;
 using KeePassPasskeyShared.Settings;
 using Microsoft.Win32;
@@ -206,6 +207,7 @@ internal static class PromptHost
 					// and the prompts have no main window to be the last one closed.
 					AppBuilder.Configure<PromptApplication>()
 						.UsePlatformDetect()
+						.With(AppFontFallbacks.Options)
 						.LogToTrace()
 						.SetupWithoutStarting();
 
