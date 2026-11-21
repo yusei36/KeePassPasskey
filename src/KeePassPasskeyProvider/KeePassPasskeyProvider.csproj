@@ -95,10 +95,10 @@
 			<IsTrimmable>false</IsTrimmable>
 		</PackageReference>
 		<!-- Avalonia UI for management window -->
-		<PackageReference Include="Avalonia" Version="12.1.4">
+		<PackageReference Include="Avalonia" Version="12.1.6">
 			<IsTrimmable>false</IsTrimmable>
 		</PackageReference>
-		<PackageReference Include="Avalonia.Desktop" Version="12.1.4">
+		<PackageReference Include="Avalonia.Desktop" Version="12.1.6">
 			<IsTrimmable>false</IsTrimmable>
 		</PackageReference>
 		<PackageReference Include="FluentAvaloniaUI" Version="3.1.0">
