@@ -11,16 +11,16 @@
     <value>Apri le opzioni avanzate per le passkey nelle Impostazioni di Windows</value>
   </data>
   <data name="App_Action_InstallPlugin" xml:space="preserve">
-    <value>Installa estensione</value>
+    <value>Installa plugin</value>
   </data>
   <data name="App_Action_InstallPluginTooltip" xml:space="preserve">
-    <value>Installa o aggiorna l'estensione di KeePass</value>
+    <value>Installa o aggiorna il plugin di KeePass</value>
   </data>
   <data name="App_Action_Register" xml:space="preserve">
     <value>Registra</value>
   </data>
   <data name="App_Action_ShowPluginFile" xml:space="preserve">
-    <value>Mostra file dell'estensione</value>
+    <value>Mostra file del plugin</value>
   </data>
   <data name="App_Channel_Dev" xml:space="preserve">
     <value>Build di sviluppo</value>
@@ -35,7 +35,7 @@
     <value>App KeePassPasskey</value>
   </data>
   <data name="App_Diagnostics_CopyPluginVersionTooltip" xml:space="preserve">
-    <value>Copia versione dell'estensione</value>
+    <value>Copia versione del plugin</value>
   </data>
   <data name="App_Diagnostics_CopyProviderVersionTooltip" xml:space="preserve">
     <value>Copia versione dell'app</value>
@@ -47,7 +47,7 @@
     <value>Versione non compatibile</value>
   </data>
   <data name="App_Diagnostics_PluginNotConnected" xml:space="preserve">
-    <value>Non connessa</value>
+    <value>Non connesso</value>
   </data>
   <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
     <value>Apri le Impostazioni di Windows per attivare o disattivare il provider di passkey</value>
@@ -59,13 +59,13 @@
     <value>Annulla registrazione</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
-    <value>Questa app ({0}) e l'estensione di KeePass ({1}) hanno versioni diverse, ma sono compatibili. Le passkey continuano a funzionare, ma le nuove funzionalità potrebbero non essere disponibili finché non aggiorni la meno recente delle due.</value>
+    <value>Questa app ({0}) e il plugin di KeePass ({1}) hanno versioni diverse, ma sono compatibili. Le passkey continuano a funzionare, ma le nuove funzionalità potrebbero non essere disponibili finché non aggiorni il meno recente dei due.</value>
   </data>
   <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
     <value>Versioni diverse</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_ClearButton" xml:space="preserve">
-    <value>Cancella</value>
+    <value>Svuota</value>
   </data>
   <data name="App_Diagnostics_WindowsCache_ClearTooltip" xml:space="preserve">
     <value>Rimuovi tutte le passkey dalla cache di Windows. Vengono ripristinate alla prossima apertura o al prossimo salvataggio di un database.</value>
@@ -152,16 +152,16 @@
     <value>Operazione annullata durante la richiesta dei diritti di amministratore. Non è stato modificato nulla.</value>
   </data>
   <data name="App_InstallDialog_Result_Installed" xml:space="preserve">
-    <value>L'estensione è stata installata.</value>
+    <value>Il plugin è stato installato.</value>
   </data>
   <data name="App_InstallDialog_Result_InstalledRestart" xml:space="preserve">
-    <value>L'estensione è stata installata. Riavvia KeePass per caricare la modifica.</value>
+    <value>Il plugin è stato installato. Riavvia KeePass per caricare la modifica.</value>
   </data>
   <data name="App_InstallDialog_Result_Removed" xml:space="preserve">
-    <value>L'estensione è stata rimossa.</value>
+    <value>Il plugin è stato rimosso.</value>
   </data>
   <data name="App_InstallDialog_Result_RemovedRestart" xml:space="preserve">
-    <value>L'estensione è stata rimossa. Riavvia KeePass per applicare la modifica.</value>
+    <value>Il plugin è stato rimosso. Riavvia KeePass per applicare la modifica.</value>
   </data>
   <data name="App_InstallDialog_ShowPluginFileTooltip" xml:space="preserve">
     <value>Mostra KeePassPasskey.dll in Esplora file</value>
@@ -179,7 +179,7 @@
     <value>Nessuna cartella scelta.</value>
   </data>
   <data name="App_InstallDialog_Status_NotInstalled" xml:space="preserve">
-    <value>Non installata.</value>
+    <value>Non installato.</value>
   </data>
   <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
     <value>Questa non è una cartella di KeePass né la sua cartella Plugins. Scegli la cartella di KeePass o la sua sottocartella Plugins.</value>
@@ -197,13 +197,13 @@
     <value>Installazione in</value>
   </data>
   <data name="App_InstallDialog_Title" xml:space="preserve">
-    <value>Estensione di KeePass</value>
+    <value>Plugin di KeePass</value>
   </data>
   <data name="App_InstallDialog_UpdateButton" xml:space="preserve">
     <value>Aggiorna</value>
   </data>
   <data name="App_Label_KeePassPlugin" xml:space="preserve">
-    <value>Estensione di KeePass</value>
+    <value>Plugin di KeePass</value>
   </data>
   <data name="App_Label_PasskeyProvider" xml:space="preserve">
     <value>Provider di passkey</value>
@@ -314,13 +314,13 @@
     <value>Apri il codice sorgente su GitHub</value>
   </data>
   <data name="App_Settings_About_ThirdParty" xml:space="preserve">
-    <value>Comunicazioni di terze parti</value>
+    <value>Avvisi di terze parti</value>
   </data>
   <data name="App_Settings_About_ThirdPartyDescription" xml:space="preserve">
     <value>Licenze open source delle librerie incluse</value>
   </data>
   <data name="App_Settings_About_ThirdPartyTooltip" xml:space="preserve">
-    <value>Apri le comunicazioni di terze parti</value>
+    <value>Apri gli avvisi di terze parti</value>
   </data>
   <data name="App_Settings_About_Version" xml:space="preserve">
     <value>Versione</value>
@@ -405,7 +405,7 @@ Un sito web che accetta solo algoritmi disattivati non può creare una passkey.<
     <value>Queste impostazioni provengono da KeePass.config.enforced.xml e non possono essere modificate qui.</value>
   </data>
   <data name="App_Settings_Enforced_Title" xml:space="preserve">
-    <value>Impostazioni rese obbligatorie da KeePass</value>
+    <value>Impostazioni bloccate da KeePass</value>
   </data>
   <data name="App_Settings_Entries_Description" xml:space="preserve">
     <value>Come vengono create le nuove voci delle passkey</value>
@@ -451,7 +451,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Questa traduzione è stata creata automaticamente e non è ancora stata rivista da un madrelingua.</value>
   </data>
   <data name="App_Settings_Language_OptionNotReviewed" xml:space="preserve">
-    <value>{0} (non ancora rivisto)</value>
+    <value>{0} (da revisionare)</value>
   </data>
   <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
     <value>Usa la lingua di Windows</value>
@@ -463,7 +463,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Mostra le richieste di conferma come notifiche di Windows anziché come finestre di dialogo. La modalità Non disturbare nasconde le notifiche senza avvisare e gli elenchi nelle notifiche mostrano al massimo 5 elementi.</value>
   </data>
   <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
-    <value>Usa le notifiche legacy per la conferma</value>
+    <value>Usa le richieste di conferma tramite notifica (legacy)</value>
   </data>
   <data name="App_Settings_LoadFailed" xml:space="preserve">
     <value>Non è stato possibile caricare le impostazioni più recenti da KeePass. Sono visualizzati gli ultimi valori noti.</value>
@@ -472,7 +472,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Caricamento delle impostazioni in corso...</value>
   </data>
   <data name="App_Settings_LogLevel_Description" xml:space="preserve">
-    <value>Livello di dettaglio dei file di log dell'app e dell'estensione</value>
+    <value>Livello di dettaglio dei file di log dell'app e del plugin</value>
   </data>
   <data name="App_Settings_LogLevel_Header" xml:space="preserve">
     <value>Livello di log</value>
@@ -493,10 +493,10 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Avviso</value>
   </data>
   <data name="App_Settings_PluginUpdates_Description" xml:space="preserve">
-    <value>All'avvio di KeePass propone di aggiornare l'estensione se questa app ne include una versione più recente. Ogni aggiornamento va confermato in una finestra di dialogo.</value>
+    <value>All'avvio di KeePass propone di aggiornare il plugin se questa app ne include una versione più recente. Ogni aggiornamento va confermato in una finestra di dialogo.</value>
   </data>
   <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
-    <value>Controlla gli aggiornamenti dell'estensione</value>
+    <value>Controlla gli aggiornamenti del plugin</value>
   </data>
   <data name="App_Settings_RefreshInterval_Description" xml:space="preserve">
     <value>Ogni quanto l'app controlla lo stato del provider</value>
@@ -511,7 +511,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Creazione di passkey</value>
   </data>
   <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
-    <value>La richiesta di conferma e Windows Hello sono entrambi disattivati, quindi le passkey verranno create senza chiedertelo.</value>
+    <value>La richiesta di conferma e Windows Hello sono entrambi disattivati, quindi le passkey verranno create senza chiederti conferma.</value>
   </data>
   <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
     <value>Ripristina valori predefiniti</value>
@@ -523,7 +523,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Risolvi i segnaposti del titolo al salvataggio</value>
   </data>
   <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
-    <value>KeePass non è in esecuzione. Avvia KeePass con l'estensione KeePassPasskey prima di salvare le impostazioni.</value>
+    <value>KeePass non è in esecuzione. Avvia KeePass con il plugin KeePassPasskey prima di salvare le impostazioni.</value>
   </data>
   <data name="App_Settings_SaveFailedTitle" xml:space="preserve">
     <value>Non è stato possibile salvare le impostazioni</value>
@@ -544,7 +544,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Accesso</value>
   </data>
   <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
-    <value>La richiesta di conferma e Windows Hello sono entrambi disattivati, quindi le passkey verranno usate per l'accesso senza chiedertelo.</value>
+    <value>La richiesta di conferma e Windows Hello sono entrambi disattivati, quindi l'accesso con le passkey avverrà senza chiederti conferma.</value>
   </data>
   <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
     <value>Non chiede di nuovo la verifica con Windows Hello se hai appena sbloccato KeePass per la stessa operazione. Si applica solo quando la richiesta di conferma è attivata.</value>
@@ -610,7 +610,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Copia **KeePassPasskey.dll** nella cartella **Plugins** di KeePass oppure usa il pulsante qui sotto. Poi riavvia KeePass.</value>
   </data>
   <data name="App_SetupGuide_Step1_Title" xml:space="preserve">
-    <value>Installa l'estensione</value>
+    <value>Installa il plugin</value>
   </data>
   <data name="App_SetupGuide_Step2_Text" xml:space="preserve">
     <value>Vai a **Impostazioni › Account › Passkey › Opzioni avanzate** oppure usa il pulsante qui sotto.</value>
@@ -619,13 +619,13 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Apri le opzioni avanzate per le passkey</value>
   </data>
   <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
-    <value>Attiva **KeePassPasskey** nell'elenco dei provider di passkey.</value>
+    <value>Attiva **KeePassPasskey** nella sezione Responsabili di passkey.</value>
   </data>
   <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
     <value>Abilita KeePassPasskey</value>
   </data>
   <data name="App_SetupGuide_Step4_Text" xml:space="preserve">
-    <value>Entrambi gli stati qui sopra dovrebbero indicare **Abilitato** / **Connessa**.</value>
+    <value>Entrambi gli stati qui sopra dovrebbero indicare **Abilitato** / **Connesso**.</value>
   </data>
   <data name="App_SetupGuide_Step4_Title" xml:space="preserve">
     <value>Verifica</value>
@@ -646,7 +646,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Fai clic su Registra per riprovare.</value>
   </data>
   <data name="App_Status_Hint_KeePassNotConnected" xml:space="preserve">
-    <value>Avvia KeePass con l'estensione KeePassPasskey installata.</value>
+    <value>Avvia KeePass con il plugin KeePassPasskey installato.</value>
   </data>
   <data name="App_Status_Hint_NoDatabase" xml:space="preserve">
     <value>Apri un database di KeePass per usare le passkey.</value>
@@ -655,19 +655,19 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Fai clic su Registra per configurare KeePassPasskey come provider di passkey.</value>
   </data>
   <data name="App_Status_Hint_Ready" xml:space="preserve">
-    <value>Il provider di passkey è abilitato e l'estensione di KeePass è connessa.</value>
+    <value>Il provider di passkey è abilitato e il plugin di KeePass è connesso.</value>
   </data>
   <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
     <value>Fai clic su "Opzioni avanzate per le passkey" qui sotto per abilitare KeePassPasskey.</value>
   </data>
   <data name="App_Status_Pill_Connected" xml:space="preserve">
-    <value>Connessa</value>
+    <value>Connesso</value>
   </data>
   <data name="App_Status_Pill_Enabled" xml:space="preserve">
     <value>Abilitato</value>
   </data>
   <data name="App_Status_Pill_NotConnected" xml:space="preserve">
-    <value>Non connessa</value>
+    <value>Non connesso</value>
   </data>
   <data name="App_Status_Pill_Registered" xml:space="preserve">
     <value>Registrato</value>
@@ -703,13 +703,13 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>L'accesso alla cartella Plugins di KeePass è stato negato.</value>
   </data>
   <data name="Common_Install_Error_BundledPluginNotFound" xml:space="preserve">
-    <value>Estensione inclusa non trovata: {0}</value>
+    <value>Plugin incluso non trovato: {0}</value>
   </data>
   <data name="Common_Install_Error_FolderNotFound" xml:space="preserve">
     <value>Cartella non trovata: {0}</value>
   </data>
   <data name="Common_Install_Error_NoBundledPlugin" xml:space="preserve">
-    <value>L'app KeePassPasskey installata non include un'estensione da installare.</value>
+    <value>L'app KeePassPasskey installata non include un plugin da installare.</value>
   </data>
   <data name="Common_Install_Error_NoTargetFolder" xml:space="preserve">
     <value>Nessuna cartella di destinazione specificata.</value>
@@ -721,7 +721,7 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>Script di installazione non trovato: {0}</value>
   </data>
   <data name="Common_Install_Error_WriteFailed" xml:space="preserve">
-    <value>Non è stato possibile copiare il file dell'estensione.</value>
+    <value>Non è stato possibile copiare il file del plugin.</value>
   </data>
   <data name="Common_OK" xml:space="preserve">
     <value>OK</value>
@@ -748,13 +748,13 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>In attesa di abilitazione</value>
   </data>
   <data name="Common_Version_AppOlder" xml:space="preserve">
-    <value>Questa app ({0}) è meno recente dell'estensione di KeePass ({1}). Aggiorna l'app KeePassPasskey.</value>
+    <value>Questa app ({0}) è meno recente del plugin di KeePass ({1}). Aggiorna l'app KeePassPasskey.</value>
   </data>
   <data name="Common_Version_Incompatible" xml:space="preserve">
-    <value>L'app e l'estensione di KeePass hanno versioni non compatibili. Aggiorna entrambe alla versione più recente.</value>
+    <value>L'app e il plugin di KeePass hanno versioni non compatibili. Aggiornali entrambi alla versione più recente.</value>
   </data>
   <data name="Common_Version_PluginOlder" xml:space="preserve">
-    <value>L'estensione di KeePass ({0}) è meno recente di questa app ({1}). Aggiorna l'estensione KeePassPasskey in KeePass.</value>
+    <value>Il plugin di KeePass ({0}) è meno recente di questa app ({1}). Aggiorna il plugin KeePassPasskey in KeePass.</value>
   </data>
   <data name="KeePass_EntryMenu_Copy" xml:space="preserve">
     <value>Copia passkey</value>
@@ -784,10 +784,10 @@ Gruppo selezionato: il gruppo selezionato in KeePass al momento della creazione 
     <value>È installata la versione {0}. L'app KeePassPasskey include solo la versione {1}. Aggiorna l'app in modo che le due versioni corrispondano.</value>
   </data>
   <data name="KeePass_NoUpdate_PluginNotLocated" xml:space="preserve">
-    <value>Non è stato possibile individuare il file dell'estensione, quindi non è possibile aggiornarla da qui.</value>
+    <value>Non è stato possibile individuare il file del plugin, quindi non è possibile aggiornarlo da qui.</value>
   </data>
   <data name="KeePass_NoUpdate_Title" xml:space="preserve">
-    <value>Estensione KeePassPasskey</value>
+    <value>Plugin KeePassPasskey</value>
   </data>
   <data name="KeePass_Paste_AlreadyOnEntry" xml:space="preserve">
     <value>La passkey si trova già in questa voce.</value>
@@ -801,7 +801,7 @@ La passkey attuale resta nella cronologia della voce, quindi puoi ripristinarla 
     <value>Non è stato possibile incollare la passkey.</value>
   </data>
   <data name="KeePass_Paste_SourceUnavailable" xml:space="preserve">
-    <value>La voce da cui proviene la passkey non è più disponibile, quindi non è stato incollato nulla.</value>
+    <value>La voce da cui proviene la passkey non è più disponibile, quindi l'operazione è stata annullata.</value>
   </data>
   <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
     <value>Un altro programma sta già usando il nome di connessione (named pipe) necessario a KeePassPasskey. Le passkey non funzioneranno finché non chiudi quel programma e riavvii KeePass.</value>
@@ -823,10 +823,10 @@ La voce stessa non viene eliminata. La passkey resta nella cronologia della voce
     <value>Non è stato possibile rimuovere la passkey.</value>
   </data>
   <data name="KeePass_Restart_FallbackQuestion" xml:space="preserve">
-    <value>L'estensione KeePassPasskey è stata aggiornata. Vuoi riavviare KeePass adesso?</value>
+    <value>Il plugin KeePassPasskey è stato aggiornato. Vuoi riavviare KeePass adesso?</value>
   </data>
   <data name="KeePass_Restart_Heading" xml:space="preserve">
-    <value>L'estensione è stata aggiornata alla versione {0}</value>
+    <value>Il plugin è stato aggiornato alla versione {0}</value>
   </data>
   <data name="KeePass_Restart_LaterNote" xml:space="preserve">
     <value>La versione {0} resta in uso fino al riavvio di KeePass</value>
@@ -847,7 +847,7 @@ La voce stessa non viene eliminata. La passkey resta nella cronologia della voce
     <value>Impostazioni passkey</value>
   </data>
   <data name="KeePass_ToolsMenu_UpdatePlugin" xml:space="preserve">
-    <value>Aggiorna estensione dall'app installata</value>
+    <value>Aggiorna plugin dall'app installata</value>
   </data>
   <data name="KeePass_UpdateFailed_FallbackQuestion" xml:space="preserve">
     <value>{0}
@@ -855,7 +855,7 @@ La voce stessa non viene eliminata. La passkey resta nella cronologia della voce
 Vuoi riprovare?</value>
   </data>
   <data name="KeePass_UpdateFailed_Heading" xml:space="preserve">
-    <value>L'estensione non è stata aggiornata</value>
+    <value>Il plugin non è stato aggiornato</value>
   </data>
   <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
     <value>L'autorizzazione non è stata concessa, quindi la versione {0} è ancora in uso.</value>
@@ -864,16 +864,16 @@ Vuoi riprovare?</value>
     <value>Riprova</value>
   </data>
   <data name="KeePass_UpdateFailed_TryAgainNote" xml:space="preserve">
-    <value>L'aggiornamento viene eseguito di nuovo</value>
+    <value>Esegue di nuovo l'aggiornamento</value>
   </data>
   <data name="KeePass_UpdateFailed_TryAgainPermissionNote" xml:space="preserve">
-    <value>L'autorizzazione viene richiesta di nuovo</value>
+    <value>Richiede di nuovo l'autorizzazione</value>
   </data>
   <data name="KeePass_Update_FallbackQuestion" xml:space="preserve">
-    <value>È disponibile una nuova estensione KeePassPasskey (versione {0}). Vuoi installarla adesso?</value>
+    <value>È disponibile un nuovo plugin KeePassPasskey (versione {0}). Vuoi installarlo adesso?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>Origine:  KeePassPasskey ({0})</value>
+    <value>Origine: KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>È disponibile la versione {0}. È installata la versione {1}.</value>
@@ -888,7 +888,7 @@ Vuoi riprovare?</value>
     <value>La creazione e l'uso delle passkey potrebbero non funzionare finché le versioni non corrispondono.</value>
   </data>
   <data name="KeePass_Update_NeverCheckCheckbox" xml:space="preserve">
-    <value>Non controllare più gli aggiornamenti dell'estensione</value>
+    <value>Non controllare più gli aggiornamenti del plugin</value>
   </data>
   <data name="KeePass_Update_SkipVersionButton" xml:space="preserve">
     <value>Salta la versione {0}</value>
@@ -897,10 +897,10 @@ Vuoi riprovare?</value>
     <value>Non chiedere più per questa versione</value>
   </data>
   <data name="KeePass_Update_Title" xml:space="preserve">
-    <value>Aggiornamento dell'estensione KeePassPasskey</value>
+    <value>Aggiornamento del plugin KeePassPasskey</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>Destinazione:  {0}</value>
+    <value>Destinazione: {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>Aggiorna ora</value>
@@ -1008,7 +1008,7 @@ Vuoi riprovare?</value>
     <value>Accedi con una passkey</value>
   </data>
   <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
-    <value>Usa voce</value>
+    <value>Voce esistente</value>
   </data>
   <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
     <value>Annullamento tra {0} s</value>
@@ -1059,7 +1059,7 @@ Vuoi riprovare?</value>
     <value>Richiesta di accesso</value>
   </data>
   <data name="Prompt_Toast_TagOverwrite" xml:space="preserve">
-    <value>la passkey verrà sostituita</value>
+    <value>sostituisce la passkey</value>
   </data>
   <data name="Prompt_Toast_TagSelected" xml:space="preserve">
     <value>selezionata</value>
