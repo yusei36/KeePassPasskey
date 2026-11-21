@@ -873,7 +873,7 @@ La entrada en sí no se elimina. La clave de paso permanece en el historial de l
     <value>Hay un nuevo complemento KeePassPasskey disponible (versión {0}). ¿Quieres instalarlo ahora?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>Origen:  KeePassPasskey ({0})</value>
+    <value>Origen: KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>La versión {0} está disponible. La versión {1} está instalada.</value>
@@ -900,7 +900,7 @@ La entrada en sí no se elimina. La clave de paso permanece en el historial de l
     <value>Actualización del complemento KeePassPasskey</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>Destino:  {0}</value>
+    <value>Destino: {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>Actualizar ahora</value>
