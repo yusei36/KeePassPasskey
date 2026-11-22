@@ -17,7 +17,8 @@ namespace KeePassPasskeyProvider.App.Utils;
 /// Text the run's own font has no glyphs for (Chinese, for example) gets its own run with the
 /// fallback family set explicitly. Left to Avalonia, the fallback first reuses the typeface the
 /// previous run fell back to, weight included, so a marked part's semibold carried over into the
-/// plain text after it and the plain text's regular weight into the marked part.
+/// plain text after it and the plain text's regular weight into the marked part
+/// (AvaloniaUI/Avalonia#18199). Remove the splitting once that reuse respects the weight.
 /// </remarks>
 public static class MarkedText
 {
