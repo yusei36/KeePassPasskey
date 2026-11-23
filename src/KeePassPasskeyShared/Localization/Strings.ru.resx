@@ -873,7 +873,7 @@
     <value>Доступен новый плагин KeePassPasskey (версия {0}). Установить его сейчас?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>Откуда:  KeePassPasskey ({0})</value>
+    <value>Откуда: KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>Доступна версия {0}. Установлена версия {1}.</value>
@@ -900,7 +900,7 @@
     <value>Обновление плагина KeePassPasskey</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>Куда:  {0}</value>
+    <value>Куда: {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>Обновить сейчас</value>
