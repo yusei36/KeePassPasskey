@@ -7,9 +7,9 @@
 
 	<PropertyGroup>
 		<VersionPrefix>1.7.1</VersionPrefix>
-		<VersionSuffix>preview.2</VersionSuffix>
-		<AssemblyVersion>1.7.0.2</AssemblyVersion>
-		<FileVersion>1.7.0.2</FileVersion>
+		<VersionSuffix>preview.3</VersionSuffix>
+		<AssemblyVersion>1.7.0.3</AssemblyVersion>
+		<FileVersion>1.7.0.3</FileVersion>
 		<Company>Uwe Kögel</Company>
 		<Copyright>Copyright © 2026 Uwe Kögel</Copyright>
 	</PropertyGroup>
