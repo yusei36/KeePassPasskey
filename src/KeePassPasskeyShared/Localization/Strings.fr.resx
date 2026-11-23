@@ -873,7 +873,7 @@ Réessayer ?</value>
     <value>Un nouveau greffon KeePassPasskey est disponible (version {0}). L'installer maintenant ?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>De :  KeePassPasskey ({0})</value>
+    <value>De : KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>La version {0} est disponible. La version {1} est installée.</value>
@@ -900,7 +900,7 @@ Réessayer ?</value>
     <value>Mise à jour du greffon KeePassPasskey</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>Vers :  {0}</value>
+    <value>Vers : {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>Mettre à jour maintenant</value>
