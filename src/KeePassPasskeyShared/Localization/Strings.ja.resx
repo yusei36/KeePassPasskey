@@ -873,7 +873,7 @@
     <value>新しい KeePassPasskey プラグイン (バージョン {0}) を利用できます。今すぐインストールしますか?</value>
   </data>
   <data name="KeePass_Update_FromLabel" xml:space="preserve">
-    <value>コピー元:  KeePassPasskey ({0})</value>
+    <value>コピー元: KeePassPasskey ({0})</value>
   </data>
   <data name="KeePass_Update_Heading" xml:space="preserve">
     <value>バージョン {0} を利用できます。バージョン {1} がインストールされています。</value>
@@ -900,7 +900,7 @@
     <value>KeePassPasskey プラグインの更新</value>
   </data>
   <data name="KeePass_Update_ToLabel" xml:space="preserve">
-    <value>コピー先:  {0}</value>
+    <value>コピー先: {0}</value>
   </data>
   <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
     <value>今すぐ更新</value>
