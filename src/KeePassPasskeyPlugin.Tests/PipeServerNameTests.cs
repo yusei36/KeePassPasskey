@@ -15,25 +15,27 @@ public class PipeServerNameTests
 	private readonly string _perUser = "kpp-test-" + Guid.NewGuid().ToString("N");
 
 	[Fact]
-	public void Start_ClaimsLegacyName_WhenFree()
+	public void Start_ClaimsBothNames_WhenFree()
 	{
 		var server = new PipeServer(null, _legacy, _perUser);
 		try
 		{
 			Assert.True(server.Start());
+			Assert.True(PipeExists(_perUser));
 			Assert.True(PipeExists(_legacy));
-			Assert.False(PipeExists(_perUser));
 		}
 		finally
 		{
 			server.Stop();
 		}
+		Assert.False(PipeExists(_perUser));
+		Assert.False(PipeExists(_legacy));
 	}
 
 	[Theory]
 	[InlineData(NamedPipeServerStream.MaxAllowedServerInstances)] // taken, instances left: ERROR_ACCESS_DENIED
 	[InlineData(1)]                                                // taken, all instances busy: ERROR_PIPE_BUSY
-	public void Start_FallsBackToPerUserName_WhenLegacyNameIsTaken(int ownerMaxInstances)
+	public void Start_ServesPerUserNameOnly_WhenLegacyNameIsTaken(int ownerMaxInstances)
 	{
 		// Stands in for the KeePass of another signed-in user holding the legacy name.
 		using (new NamedPipeServerStream(_legacy, PipeDirection.InOut, ownerMaxInstances))
@@ -43,6 +45,27 @@ public class PipeServerNameTests
 			{
 				Assert.True(server.Start());
 				Assert.True(PipeExists(_perUser));
+			}
+			finally
+			{
+				server.Stop();
+			}
+		}
+	}
+
+	[Theory]
+	[InlineData(NamedPipeServerStream.MaxAllowedServerInstances)]
+	[InlineData(1)]
+	public void Start_Refuses_WhenPerUserNameIsTaken(int ownerMaxInstances)
+	{
+		// Stands in for another process holding the per-user name.
+		using (new NamedPipeServerStream(_perUser, PipeDirection.InOut, ownerMaxInstances))
+		{
+			var server = new PipeServer(null, _legacy, _perUser);
+			try
+			{
+				Assert.False(server.Start());
+				Assert.False(PipeExists(_legacy));
 			}
 			finally
 			{
