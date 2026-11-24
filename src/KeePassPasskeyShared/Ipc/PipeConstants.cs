@@ -21,9 +21,8 @@ public static class PipeConstants
 	public static readonly string PipeName = BaseName + "-" + WindowsIdentity.GetCurrent().User.Value;
 
 	/// <summary>
-	/// Name used by plugins up to 1.4.x. The plugin still claims it first, so an older provider keeps
-	/// reaching a newer plugin; only when another user's KeePass holds it does the plugin use
-	/// <see cref="PipeName"/>. The client tries <see cref="PipeName"/> first and falls back to this one.
+	/// Name used by plugins up to 1.4.x. The plugin also claims it when free, so an older provider keeps
+	/// reaching a newer plugin. The client tries <see cref="PipeName"/> first and falls back to this one.
 	/// </summary>
 	public const string LegacyPipeName = BaseName;
 
