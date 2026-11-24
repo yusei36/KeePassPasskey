@@ -1,0 +1,1085 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App_Action_AdvancedPasskeyOptions" xml:space="preserve">
+    <value>パスキーの詳細オプション</value>
+  </data>
+  <data name="App_Action_AdvancedPasskeyOptionsTooltip" xml:space="preserve">
+    <value>Windows の設定でパスキーの詳細オプションを開く</value>
+  </data>
+  <data name="App_Action_InstallPlugin" xml:space="preserve">
+    <value>プラグインをインストール</value>
+  </data>
+  <data name="App_Action_InstallPluginTooltip" xml:space="preserve">
+    <value>KeePass プラグインをインストールまたは更新</value>
+  </data>
+  <data name="App_Action_Register" xml:space="preserve">
+    <value>登録</value>
+  </data>
+  <data name="App_Action_ShowPluginFile" xml:space="preserve">
+    <value>プラグイン ファイルを表示</value>
+  </data>
+  <data name="App_Channel_Dev" xml:space="preserve">
+    <value>開発ビルド</value>
+  </data>
+  <data name="App_Channel_GitHub" xml:space="preserve">
+    <value>GitHub リリース版</value>
+  </data>
+  <data name="App_Channel_Store" xml:space="preserve">
+    <value>Microsoft Store 版</value>
+  </data>
+  <data name="App_Diagnostics_AppVersion_Label" xml:space="preserve">
+    <value>KeePassPasskey アプリ</value>
+  </data>
+  <data name="App_Diagnostics_CopyPluginVersionTooltip" xml:space="preserve">
+    <value>プラグインのバージョンをコピー</value>
+  </data>
+  <data name="App_Diagnostics_CopyProviderVersionTooltip" xml:space="preserve">
+    <value>アプリのバージョンをコピー</value>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Message" xml:space="preserve">
+    <value>{0}それまでパスキーの操作はブロックされます。</value>
+  </data>
+  <data name="App_Diagnostics_IncompatibleVersion_Title" xml:space="preserve">
+    <value>互換性のないバージョン</value>
+  </data>
+  <data name="App_Diagnostics_PluginNotConnected" xml:space="preserve">
+    <value>未接続</value>
+  </data>
+  <data name="App_Diagnostics_Registration_AdvancedOptionsTooltip" xml:space="preserve">
+    <value>Windows の設定を開いて、パスキー プロバイダーのオン/オフを切り替える</value>
+  </data>
+  <data name="App_Diagnostics_Registration_Label" xml:space="preserve">
+    <value>プロバイダーの登録</value>
+  </data>
+  <data name="App_Diagnostics_Registration_UnregisterButton" xml:space="preserve">
+    <value>登録解除</value>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Message" xml:space="preserve">
+    <value>このアプリ ({0}) と KeePass プラグイン ({1}) はバージョンが異なりますが、互換性があります。パスキーは引き続き使用できますが、古いバージョンのほうを更新するまで、新しい機能を使用できない場合があります。</value>
+  </data>
+  <data name="App_Diagnostics_VersionMismatch_Title" xml:space="preserve">
+    <value>バージョンの不一致</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearButton" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_ClearTooltip" xml:space="preserve">
+    <value>Windows のキャッシュからすべてのパスキーを削除します。次にデータベースを開くか保存したときに、再び追加されます。</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpButton" xml:space="preserve">
+    <value>ログに出力</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_DumpTooltip" xml:space="preserve">
+    <value>Windows のキャッシュと KeePass のパスキーをログに出力</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_Label" xml:space="preserve">
+    <value>Windows の資格情報キャッシュ</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncButton" xml:space="preserve">
+    <value>今すぐ同期</value>
+  </data>
+  <data name="App_Diagnostics_WindowsCache_SyncTooltip" xml:space="preserve">
+    <value>開いている KeePass データベースをもとに、Windows のキャッシュを今すぐ最新の状態にする</value>
+  </data>
+  <data name="App_InfoBar_DevBuildMessage" xml:space="preserve">
+    <value>これは別の ID を持つ開発ビルドです。安定版と共存してインストールできます。運用環境では使用しないでください。</value>
+  </data>
+  <data name="App_InfoBar_DevBuildTitle" xml:space="preserve">
+    <value>開発ビルド</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedMessage" xml:space="preserve">
+    <value>[登録] と [登録解除] は正しく動作しません。先に MSIX パッケージをインストールしてください。</value>
+  </data>
+  <data name="App_InfoBar_NotPackagedTitle" xml:space="preserve">
+    <value>パッケージとしてインストールされていません</value>
+  </data>
+  <data name="App_InstallDialog_BrowseTooltip" xml:space="preserve">
+    <value>KeePass のフォルダーを選択</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Installing" xml:space="preserve">
+    <value>インストールしています...</value>
+  </data>
+  <data name="App_InstallDialog_Busy_Removing" xml:space="preserve">
+    <value>削除しています...</value>
+  </data>
+  <data name="App_InstallDialog_CloseButton" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="App_InstallDialog_CopyYourselfLabel" xml:space="preserve">
+    <value>ファイルを手動でコピーする場合:</value>
+  </data>
+  <data name="App_InstallDialog_Detected_DefaultPath" xml:space="preserve">
+    <value>既定のインストール パスから検出しました。</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Msi" xml:space="preserve">
+    <value>MSI インストールから検出しました。</value>
+  </data>
+  <data name="App_InstallDialog_Detected_NotFound" xml:space="preserve">
+    <value>KeePass が見つかりません。KeePass のフォルダーまたはその Plugins フォルダーを入力するか、参照して選択してください。</value>
+  </data>
+  <data name="App_InstallDialog_Detected_Registry" xml:space="preserve">
+    <value>KeePass インストーラーのレジストリ キーから検出しました。</value>
+  </data>
+  <data name="App_InstallDialog_Detected_RunningKeePass" xml:space="preserve">
+    <value>実行中の KeePass から検出しました。</value>
+  </data>
+  <data name="App_InstallDialog_FolderLabel" xml:space="preserve">
+    <value>KeePass のフォルダーまたは Plugins フォルダー</value>
+  </data>
+  <data name="App_InstallDialog_FolderWillBeCreated" xml:space="preserve">
+    <value>このフォルダーはまだ存在しないため、作成されます。</value>
+  </data>
+  <data name="App_InstallDialog_InstallButton" xml:space="preserve">
+    <value>インストール</value>
+  </data>
+  <data name="App_InstallDialog_NeedsAdmin" xml:space="preserve">
+    <value>このフォルダーにコピーするには管理者権限が必要です。インストール時に確認が表示されます。</value>
+  </data>
+  <data name="App_InstallDialog_PickFolderTitle" xml:space="preserve">
+    <value>KeePass のフォルダー、Plugins フォルダー、またはそのサブフォルダーを選択</value>
+  </data>
+  <data name="App_InstallDialog_ReinstallButton" xml:space="preserve">
+    <value>再インストール</value>
+  </data>
+  <data name="App_InstallDialog_RemoveButton" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="App_InstallDialog_Result_Cancelled" xml:space="preserve">
+    <value>ユーザー アカウント制御のダイアログでキャンセルされました。変更は行われていません。</value>
+  </data>
+  <data name="App_InstallDialog_Result_Installed" xml:space="preserve">
+    <value>プラグインをインストールしました。</value>
+  </data>
+  <data name="App_InstallDialog_Result_InstalledRestart" xml:space="preserve">
+    <value>プラグインをインストールしました。変更を読み込むには、KeePass を再起動してください。</value>
+  </data>
+  <data name="App_InstallDialog_Result_Removed" xml:space="preserve">
+    <value>プラグインを削除しました。</value>
+  </data>
+  <data name="App_InstallDialog_Result_RemovedRestart" xml:space="preserve">
+    <value>プラグインを削除しました。変更を適用するには、KeePass を再起動してください。</value>
+  </data>
+  <data name="App_InstallDialog_ShowPluginFileTooltip" xml:space="preserve">
+    <value>KeePassPasskey.dll をエクスプローラーで表示</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetButton" xml:space="preserve">
+    <value>インストール先フォルダーを表示</value>
+  </data>
+  <data name="App_InstallDialog_ShowTargetTooltip" xml:space="preserve">
+    <value>KeePass の Plugins フォルダーをエクスプローラーで開く</value>
+  </data>
+  <data name="App_InstallDialog_SourceCaption" xml:space="preserve">
+    <value>インストール元: KeePassPasskey ({0}) {1}</value>
+  </data>
+  <data name="App_InstallDialog_Status_NoFolder" xml:space="preserve">
+    <value>フォルダーが選択されていません。</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotInstalled" xml:space="preserve">
+    <value>インストールされていません。</value>
+  </data>
+  <data name="App_InstallDialog_Status_NotKeePassFolder" xml:space="preserve">
+    <value>これは KeePass のフォルダーでも Plugins フォルダーでもありません。KeePass のフォルダーか、その Plugins サブフォルダーを選択してください。</value>
+  </data>
+  <data name="App_InstallDialog_Status_Outdated" xml:space="preserve">
+    <value>バージョン {0} がインストールされています。バージョン {1} を利用できます。</value>
+  </data>
+  <data name="App_InstallDialog_Status_PluginNewer" xml:space="preserve">
+    <value>バージョン {0} がインストールされています。このアプリにはバージョン {1} しか含まれていません。</value>
+  </data>
+  <data name="App_InstallDialog_Status_UpToDate" xml:space="preserve">
+    <value>バージョン {0} がインストールされており、最新です。</value>
+  </data>
+  <data name="App_InstallDialog_TargetLabel" xml:space="preserve">
+    <value>インストール先</value>
+  </data>
+  <data name="App_InstallDialog_Title" xml:space="preserve">
+    <value>KeePass プラグイン</value>
+  </data>
+  <data name="App_InstallDialog_UpdateButton" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="App_Label_KeePassPlugin" xml:space="preserve">
+    <value>KeePass プラグイン</value>
+  </data>
+  <data name="App_Label_PasskeyProvider" xml:space="preserve">
+    <value>パスキー プロバイダー</value>
+  </data>
+  <data name="App_Log_CopyTooltip" xml:space="preserve">
+    <value>ログをクリップボードにコピー</value>
+  </data>
+  <data name="App_Log_NoFile" xml:space="preserve">
+    <value>(ログ ファイルはまだありません)</value>
+  </data>
+  <data name="App_Log_OpenFileTooltip" xml:space="preserve">
+    <value>ログ ファイルを開く</value>
+  </data>
+  <data name="App_Log_OpenFolderTooltip" xml:space="preserve">
+    <value>ログ フォルダーを開く</value>
+  </data>
+  <data name="App_Log_ReadFailed" xml:space="preserve">
+    <value>(ログを読み取れませんでした: {0})</value>
+  </data>
+  <data name="App_Nav_Diagnostics" xml:space="preserve">
+    <value>診断</value>
+  </data>
+  <data name="App_Nav_Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="App_Nav_Status" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="App_Registration_RegisterFailedMessage" xml:space="preserve">
+    <value>パスキー プロバイダーの登録中に、Windows から HRESULT {0} が返されました。</value>
+  </data>
+  <data name="App_Registration_RegisterFailedTitle" xml:space="preserve">
+    <value>登録できませんでした</value>
+  </data>
+  <data name="App_Registration_UnregisterFailedMessage" xml:space="preserve">
+    <value>パスキー プロバイダーの登録解除中に、Windows から HRESULT {0} が返されました。</value>
+  </data>
+  <data name="App_Registration_UnregisterFailedTitle" xml:space="preserve">
+    <value>登録を解除できませんでした</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyButton" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedMessage" xml:space="preserve">
+    <value>適用時に Windows から HRESULT {0} が返されたため、AAGUID は変更されませんでした。</value>
+  </data>
+  <data name="App_Settings_Aaguid_ApplyFailedTitle" xml:space="preserve">
+    <value>認証器を更新できませんでした</value>
+  </data>
+  <data name="App_Settings_Aaguid_ClearTooltip" xml:space="preserve">
+    <value>フィールドをクリア</value>
+  </data>
+  <data name="App_Settings_Aaguid_DefaultApplied" xml:space="preserve">
+    <value>既定の AAGUID を使用しています。</value>
+  </data>
+  <data name="App_Settings_Aaguid_Description" xml:space="preserve">
+    <value>パスキーの作成時に Web サイトに示される認証器の識別子 (AAGUID) を上書きします。既定値を使用する場合は空欄のままにしてください。適用すると、認証器が Windows に再登録されます。</value>
+  </data>
+  <data name="App_Settings_Aaguid_Header" xml:space="preserve">
+    <value>AAGUID の偽装</value>
+  </data>
+  <data name="App_Settings_Aaguid_Invalid" xml:space="preserve">
+    <value>有効な GUID を入力してください。既定値を使用する場合は空欄のままにしてください。</value>
+  </data>
+  <data name="App_Settings_Aaguid_SpoofApplied" xml:space="preserve">
+    <value>偽装した AAGUID を適用しました。</value>
+  </data>
+  <data name="App_Settings_About_Contributors" xml:space="preserve">
+    <value>貢献者</value>
+  </data>
+  <data name="App_Settings_About_ContributorsTooltip" xml:space="preserve">
+    <value>GitHub で貢献者の一覧を開く</value>
+  </data>
+  <data name="App_Settings_About_Copyright" xml:space="preserve">
+    <value>著作権</value>
+  </data>
+  <data name="App_Settings_About_CopyrightNotice" xml:space="preserve">
+    <value>© 2026 Uwe Kögel と貢献者</value>
+  </data>
+  <data name="App_Settings_About_CopyVersionTooltip" xml:space="preserve">
+    <value>バージョンをコピー</value>
+  </data>
+  <data name="App_Settings_About_Description" xml:space="preserve">
+    <value>バージョン、ソース コード、ライセンス</value>
+  </data>
+  <data name="App_Settings_About_Header" xml:space="preserve">
+    <value>バージョン情報</value>
+  </data>
+  <data name="App_Settings_About_License" xml:space="preserve">
+    <value>ライセンス</value>
+  </data>
+  <data name="App_Settings_About_LicenseName" xml:space="preserve">
+    <value>GNU GPL v3.0 以降</value>
+  </data>
+  <data name="App_Settings_About_LicenseTooltip" xml:space="preserve">
+    <value>ライセンスの全文を開く</value>
+  </data>
+  <data name="App_Settings_About_ReportBug" xml:space="preserve">
+    <value>バグを報告</value>
+  </data>
+  <data name="App_Settings_About_ReportBugTooltip" xml:space="preserve">
+    <value>GitHub で Issues を開く</value>
+  </data>
+  <data name="App_Settings_About_SourceCode" xml:space="preserve">
+    <value>ソース コード</value>
+  </data>
+  <data name="App_Settings_About_SourceCodeTooltip" xml:space="preserve">
+    <value>GitHub でソース コードを開く</value>
+  </data>
+  <data name="App_Settings_About_ThirdParty" xml:space="preserve">
+    <value>サード パーティ通知</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyDescription" xml:space="preserve">
+    <value>同梱されているライブラリのオープン ソース ライセンス</value>
+  </data>
+  <data name="App_Settings_About_ThirdPartyTooltip" xml:space="preserve">
+    <value>サード パーティ通知を開く</value>
+  </data>
+  <data name="App_Settings_About_Version" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="App_Settings_About_Website" xml:space="preserve">
+    <value>Web サイト</value>
+  </data>
+  <data name="App_Settings_About_WebsiteTooltip" xml:space="preserve">
+    <value>Web サイトを開く</value>
+  </data>
+  <data name="App_Settings_Advanced_Description" xml:space="preserve">
+    <value>動作、タイミング、ログに関する、めったに変更する必要のない設定</value>
+  </data>
+  <data name="App_Settings_Advanced_Header" xml:space="preserve">
+    <value>詳細設定</value>
+  </data>
+  <data name="App_Settings_Algorithms_Description" xml:space="preserve">
+    <value>Web サイトが複数のアルゴリズムを受け付ける場合に、新しいパスキーで使用するアルゴリズムを指定します。
+オフのアルゴリズムしか受け付けない Web サイトでは、パスキーを作成できません。</value>
+  </data>
+  <data name="App_Settings_Algorithms_Header" xml:space="preserve">
+    <value>署名アルゴリズム</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveDownTooltip" xml:space="preserve">
+    <value>下に移動</value>
+  </data>
+  <data name="App_Settings_Algorithms_MoveUpTooltip" xml:space="preserve">
+    <value>上に移動</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionListOrder" xml:space="preserve">
+    <value>一覧の順序を使用</value>
+  </data>
+  <data name="App_Settings_Algorithms_OptionWebsiteOrder" xml:space="preserve">
+    <value>Web サイトの指定順を使用</value>
+  </data>
+  <data name="App_Settings_Algorithms_OrderLabel" xml:space="preserve">
+    <value>順序</value>
+  </data>
+  <data name="App_Settings_Appearance_Description" xml:space="preserve">
+    <value>テーマと言語</value>
+  </data>
+  <data name="App_Settings_Appearance_Header" xml:space="preserve">
+    <value>外観</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Description" xml:space="preserve">
+    <value>確認プロンプトを表示しておく時間</value>
+  </data>
+  <data name="App_Settings_ApprovalTimeout_Header" xml:space="preserve">
+    <value>確認のタイムアウト</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Description" xml:space="preserve">
+    <value>オンの場合、新しいパスキーはバックアップして他のデバイスと同期できるものとして Web サイトに通知されます。オフの場合、1 台のデバイスにのみ保存されるものとして通知されます。</value>
+  </data>
+  <data name="App_Settings_BackupEligibility_Header" xml:space="preserve">
+    <value>バックアップ可能 (BE)</value>
+  </data>
+  <data name="App_Settings_BackupState_Description" xml:space="preserve">
+    <value>オンの場合、新しいパスキーは既にバックアップされているものとして Web サイトに通知されます。[バックアップ可能] がオンの場合のみ使用できます。</value>
+  </data>
+  <data name="App_Settings_BackupState_Header" xml:space="preserve">
+    <value>バックアップ状態 (BS)</value>
+  </data>
+  <data name="App_Settings_DiscardTooltip" xml:space="preserve">
+    <value>変更を破棄</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Description" xml:space="preserve">
+    <value>既にパスキーがあるアカウントに 2 つ目を作成しないよう Web サイトが求めた場合に、その要求に従うかどうかと、チェックするデータベース</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_Header" xml:space="preserve">
+    <value>パスキーの重複チェック</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionAllDatabases" xml:space="preserve">
+    <value>すべてのデータベースをチェック</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionNone" xml:space="preserve">
+    <value>チェックしない</value>
+  </data>
+  <data name="App_Settings_DuplicateCheck_OptionTargetDatabase" xml:space="preserve">
+    <value>保存先のデータベースをチェック</value>
+  </data>
+  <data name="App_Settings_Enforced_Message" xml:space="preserve">
+    <value>これらの設定は KeePass.config.enforced.xml で指定されているため、ここでは変更できません。</value>
+  </data>
+  <data name="App_Settings_Enforced_Title" xml:space="preserve">
+    <value>KeePass によって強制されている設定</value>
+  </data>
+  <data name="App_Settings_Entries_Description" xml:space="preserve">
+    <value>新しいパスキー エントリの作成方法</value>
+  </data>
+  <data name="App_Settings_Entries_Header" xml:space="preserve">
+    <value>パスキー エントリ</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Description" xml:space="preserve">
+    <value>Passkeys グループ: パスキー用の既定のグループです。
+選択中のグループ: パスキーの作成時に KeePass で選択されているグループです。</value>
+  </data>
+  <data name="App_Settings_EntryGroup_Header" xml:space="preserve">
+    <value>新しいパスキーの保存先</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionPasskeys" xml:space="preserve">
+    <value>Passkeys グループ</value>
+  </data>
+  <data name="App_Settings_EntryGroup_OptionSelected" xml:space="preserve">
+    <value>選択中のグループ</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Description" xml:space="preserve">
+    <value>新しいエントリのタイトルです。{RP_NAME} と、{USERNAME} や {URL} などの KeePass のプレースホルダーを使用できます。</value>
+  </data>
+  <data name="App_Settings_EntryTitle_Header" xml:space="preserve">
+    <value>エントリのタイトル</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Description" xml:space="preserve">
+    <value>パスキーのエラーが発生したときに詳しい通知を表示します。Windows 自体は汎用的なエラーしか表示しません。</value>
+  </data>
+  <data name="App_Settings_ErrorNotifications_Header" xml:space="preserve">
+    <value>エラー通知</value>
+  </data>
+  <data name="App_Settings_Expert_Description" xml:space="preserve">
+    <value>特殊な構成向けのオプションです。動作を理解している場合にのみ変更してください。</value>
+  </data>
+  <data name="App_Settings_Expert_Header" xml:space="preserve">
+    <value>エキスパート</value>
+  </data>
+  <data name="App_Settings_Language_Header" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="App_Settings_Language_NotReviewed" xml:space="preserve">
+    <value>この翻訳は自動的に作成されたもので、まだネイティブ スピーカーによるレビューを受けていません。</value>
+  </data>
+  <data name="App_Settings_Language_OptionNotReviewed" xml:space="preserve">
+    <value>{0} (未レビュー)</value>
+  </data>
+  <data name="App_Settings_Language_OptionSystem" xml:space="preserve">
+    <value>Windows の言語を使用</value>
+  </data>
+  <data name="App_Settings_Language_ReviewTooltip" xml:space="preserve">
+    <value>この翻訳のレビューに協力する</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Description" xml:space="preserve">
+    <value>確認プロンプトをダイアログではなく Windows の通知として表示します。[応答不可] がオンの場合、通知は警告なしに非表示になります。また、通知内の一覧に表示されるのは最大 5 件です。</value>
+  </data>
+  <data name="App_Settings_LegacyPrompts_Header" xml:space="preserve">
+    <value>従来の通知で確認する</value>
+  </data>
+  <data name="App_Settings_LoadFailed" xml:space="preserve">
+    <value>KeePass から最新の設定を読み込めませんでした。最後に取得した値を表示しています。</value>
+  </data>
+  <data name="App_Settings_Loading" xml:space="preserve">
+    <value>設定を読み込んでいます...</value>
+  </data>
+  <data name="App_Settings_LogLevel_Description" xml:space="preserve">
+    <value>アプリとプラグインがログ ファイルに記録する内容の詳しさ</value>
+  </data>
+  <data name="App_Settings_LogLevel_Header" xml:space="preserve">
+    <value>ログ レベル</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionDebug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionError" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionOff" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="App_Settings_LogLevel_OptionWarn" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Description" xml:space="preserve">
+    <value>KeePass の起動時に、このアプリに新しいバージョンのプラグインが含まれていれば、プラグインの更新を提案します。更新は毎回、ダイアログで確認してから行われます。</value>
+  </data>
+  <data name="App_Settings_PluginUpdates_Header" xml:space="preserve">
+    <value>プラグインの更新を確認する</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Description" xml:space="preserve">
+    <value>アプリがプロバイダーの状態を確認する頻度</value>
+  </data>
+  <data name="App_Settings_RefreshInterval_Header" xml:space="preserve">
+    <value>状態の更新間隔</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Description" xml:space="preserve">
+    <value>新しいパスキーの作成を確認する方法</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_Header" xml:space="preserve">
+    <value>パスキーの作成</value>
+  </data>
+  <data name="App_Settings_RegistrationVerification_SilentWarning" xml:space="preserve">
+    <value>[確認プロンプト] と Windows Hello が両方ともオフのため、パスキーの作成が確認なしで行われます。</value>
+  </data>
+  <data name="App_Settings_ResetToDefaultsTooltip" xml:space="preserve">
+    <value>既定値に戻す</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Description" xml:space="preserve">
+    <value>オン: プレースホルダーが置き換えられ、その結果のテキストがタイトルに保存されます。オフ: エントリの表示時に毎回 KeePass で置き換えられます。{RP_NAME} は保存時に常に置き換えられます。</value>
+  </data>
+  <data name="App_Settings_ResolvePlaceholders_Header" xml:space="preserve">
+    <value>保存時にタイトルのプレースホルダーを置き換える</value>
+  </data>
+  <data name="App_Settings_SaveFailedNotRunning" xml:space="preserve">
+    <value>KeePass が実行されていません。設定を保存する前に、KeePassPasskey プラグインをインストールした KeePass を起動してください。</value>
+  </data>
+  <data name="App_Settings_SaveFailedTitle" xml:space="preserve">
+    <value>設定を保存できませんでした</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Description" xml:space="preserve">
+    <value>常に新しいエントリを作成するのではなく、一致するエントリへのパスキーの保存を提案します。新しいパスキーの [確認プロンプト] がオンである必要があります。</value>
+  </data>
+  <data name="App_Settings_SaveToExisting_Header" xml:space="preserve">
+    <value>既存のエントリへの保存を提案する</value>
+  </data>
+  <data name="App_Settings_SaveTooltip" xml:space="preserve">
+    <value>設定を保存</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Description" xml:space="preserve">
+    <value>サインインを確認する方法</value>
+  </data>
+  <data name="App_Settings_SignInVerification_Header" xml:space="preserve">
+    <value>サインイン</value>
+  </data>
+  <data name="App_Settings_SignInVerification_SilentWarning" xml:space="preserve">
+    <value>[確認プロンプト] と Windows Hello が両方ともオフのため、パスキーでのサインインが確認なしで行われます。</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Description" xml:space="preserve">
+    <value>同じ操作のために KeePass のロックを解除した直後は、Windows Hello による確認をもう一度求めません。[確認プロンプト] がオンの場合にのみ適用されます。</value>
+  </data>
+  <data name="App_Settings_SkipHelloAfterUnlock_Header" xml:space="preserve">
+    <value>KeePass のロック解除後に Windows Hello をスキップする</value>
+  </data>
+  <data name="App_Settings_TagEntries_Description" xml:space="preserve">
+    <value>新しいパスキー用に作成する各エントリに「Passkey」タグを付けます。</value>
+  </data>
+  <data name="App_Settings_TagEntries_Header" xml:space="preserve">
+    <value>新しいパスキー エントリにタグを付ける</value>
+  </data>
+  <data name="App_Settings_Theme_Header" xml:space="preserve">
+    <value>テーマ</value>
+  </data>
+  <data name="App_Settings_Theme_OptionDark" xml:space="preserve">
+    <value>ダーク</value>
+  </data>
+  <data name="App_Settings_Theme_OptionLight" xml:space="preserve">
+    <value>ライト</value>
+  </data>
+  <data name="App_Settings_Theme_OptionSystem" xml:space="preserve">
+    <value>システム設定を使用</value>
+  </data>
+  <data name="App_Settings_ToggleOff" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="App_Settings_ToggleOn" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Description" xml:space="preserve">
+    <value>システム トレイに状態アイコンを表示します。ウィンドウを閉じても、アプリはシステム トレイで実行され続けます。</value>
+  </data>
+  <data name="App_Settings_TrayIcon_Header" xml:space="preserve">
+    <value>システム トレイ アイコン</value>
+  </data>
+  <data name="App_Settings_UnsavedChangesTooltip" xml:space="preserve">
+    <value>保存されていない変更があります</value>
+  </data>
+  <data name="App_Settings_Verification_Description" xml:space="preserve">
+    <value>パスキーの操作に対する確認プロンプトとユーザー検証</value>
+  </data>
+  <data name="App_Settings_Verification_Header" xml:space="preserve">
+    <value>確認とユーザー検証</value>
+  </data>
+  <data name="App_Settings_Verification_Prompt" xml:space="preserve">
+    <value>確認プロンプト</value>
+  </data>
+  <data name="App_Settings_Verification_WindowsHello" xml:space="preserve">
+    <value>Windows Hello (PIN、指紋、顔)</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Description" xml:space="preserve">
+    <value>パスキーの Web サイトとユーザー名を Windows と共有します (鍵そのものは共有しません)。これにより、サインイン時に Windows がパスキーを候補として表示できます。オフの場合、Windows はパスキーを認識できず、ほとんどの Web サイトでサインインできません。</value>
+  </data>
+  <data name="App_Settings_WindowsCache_Header" xml:space="preserve">
+    <value>Windows の資格情報キャッシュ</value>
+  </data>
+  <data name="App_SetupGuide_ShowPluginFileTooltip" xml:space="preserve">
+    <value>KeePassPasskey.dll をエクスプローラーで表示して、手動でコピーする</value>
+  </data>
+  <data name="App_SetupGuide_Step1_Text" xml:space="preserve">
+    <value>**KeePassPasskey.dll** を KeePass の **Plugins** フォルダーにコピーするか、下のボタンを使用してください。その後、KeePass を再起動してください。</value>
+  </data>
+  <data name="App_SetupGuide_Step1_Title" xml:space="preserve">
+    <value>プラグインをインストールする</value>
+  </data>
+  <data name="App_SetupGuide_Step2_Text" xml:space="preserve">
+    <value>**設定 › アカウント › パスキー › 詳細オプション** に移動するか、下のボタンを使用してください。</value>
+  </data>
+  <data name="App_SetupGuide_Step2_Title" xml:space="preserve">
+    <value>パスキーの詳細オプションを開く</value>
+  </data>
+  <data name="App_SetupGuide_Step3_Text" xml:space="preserve">
+    <value>パスキー プロバイダーの一覧で **KeePassPasskey** をオンにしてください。</value>
+  </data>
+  <data name="App_SetupGuide_Step3_Title" xml:space="preserve">
+    <value>KeePassPasskey を有効にする</value>
+  </data>
+  <data name="App_SetupGuide_Step4_Text" xml:space="preserve">
+    <value>上の 2 つの状態が **有効** / **接続済み** になっているはずです。</value>
+  </data>
+  <data name="App_SetupGuide_Step4_Title" xml:space="preserve">
+    <value>確認する</value>
+  </data>
+  <data name="App_SetupGuide_Title" xml:space="preserve">
+    <value>はじめに</value>
+  </data>
+  <data name="App_SetupGuide_UserGuideTooltip" xml:space="preserve">
+    <value>ユーザー ガイドを開く</value>
+  </data>
+  <data name="App_Status_Headline_AutoregisterFailed" xml:space="preserve">
+    <value>自動登録できませんでした</value>
+  </data>
+  <data name="App_Status_Headline_Ready" xml:space="preserve">
+    <value>すべての準備ができました</value>
+  </data>
+  <data name="App_Status_Hint_AutoregisterFailed" xml:space="preserve">
+    <value>[登録] を選択して、もう一度お試しください。</value>
+  </data>
+  <data name="App_Status_Hint_KeePassNotConnected" xml:space="preserve">
+    <value>KeePassPasskey プラグインをインストールした KeePass を起動してください。</value>
+  </data>
+  <data name="App_Status_Hint_NoDatabase" xml:space="preserve">
+    <value>パスキーを使用するには、KeePass データベースを開いてください。</value>
+  </data>
+  <data name="App_Status_Hint_NotRegistered" xml:space="preserve">
+    <value>[登録] を選択して、KeePassPasskey をパスキー プロバイダーとしてセットアップしてください。</value>
+  </data>
+  <data name="App_Status_Hint_Ready" xml:space="preserve">
+    <value>パスキー プロバイダーが有効で、KeePass プラグインが接続されています。</value>
+  </data>
+  <data name="App_Status_Hint_WaitingToBeEnabled" xml:space="preserve">
+    <value>下の [パスキーの詳細オプション] を選択して、KeePassPasskey を有効にしてください。</value>
+  </data>
+  <data name="App_Status_Pill_Connected" xml:space="preserve">
+    <value>接続済み</value>
+  </data>
+  <data name="App_Status_Pill_Enabled" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="App_Status_Pill_NotConnected" xml:space="preserve">
+    <value>未接続</value>
+  </data>
+  <data name="App_Status_Pill_Registered" xml:space="preserve">
+    <value>登録済み</value>
+  </data>
+  <data name="App_Status_RefreshTooltip" xml:space="preserve">
+    <value>状態を最新の情報に更新</value>
+  </data>
+  <data name="App_TrayOffer_AddButton" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="App_TrayOffer_Message" xml:space="preserve">
+    <value>KeePassPasskey をシステム トレイに追加します。</value>
+  </data>
+  <data name="App_TrayOffer_NoThanksButton" xml:space="preserve">
+    <value>今はしない</value>
+  </data>
+  <data name="App_TrayOffer_Title" xml:space="preserve">
+    <value>状態をいつでも確認できるようにしますか?</value>
+  </data>
+  <data name="App_UnsavedChanges_DiscardButton" xml:space="preserve">
+    <value>保存しない</value>
+  </data>
+  <data name="App_UnsavedChanges_Message" xml:space="preserve">
+    <value>保存されていない変更があります。移動する前に保存しますか?</value>
+  </data>
+  <data name="App_UnsavedChanges_Title" xml:space="preserve">
+    <value>保存されていない変更</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Common_Install_Error_AccessDenied" xml:space="preserve">
+    <value>KeePass の Plugins フォルダーへのアクセスが拒否されました。</value>
+  </data>
+  <data name="Common_Install_Error_BundledPluginNotFound" xml:space="preserve">
+    <value>同梱のプラグインが見つかりません: {0}</value>
+  </data>
+  <data name="Common_Install_Error_FolderNotFound" xml:space="preserve">
+    <value>フォルダーが見つかりません: {0}</value>
+  </data>
+  <data name="Common_Install_Error_NoBundledPlugin" xml:space="preserve">
+    <value>インストールされている KeePassPasskey アプリには、インストールできるプラグインが含まれていません。</value>
+  </data>
+  <data name="Common_Install_Error_NoTargetFolder" xml:space="preserve">
+    <value>インストール先フォルダーが指定されていません。</value>
+  </data>
+  <data name="Common_Install_Error_NotKeePassFolder" xml:space="preserve">
+    <value>選択したフォルダーは KeePass のインストール先に含まれていません。</value>
+  </data>
+  <data name="Common_Install_Error_ScriptNotFound" xml:space="preserve">
+    <value>インストーラー スクリプトが見つかりません: {0}</value>
+  </data>
+  <data name="Common_Install_Error_WriteFailed" xml:space="preserve">
+    <value>プラグイン ファイルをコピーできませんでした。</value>
+  </data>
+  <data name="Common_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Common_Status_IncompatibleVersion" xml:space="preserve">
+    <value>互換性のないバージョン</value>
+  </data>
+  <data name="Common_Status_KeePassNotConnected" xml:space="preserve">
+    <value>KeePass 未接続</value>
+  </data>
+  <data name="Common_Status_NoDatabase" xml:space="preserve">
+    <value>データベースが開かれていません</value>
+  </data>
+  <data name="Common_Status_NotRegistered" xml:space="preserve">
+    <value>未登録</value>
+  </data>
+  <data name="Common_Status_VersionMismatch" xml:space="preserve">
+    <value>バージョンの不一致</value>
+  </data>
+  <data name="Common_Status_WaitingToBeEnabled" xml:space="preserve">
+    <value>有効化を待機中</value>
+  </data>
+  <data name="Common_Version_AppOlder" xml:space="preserve">
+    <value>このアプリ ({0}) は KeePass プラグイン ({1}) より古いバージョンです。KeePassPasskey アプリを更新してください。</value>
+  </data>
+  <data name="Common_Version_Incompatible" xml:space="preserve">
+    <value>アプリと KeePass プラグインのバージョンに互換性がありません。両方を最新バージョンに更新してください。</value>
+  </data>
+  <data name="Common_Version_PluginOlder" xml:space="preserve">
+    <value>KeePass プラグイン ({0}) はこのアプリ ({1}) より古いバージョンです。KeePass で KeePassPasskey プラグインを更新してください。</value>
+  </data>
+  <data name="KeePass_EntryMenu_Copy" xml:space="preserve">
+    <value>パスキーをコピー</value>
+  </data>
+  <data name="KeePass_EntryMenu_Cut" xml:space="preserve">
+    <value>パスキーを切り取り</value>
+  </data>
+  <data name="KeePass_EntryMenu_Paste" xml:space="preserve">
+    <value>ここにパスキーを貼り付け</value>
+  </data>
+  <data name="KeePass_EntryMenu_PasteFrom" xml:space="preserve">
+    <value>「{0}」からパスキーを貼り付け</value>
+  </data>
+  <data name="KeePass_EntryMenu_Remove" xml:space="preserve">
+    <value>パスキーを削除</value>
+  </data>
+  <data name="KeePass_EntryMenu_Root" xml:space="preserve">
+    <value>パスキー</value>
+  </data>
+  <data name="KeePass_NoUpdate_AlreadyNewest" xml:space="preserve">
+    <value>バージョン {0} は既にインストールされています。KeePassPasskey アプリには、これより新しいバージョンは含まれていません。</value>
+  </data>
+  <data name="KeePass_NoUpdate_AppNotInstalled" xml:space="preserve">
+    <value>KeePassPasskey アプリがインストールされていないようです。</value>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNewer" xml:space="preserve">
+    <value>バージョン {0} がインストールされています。KeePassPasskey アプリにはバージョン {1} しか含まれていません。両方のバージョンが一致するように、アプリを更新してください。</value>
+  </data>
+  <data name="KeePass_NoUpdate_PluginNotLocated" xml:space="preserve">
+    <value>プラグイン ファイルの場所を特定できなかったため、ここからは更新できません。</value>
+  </data>
+  <data name="KeePass_NoUpdate_Title" xml:space="preserve">
+    <value>KeePassPasskey プラグイン</value>
+  </data>
+  <data name="KeePass_Paste_AlreadyOnEntry" xml:space="preserve">
+    <value>このパスキーは既にこのエントリにあります。</value>
+  </data>
+  <data name="KeePass_Paste_ConfirmReplace" xml:space="preserve">
+    <value>このエントリには既にパスキーがあります。貼り付けるパスキーで置き換えますか?
+
+現在のパスキーはエントリの履歴に残るため、必要な場合は復元できます。</value>
+  </data>
+  <data name="KeePass_Paste_Failed" xml:space="preserve">
+    <value>パスキーを貼り付けられませんでした。</value>
+  </data>
+  <data name="KeePass_Paste_SourceUnavailable" xml:space="preserve">
+    <value>貼り付け元のエントリが利用できなくなったため、貼り付けはキャンセルされました。</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedMessage" xml:space="preserve">
+    <value>KeePassPasskey が必要とする接続名 (名前付きパイプ) を、別のプログラムが既に使用しています。そのプログラムを終了して KeePass を再起動するまで、パスキーは使用できません。</value>
+  </data>
+  <data name="KeePass_Pipe_ClaimFailedTitle" xml:space="preserve">
+    <value>KeePassPasskey は名前付きパイプを確保できませんでした</value>
+  </data>
+  <data name="KeePass_Remove_Confirm" xml:space="preserve">
+    <value>このエントリからパスキーを削除しますか?
+
+エントリ自体は削除されません。パスキーはエントリの履歴に残るため、必要な場合は復元できます。</value>
+  </data>
+  <data name="KeePass_Remove_ConfirmTitled" xml:space="preserve">
+    <value>「{0}」からパスキーを削除しますか?
+
+エントリ自体は削除されません。パスキーはエントリの履歴に残るため、必要な場合は復元できます。</value>
+  </data>
+  <data name="KeePass_Remove_Failed" xml:space="preserve">
+    <value>パスキーを削除できませんでした。</value>
+  </data>
+  <data name="KeePass_Restart_FallbackQuestion" xml:space="preserve">
+    <value>KeePassPasskey プラグインを更新しました。今すぐ KeePass を再起動しますか?</value>
+  </data>
+  <data name="KeePass_Restart_Heading" xml:space="preserve">
+    <value>プラグインを {0} に更新しました</value>
+  </data>
+  <data name="KeePass_Restart_LaterNote" xml:space="preserve">
+    <value>KeePass を再起動するまで {0} が引き続き使用されます</value>
+  </data>
+  <data name="KeePass_Restart_Message" xml:space="preserve">
+    <value>新しいバージョンを読み込むには、KeePass を再起動する必要があります。</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowButton" xml:space="preserve">
+    <value>今すぐ再起動</value>
+  </data>
+  <data name="KeePass_Restart_RestartNowNote" xml:space="preserve">
+    <value>KeePass が終了し、もう一度起動します</value>
+  </data>
+  <data name="KeePass_ToolsMenu_AppOpenFailed" xml:space="preserve">
+    <value>KeePassPasskey アプリを開けませんでした。インストールされていないようです。</value>
+  </data>
+  <data name="KeePass_ToolsMenu_Settings" xml:space="preserve">
+    <value>パスキーの設定</value>
+  </data>
+  <data name="KeePass_ToolsMenu_UpdatePlugin" xml:space="preserve">
+    <value>インストール済みのアプリからプラグインを更新</value>
+  </data>
+  <data name="KeePass_UpdateFailed_FallbackQuestion" xml:space="preserve">
+    <value>{0}
+
+もう一度試しますか?</value>
+  </data>
+  <data name="KeePass_UpdateFailed_Heading" xml:space="preserve">
+    <value>プラグインは更新されませんでした</value>
+  </data>
+  <data name="KeePass_UpdateFailed_PermissionDenied" xml:space="preserve">
+    <value>アクセス許可が与えられなかったため、バージョン {0} が引き続き使用されます。</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainButton" xml:space="preserve">
+    <value>再試行</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainNote" xml:space="preserve">
+    <value>更新をもう一度実行します</value>
+  </data>
+  <data name="KeePass_UpdateFailed_TryAgainPermissionNote" xml:space="preserve">
+    <value>アクセス許可をもう一度求めます</value>
+  </data>
+  <data name="KeePass_Update_FallbackQuestion" xml:space="preserve">
+    <value>新しい KeePassPasskey プラグイン (バージョン {0}) を利用できます。今すぐインストールしますか?</value>
+  </data>
+  <data name="KeePass_Update_FromLabel" xml:space="preserve">
+    <value>コピー元: KeePassPasskey ({0})</value>
+  </data>
+  <data name="KeePass_Update_Heading" xml:space="preserve">
+    <value>バージョン {0} を利用できます。バージョン {1} がインストールされています。</value>
+  </data>
+  <data name="KeePass_Update_LaterButton" xml:space="preserve">
+    <value>後で</value>
+  </data>
+  <data name="KeePass_Update_LaterNote" xml:space="preserve">
+    <value>次回の KeePass 起動時にもう一度確認します</value>
+  </data>
+  <data name="KeePass_Update_Message" xml:space="preserve">
+    <value>バージョンが一致するまで、パスキーの作成と使用ができない場合があります。</value>
+  </data>
+  <data name="KeePass_Update_NeverCheckCheckbox" xml:space="preserve">
+    <value>今後、プラグインの更新を確認しない</value>
+  </data>
+  <data name="KeePass_Update_SkipVersionButton" xml:space="preserve">
+    <value>バージョン {0} をスキップ</value>
+  </data>
+  <data name="KeePass_Update_SkipVersionNote" xml:space="preserve">
+    <value>このバージョンについては今後確認しません</value>
+  </data>
+  <data name="KeePass_Update_Title" xml:space="preserve">
+    <value>KeePassPasskey プラグインの更新</value>
+  </data>
+  <data name="KeePass_Update_ToLabel" xml:space="preserve">
+    <value>コピー先: {0}</value>
+  </data>
+  <data name="KeePass_Update_UpdateNowButton" xml:space="preserve">
+    <value>今すぐ更新</value>
+  </data>
+  <data name="KeePass_Update_UpdateNowNote" xml:space="preserve">
+    <value>新しいバージョンを読み込むには、更新後に KeePass を再起動する必要があります</value>
+  </data>
+  <data name="Notify_Error_DbLocked" xml:space="preserve">
+    <value>KeePass データベースがロックされています。KeePass のロックを解除して、もう一度お試しください。</value>
+  </data>
+  <data name="Notify_Error_Duplicate" xml:space="preserve">
+    <value>{0} のパスキーは既に存在します。</value>
+  </data>
+  <data name="Notify_Error_Internal" xml:space="preserve">
+    <value>KeePass で内部エラーが発生しました:</value>
+  </data>
+  <data name="Notify_Error_KeePassNotReady" xml:space="preserve">
+    <value>KeePass が実行されていないか、データベースがロックされています。</value>
+  </data>
+  <data name="Notify_Error_NotFound" xml:space="preserve">
+    <value>{0} のパスキーが見つかりません。</value>
+  </data>
+  <data name="Notify_Error_NotFoundForUser" xml:space="preserve">
+    <value>{1} 用の {0} のパスキーが見つかりません。</value>
+  </data>
+  <data name="Notify_Error_Unexpected" xml:space="preserve">
+    <value>予期しないエラーが発生しました:</value>
+  </data>
+  <data name="Notify_Error_UnsupportedAlgorithm" xml:space="preserve">
+    <value>この Web サイトが受け付ける署名アルゴリズムは、いずれも設定でオンになっていません。</value>
+  </data>
+  <data name="Notify_Title_CreateFailed" xml:space="preserve">
+    <value>パスキーを作成できませんでした</value>
+  </data>
+  <data name="Notify_Title_SignInFailed" xml:space="preserve">
+    <value>サインインできませんでした</value>
+  </data>
+  <data name="Prompt_CountdownTooltip" xml:space="preserve">
+    <value>時間切れになると操作はキャンセルされます</value>
+  </data>
+  <data name="Prompt_Entry_UnnamedDatabase" xml:space="preserve">
+    <value>(名前のないデータベース)</value>
+  </data>
+  <data name="Prompt_Entry_Untitled" xml:space="preserve">
+    <value>(タイトルなし)</value>
+  </data>
+  <data name="Prompt_Register_AddToExisting" xml:space="preserve">
+    <value>既存のエントリ</value>
+  </data>
+  <data name="Prompt_Register_AsUser" xml:space="preserve">
+    <value>{0} として</value>
+  </data>
+  <data name="Prompt_Register_AttestationHint" xml:space="preserve">
+    <value>この Web サイトはエンタープライズ構成証明を要求しましたが、KeePassPasskey では提供できません。それでもパスキーは受け入れられる場合があります。</value>
+  </data>
+  <data name="Prompt_Register_ConfirmButton" xml:space="preserve">
+    <value>パスキーを作成</value>
+  </data>
+  <data name="Prompt_Register_CreateNew" xml:space="preserve">
+    <value>新しいエントリ</value>
+  </data>
+  <data name="Prompt_Register_DatabaseLabel" xml:space="preserve">
+    <value>データベース</value>
+  </data>
+  <data name="Prompt_Register_FilterAll" xml:space="preserve">
+    <value>すべてのエントリを表示しています</value>
+  </data>
+  <data name="Prompt_Register_FilterWithoutPasskey" xml:space="preserve">
+    <value>パスキーのないエントリのみ表示しています</value>
+  </data>
+  <data name="Prompt_Register_FilterWithPasskey" xml:space="preserve">
+    <value>既にパスキーがあるエントリのみ表示しています</value>
+  </data>
+  <data name="Prompt_Register_HasPasskeyTooltip" xml:space="preserve">
+    <value>このエントリには既にパスキーがあります</value>
+  </data>
+  <data name="Prompt_Register_Headline" xml:space="preserve">
+    <value>{0} がパスキーの作成を求めています</value>
+  </data>
+  <data name="Prompt_Register_NewEntryHint" xml:space="preserve">
+    <value>この Web サイト用に新しいエントリが作成されます。</value>
+  </data>
+  <data name="Prompt_Register_NoMatches" xml:space="preserve">
+    <value>検索に一致するエントリがありません。</value>
+  </data>
+  <data name="Prompt_Register_ReplaceHint" xml:space="preserve">
+    <value>このエントリには既にパスキーがあります。保存すると、そのパスキーが置き換えられます。</value>
+  </data>
+  <data name="Prompt_Register_SearchPlaceholder" xml:space="preserve">
+    <value>エントリを検索...</value>
+  </data>
+  <data name="Prompt_Register_SelectedInKeePassTooltip" xml:space="preserve">
+    <value>KeePass で選択中</value>
+  </data>
+  <data name="Prompt_Register_Title" xml:space="preserve">
+    <value>パスキーを作成</value>
+  </data>
+  <data name="Prompt_SignIn_ConfirmButton" xml:space="preserve">
+    <value>サインイン</value>
+  </data>
+  <data name="Prompt_SignIn_Headline" xml:space="preserve">
+    <value>{0} がサインインを求めています</value>
+  </data>
+  <data name="Prompt_SignIn_Title" xml:space="preserve">
+    <value>パスキーでサインイン</value>
+  </data>
+  <data name="Prompt_Toast_AddToExisting" xml:space="preserve">
+    <value>既存エントリ</value>
+  </data>
+  <data name="Prompt_Toast_CancellingIn" xml:space="preserve">
+    <value>{0} 秒後にキャンセル</value>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Body" xml:space="preserve">
+    <value>{0} のパスキーを作成します。</value>
+  </data>
+  <data name="Prompt_Toast_ChooseEntry_Title" xml:space="preserve">
+    <value>保存先のエントリを選択</value>
+  </data>
+  <data name="Prompt_Toast_CreateNew" xml:space="preserve">
+    <value>新規エントリ</value>
+  </data>
+  <data name="Prompt_Toast_DatabasePicker" xml:space="preserve">
+    <value>保存先のデータベース</value>
+  </data>
+  <data name="Prompt_Toast_EntriesTruncated" xml:space="preserve">
+    <value>一致するエントリ {1} 件のうち {0} 件を表示しています。</value>
+  </data>
+  <data name="Prompt_Toast_Register_Body" xml:space="preserve">
+    <value>{0} のパスキーを作成します。</value>
+  </data>
+  <data name="Prompt_Toast_Register_BodyForUser" xml:space="preserve">
+    <value>{0} として {1} のパスキーを作成します。</value>
+  </data>
+  <data name="Prompt_Toast_Register_ConfirmButton" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="Prompt_Toast_Register_Title" xml:space="preserve">
+    <value>パスキーの作成要求</value>
+  </data>
+  <data name="Prompt_Toast_SaveToEntry" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_Body" xml:space="preserve">
+    <value>{0} にサインインします。</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_BodyAsUser" xml:space="preserve">
+    <value>{1} に {0} としてサインインします。</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_ConfirmButton" xml:space="preserve">
+    <value>サインイン</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_EntryHint" xml:space="preserve">
+    <value>KeePass エントリ: {0}</value>
+  </data>
+  <data name="Prompt_Toast_SignIn_Title" xml:space="preserve">
+    <value>サインイン要求</value>
+  </data>
+  <data name="Prompt_Toast_TagOverwrite" xml:space="preserve">
+    <value>パスキーを置き換え</value>
+  </data>
+  <data name="Prompt_Toast_TagSelected" xml:space="preserve">
+    <value>選択中</value>
+  </data>
+  <data name="Prompt_WindowsHello_NoTitle" xml:space="preserve">
+    <value>(タイトルなし)</value>
+  </data>
+  <data name="Tray_Menu_Exit" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="Tray_Menu_Open" xml:space="preserve">
+    <value>KeePassPasskey を開く</value>
+  </data>
+  <data name="Tray_Menu_Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Tray_Tooltip_Ready" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="Tray_Tooltip_RegistrationFailed" xml:space="preserve">
+    <value>登録できませんでした</value>
+  </data>
+</root>
