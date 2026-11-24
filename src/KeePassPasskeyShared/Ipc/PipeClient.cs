@@ -68,6 +68,13 @@ public sealed class PipeClient
 			{
 				pipe.Connect(ConnectTimeoutMs);
 
+				var owner = PipeOwner.Get(pipe.SafePipeHandle, out string ownerError);
+				if (owner == null || !PipeOwner.IsAccepted(owner))
+				{
+					Log.Warn($"Refusing the pipe server: owned by {owner?.Value ?? ownerError}, not by the current user", nameof(PipeClient));
+					return null;
+				}
+
 				string requestJson = JsonConvert.SerializeObject(request);
 				byte[] requestBytes = Encoding.UTF8.GetBytes(requestJson);
 				_logger?.Invoke($">> {requestJson}");

@@ -1,6 +1,7 @@
 ﻿// SPDX-FileCopyrightText: Copyright (C) 2026 Uwe Koegel
 // SPDX-License-Identifier: GPL-3.0-or-later
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Pipes;
@@ -31,11 +32,16 @@ internal sealed class PipeServer : IDisposable
 
 	private readonly RequestHandler _handler;
 	private volatile bool _running;
-	private Thread _listenThread;
-	private NamedPipeServerStream _firstPipe;
-	private string _pipeName;
+	private readonly List<Listener> _listeners = new List<Listener>();
 	private readonly string _legacyName;
 	private readonly string _perUserName;
+
+	private sealed class Listener
+	{
+		internal string Name;
+		internal NamedPipeServerStream FirstPipe;
+		internal Thread Thread;
+	}
 
 	internal PipeServer(RequestHandler handler)
 		: this(handler, PipeConstants.LegacyPipeName, PipeConstants.PipeName)
@@ -51,56 +57,77 @@ internal sealed class PipeServer : IDisposable
 	}
 
 	/// <summary>
-	/// Claims a pipe name and starts listening. Returns false if both names are already in use
-	/// (possible pipe-name squatting), in which case the server serves no requests.
+	/// Claims the per-user name and, when free, the legacy name, and starts listening. Returns false if
+	/// the per-user name is already in use, in which case the server serves no requests.
 	/// </summary>
 	internal bool Start()
 	{
-		// The legacy name first, so a 1.4.x provider still reaches a newer plugin (e.g. a portable
-		// KeePass carrying its own plugin). With several users signed in only the first one gets it;
-		// the others fall back to their per-user name. The client tries both.
+		// The legacy name only serves 1.4.x providers.
+		NamedPipeServerStream perUserPipe, legacyPipe;
 		try
 		{
-			_firstPipe = ClaimFirstInstance(_legacyName) ?? ClaimFirstInstance(_perUserName);
+			perUserPipe = ClaimFirstInstance(_perUserName);
+			if (perUserPipe == null)
+			{
+				Log.Error($"Pipe name '{_perUserName}' is already in use by another process. " +
+						  "Refusing to serve passkey requests (possible pipe-name squatting). " +
+						  "Close the other process and restart KeePass.");
+				return false;
+			}
 		}
 		catch (Exception ex)
 		{
 			Log.Error($"Failed to create named pipe: {ex.Message}");
 			return false;
 		}
-
-		if (_firstPipe == null)
+		try
 		{
-			Log.Error($"Pipe name '{_perUserName}' is already in use by another process. " +
-					  "Refusing to serve passkey requests (possible pipe-name squatting). " +
-					  "Close the other process and restart KeePass.");
-			return false;
+			legacyPipe = ClaimFirstInstance(_legacyName);
 		}
-		Log.Info($"listening on '{_pipeName}'");
+		catch (Exception ex)
+		{
+			Log.Warn($"Failed to create the legacy named pipe: {ex.Message}");
+			legacyPipe = null;
+		}
 
 		_running = true;
-		_listenThread = new Thread(ListenLoop) { IsBackground = true, Name = "KeePass-Passkey-PipeServer" };
-		_listenThread.Start();
+		StartListener(_perUserName, perUserPipe);
+		if (legacyPipe != null)
+			StartListener(_legacyName, legacyPipe);
 		return true;
+	}
+
+	private void StartListener(string name, NamedPipeServerStream firstPipe)
+	{
+		var listener = new Listener { Name = name, FirstPipe = firstPipe };
+		listener.Thread = new Thread(() => ListenLoop(listener)) { IsBackground = true, Name = "KeePass-Passkey-PipeServer" };
+		_listeners.Add(listener);
+		listener.Thread.Start();
+		Log.Info($"Listening on '{name}'");
 	}
 
 	internal void Stop()
 	{
 		_running = false;
-		// Wake up the listener by connecting a dummy client
-		try
+		foreach (var listener in _listeners)
 		{
-			using (var dummy = new NamedPipeClientStream(".", _pipeName, PipeDirection.Out))
-				dummy.Connect(100);
+			// Wake up the listener by connecting a dummy client
+			try
+			{
+				using (var dummy = new NamedPipeClientStream(".", listener.Name, PipeDirection.Out))
+					dummy.Connect(100);
+			}
+			catch { }
 		}
-		catch { }
-		// The listener closes the pipe; waiting for it means the name is free once Stop returns.
-		_listenThread?.Join(1000);
+		// The listeners close their pipes; waiting for them means the names are free once Stop returns.
+		foreach (var listener in _listeners)
+			listener.Thread.Join(1000);
+		_listeners.Clear();
 	}
 
 	public void Dispose() => Stop();
 
-	private void ListenLoop()
+	private void ListenLoop(Listener listener)
 	{
 		while (_running)
 		{
@@ -108,7 +135,7 @@ internal sealed class PipeServer : IDisposable
 			try
 			{
 				// Reuse the instance claimed in Start() for the first iteration, then create more.
-				pipe = Interlocked.Exchange(ref _firstPipe, null) ?? CreatePipe(_pipeName, firstInstance: false);
+				pipe = Interlocked.Exchange(ref listener.FirstPipe, null) ?? CreatePipe(listener.Name, firstInstance: false);
 
 				pipe.WaitForConnection();
 
@@ -213,13 +240,11 @@ internal sealed class PipeServer : IDisposable
 	/// Creates the first instance with FILE_FLAG_FIRST_PIPE_INSTANCE, so an existing owner of the name is
 	/// detected here. Returns null when the name is taken, by another user's KeePass or a squatter.
 	/// </summary>
-	private NamedPipeServerStream ClaimFirstInstance(string name)
+	private static NamedPipeServerStream ClaimFirstInstance(string name)
 	{
 		try
 		{
-			var pipe = CreatePipe(name, firstInstance: true);
-			_pipeName = name;
-			return pipe;
+			return CreatePipe(name, firstInstance: true);
 		}
 		// ERROR_PIPE_BUSY instead of ERROR_ACCESS_DENIED when the owner has no free instance left.
 		catch (Win32Exception ex) when (ex.NativeErrorCode == ERROR_ACCESS_DENIED || ex.NativeErrorCode == ERROR_PIPE_BUSY)
@@ -285,8 +310,8 @@ internal sealed class PipeServer : IDisposable
 		try
 		{
 			string userSid = WindowsIdentity.GetCurrent().User.Value;
-			// D: full control to the user and SYSTEM. S: medium label, deny read/write-up from below.
-			string sddl = $"D:(A;;GA;;;{userSid})(A;;GA;;;SY)S:(ML;;NRNW;;;ME)";
+			// O: the user. D: full control to the user and SYSTEM. S: medium label, deny read/write-up from below.
+			string sddl = $"O:{userSid}D:(A;;GA;;;{userSid})(A;;GA;;;SY)S:(ML;;NRNW;;;ME)";
 			var rsd = new RawSecurityDescriptor(sddl);
 			var bytes = new byte[rsd.BinaryLength];
 			rsd.GetBinaryForm(bytes, 0);
