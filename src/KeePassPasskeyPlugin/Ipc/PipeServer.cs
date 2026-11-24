@@ -310,8 +310,8 @@ internal sealed class PipeServer : IDisposable
 		try
 		{
 			string userSid = WindowsIdentity.GetCurrent().User.Value;
-			// D: full control to the user and SYSTEM. S: medium label, deny read/write-up from below.
-			string sddl = $"D:(A;;GA;;;{userSid})(A;;GA;;;SY)S:(ML;;NRNW;;;ME)";
+			// O: the user. D: full control to the user and SYSTEM. S: medium label, deny read/write-up from below.
+			string sddl = $"O:{userSid}D:(A;;GA;;;{userSid})(A;;GA;;;SY)S:(ML;;NRNW;;;ME)";
 			var rsd = new RawSecurityDescriptor(sddl);
 			var bytes = new byte[rsd.BinaryLength];
 			rsd.GetBinaryForm(bytes, 0);

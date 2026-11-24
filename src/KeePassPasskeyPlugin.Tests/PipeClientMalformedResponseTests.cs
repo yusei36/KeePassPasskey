@@ -3,6 +3,8 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,13 +30,23 @@ public class PipeClientMalformedResponseTests
 		}
 	}
 
+	// PipeClient only talks to a pipe the current user owns; an elevated runner would otherwise make it Administrators.
+	private static PipeSecurity OwnedByCurrentUser()
+	{
+		var user = WindowsIdentity.GetCurrent().User;
+		var security = new PipeSecurity();
+		security.SetOwner(user);
+		security.AddAccessRule(new PipeAccessRule(user, PipeAccessRights.FullControl, AccessControlType.Allow));
+		return security;
+	}
+
 	// Serves one canned reply so PipeClient.Send can be driven end to end.
 	private static Task ServeOnce(string pipeName, string responseJson, CancellationToken ct)
 	{
 		return Task.Run(async () =>
 		{
 			using (var server = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1,
-									PipeTransmissionMode.Byte, PipeOptions.Asynchronous))
+									PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 0, 0, OwnedByCurrentUser()))
 			{
 				await server.WaitForConnectionAsync(ct);
 
